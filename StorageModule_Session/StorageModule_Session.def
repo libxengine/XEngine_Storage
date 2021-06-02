@@ -1,0 +1,11 @@
+LIBRARY
+
+EXPORTS
+	Session_GetLastError
+
+	Session_DLStroage_Init
+	Session_DLStroage_Destory
+	Session_DLStroage_Insert
+	Session_DLStroage_GetList
+	Session_DLStroage_GetCount
+	Session_DLStroage_Delete
