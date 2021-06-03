@@ -55,3 +55,18 @@ extern XENGINE_SERVERCONFIG st_ServiceCfg;
 #include "StorageApp_Task.h"
 #include "StorageApp_Config.h"
 #include "StorageApp_Download.h"
+
+#ifdef _WINDOWS
+#pragma comment(lib,"Ws2_32.lib")
+#pragma comment(lib,"../Debug/StorageModule_Session.lib")
+#pragma comment(lib,"../Debug/StorageModule_Config.lib")
+#ifdef WIN32
+#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib.lib")
+#pragma comment(lib,"x86/XEngine_Core/XEngine_Core.lib")
+#pragma comment(lib,"x86/XEngine_Core/XEngine_ManagePool.lib")
+#pragma comment(lib,"x86/XEngine_HelpComponents/HelpComponents_XLog.lib")
+#pragma comment(lib,"x86/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
+#else
+#endif
+#else
+#endif

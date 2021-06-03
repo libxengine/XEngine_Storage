@@ -2,7 +2,7 @@
 
 BOOL CALLBACK XEngine_Callback_DownloadLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
-	RfcComponents_HttpServer_CreateClientEx(xhDLHttp, lpszClientAddr);
+	RfcComponents_HttpServer_CreateClientEx(xhDLHttp, lpszClientAddr, 0);
 	SocketOpt_HeartBeat_InsertAddrEx(xhHBDownload, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端：%s，进入了服务器"), lpszClientAddr);
 	return TRUE;
@@ -23,7 +23,7 @@ void CALLBACK XEngine_Callback_DownloadLeave(LPCTSTR lpszClientAddr, SOCKET hSoc
 }
 BOOL CALLBACK XEngine_Callback_UPLoaderLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
-	RfcComponents_HttpServer_CreateClientEx(xhUPHttp, lpszClientAddr);
+	RfcComponents_HttpServer_CreateClientEx(xhUPHttp, lpszClientAddr, 0);
 	SocketOpt_HeartBeat_InsertAddrEx(xhHBUPLoader, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端：%s，进入了服务器"), lpszClientAddr);
 	return TRUE;

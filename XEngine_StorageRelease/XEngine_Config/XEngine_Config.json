@@ -1,0 +1,43 @@
+{
+    "tszIPAddr":"127.0.0.1",
+    "bDeamon":0,
+    "nCenterPort":5001,
+    "nStorageDLPort":5002,
+    "nStorageUPPort":5003,
+    "XMax":{
+        "MaxClient":10000,
+        "MaxQueue":10000,
+        "IOThread":2,
+        "CenterThread":2,
+        "nStorageUPThread":2,
+        "nStorageDLThread":2
+    },
+    "XTime":{
+        "bHBTime":0,
+        "nTimeCheck":3,
+        "nCenterTimeOut":5,
+        "nStorageTimeOut":5
+    },
+    "XLog":{
+        "MaxSize":1024000,
+        "MaxCount":10,
+        "LogLeave":32
+    },
+    "XSql":{
+        "SQLAddr":"127.0.0.1",
+        "SQLPort":3306,
+        "SQLUser":"root",
+        "SQLPass":"123123Ruiyue"
+    },
+    "XStorage":{
+        "nUseMode":1,
+        "tszHttpAddr":"http://192.168.1.4",
+        "tszNginAddr":"http://192.168.1.4:5010",
+        "tszFileDir":"/home/ubuntu/nginx/html"
+    },
+    "XVer":{
+        "StorageVersion":[
+            "1.0.0.1001 Build20210501"
+        ]
+    }
+}

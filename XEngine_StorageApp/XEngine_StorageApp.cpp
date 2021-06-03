@@ -64,8 +64,14 @@ static int ServiceApp_Deamon(int wait)
 
 int main(int argc, char** argv)
 {
+#ifdef _WINDOWS
+	WSADATA st_WSAData;
+	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
+#endif
 	bIsRun = TRUE;
 	tstring m_StrVersion;
+	LPCTSTR lpszHTTPMime = _T("./XEngine_Config/HttpMime.types");
+	LPCTSTR lpszHTTPCode = _T("./XEngine_Config/HttpCode.types");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListUPThread;
 	THREADPOOL_PARAMENT** ppSt_ListDLThread;
@@ -122,9 +128,24 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，心跳管理服务配置为不启用..."));
 	}
 
+	xhDLHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageDLThread);
+	if (NULL == xhDLHttp)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化HTTP下载服务失败，错误：%lX"), HttpServer_GetLastError());
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP下载服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
+	xhUPHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageUPThread);
+	if (NULL == xhDLHttp)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化HTTP上传服务失败，错误：%lX"), HttpServer_GetLastError());
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP上传服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageUPThread);
+
 	if (!NetCore_TCPXCore_StartEx(&xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载存储网络服务失败，错误：%lX"), NetCore_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nStorageDLPort, NetCore_GetLastError());
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nIOThread);
@@ -133,7 +154,7 @@ int main(int argc, char** argv)
 
 	if (!NetCore_TCPXCore_StartEx(&xhNetUPLoader, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传存储网络服务失败，错误：%lX"), NetCore_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nStorageUPPort, NetCore_GetLastError());
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetUPLoader, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nIOThread);
@@ -185,5 +206,9 @@ XENGINE_EXITAPP:
 	RfcComponents_HttpServer_DestroyEx(xhDLHttp);
 	HelpComponents_XLog_Destroy(xhLog);
 	Session_DLStroage_Destory();
+
+#ifdef _WINDOWS
+	WSACleanup();
+#endif
 	return 0;
 }

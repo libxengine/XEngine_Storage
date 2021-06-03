@@ -48,4 +48,9 @@
       <Filter>源文件\Config_Json</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="StorageModule_Config.def">
+      <Filter>源文件</Filter>
+    </None>
+  </ItemGroup>
 </Project>
