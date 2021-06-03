@@ -23,10 +23,10 @@ void ServiceApp_Stop(int signo)
 	NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
 	SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
 	SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
-	ManagePool_Thread_NQDestroy(xhUPPool);
-	ManagePool_Thread_NQDestroy(xhDLPool);
 	RfcComponents_HttpServer_DestroyEx(xhUPHttp);
 	RfcComponents_HttpServer_DestroyEx(xhDLHttp);
+	ManagePool_Thread_NQDestroy(xhUPPool);
+	ManagePool_Thread_NQDestroy(xhDLPool);
 	HelpComponents_XLog_Destroy(xhLog);
 	Session_DLStroage_Destory();
 	exit(0);
@@ -152,12 +152,12 @@ int main(int argc, char** argv)
 	NetCore_TCPXCore_RegisterCallBackEx(xhNetDownload, XEngine_Callback_DownloadLogin, XEngine_Callback_DownloadRecv, XEngine_Callback_DownloadLeave);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册下载存储网络服务事件成功！"));
 
-	if (!NetCore_TCPXCore_StartEx(&xhNetUPLoader, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread))
+	if (!NetCore_TCPXCore_StartEx(&xhNetUPLoader, st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nStorageUPPort, NetCore_GetLastError());
 		goto XENGINE_EXITAPP;
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetUPLoader, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nIOThread);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetUPLoader, st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nIOThread);
 	NetCore_TCPXCore_RegisterCallBackEx(xhNetUPLoader, XEngine_Callback_UPLoaderLogin, XEngine_Callback_UPLoaderRecv, XEngine_Callback_UPLoaderLeave);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册上传存储网络服务事件成功！"));
 
@@ -200,10 +200,10 @@ XENGINE_EXITAPP:
 	NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
 	SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
 	SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
-	ManagePool_Thread_NQDestroy(xhUPPool);
-	ManagePool_Thread_NQDestroy(xhDLPool);
 	RfcComponents_HttpServer_DestroyEx(xhUPHttp);
 	RfcComponents_HttpServer_DestroyEx(xhDLHttp);
+	ManagePool_Thread_NQDestroy(xhUPPool);
+	ManagePool_Thread_NQDestroy(xhDLPool);
 	HelpComponents_XLog_Destroy(xhLog);
 	Session_DLStroage_Destory();
 

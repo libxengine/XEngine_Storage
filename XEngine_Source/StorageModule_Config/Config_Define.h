@@ -58,7 +58,6 @@ typedef struct tag_XEngine_ServerConfig
     }st_XStorage;
     struct
     {
-        list<tstring> *pStl_ListCenter;
         list<tstring> *pStl_ListStorage;
     }st_XVer;
 }XENGINE_SERVERCONFIG;

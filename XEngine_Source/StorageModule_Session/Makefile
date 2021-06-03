@@ -2,11 +2,11 @@ CC = g++ -Wall -std=c++17 -fPIC
 RELEASE = 0
 UNICODE = 0
 INCLUDE = -I ./
-LOADBIN = -L ../../XEngine_Lib/XEngine_BaseLib -L ../../XEngine_Lib/XEngine_Algorithm
-LIB = -lXEngine_BaseLib -lXEngine_Algorithm
+LOADBIN = 
+LIB = 
 LIBEX = -static-libgcc -lrt -ldl -lpthread
-LOADSO = -Wl,-rpath=../XEngine_BaseLib,--disable-new-dtags
-LIBINCLUDE = Session_Client.o Session_DLStroage.o pch.o
+LOADSO = -Wl,-rpath=
+LIBINCLUDE = Session_DLStroage.o Session_UPStroage.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -24,18 +24,20 @@ endif
 
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE) -o libNetHelp_Session.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE) -o libStorageModule_Session.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
 Session_DLStroage.o:./Session_Stroage/Session_DLStroage.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Session_Stroage/Session_DLStroage.cpp 
-					              
+Session_UPStroage.o:./Session_Stroage/Session_UPStroage.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Session_Stroage/Session_UPStroage.cpp 
+						              
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libNetHelp_Session.so
-	cp ./libNetHelp_Session.so ../../../XEngine_Release/XEngine_NetHelp/libNetHelp_Session.so
+InstallSo:./libStorageModule_Session.so
+	cp ./libStorageModule_Session.so ../../XEngine_Release/libStorageModule_Session.so
 
 
 CleanAll:CleanObj CleanMk

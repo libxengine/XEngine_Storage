@@ -131,7 +131,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
 	_tcscpy(pSt_ServerConfig->st_XStorage.tszNginAddr, st_JsonXStorage["tszNginAddr"].asCString());
     _tcscpy(pSt_ServerConfig->st_XStorage.tszFileDir, st_JsonXStorage["tszFileDir"].asCString());
 
-	if (st_JsonRoot["XVer"].empty() || (2 != st_JsonRoot["XVer"].size()))
+	if (st_JsonRoot["XVer"].empty() || (1 != st_JsonRoot["XVer"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XVER;
@@ -139,13 +139,8 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
 	}
 	Json::Value st_JsonXVer = st_JsonRoot["XVer"];
     
-    pSt_ServerConfig->st_XVer.pStl_ListCenter = new list<tstring>;
     pSt_ServerConfig->st_XVer.pStl_ListStorage = new list<tstring>;
 
-    for (unsigned int i = 0; i < st_JsonXVer["CenterVersion"].size(); i++)
-    {
-        pSt_ServerConfig->st_XVer.pStl_ListCenter->push_back(st_JsonXVer["CenterVersion"][i].asCString());
-    }
     for (unsigned int i = 0; i < st_JsonXVer["StorageVersion"].size(); i++)
     {
         pSt_ServerConfig->st_XVer.pStl_ListStorage->push_back(st_JsonXVer["StorageVersion"][i].asCString());

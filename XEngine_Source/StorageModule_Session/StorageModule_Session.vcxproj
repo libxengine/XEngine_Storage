@@ -163,6 +163,7 @@
     <ClInclude Include="Session_Define.h" />
     <ClInclude Include="Session_Error.h" />
     <ClInclude Include="Session_Stroage\Session_DLStroage.h" />
+    <ClInclude Include="Session_Stroage\Session_UPStroage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -173,6 +174,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Session_Stroage\Session_DLStroage.cpp" />
+    <ClCompile Include="Session_Stroage\Session_UPStroage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="StorageModule_Session.def" />
