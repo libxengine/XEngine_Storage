@@ -10,5 +10,5 @@ void CALLBACK XEngine_Callback_UPLoaderLeave(LPCTSTR lpszClientAddr, SOCKET hSoc
 void CALLBACK XEngine_Callback_HBDownload(LPCTSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam);
 void CALLBACK XEngine_Callback_HBUPLoader(LPCTSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam);
 
-BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, BOOL bHBLeave);
+BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, BOOL bHBLeave, BOOL bUP = TRUE);
 BOOL XEngine_Net_SendMsg(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, int nType = STORAGE_NETTYPE_HTTPDOWNLOAD);

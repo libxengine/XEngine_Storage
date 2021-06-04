@@ -30,6 +30,9 @@
     <ClCompile Include="StorageApp_Task.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="StorageApp_UPLoader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StorageApp_Config.h">
@@ -45,6 +48,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="StorageApp_Task.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StorageApp_UPLoader.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

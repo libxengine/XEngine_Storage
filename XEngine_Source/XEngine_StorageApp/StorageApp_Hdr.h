@@ -46,6 +46,7 @@ extern XNETHANDLE xhNetDownload;
 extern XNETHANDLE xhNetUPLoader;
 extern XNETHANDLE xhUPPool;
 extern XNETHANDLE xhDLPool;
+extern XNETHANDLE xhSDPool;
 extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 
@@ -55,6 +56,7 @@ extern XENGINE_SERVERCONFIG st_ServiceCfg;
 #include "StorageApp_Task.h"
 #include "StorageApp_Config.h"
 #include "StorageApp_Download.h"
+#include "StorageApp_UPLoader.h"
 
 #ifdef _WINDOWS
 #pragma comment(lib,"Ws2_32.lib")

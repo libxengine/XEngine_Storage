@@ -9,6 +9,7 @@ XNETHANDLE xhNetDownload = 0;
 XNETHANDLE xhNetUPLoader = 0;
 XNETHANDLE xhUPPool = 0;
 XNETHANDLE xhDLPool = 0;
+XNETHANDLE xhSDPool = 0;
 XHANDLE xhUPHttp = NULL;
 XHANDLE xhDLHttp = NULL;
 
@@ -16,20 +17,24 @@ XENGINE_SERVERCONFIG st_ServiceCfg;
 
 void ServiceApp_Stop(int signo)
 {
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("存储中心服务器退出..."));
-	bIsRun = FALSE;
+	if (bIsRun)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("存储中心服务器退出..."));
+		bIsRun = FALSE;
 
-	NetCore_TCPXCore_DestroyEx(xhNetDownload);
-	NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
-	SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
-	SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
-	RfcComponents_HttpServer_DestroyEx(xhUPHttp);
-	RfcComponents_HttpServer_DestroyEx(xhDLHttp);
-	ManagePool_Thread_NQDestroy(xhUPPool);
-	ManagePool_Thread_NQDestroy(xhDLPool);
-	HelpComponents_XLog_Destroy(xhLog);
-	Session_DLStroage_Destory();
-	exit(0);
+		NetCore_TCPXCore_DestroyEx(xhNetDownload);
+		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
+		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
+		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
+		RfcComponents_HttpServer_DestroyEx(xhUPHttp);
+		RfcComponents_HttpServer_DestroyEx(xhDLHttp);
+		ManagePool_Thread_NQDestroy(xhUPPool);
+		ManagePool_Thread_NQDestroy(xhDLPool);
+		ManagePool_Thread_NQDestroy(xhSDPool);
+		HelpComponents_XLog_Destroy(xhLog);
+		Session_DLStroage_Destory();
+		exit(0);
+	}
 }
 static int ServiceApp_Deamon(int wait)
 {
@@ -75,6 +80,7 @@ int main(int argc, char** argv)
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListUPThread;
 	THREADPOOL_PARAMENT** ppSt_ListDLThread;
+	THREADPOOL_PARAMENT** ppSt_ListSDThread;
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceCfg, '\0', sizeof(XENGINE_SERVERCONFIG));
@@ -163,12 +169,19 @@ int main(int argc, char** argv)
 
 	if (!Session_DLStroage_Init(st_ServiceCfg.st_XMax.nStorageDLThread))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载会话服务失败，错误：%lX"), NetCore_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功"));
+	if (!Session_UPStroage_Init())
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传会话服务失败，错误：%lX"), Session_GetLastError());
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传会话服务成功"));
 
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread, sizeof(THREADPOOL_PARAMENT));
+	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListSDThread, st_ServiceCfg.st_XMax.nStorageDLThread, sizeof(THREADPOOL_PARAMENT));
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageUPThread, sizeof(THREADPOOL_PARAMENT));
 	for (int i = 0; i < st_ServiceCfg.st_XMax.nStorageDLThread; i++)
 	{
@@ -176,37 +189,66 @@ int main(int argc, char** argv)
 		*pInt_Pos = i;
 
 		ppSt_ListDLThread[i]->lParam = pInt_Pos;
-		ppSt_ListDLThread[i]->fpCall_ThreadsTask = XEngine_Download_Thread;
+		ppSt_ListDLThread[i]->fpCall_ThreadsTask = XEngine_Download_HTTPThread;
+
+		ppSt_ListSDThread[i]->lParam = pInt_Pos;
+		ppSt_ListSDThread[i]->fpCall_ThreadsTask = XEngine_Download_SendThread;
 	}
 	if (!ManagePool_Thread_NQCreate(&xhDLPool, &ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动任务处理线程池失败，错误：%d"), errno);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP下载处理线程池失败，错误：%d"), errno);
 		goto XENGINE_EXITAPP;
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动HTTP下载任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
+	if (!ManagePool_Thread_NQCreate(&xhSDPool, &ppSt_ListSDThread, st_ServiceCfg.st_XMax.nStorageDLThread))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动下载任务线程池失败，错误：%d"), errno);
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载任务线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
+
+	for (int i = 0; i < st_ServiceCfg.st_XMax.nStorageUPThread; i++)
+	{
+		int* pInt_Pos = new int;
+		*pInt_Pos = i;
+
+		ppSt_ListUPThread[i]->lParam = pInt_Pos;
+		ppSt_ListUPThread[i]->fpCall_ThreadsTask = XEngine_UPLoader_HTTPThread;
+	}
+	if (!ManagePool_Thread_NQCreate(&xhUPPool, &ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageDLThread))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP上传处理线程池失败，错误：%d"), errno);
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动HTTP上传任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
 
 	m_StrVersion = st_ServiceCfg.st_XVer.pStl_ListStorage->front();
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), m_StrVersion.c_str());
+
 	while (bIsRun)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 
 XENGINE_EXITAPP:
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("存储中心服务关闭，服务器退出..."));
-	bIsRun = FALSE;
 
-	NetCore_TCPXCore_DestroyEx(xhNetDownload);
-	NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
-	SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
-	SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
-	RfcComponents_HttpServer_DestroyEx(xhUPHttp);
-	RfcComponents_HttpServer_DestroyEx(xhDLHttp);
-	ManagePool_Thread_NQDestroy(xhUPPool);
-	ManagePool_Thread_NQDestroy(xhDLPool);
-	HelpComponents_XLog_Destroy(xhLog);
-	Session_DLStroage_Destory();
+	if (bIsRun)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("存储中心服务关闭，服务器退出..."));
+		bIsRun = FALSE;
 
+		NetCore_TCPXCore_DestroyEx(xhNetDownload);
+		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
+		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
+		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
+		RfcComponents_HttpServer_DestroyEx(xhUPHttp);
+		RfcComponents_HttpServer_DestroyEx(xhDLHttp);
+		ManagePool_Thread_NQDestroy(xhUPPool);
+		ManagePool_Thread_NQDestroy(xhDLPool);
+		ManagePool_Thread_NQDestroy(xhSDPool);
+		HelpComponents_XLog_Destroy(xhLog);
+		Session_DLStroage_Destory();
+	}
 #ifdef _WINDOWS
 	WSACleanup();
 #endif

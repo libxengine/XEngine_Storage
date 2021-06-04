@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Session_Stroage/Session_DLStroage.h"
+#include "Session_Stroage/Session_UPStroage.h"
 /********************************************************************
 //    Created:     2021/06/02  14:38:34
 //    File Name:   D:\XEngine_Storage\StorageModule_Session\pch.cpp
@@ -15,6 +16,7 @@ BOOL Session_IsErrorOccur = FALSE;
 DWORD Session_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CSession_DLStroage m_DLStorage;
+CSession_UPStroage m_UPStorage;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义机器
 //////////////////////////////////////////////////////////////////////////
@@ -52,4 +54,32 @@ extern "C" BOOL Session_DLStroage_GetCount(int nIndex, int* pInt_ListCount)
 extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 {
 	return m_DLStorage.Session_DLStroage_Delete(lpszClientAddr);
+}
+extern "C" BOOL Session_UPStroage_Init()
+{
+	return m_UPStorage.Session_UPStroage_Init();
+}
+extern "C" BOOL Session_UPStroage_Destory()
+{
+	return m_UPStorage.Session_UPStroage_Destory();
+}
+extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, int nPos)
+{
+	return m_UPStorage.Session_UPStroage_Insert(lpszClientAddr, lpszFileDir, nFileSize, nPos);
+}
+extern "C" BOOL Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL * pbComplete)
+{
+	return m_UPStorage.Session_UPStroage_GetComplete(lpszClientAddr, pbComplete);
+}
+extern "C" BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
+{
+	return m_UPStorage.Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer, nMsgLen);
+}
+extern "C" BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr)
+{
+	return m_UPStorage.Session_UPStroage_Exist(lpszClientAddr);
+}
+extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
+{
+	return m_UPStorage.Session_UPStroage_Delete(lpszClientAddr);
 }

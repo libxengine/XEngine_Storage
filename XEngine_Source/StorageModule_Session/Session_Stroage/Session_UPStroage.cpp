@@ -22,32 +22,16 @@ CSession_UPStroage::~CSession_UPStroage()
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
 函数名称：Session_UPStroage_Init
-函数功能：初始化下载会话管理器
- 参数.一：nPoolCount
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入最大运行多少个下载同时进行
+函数功能：初始化上传会话管理器
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Init(int nPoolCount /* = 1 */)
+BOOL CSession_UPStroage::Session_UPStroage_Init()
 {
 	Session_IsErrorOccur = FALSE;
 
-	for (int i = 0; i < nPoolCount; i++)
-	{
-		SESSION_STORAGELIST st_StorageList;
-
-		st_StorageList.pStl_ListStorage = new list<SESSION_STORAGEINFO>;
-		st_StorageList.st_Locker = make_shared<shared_mutex>();
-
-		st_Locker.lock();
-		stl_MapStroage.insert(make_pair(i, st_StorageList));
-		st_Locker.unlock();
-	}
 	return TRUE;
 }
 /********************************************************************
@@ -63,20 +47,6 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
 	Session_IsErrorOccur = FALSE;
 
 	st_Locker.lock();
-	unordered_map<int, SESSION_STORAGELIST>::iterator stl_MapIterator = stl_MapStroage.begin();
-	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
-	{
-		stl_MapIterator->second.st_Locker->lock();
-		list<SESSION_STORAGEINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListStorage->begin();
-		for (; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++)
-		{
-			fclose(stl_ListIterator->pSt_File);
-		}
-		stl_MapIterator->second.pStl_ListStorage->clear();
-		delete stl_MapIterator->second.pStl_ListStorage;
-		stl_MapIterator->second.pStl_ListStorage = NULL;
-		stl_MapIterator->second.st_Locker->unlock();
-	}
 	stl_MapStroage.clear();
 	st_Locker.unlock();
 
@@ -95,11 +65,11 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   类型：常量字符指针
   可空：N
   意思：输入文件地址
- 参数.三：pInt_Count
+ 参数.三：nFileSize
   In/Out：Out
-  类型：整数型指针
-  可空：Y
-  意思：输出文件大小
+  类型：整数型
+  可空：N
+  意思：输入文件大小
  参数.四：nPos
   In/Out：In
   类型：整数型
@@ -110,7 +80,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x* pInt_Count /* = NULL */, int nPos /* = 0 */)
+BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, int nPos /* = 0 */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -122,107 +92,60 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	}
 	//禁止一个客户端启动多个下载会话
 	st_Locker.lock_shared();
-	unordered_map<int, SESSION_STORAGELIST>::iterator stl_MapIterator = stl_MapStroage.begin();
-	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator != stl_MapStroage.end())
 	{
-		stl_MapIterator->second.st_Locker->lock_shared();
-		list<SESSION_STORAGEINFO>::iterator stl_ListIterator= stl_MapIterator->second.pStl_ListStorage->begin();
-		for (; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++)
-		{
-			if (0 == _tcsncmp(lpszClientAddr, stl_ListIterator->tszClientAddr, _tcslen(lpszClientAddr)))
-			{
-				Session_IsErrorOccur = TRUE;
-				Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_EXIST;
-				stl_MapIterator->second.st_Locker->unlock_shared();
-				st_Locker.unlock_shared();
-				return FALSE;
-			}
-		}
-		stl_MapIterator->second.st_Locker->unlock_shared();
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_EXIST;
+		st_Locker.unlock_shared();
+		return FALSE;
 	}
 	st_Locker.unlock_shared();
 
-	SESSION_STORAGEINFO st_Client;
-	struct _stat st_FStat;
+	SESSION_STORAGEUPLOADER st_Client;
+	memset(&st_Client, '\0', sizeof(SESSION_STORAGEUPLOADER));
 
-	memset(&st_Client, '\0', sizeof(SESSION_STORAGEINFO));
-	_stat(lpszFileDir, &st_FStat);
-
-	st_Client.ullPos = nPos;
-	st_Client.ullCount = st_FStat.st_size;
-	_tcscpy(st_Client.tszFileDir, lpszFileDir);
-	_tcscpy(st_Client.tszClientAddr, lpszClientAddr);
+	st_Client.st_StorageInfo.ullPos = nPos;
+	st_Client.st_StorageInfo.ullCount = nFileSize;
+	_tcscpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
+	_tcscpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
 	//填充下载信息
-	st_Client.pSt_File = _tfopen(lpszFileDir, _T("rb"));
-	if (NULL == st_Client.pSt_File)
+	st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("wb"));
+	if (NULL == st_Client.st_StorageInfo.pSt_File)
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 		return FALSE;
 	}
-	if (NULL != pInt_Count)
-	{
-		*pInt_Count = st_Client.ullCount;
-	}
-	//查找一个最小队列
-	int nListPos = 0;
-	size_t nListCount = 99999;
+
 	st_Locker.lock();
-	stl_MapIterator = stl_MapStroage.begin();
-	for (int i = 0; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++, i++)
-	{
-		stl_MapIterator->second.st_Locker->lock_shared();
-		if (nListCount > stl_MapIterator->second.pStl_ListStorage->size())
-		{
-			nListPos = i;
-			nListCount = stl_MapIterator->second.pStl_ListStorage->size();
-		}
-		stl_MapIterator->second.st_Locker->unlock_shared();
-	}
-	stl_MapIterator = stl_MapStroage.find(nListPos);
-	stl_MapIterator->second.st_Locker->lock();
-	stl_MapIterator->second.pStl_ListStorage->push_back(st_Client);
-	stl_MapIterator->second.st_Locker->unlock();
+	stl_MapStroage.insert(make_pair(lpszClientAddr, st_Client));
 	st_Locker.unlock();
 	return TRUE;
 }
 /********************************************************************
-函数名称：Session_UPStroage_GetList
-函数功能：获得下载器中的列表索引信息
- 参数.一：nPool
+函数名称：Session_UPStroage_GetComplete
+函数功能：接受的数据是否完毕
+ 参数.一：lpszClientAddr
   In/Out：In
-  类型：整数型
+  类型：常量字符指针
   可空：N
-  意思：输入要操作的队列
- 参数.二：nIndex
-  In/Out：In
-  类型：整数型
+  意思：输入要操作的客户端
+ 参数.二：pbComplete
+  In/Out：Out
+  类型：逻辑型指针
   可空：N
-  意思：输入要操作的队列索引
- 参数.三：ptszClientAddr
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输出客户端地址
- 参数.四：ptszMsgBuffer
-  In/Out：In
-  类型：整数型
-  可空：N
- 参数.五：pInt_MsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输出获取的缓冲区大小
+  意思：输出是否完成
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_GetList(int nPool, int nIndex, TCHAR* ptszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+BOOL CSession_UPStroage::Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL* pbComplete)
 {
 	Session_IsErrorOccur = FALSE;
 
-	if ((NULL == ptszClientAddr) || (NULL == ptszMsgBuffer))
+	if ((NULL == lpszClientAddr) || (NULL == pbComplete))
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
@@ -230,7 +153,7 @@ BOOL CSession_UPStroage::Session_UPStroage_GetList(int nPool, int nIndex, TCHAR*
 	}
 
 	st_Locker.lock_shared();
-	unordered_map<int, SESSION_STORAGELIST>::iterator stl_MapIterator = stl_MapStroage.find(nPool);
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator == stl_MapStroage.end())
 	{
 		Session_IsErrorOccur = TRUE;
@@ -238,68 +161,110 @@ BOOL CSession_UPStroage::Session_UPStroage_GetList(int nPool, int nIndex, TCHAR*
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	stl_MapIterator->second.st_Locker->lock_shared();
-	list<SESSION_STORAGEINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListStorage->begin();
-	for (int i = 0; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++, i++)
+	if (stl_MapIterator->second.nWriteLen >= stl_MapIterator->second.st_StorageInfo.ullCount)
 	{
-		if (nIndex == i)
+		*pbComplete = TRUE;
+	}
+	else
+	{
+		*pbComplete = FALSE;
+	}
+	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_UPStroage_Write
+函数功能：写入数据到文件
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要写入的数据
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入写入大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszClientAddr) || (NULL == lpszMsgBuffer))
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+
+	st_Locker.lock_shared();
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	int nCount = nMsgLen;
+	int nWLen = 0;
+	while (TRUE)
+	{
+		int nRet = fwrite(lpszMsgBuffer + nWLen, 1, nCount - nWLen, stl_MapIterator->second.st_StorageInfo.pSt_File);
+		nWLen += nRet;
+		//直到写完
+		if (nWLen >= nCount)
 		{
-			_tcscpy(ptszClientAddr, stl_ListIterator->tszClientAddr);
-			*pInt_MsgLen = fread(ptszMsgBuffer, 1, *pInt_MsgLen, stl_ListIterator->pSt_File);
 			break;
 		}
 	}
-	stl_MapIterator->second.st_Locker->unlock_shared();
+	stl_MapIterator->second.nWriteLen += nMsgLen;
 	st_Locker.unlock_shared();
 	return TRUE;
 }
 /********************************************************************
-函数名称：Session_UPStroage_GetCount
-函数功能：获取队列拥有的个数
- 参数.一：nPool
+函数名称：Session_UPStroage_Exist
+函数功能：客户端是否存在
+ 参数.一：lpszClientAddr
   In/Out：In
-  类型：整数型
+  类型：常量字符指针
   可空：N
-  意思：输入要操作的队列
- 参数.二：pInt_ListCount
-  In/Out：Out
-  类型：整数型指针
-  可空：N
-  意思：输出队列个数
+  意思：输入要操作的客户端
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_GetCount(int nPool, int* pInt_ListCount)
+BOOL CSession_UPStroage::Session_UPStroage_Exist(LPCTSTR lpszClientAddr)
 {
 	Session_IsErrorOccur = FALSE;
 
-	if (NULL == pInt_ListCount)
-	{
-		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
-		return FALSE;
-	}
-
-	st_Locker.lock_shared();
-	unordered_map<int, SESSION_STORAGELIST>::iterator stl_MapIterator = stl_MapStroage.find(nPool);
+	BOOL bRet = FALSE;
+	st_Locker.lock();
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator == stl_MapStroage.end())
 	{
-		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
-		st_Locker.unlock_shared();
-		return FALSE;
+		bRet = FALSE;
 	}
-	stl_MapIterator->second.st_Locker->lock_shared();
-	*pInt_ListCount = stl_MapIterator->second.pStl_ListStorage->size();
-	stl_MapIterator->second.st_Locker->unlock_shared();
-	st_Locker.unlock_shared();
-	return TRUE;
+	else
+	{
+		bRet = TRUE;
+	}
+	st_Locker.unlock();
+	return bRet;
 }
 /********************************************************************
 函数名称：Session_UPStroage_Delete
-函数功能：删除一个队列
+函数功能：删除上传会话
  参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
@@ -314,30 +279,13 @@ BOOL CSession_UPStroage::Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 {
 	Session_IsErrorOccur = FALSE;
 
-	BOOL bFound = FALSE;
-	st_Locker.lock_shared();
-	unordered_map<int, SESSION_STORAGELIST>::iterator stl_MapIterator = stl_MapStroage.begin();
-	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
+	st_Locker.lock();
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator != stl_MapStroage.end())
 	{
-		stl_MapIterator->second.st_Locker->lock();
-		list<SESSION_STORAGEINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListStorage->begin();
-		for (; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++)
-		{
-			if (0 == _tcsncmp(lpszClientAddr, stl_ListIterator->tszClientAddr, _tcslen(lpszClientAddr)))
-			{
-				bFound = TRUE;
-				fclose(stl_ListIterator->pSt_File);
-				stl_MapIterator->second.pStl_ListStorage->erase(stl_ListIterator);
-				break;
-			}
-		}
-		stl_MapIterator->second.st_Locker->unlock();
-
-		if (bFound)
-		{
-			break;
-		}
+		fclose(stl_MapIterator->second.st_StorageInfo.pSt_File);
+		stl_MapStroage.erase(stl_MapIterator);
 	}
-	st_Locker.unlock_shared();
+	st_Locker.unlock();
 	return TRUE;
 }

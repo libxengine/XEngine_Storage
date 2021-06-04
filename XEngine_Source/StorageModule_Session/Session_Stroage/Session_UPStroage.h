@@ -10,11 +10,12 @@
 //    Purpose:     存储上传会话
 //    History:
 *********************************************************************/
-typedef struct
+typedef struct  
 {
-    shared_ptr<shared_mutex> st_Locker;
-    list<SESSION_STORAGEINFO>* pStl_ListStorage;
-}SESSION_STORAGELIST;
+    __int64x nWriteLen;
+    time_t nTimeStart;
+    SESSION_STORAGEINFO st_StorageInfo;
+}SESSION_STORAGEUPLOADER;
 
 class CSession_UPStroage
 {
@@ -22,14 +23,15 @@ public:
     CSession_UPStroage();
     ~CSession_UPStroage();
 public:
-    BOOL Session_UPStroage_Init(int nPoolCount = 1);
+    BOOL Session_UPStroage_Init();
     BOOL Session_UPStroage_Destory();
-    BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x* pInt_Count = NULL, int nPos = 0);
-    BOOL Session_UPStroage_GetList(int nPool, int nIndex, TCHAR* ptszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
-    BOOL Session_UPStroage_GetCount(int nPool, int* pInt_ListCount);
+    BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, int nPos = 0);
+    BOOL Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL* pbComplete);
+    BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen);
+    BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr);
     BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr);
 private:
     shared_mutex st_Locker;
 private:
-    unordered_map<int, SESSION_STORAGELIST> stl_MapStroage;
+    unordered_map<tstring, SESSION_STORAGEUPLOADER> stl_MapStroage;
 };

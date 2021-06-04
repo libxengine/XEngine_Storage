@@ -146,3 +146,121 @@ extern "C" BOOL Session_DLStroage_GetCount(int nIndex, int* pInt_ListCount);
 备注：
 *********************************************************************/
 extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr);
+/********************************************************************
+函数名称：Session_UPStroage_Init
+函数功能：初始化上传会话管理器
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStroage_Init();
+/********************************************************************
+函数名称：Session_UPStroage_Destory
+函数功能：销毁下载管理器
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStroage_Destory();
+/********************************************************************
+函数名称：Session_UPStroage_Insert
+函数功能：插入一个会话到下载器
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：lpszFileDir
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入文件地址
+ 参数.三：nFileSize
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：输入文件大小
+ 参数.四：nPos
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入要移动的指针位置
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, int nPos = 0);
+/********************************************************************
+函数名称：Session_UPStroage_GetComplete
+函数功能：接受的数据是否完毕
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pbComplete
+  In/Out：Out
+  类型：逻辑型指针
+  可空：N
+  意思：输出是否完成
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL* pbComplete);
+/********************************************************************
+函数名称：Session_UPStroage_Write
+函数功能：写入数据到文件
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要写入的数据
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入写入大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen);
+/********************************************************************
+函数名称：Session_UPStroage_Exist
+函数功能：客户端是否存在
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr);
+/********************************************************************
+函数名称：Session_UPStroage_Delete
+函数功能：删除上传会话
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr);
