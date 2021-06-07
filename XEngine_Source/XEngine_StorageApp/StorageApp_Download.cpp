@@ -5,11 +5,12 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 	int nThreadPos = *(int*)lParam;
 	TCHAR tszClientAddr[128];
 	TCHAR tszMsgBuffer[4096];
+	nThreadPos++;
 
 	while (bIsRun)
 	{
 		//等待指定线程事件触发
-		if (RfcComponents_HttpServer_EventWaitEx(xhDLHttp, nThreadPos + 1))
+		if (RfcComponents_HttpServer_EventWaitEx(xhDLHttp, nThreadPos))
 		{
 			int nListCount = 0;
 			int nMsgLen = 0;
@@ -115,7 +116,7 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 }
 BOOL XEngine_Task_SendDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
 {
-	XEngine_Net_SendMsg(lpszClientAddr, lpszMsgBuffer, nMsgLen);
+	XEngine_Net_SendMsg(lpszClientAddr, lpszMsgBuffer, nMsgLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,正在发送文件数据,大小:%d"), lpszClientAddr, nMsgLen);
 	return TRUE;
 }
