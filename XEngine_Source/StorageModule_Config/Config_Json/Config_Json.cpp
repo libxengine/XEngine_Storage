@@ -125,11 +125,20 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
         return FALSE;
     }
     Json::Value st_JsonXStorage = st_JsonRoot["XStorage"];
-
 	pSt_ServerConfig->st_XStorage.nUseMode = st_JsonXStorage["nUseMode"].asInt();
 	_tcscpy(pSt_ServerConfig->st_XStorage.tszHttpAddr, st_JsonXStorage["tszHttpAddr"].asCString());
 	_tcscpy(pSt_ServerConfig->st_XStorage.tszNginAddr, st_JsonXStorage["tszNginAddr"].asCString());
     _tcscpy(pSt_ServerConfig->st_XStorage.tszFileDir, st_JsonXStorage["tszFileDir"].asCString());
+
+	if (st_JsonRoot["XLimit"].empty() || (2 != st_JsonRoot["XLimit"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
+		return FALSE;
+	}
+	Json::Value st_JsonXLimit = st_JsonRoot["XLimit"];
+	pSt_ServerConfig->st_XLimit.nMaxDNLoader = st_JsonXLimit["nMaxDNLoad"].asInt64();
+    pSt_ServerConfig->st_XLimit.nMaxUPLoader = st_JsonXLimit["nMaxUPLoad"].asInt64();
 
 	if (st_JsonRoot["XVer"].empty() || (1 != st_JsonRoot["XVer"].size()))
 	{

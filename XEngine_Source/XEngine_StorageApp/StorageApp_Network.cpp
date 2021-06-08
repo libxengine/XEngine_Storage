@@ -68,6 +68,7 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, BOOL bHBLeave, BOOL bUP)
 		SocketOpt_HeartBeat_DeleteAddrEx(xhHBDownload, lpszClientAddr);
 		SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
 	}
+	Session_UPStroage_Delete(lpszClientAddr);
 	Session_DLStroage_Delete(lpszClientAddr);
 	RfcComponents_HttpServer_CloseClinetEx(xhUPHttp, lpszClientAddr);
 	RfcComponents_HttpServer_CloseClinetEx(xhDLHttp, lpszClientAddr);

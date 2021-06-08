@@ -67,7 +67,9 @@ XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
 			}
 			XEngine_Task_SendDownload(tszClientAddr, tszMsgBuffer, nMsgLen);
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		int nTimeWait = 10;
+		Algorithm_Calculation_SleepFlow(&nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, nListCount, 4096);
+		std::this_thread::sleep_for(std::chrono::milliseconds(nTimeWait));
 	}
 	return 0;
 }
@@ -117,6 +119,6 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 BOOL XEngine_Task_SendDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
 {
 	XEngine_Net_SendMsg(lpszClientAddr, lpszMsgBuffer, nMsgLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,正在发送文件数据,大小:%d"), lpszClientAddr, nMsgLen);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("下载客户端:%s,正在发送文件数据,大小:%d"), lpszClientAddr, nMsgLen);
 	return TRUE;
 }

@@ -56,6 +56,11 @@ typedef struct tag_XEngine_ServerConfig
         TCHAR tszNginAddr[MAX_PATH];
 		TCHAR tszFileDir[MAX_PATH];
     }st_XStorage;
+	struct
+	{
+        __int64x nMaxUPLoader;
+        __int64x nMaxDNLoader;
+	}st_XLimit;
     struct
     {
         list<tstring> *pStl_ListStorage;
