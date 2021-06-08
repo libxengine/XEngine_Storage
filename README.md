@@ -8,19 +8,22 @@ c c++ file storage service
 基于libXEngine开发并实现的一套简洁高性能跨平台网络存储服务  
 本仓库有开发和主分支,如果要使用,请使用master分支下的代码  
 软件特性:  
-1. 支持HTTP协议上传和下载(采用GET和POST)
+1. 支持HTTP协议上传和下载(采用PUT和GET)
 2. 支持二进制私有协议传送数据(规划中)
 3. 支持加密传输(规划中)
 4. 采用MYSQL记录信息
 5. 支持分布式(规划中)
 6. 支持HTTP和私有验证(规划中)
 7. 支持详尽的日志和配置信息
+8. 支持传输速率控制
+9. 支持任务开始结束代理转发(规划中)
+10.支持P2P,BT,数据分发(规划中)
 
 ## 安装教程
 
 #### 版本需求
 支持WINDOWS 7SP1和LINUX(UBUNT20.04,CENTOS8)以上系统  
-XEngine版本需要V7.12或者以上版本  
+XEngine版本需要V7.13或者以上版本  
 vcpkg 需要2021.05.11以上版本  
 
 #### Windows
@@ -31,6 +34,8 @@ vcpkg 需要2021.05.11以上版本
 安装好后你可能需要把它集成到你的VS中  
 然后命令安装环境: vcpkg.exe install jsoncpp   
 集成VS环境: vcpkg integrate install  
+vcpkg 主要为了方便安装jsoncpp,如果你想自己配置jsoncpp的环境,可以不使用vcpkg...  
+
 ##### XEngine环境
 XEngine可以直接下载,下载完毕后添加用户环境变量,需要下面两个  
 - XEngine_Include 头文件目录地址
@@ -73,4 +78,8 @@ make FLAGS=CleanAll 清理编译
 1.  Fork 本仓库
 2.  新建 Feat_xxx 分支
 3.  提交代码
-4.  新建 Pull Request
+4.  新建 Pull Request  
+
+## 提交问题
+
+如果你有问题,可以在issues中提交
