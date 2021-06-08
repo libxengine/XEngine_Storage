@@ -1,0 +1,291 @@
+#include "pch.h"
+#include "Session_UPStroage.h"
+/********************************************************************
+//    Created:     2021/06/03  11:40:02
+//    File Name:   D:\XEngine_Storage\StorageModule_Session\Session_Stroage\Session_UPStroage.cpp
+//    File Path:   D:\XEngine_Storage\StorageModule_Session\Session_Stroage
+//    File Base:   Session_UPStroage
+//    File Ext:    cpp
+//    Project:     XEngine(网络通信引擎)
+//    Author:      qyt
+//    Purpose:     存储上传会话
+//    History:
+*********************************************************************/
+CSession_UPStroage::CSession_UPStroage()
+{
+}
+CSession_UPStroage::~CSession_UPStroage()
+{
+}
+//////////////////////////////////////////////////////////////////////////
+//                      公有函数
+//////////////////////////////////////////////////////////////////////////
+/********************************************************************
+函数名称：Session_UPStroage_Init
+函数功能：初始化上传会话管理器
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_Init()
+{
+	Session_IsErrorOccur = FALSE;
+
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_UPStroage_Destory
+函数功能：销毁下载管理器
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_Destory()
+{
+	Session_IsErrorOccur = FALSE;
+
+	st_Locker.lock();
+	stl_MapStroage.clear();
+	st_Locker.unlock();
+
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_UPStroage_Insert
+函数功能：插入一个会话到下载器
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：lpszFileDir
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入文件地址
+ 参数.三：nFileSize
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：输入文件大小
+ 参数.四：nPos
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入要移动的指针位置
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, int nPos /* = 0 */)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszClientAddr) || (NULL == lpszFileDir))
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+	//禁止一个客户端启动多个下载会话
+	st_Locker.lock_shared();
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator != stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_EXIST;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	st_Locker.unlock_shared();
+
+	SESSION_STORAGEUPLOADER st_Client;
+	memset(&st_Client, '\0', sizeof(SESSION_STORAGEUPLOADER));
+
+	st_Client.st_StorageInfo.ullPos = nPos;
+	st_Client.st_StorageInfo.ullCount = nFileSize;
+	_tcscpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
+	_tcscpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
+	//填充下载信息
+	st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("wb"));
+	if (NULL == st_Client.st_StorageInfo.pSt_File)
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
+		return FALSE;
+	}
+
+	st_Locker.lock();
+	stl_MapStroage.insert(make_pair(lpszClientAddr, st_Client));
+	st_Locker.unlock();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_UPStroage_GetComplete
+函数功能：接受的数据是否完毕
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pbComplete
+  In/Out：Out
+  类型：逻辑型指针
+  可空：N
+  意思：输出是否完成
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL* pbComplete)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszClientAddr) || (NULL == pbComplete))
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+
+	st_Locker.lock_shared();
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	if (stl_MapIterator->second.nWriteLen >= stl_MapIterator->second.st_StorageInfo.ullCount)
+	{
+		*pbComplete = TRUE;
+	}
+	else
+	{
+		*pbComplete = FALSE;
+	}
+	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_UPStroage_Write
+函数功能：写入数据到文件
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要写入的数据
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入写入大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszClientAddr) || (NULL == lpszMsgBuffer))
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+
+	st_Locker.lock_shared();
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	int nCount = nMsgLen;
+	int nWLen = 0;
+	while (TRUE)
+	{
+		int nRet = fwrite(lpszMsgBuffer + nWLen, 1, nCount - nWLen, stl_MapIterator->second.st_StorageInfo.pSt_File);
+		nWLen += nRet;
+		//直到写完
+		if (nWLen >= nCount)
+		{
+			break;
+		}
+	}
+	stl_MapIterator->second.nWriteLen += nMsgLen;
+	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_UPStroage_Exist
+函数功能：客户端是否存在
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_Exist(LPCTSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = FALSE;
+
+	BOOL bRet = FALSE;
+	st_Locker.lock();
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		bRet = FALSE;
+	}
+	else
+	{
+		bRet = TRUE;
+	}
+	st_Locker.unlock();
+	return bRet;
+}
+/********************************************************************
+函数名称：Session_UPStroage_Delete
+函数功能：删除上传会话
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = FALSE;
+
+	st_Locker.lock();
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator != stl_MapStroage.end())
+	{
+		fclose(stl_MapIterator->second.st_StorageInfo.pSt_File);
+		stl_MapStroage.erase(stl_MapIterator);
+	}
+	st_Locker.unlock();
+	return TRUE;
+}
