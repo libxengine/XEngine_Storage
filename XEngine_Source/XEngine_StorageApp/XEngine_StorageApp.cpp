@@ -33,6 +33,7 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhSDPool);
 		HelpComponents_XLog_Destroy(xhLog);
 		Session_DLStroage_Destory();
+		SQLPacket_Close();
 		exit(0);
 	}
 }
@@ -133,6 +134,13 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，心跳管理服务配置为不启用..."));
 	}
+
+	if (!SQLPacket_Connect(st_ServiceCfg.st_XSql.tszSQLAddr, st_ServiceCfg.st_XSql.nSQLPort, st_ServiceCfg.st_XSql.tszSQLUser, st_ServiceCfg.st_XSql.tszSQLPass))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化数据库服务失败，错误：%lX"), SQLPacket_GetLastError());
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化数据库服务成功"));
 
 	xhDLHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageDLThread);
 	if (NULL == xhDLHttp)
@@ -248,6 +256,7 @@ XENGINE_EXITAPP:
 		ManagePool_Thread_NQDestroy(xhSDPool);
 		HelpComponents_XLog_Destroy(xhLog);
 		Session_DLStroage_Destory();
+		SQLPacket_Close();
 	}
 #ifdef _WINDOWS
 	WSACleanup();

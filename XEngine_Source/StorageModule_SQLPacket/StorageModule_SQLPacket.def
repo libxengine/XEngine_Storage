@@ -1,0 +1,11 @@
+LIBRARY
+
+EXPORTS
+	SQLPacket_GetLastError
+
+	SQLPacket_Connect
+	SQLPacket_Close
+
+	SQLPacket_File_Insert
+	SQLPacket_File_Delete
+	SQLPacket_File_QueryAll

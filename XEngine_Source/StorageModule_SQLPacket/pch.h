@@ -7,7 +7,42 @@
 #ifndef PCH_H
 #define PCH_H
 
+#ifdef _WINDOWS
 // 添加要在此处预编译的标头
 #include "framework.h"
+#include <tchar.h>
+#endif
 
 #endif //PCH_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <XEngine_Include/XEngine_CommHdr.h>
+#include <XEngine_Include/XEngine_Types.h>
+#include <XEngine_Include/XEngine_ProtocolHdr.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
+#include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
+#include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
+#include "SQLPacket_Define.h"
+#include "SQLPacket_Error.h"
+using namespace std;
+/********************************************************************
+//    Created:     2021/06/09  11:19:10
+//    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_SQLPacket\pch.h
+//    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_SQLPacket
+//    File Base:   pch
+//    File Ext:    h
+//    Project:     XEngine(网络通信引擎)
+//    Author:      qyt
+//    Purpose:     公用头文件
+//    History:
+*********************************************************************/
+extern BOOL SQLPacket_IsErrorOccur;
+extern DWORD SQLPacket_dwErrorCode;
+
+#ifdef _WINDOWS
+#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib")
+#pragma comment(lib,"x86/XEngine_HelpComponents/HelpComponents_DataBase")
+#endif

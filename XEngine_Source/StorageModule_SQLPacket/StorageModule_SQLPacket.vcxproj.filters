@@ -13,12 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\SQLPacket_File">
+      <UniqueIdentifier>{ca90db6d-a609-478a-be6a-b54db3e7e8e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\SQLPacket_File">
+      <UniqueIdentifier>{be7f8d6a-5040-4b9b-a121-85d012013c18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLPacket_File\SQLPacket_File.h">
+      <Filter>头文件\SQLPacket_File</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLPacket_Define.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLPacket_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,5 +44,13 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SQLPacket_File\SQLPacket_File.cpp">
+      <Filter>源文件\SQLPacket_File</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="StorageModule_SQLPacket.def">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
