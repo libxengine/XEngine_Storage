@@ -21,19 +21,27 @@ void ServiceApp_Stop(int signo)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("存储中心服务器退出..."));
 		bIsRun = FALSE;
-
-		NetCore_TCPXCore_DestroyEx(xhNetDownload);
-		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
-		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
-		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
+		printf("1\n");
 		RfcComponents_HttpServer_DestroyEx(xhUPHttp);
 		RfcComponents_HttpServer_DestroyEx(xhDLHttp);
+		printf("2\n");
+		NetCore_TCPXCore_DestroyEx(xhNetDownload);
+		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
+		printf("3\n");
+		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
+		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
+		printf("4\n");
 		ManagePool_Thread_NQDestroy(xhUPPool);
 		ManagePool_Thread_NQDestroy(xhDLPool);
 		ManagePool_Thread_NQDestroy(xhSDPool);
+		printf("5\n");
 		HelpComponents_XLog_Destroy(xhLog);
+		printf("6\n");
 		Session_DLStroage_Destory();
-		SQLPacket_Close();
+		Session_UPStroage_Destory();
+		printf("7\n");
+		XStorageSQL_Destory();
+		printf("8\n");
 		exit(0);
 	}
 }
@@ -134,10 +142,9 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，心跳管理服务配置为不启用..."));
 	}
-
-	if (!SQLPacket_Connect(st_ServiceCfg.st_XSql.tszSQLAddr, st_ServiceCfg.st_XSql.nSQLPort, st_ServiceCfg.st_XSql.tszSQLUser, st_ServiceCfg.st_XSql.tszSQLPass))
+	if (!XStorageSQL_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql, st_ServiceCfg.st_XTime.nDBMonth))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化数据库服务失败，错误：%lX"), SQLPacket_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化数据库服务失败，错误：%lX"), XStorageDB_GetLastError());
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化数据库服务成功"));
@@ -256,7 +263,8 @@ XENGINE_EXITAPP:
 		ManagePool_Thread_NQDestroy(xhSDPool);
 		HelpComponents_XLog_Destroy(xhLog);
 		Session_DLStroage_Destory();
-		SQLPacket_Close();
+		Session_UPStroage_Destory();
+		XStorageSQL_Destory();
 	}
 #ifdef _WINDOWS
 	WSACleanup();

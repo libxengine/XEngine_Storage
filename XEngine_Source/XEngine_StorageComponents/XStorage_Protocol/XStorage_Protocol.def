@@ -1,0 +1,26 @@
+LIBRARY
+
+EXPORTS
+	XStorageProtocol_GetLastError
+
+	XStorageProtocol_Comm_ParseFile
+	XStorageProtocol_Comm_Response
+	XStorageProtocol_Comm_ParseClient
+	
+	XStorageProtocol_Client_REQQueryFile
+	XStorageProtocol_Client_REQQueryUser
+	XStorageProtocol_Client_REQDelete
+	XStorageProtocol_Client_REQLogin
+	XStorageProtocol_Client_REQFile
+	XStorageProtocol_Client_REQDirOperator
+	XStorageProtocol_Client_REQDirQuery
+	XStorageProtocol_Client_REQRegister
+
+	XStorageProtocol_Core_REQQueryFile
+	XStorageProtocol_Core_REPQueryFile
+	XStorageProtocol_Core_REPFile
+	XStorageProtocol_Core_REQCreateDir
+	XStorageProtocol_Core_REPQueryDir
+	XStorageProtocol_Core_REQUserReg
+	XStorageProtocol_Core_REQQueryUser
+	XStorageProtocol_Core_REPQueryUser

@@ -40,7 +40,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 {
 	int nSDLen = 2048;
 	TCHAR tszSDBuffer[2048];
-	TCHAR tszFileDir[512];
+	TCHAR tszFileDir[1024];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
@@ -86,20 +86,20 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	if (nHDSize >= nRVCount)
 	{
 		UCHAR tszHashStr[MAX_PATH];
-		XENGINE_PROTOCOLFILE st_ProtocolFile;
+		XSTORAGECORE_DBFILE st_ProtocolFile;
 
 		memset(tszHashStr, '\0', MAX_PATH);
-		memset(&st_ProtocolFile, '\0', sizeof(XENGINE_PROTOCOLFILE));
+		memset(&st_ProtocolFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
 		
 		_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
-		_tcscpy(st_ProtocolFile.tszFilePath, st_ServiceCfg.st_XStorage.tszFileDir);
-		_tcscpy(st_ProtocolFile.tszFileName, pSt_HTTPParam->tszHttpUri + 1);
-		st_ProtocolFile.nFileSize = nRVCount;
+		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFilePath, st_ServiceCfg.st_XStorage.tszFileDir);
+		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, pSt_HTTPParam->tszHttpUri + 1);
+		st_ProtocolFile.st_ProtocolFile.nFileSize = nRVCount;
 
 		OPenSsl_Api_Digest(tszFileDir, tszHashStr, NULL, TRUE, XENGINE_OPENSSL_API_DIGEST_SHA1);
-		BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, st_ProtocolFile.tszFileHash);
-		if (SQLPacket_File_Insert(&st_ProtocolFile))
+		BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+		if (XStorageSQL_File_FileInsert(&st_ProtocolFile))
 		{
 			st_HDRParam.nHttpCode = 200;
 			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
@@ -111,7 +111,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			st_HDRParam.nHttpCode = 403;
 			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, SQLPacket_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, XStorageDB_GetLastError());
 		}
 		Session_UPStroage_Delete(lpszClientAddr);
 	}

@@ -24,7 +24,7 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 			RfcComponents_HttpServer_GetPoolEx(xhDLHttp, nThreadPos, &ppSt_PKTClient, &nListCount);
 			for (int i = 0; i < nListCount; i++)
 			{
-				for (int j = 0; i < ppSt_PKTClient[i]->nPktCount; j++)
+				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
 				{
 					//获得指定下载客户端触发信息
 					if (RfcComponents_HttpServer_GetClientEx(xhDLHttp, ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, &nMsgLen, &st_HTTPParam))
@@ -79,7 +79,7 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	int nSDLen = 2048;
 	__int64x ullSize = 0;
 	TCHAR tszSDBuffer[2048];
-	TCHAR tszFileDir[512];
+	TCHAR tszFileDir[1024];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
