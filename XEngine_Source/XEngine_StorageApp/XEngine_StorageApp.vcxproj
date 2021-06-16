@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="StorageApp_Center.cpp" />
     <ClCompile Include="StorageApp_Config.cpp" />
     <ClCompile Include="StorageApp_Download.cpp" />
     <ClCompile Include="StorageApp_Network.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="XEngine_StorageApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="StorageApp_Center.h" />
     <ClInclude Include="StorageApp_Config.h" />
     <ClInclude Include="StorageApp_Download.h" />
     <ClInclude Include="StorageApp_Hdr.h" />

@@ -19,8 +19,9 @@ void CALLBACK XEngine_Callback_DownloadRecv(LPCTSTR lpszClientAddr, SOCKET hSock
 }
 void CALLBACK XEngine_Callback_DownloadLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
-	XEngine_Net_CloseClient(lpszClientAddr, FALSE, FALSE);
+	XEngine_Net_CloseClient(lpszClientAddr, FALSE, STORAGE_NETTYPE_HTTPDOWNLOAD);
 }
+//////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK XEngine_Callback_UPLoaderLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
 	RfcComponents_HttpServer_CreateClientEx(xhUPHttp, lpszClientAddr, 0);
@@ -41,23 +42,56 @@ void CALLBACK XEngine_Callback_UPLoaderRecv(LPCTSTR lpszClientAddr, SOCKET hSock
 }
 void CALLBACK XEngine_Callback_UPLoaderLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
-	XEngine_Net_CloseClient(lpszClientAddr, FALSE, TRUE);
+	XEngine_Net_CloseClient(lpszClientAddr, FALSE, STORAGE_NETTYPE_HTTPUPLOADER);
+}
+//////////////////////////////////////////////////////////////////////////
+BOOL CALLBACK XEngine_Callback_CenterLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
+{
+	RfcComponents_HttpServer_CreateClientEx(xhUPHttp, lpszClientAddr, 0);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s，进入了服务器"), lpszClientAddr);
+	return TRUE;
+}
+void CALLBACK XEngine_Callback_CenterRecv(LPCTSTR lpszClientAddr, SOCKET hSocket, LPCTSTR lpszRecvMsg, int nMsgLen, LPVOID lParam)
+{
+	if (!RfcComponents_HttpServer_InserQueueEx(xhCenterHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
+		return;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
+}
+void CALLBACK XEngine_Callback_CenterLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
+{
+	XEngine_Net_CloseClient(lpszClientAddr, FALSE, STORAGE_NETTYPE_HTTPCENTER);
 }
 //////////////////////////////////////////////////////////////////////////
 void CALLBACK XEngine_Callback_HBDownload(LPCTSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam)
 {
-	XEngine_Net_CloseClient(lpszClientAddr, TRUE);
+	XEngine_Net_CloseClient(lpszClientAddr, TRUE, STORAGE_NETTYPE_HTTPDOWNLOAD);
 }
 void CALLBACK XEngine_Callback_HBUPLoader(LPCTSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam)
 {
-	XEngine_Net_CloseClient(lpszClientAddr, TRUE);
+	XEngine_Net_CloseClient(lpszClientAddr, TRUE, STORAGE_NETTYPE_HTTPUPLOADER);
 }
 //////////////////////////////////////////////////////////////////////////
-BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, BOOL bHBLeave, BOOL bUP)
+BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, BOOL bHBLeave, int nType)
 {
 	LPCTSTR lpszLeaveMsg = bHBLeave ? _T("心跳超时") : _T("主动断开");
-	LPCTSTR lpszClientType = bUP ? _T("上传客户端") : _T("下载客户端");
+	tstring m_StrClient;
 
+	if (STORAGE_NETTYPE_HTTPUPLOADER == nType)
+	{
+		m_StrClient = _T("上传客户端");
+	}
+	else if (STORAGE_NETTYPE_HTTPDOWNLOAD == nType)
+	{
+		m_StrClient = _T("下载客户端");
+	}
+	else
+	{
+		m_StrClient = _T("业务客户端");
+	}
+	
 	if (bHBLeave)
 	{
 		NetCore_TCPXCore_CloseForClientEx(xhNetDownload, lpszClientAddr);
@@ -72,7 +106,8 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, BOOL bHBLeave, BOOL bUP)
 	Session_DLStroage_Delete(lpszClientAddr);
 	RfcComponents_HttpServer_CloseClinetEx(xhUPHttp, lpszClientAddr);
 	RfcComponents_HttpServer_CloseClinetEx(xhDLHttp, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s：%s，与服务器断开，原因：%s"), lpszClientType, lpszClientAddr, lpszLeaveMsg);
+	RfcComponents_HttpServer_CloseClinetEx(xhCenterHttp, lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s：%s，与服务器断开，原因：%s"), m_StrClient.c_str(), lpszClientAddr, lpszLeaveMsg);
 	return TRUE;
 }
 ///////////////////////////////////////////////////////////////////////////////////

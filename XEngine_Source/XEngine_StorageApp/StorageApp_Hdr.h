@@ -47,6 +47,7 @@ using namespace std;
 
 #define STORAGE_NETTYPE_HTTPUPLOADER 1
 #define STORAGE_NETTYPE_HTTPDOWNLOAD 2
+#define STORAGE_NETTYPE_HTTPCENTER 3
 
 extern BOOL bIsRun;
 extern XLOG xhLog;
@@ -55,11 +56,14 @@ extern XNETHANDLE xhHBDownload;
 extern XNETHANDLE xhHBUPLoader;
 extern XNETHANDLE xhNetDownload;
 extern XNETHANDLE xhNetUPLoader;
+extern XNETHANDLE xhNetCenter;
 extern XNETHANDLE xhUPPool;
 extern XNETHANDLE xhDLPool;
 extern XNETHANDLE xhSDPool;
+extern XNETHANDLE xhCTPool;
 extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
+extern XHANDLE xhCenterHttp;
 
 extern XENGINE_SERVERCONFIG st_ServiceCfg;
 
@@ -68,6 +72,7 @@ extern XENGINE_SERVERCONFIG st_ServiceCfg;
 #include "StorageApp_Config.h"
 #include "StorageApp_Download.h"
 #include "StorageApp_UPLoader.h"
+#include "StorageApp_Center.h"
 
 #ifdef _WINDOWS
 #pragma comment(lib,"Ws2_32.lib")
