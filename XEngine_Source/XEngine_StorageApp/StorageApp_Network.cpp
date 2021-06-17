@@ -47,7 +47,7 @@ void CALLBACK XEngine_Callback_UPLoaderLeave(LPCTSTR lpszClientAddr, SOCKET hSoc
 //////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK XEngine_Callback_CenterLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
-	RfcComponents_HttpServer_CreateClientEx(xhUPHttp, lpszClientAddr, 0);
+	RfcComponents_HttpServer_CreateClientEx(xhCenterHttp, lpszClientAddr, 0);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s，进入了服务器"), lpszClientAddr);
 	return TRUE;
 }
@@ -123,13 +123,17 @@ BOOL XEngine_Net_SendMsg(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsg
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBDownload, lpszClientAddr);
 		}
 	}
-	else
+	else if (STORAGE_NETTYPE_HTTPUPLOADER == nType)
 	{
 		bRet = NetCore_TCPXCore_SendEx(xhNetUPLoader, lpszClientAddr, lpszMsgBuffer, nMsgLen);
 		if (bRet)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBUPLoader, lpszClientAddr);
 		}
+	}
+	else if (STORAGE_NETTYPE_HTTPCENTER == nType)
+	{
+		bRet = NetCore_TCPXCore_SendEx(xhNetCenter, lpszClientAddr, lpszMsgBuffer, nMsgLen);
 	}
 
 	if (!bRet)

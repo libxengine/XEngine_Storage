@@ -45,17 +45,17 @@ CXStorageProtocol_Core::~CXStorageProtocol_Core()
   类型：字符指针
   可空：N
   意思：查询的文件名
- 参数.五：ptszFileMD5
+ 参数.五：ptszFileHash
   In/Out：Out
   类型：字符指针
   可空：N
-  意思：查询的文件MD5
+  意思：查询的文件HASH
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgBuffer, TCHAR *ptszTimeStart, TCHAR *ptszTimeEnd, TCHAR *ptszFileName /* = NULL */, TCHAR *ptszFileMD5 /* = NULL */)
+BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgBuffer, TCHAR *ptszTimeStart, TCHAR *ptszTimeEnd, TCHAR *ptszFileName /* = NULL */, TCHAR * ptszFileHash /* = NULL */)
 {
     XStorage_IsErrorOccur = FALSE;
 
@@ -90,11 +90,11 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgB
             _tcscpy(ptszFileName, st_JsonRoot["lpszFileName"].asCString());
         }
     }
-    if (NULL != ptszFileMD5)
+    if (NULL != ptszFileHash)
     {
-        if (!st_JsonRoot["lpszFileMD5"].isNull())
+        if (!st_JsonRoot["lpszFileHash"].isNull())
         {
-            _tcscpy(ptszFileMD5, st_JsonRoot["lpszFileMD5"].asCString());
+            _tcscpy(ptszFileHash, st_JsonRoot["lpszFileHash"].asCString());
         }
     }
     return TRUE;
@@ -149,9 +149,6 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPQueryFile(TCHAR* ptszMsgBu
     }
     Json::Value st_JsonRoot;
     Json::Value st_JsonArray;
-    XENGINE_PROTOCOLHDR st_ProtocolHdr;
-    memset(&st_ProtocolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
-
     //JSON赋值
     for (int i = 0; i < nListCount; i++)
     {
@@ -161,7 +158,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPQueryFile(TCHAR* ptszMsgBu
         st_JsonObject["tszFileUser"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileUser;
         st_JsonObject["tszFileHash"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileHash;
         st_JsonObject["tszFileTime"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileTime;
-        st_JsonObject["nFileSize"] = nListCount;
+        st_JsonObject["nFileSize"] = (*pppSt_DBFile)[i]->st_ProtocolFile.nFileSize;
         st_JsonArray.append(st_JsonObject);
     }
     st_JsonRoot["Count"] = nListCount;
@@ -169,18 +166,10 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPQueryFile(TCHAR* ptszMsgBu
     st_JsonRoot["lpszTimeStart"] = lpszTimeStart;
     st_JsonRoot["lpszTimeEnd"] = lpszTimeEnd;
     st_JsonRoot["Code"] = 0;
-    st_JsonRoot["Msg"] = _T("查询文件列表成功");
-    //填充协议头
-    st_ProtocolHdr.wHeader = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_HEADER;
-    st_ProtocolHdr.unOperatorType = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_STORAGE;
-    st_ProtocolHdr.unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REPQUERYFILE;
-    st_ProtocolHdr.byVersion = 1;
-    st_ProtocolHdr.unPacketSize = (UINT)st_JsonRoot.toStyledString().length();
-    st_ProtocolHdr.wTail = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_TAIL;
+    st_JsonRoot["Msg"] = _T("ok");
     //打包输出信息
-    *pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + sizeof(XENGINE_PROTOCOLFILE);
-    memcpy(ptszMsgBuffer, &st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
-    memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), st_JsonRoot.toStyledString().c_str(), st_ProtocolHdr.unPacketSize);
+    *pInt_MsgLen = st_JsonRoot.toStyledString().length();
+    memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
     return TRUE;
 }
 /********************************************************************

@@ -127,7 +127,7 @@ BOOL CXStorageSQL_File::XStorageSQL_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBF
     }
     int nListCount = 0;
     XSTORAGECORE_DBFILE **ppSt_ListFile;
-    if (XStorageSQL_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser))
+    if (XStorageSQL_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, pSt_DBFile->st_ProtocolFile.tszFileHash))
     {
         BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
         return TRUE;
@@ -276,7 +276,14 @@ BOOL CXStorageSQL_File::XStorageSQL_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_
     //检查是否时间范围检索
     if ((NULL != lpszTimeStart) && (NULL != lpszTimeEnd))
     {
-        _stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XEngine_Storage' AND TABLE_NAME BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
+        if (_tcslen(lpszTimeStart) > 0 && _tcslen(lpszTimeEnd) > 0)
+        {
+            _stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XEngine_Storage' AND TABLE_NAME BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
+        }
+        else
+        {
+            _stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XEngine_Storage'"));
+        }
     }
     else
     {
@@ -303,13 +310,27 @@ BOOL CXStorageSQL_File::XStorageSQL_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_
 
         memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
         //判断查询方式
-        if (NULL == lpszFile)
+        if (NULL != lpszFile)
         {
-            _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s` WHERE FileHash = '%s'"), pptszResult[0], lpszHash);
+            if (_tcslen(lpszFile) > 0)
+            {
+                _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s` WHERE FileName = '%s'"), pptszResult[0], lpszFile);
+            }
+            else
+            {
+                _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s`"), pptszResult[0]);
+            }
         }
-        else
+        if (NULL != lpszHash)
         {
-            _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s` WHERE FileName = '%s'"), pptszResult[0], lpszFile);
+			if (_tcslen(lpszHash) > 0)
+			{
+				_stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s` WHERE FileHash = '%s'"), pptszResult[0], lpszHash);
+			}
+			else
+			{
+				_stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s`"), pptszResult[0]);
+			}
         }
         //查询文件
         if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
@@ -326,23 +347,23 @@ BOOL CXStorageSQL_File::XStorageSQL_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_
 
                 if (NULL != pptszFileResult[1])
                 {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[2]);
+                    _tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[1]);
                 }
                 if (NULL != pptszFileResult[2])
                 {
                     _tcscpy(st_DBFile.st_ProtocolFile.tszFileName, pptszFileResult[2]);
                 }
-                if (NULL != pptszFileResult[3])
-                {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[3]);
-                }
+				if (NULL != pptszFileResult[3])
+				{
+					_tcscpy(st_DBFile.st_ProtocolFile.tszFileHash, pptszFileResult[3]);
+				}
                 if (NULL != pptszFileResult[4])
                 {
-                    st_DBFile.st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[4]);
+                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[4]);
                 }
                 if (NULL != pptszFileResult[5])
                 {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileHash, pptszFileResult[5]);
+                    st_DBFile.st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[5]);
                 }
                 if (NULL != pptszFileResult[6])
                 {

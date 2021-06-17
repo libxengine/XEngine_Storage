@@ -406,7 +406,7 @@ extern "C" BOOL XStorageProtocol_Client_REQRegister(CHAR *ptszMsgBuffer, int *pI
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL XStorageProtocol_Core_REQQueryFile(LPCSTR lpszMsgBuffer, CHAR *ptszTimeStart, CHAR *ptszTimeEnd, CHAR *ptszFileName = NULL, CHAR *ptszFileMD5 = NULL);
+extern "C" BOOL XStorageProtocol_Core_REQQueryFile(LPCSTR lpszMsgBuffer, CHAR *ptszTimeStart, CHAR *ptszTimeEnd, CHAR *ptszFileName = NULL, CHAR * ptszFileHash = NULL);
 /********************************************************************
 函数名称：XStorageProtocol_Core_REPQueryFile
 函数功能：查询回复打包协议
