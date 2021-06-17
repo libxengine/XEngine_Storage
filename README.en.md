@@ -3,6 +3,8 @@
 ## Introduction
 c c++ 存储服务 c c++ 文件存储服务  
 c c++ file storage service  
+This is an api gateway for uploading and downloading.  
+The service is for users who have business needs for upload and download services (such as developers who need to upload and download servers).  
 
 ## Software feature
 The purpose of development and implementation based on libXEngine is a cross-platform network storage service  
