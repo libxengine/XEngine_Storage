@@ -24,10 +24,12 @@ XHTHREAD CALLBACK XEngine_Center_HTTPThread(LPVOID lParam)
 				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
 				{
 					int nMsgLen = 10240;
+					int nHdrCount = 0;
+					CHAR** ppszListHdr = NULL;
 					//获得指定上传客户端触发信息
-					if (RfcComponents_HttpServer_GetClientEx(xhCenterHttp, ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, &nMsgLen, &st_HTTPParam))
+					if (RfcComponents_HttpServer_GetClientEx(xhCenterHttp, ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
 					{
-						XEngine_Task_HttpCenter(ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, nMsgLen, &st_HTTPParam);
+						XEngine_Task_HttpCenter(ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
 				}
 			}
@@ -64,7 +66,7 @@ BOOL XEngine_Task_HttpCenter_APIList(LPCTSTR lpszUrlName, TCHAR* ptszAPIVersion,
 	_tcscpy(ptszAPIName, ptszTokStr);
 	return TRUE;
 }
-BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam)
+BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, TCHAR** pptszListHdr, int nHdrCount)
 {
 	int nSDLen = 2048;
 	TCHAR tszSDBuffer[2048];
@@ -101,11 +103,13 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		return FALSE;
 	}
 
+	LPCTSTR lpszEvent = _T("Event");
 	LPCTSTR lpszQuery = _T("query");
+	LPCTSTR lpszEventUPFile = _T("UPFile");
 	LPCTSTR lpszQueryFile = _T("file");
-	if (0 == _tcsncmp(lpszQuery, tszAPIMethod, _tcslen(lpszQuery)))
+	if (0 == _tcsnicmp(lpszQuery, tszAPIMethod, _tcslen(lpszQuery)))
 	{
-		if (0 == _tcsncmp(lpszQueryFile, tszAPIName, _tcslen(lpszQueryFile)))
+		if (0 == _tcsnicmp(lpszQueryFile, tszAPIName, _tcslen(lpszQueryFile)))
 		{
 			int nMsgLen = 10240;
 			TCHAR tszFileName[MAX_PATH];
@@ -133,6 +137,66 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求查询文件列表成功,列表个数:%d"), lpszClientAddr, nListCount);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
+		}
+	}
+	else if (0 == _tcsnicmp(lpszEvent, tszAPIMethod, _tcslen(lpszEvent)))
+	{
+		if (0 == _tcsnicmp(lpszEventUPFile, tszAPIName, _tcslen(lpszEventUPFile)))
+		{
+			LPCTSTR lpszContentType = _T("Content-Type");
+			LPCTSTR lpszBoundaryStr = _T("boundary=");
+			TCHAR tszContentStr[MAX_PATH];
+			TCHAR tszBoundarTmp[MAX_PATH];
+			TCHAR tszBoundarStr[MAX_PATH];
+			TCHAR tszFileDir[MAX_PATH];
+			XSTORAGECORE_DBFILE st_DBFile;
+
+			memset(tszContentStr, '\0', MAX_PATH);
+			memset(tszBoundarTmp, '\0', MAX_PATH);
+			memset(tszBoundarStr, '\0', MAX_PATH);
+			memset(tszContentStr, '\0', MAX_PATH);
+			memset(tszFileDir, '\0', MAX_PATH);
+			memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
+
+			if (!RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszContentType, tszContentStr))
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 400;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求的HTTP头内容不正确,没有类型字段"), lpszClientAddr);
+				return FALSE;
+			}
+			if (!BaseLib_OperatorString_FromStrGetKeyValue(tszContentStr, lpszBoundaryStr, NULL, tszBoundarTmp))
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 400;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求的HTTP头内容不正确,没有Boundary值"), lpszClientAddr);
+				return FALSE;
+			}
+			_stprintf(tszBoundarStr, _T("--%s\r\n"), tszBoundarTmp);
+			
+			XStorageProtocol_Core_REQUPEvent(lpszMsgBuffer, tszBoundarStr, st_DBFile.st_ProtocolFile.tszFileName, tszFileDir, st_DBFile.st_ProtocolFile.tszFileHash, &st_DBFile.st_ProtocolFile.nFileSize);
+			_tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, st_ServiceCfg.st_XStorage.tszFileDir);
+
+			if (XStorageSQL_File_FileInsert(&st_DBFile))
+			{
+				st_HDRParam.nHttpCode = 200;
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,处理NGINX代理上传文件成功,文件名:%s,大小:%lld"), lpszClientAddr, tszFileDir, st_DBFile.st_ProtocolFile.nFileSize);
+			}
+			else
+			{
+				st_HDRParam.nHttpCode = 403;
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,处理NGINX代理上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, XStorageDB_GetLastError());
+			}
 		}
 	}
 	return TRUE;

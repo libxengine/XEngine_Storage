@@ -54,6 +54,7 @@ typedef struct tag_XEngine_ServerConfig
     struct  
 	{
         int nUseMode;
+        int nHashMode;
         TCHAR tszHttpAddr[MAX_PATH];
         TCHAR tszNginAddr[MAX_PATH];
 		TCHAR tszFileDir[MAX_PATH];

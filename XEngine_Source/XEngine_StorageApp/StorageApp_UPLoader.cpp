@@ -48,6 +48,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
 	LPCTSTR lpszMethodGet = _T("PUT");
+
 	if (0 != _tcsncmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodGet)))
 	{
 		st_HDRParam.bIsClose = TRUE;
@@ -91,13 +92,12 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		memset(tszHashStr, '\0', MAX_PATH);
 		memset(&st_ProtocolFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
-		
 		_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
 		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFilePath, st_ServiceCfg.st_XStorage.tszFileDir);
 		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, pSt_HTTPParam->tszHttpUri + 1);
 		st_ProtocolFile.st_ProtocolFile.nFileSize = nRVCount;
 
-		OPenSsl_Api_Digest(tszFileDir, tszHashStr, NULL, TRUE, XENGINE_OPENSSL_API_DIGEST_SHA1);
+		OPenSsl_Api_Digest(tszFileDir, tszHashStr, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
 		BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		if (XStorageSQL_File_FileInsert(&st_ProtocolFile))
 		{

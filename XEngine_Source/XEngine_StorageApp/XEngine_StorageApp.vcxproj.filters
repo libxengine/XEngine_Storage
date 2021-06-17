@@ -27,9 +27,6 @@
     <ClCompile Include="StorageApp_Network.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="StorageApp_Task.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="StorageApp_UPLoader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -48,9 +45,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="StorageApp_Network.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="StorageApp_Task.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="StorageApp_UPLoader.h">

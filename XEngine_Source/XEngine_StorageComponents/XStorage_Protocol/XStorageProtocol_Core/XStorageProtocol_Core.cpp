@@ -80,9 +80,20 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgB
     delete pSt_JsonReader;
     pSt_JsonReader = NULL;
 
-    _tcscpy(ptszTimeStart, st_JsonRoot["lpszTimeStart"].asCString());
-    _tcscpy(ptszTimeEnd, st_JsonRoot["lpszTimeEnd"].asCString());
-
+    if (NULL != ptszTimeStart)
+    {
+		if (!st_JsonRoot["lpszTimeStart"].isNull())
+		{
+			_tcscpy(ptszTimeStart, st_JsonRoot["lpszTimeStart"].asCString());
+		}
+    }
+    if (NULL != ptszTimeEnd)
+    {
+		if (!st_JsonRoot["lpszTimeEnd"].asCString())
+		{
+			_tcscpy(ptszTimeEnd, st_JsonRoot["lpszTimeEnd"].asCString());
+		}
+    }
     if (NULL != ptszFileName)
     {
         if (!st_JsonRoot["lpszFileName"].isNull())
@@ -263,6 +274,122 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPFile(TCHAR *ptszMsgBuffer,
     *pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + st_ProtocolHdr.unPacketSize;
     memcpy(ptszMsgBuffer, &st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
     memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), st_JsonRoot.toStyledString().c_str(), st_ProtocolHdr.unPacketSize);
+    return TRUE;
+}
+/********************************************************************
+函数名称：XStorageProtocol_Core_REQUPEvent
+函数功能：NGINX代理上传事件处理函数
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的缓冲区
+ 参数.二：lpszBoundary
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入边界字符串
+ 参数.三：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件名
+ 参数.四：ptszFilePath
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件路径
+ 参数.五：ptszFileHash
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件HASH
+ 参数.六：pInt_FileSize
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出文件大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQUPEvent(LPCTSTR lpszMsgBuffer, LPCTSTR lpszBoundary, TCHAR* ptszFileName, TCHAR* ptszFilePath, TCHAR* ptszFileHash, __int64x* pInt_FileSize)
+{
+    XStorage_IsErrorOccur = FALSE;
+
+	std::string::size_type nPos;
+    std::string m_FindStr = lpszMsgBuffer;
+    //扩展字符串以方便操作
+    m_FindStr += lpszBoundary;
+
+    unsigned int nBDLen = _tcslen(lpszBoundary);
+    unsigned int nCount = m_FindStr.size();
+	for (unsigned int i = 0; i < nCount; i++)
+	{
+        nPos = m_FindStr.find(lpszBoundary, i);
+		if (nPos < nCount)
+		{
+			std::string m_Str = m_FindStr.substr(i, nPos - i);
+			if (!m_Str.empty())
+			{
+				LPCTSTR lpszLineStr = _T("\r\n\r\n");
+				LPCTSTR lpszContentText = _T("Content-Disposition");
+
+				TCHAR tszMsgBuffer[1024];
+				TCHAR tszKeyStr[MAX_PATH];
+
+				memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+				memset(tszKeyStr, '\0', sizeof(tszKeyStr));
+				_tcscpy(tszMsgBuffer, m_Str.c_str());
+
+				TCHAR* ptszTokPos = NULL;
+				TCHAR* ptszTokStr = _tcstok_s(tszMsgBuffer, lpszLineStr, &ptszTokPos);
+				if (NULL != _tcsstr(ptszTokStr, lpszContentText))
+				{
+					BaseLib_OperatorString_GetStartEnd(ptszTokStr, tszKeyStr, _T("\""), _T("\""));
+
+					LPCTSTR lpszKeyName = _T("file_name");
+					LPCTSTR lpszKeyPath = _T("file_path");
+					LPCTSTR lpszKeyHash = _T("file_md5");
+					LPCTSTR lpszKeySize = _T("file_size");
+					if (0 == _tcsncmp(lpszKeyName, tszKeyStr, _tcslen(lpszKeyName)))
+					{
+						ptszTokStr = _tcstok_s(NULL, lpszLineStr, &ptszTokPos);
+						if (NULL != ptszTokStr)
+						{
+							_tcscpy(ptszFileName, ptszTokStr);
+						}
+					}
+					if (0 == _tcsncmp(lpszKeyPath, tszKeyStr, _tcslen(lpszKeyPath)))
+					{
+						ptszTokStr = _tcstok_s(NULL, lpszLineStr, &ptszTokPos);
+						if (NULL != ptszTokStr)
+						{
+							_tcscpy(ptszFilePath, ptszTokStr);
+						}
+					}
+					if (0 == _tcsncmp(lpszKeyHash, tszKeyStr, _tcslen(lpszKeyHash)))
+					{
+						ptszTokStr = _tcstok_s(NULL, lpszLineStr, &ptszTokPos);
+						if (NULL != ptszTokStr)
+						{
+							_tcscpy(ptszFileHash, ptszTokStr);
+						}
+					}
+					if (0 == _tcsncmp(lpszKeySize, tszKeyStr, _tcslen(lpszKeySize)))
+					{
+						ptszTokStr = _tcstok_s(NULL, lpszLineStr, &ptszTokPos);
+						if (NULL != ptszTokStr)
+						{
+							*pInt_FileSize = _ttoi64(ptszTokStr);
+						}
+					}
+				}
+			}
+			i = nPos + nBDLen - 1;
+		}
+	}
     return TRUE;
 }
 /********************************************************************

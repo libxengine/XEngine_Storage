@@ -68,7 +68,6 @@ extern XHANDLE xhCenterHttp;
 extern XENGINE_SERVERCONFIG st_ServiceCfg;
 
 #include "StorageApp_Network.h"
-#include "StorageApp_Task.h"
 #include "StorageApp_Config.h"
 #include "StorageApp_Download.h"
 #include "StorageApp_UPLoader.h"

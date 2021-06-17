@@ -68,6 +68,10 @@ extern "C" BOOL XStorageProtocol_Client_REQFile(TCHAR * ptszMsgBuffer, int* pInt
 {
 	return m_ProtocolClient.XStorageProtocol_Client_REQFile(ptszMsgBuffer, pInt_MsgLen, xhToken, lpszFileMD5, lpszFileName, lpszFilePath, bUPFile);
 }
+extern "C" BOOL XStorageProtocol_Core_REQUPEvent(LPCTSTR lpszMsgBuffer, LPCTSTR lpszBoundary, TCHAR * ptszFileName, TCHAR * ptszFilePath, TCHAR * ptszFileHash, __int64x * pInt_FileSize)
+{
+	return m_ProtocolCore.XStorageProtocol_Core_REQUPEvent(lpszMsgBuffer, lpszBoundary, ptszFileName, ptszFilePath, ptszFileHash, pInt_FileSize);
+}
 //////////////////////////////////////////////////////////////////////////
 extern "C" BOOL XStorageProtocol_Client_REQDirOperator(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszUserDir, BOOL bCreate)
 {

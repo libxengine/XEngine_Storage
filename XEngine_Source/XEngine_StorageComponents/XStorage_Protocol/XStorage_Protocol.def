@@ -19,6 +19,7 @@ EXPORTS
 	XStorageProtocol_Core_REQQueryFile
 	XStorageProtocol_Core_REPQueryFile
 	XStorageProtocol_Core_REPFile
+	XStorageProtocol_Core_REQUPEvent
 	XStorageProtocol_Core_REQCreateDir
 	XStorageProtocol_Core_REPQueryDir
 	XStorageProtocol_Core_REQUserReg

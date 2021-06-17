@@ -32,6 +32,7 @@
   },
   "XStorage": {
     "nUseMode": 1,
+    "nHashMode": 2,
     "tszHttpAddr": "http://192.168.1.4",
     "tszNginAddr": "http://192.168.1.4:5010",
     "tszFileDir": "./XEngine_File"
@@ -42,6 +43,7 @@
   },
   "XVer": {
     "StorageVersion": [
+      "1.2.0.1001 Build20210618",
       "1.1.0.1001 Build20210611",
       "1.0.0.1001 Build20210501"
     ]

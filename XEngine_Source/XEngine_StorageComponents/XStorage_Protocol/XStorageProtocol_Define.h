@@ -491,6 +491,45 @@ extern "C" BOOL XStorageProtocol_Core_REPQueryFile(CHAR *ptszMsgBuffer, int *pIn
 *********************************************************************/
 extern "C" BOOL XStorageProtocol_Core_REPFile(CHAR *ptszMsgBuffer, int *pInt_MsgLen, XNETHANDLE xhToken = 0, BOOL bUPFile = TRUE, int nCode = 0, LPCSTR lpszCodeMsg = NULL, XENGINE_PROTOCOLFILE *pSt_ProtcolFile = NULL);
 /********************************************************************
+函数名称：XStorageProtocol_Core_REQUPEvent
+函数功能：NGINX代理上传事件处理函数
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的缓冲区
+ 参数.二：lpszBoundary
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入边界字符串
+ 参数.三：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件名
+ 参数.四：ptszFilePath
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件路径
+ 参数.五：ptszFileHash
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件HASH
+ 参数.六：pInt_FileSize
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出文件大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL XStorageProtocol_Core_REQUPEvent(LPCTSTR lpszMsgBuffer, LPCTSTR lpszBoundary, TCHAR* ptszFileName, TCHAR* ptszFilePath, TCHAR* ptszFileHash, __int64x* pInt_FileSize);
+/********************************************************************
 函数名称：XStorageProtocol_Core_REQCreateDir
 函数功能：创建文件夹协议
  参数.一：lpszMsgBuffer
