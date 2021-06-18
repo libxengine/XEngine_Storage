@@ -26,6 +26,7 @@
 #include <fstream>
 #include <memory>
 #include <list>
+#include <unordered_map>
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>

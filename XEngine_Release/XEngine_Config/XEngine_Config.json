@@ -38,6 +38,19 @@
     "tszNginAddr": "http://192.168.1.4:5010",
     "tszFileDir": "./XEngine_File"
   },
+  "XProxy": {
+    "XProxyAuth": {
+      "bAuth": 0,
+      "tszUserList": "./XEngine_Config/UserList.txt",
+      "tszAuthProxy": "http://www.xyry.org/Api/Auth/basic"
+    },
+    "XProxyPass": {
+      "bUPGet": 0,
+      "bDLGet": 0,
+      "tszUPPass": "http://www.xyry.org/Api/Pass/upfile",
+      "tszDLPass": "http://www.xyry.org/Api/Pass/dlfile"
+    }
+  },
   "XLimit": {
     "nMaxUPLoad": 0,
     "nMaxDNLoad": 102400
