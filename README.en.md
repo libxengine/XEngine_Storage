@@ -33,7 +33,7 @@ XEngine need V7.13 or above
 vcpkg need 2021.05.11 or above  
 
 #### Windows
-use vs2019 x86 open and complie  
+use vs2019 x86(debug or release) x64(only release) open and complie  
 You need to configure the environment in the following way, otherwise you may need to set the library directory in the project yourself  
 
 ##### install Dependent library
@@ -49,7 +49,7 @@ XEngine can be download with mine repository,whe you downloaded xengine,you have
 
 #### Linux
 Linux use Makefile to complie  
-supproted ubuntu or centos   
+supproted ubuntu x64 or centos x64     
 
 ##### install Dependent library
 install jsoncpp to your system  

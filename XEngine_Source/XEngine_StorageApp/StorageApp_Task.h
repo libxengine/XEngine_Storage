@@ -1,3 +1,3 @@
 ﻿#pragma once
 
-BOOL XEngine_Task_Auth(LPCTSTR lpszClientAddr, TCHAR** pptszListHdr, int nHdrCount, int nSDType = STORAGE_NETTYPE_HTTPDOWNLOAD);
+BOOL XEngine_Task_ProxyAuth(LPCTSTR lpszClientAddr, TCHAR** pptszListHdr, int nHdrCount, int nSDType = STORAGE_NETTYPE_HTTPDOWNLOAD);

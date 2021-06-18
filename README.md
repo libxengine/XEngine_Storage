@@ -32,7 +32,7 @@ XEngine版本需要V7.13或者以上版本
 vcpkg 需要2021.05.11以上版本  
 
 #### Windows
-使用VS2019 x86打开并且编译
+使用VS2019 x86(debug release) x64(release)打开并且编译
 你需要按照下面的方式配置环境,不然你可能需要自己在项目中设置库目录
 ##### 三方库环境
 需要使用VCPKG安装环境.代码地址:https://github.com/microsoft/vcpkg  
@@ -48,7 +48,7 @@ XEngine可以直接下载,下载完毕后添加用户环境变量,需要下面�
 
 #### Linux
 Linux使用Makefile编译  
-UBUNTU20.04或者CENTOS8均可  
+UBUNTU20.04 x64或者CENTOS8 x64均可  
 
 ##### 三方库环境
 基于不同系统,可能命令不同,比如在Ubuntu下面  

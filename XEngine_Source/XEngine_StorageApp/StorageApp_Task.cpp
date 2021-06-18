@@ -1,6 +1,6 @@
 ﻿#include "StorageApp_Hdr.h"
 
-BOOL XEngine_Task_Auth(LPCTSTR lpszClientAddr, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
+BOOL XEngine_Task_ProxyAuth(LPCTSTR lpszClientAddr, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
 {
 	int nSDLen = 1024;
 	int nAuthType = 0;
@@ -14,6 +14,10 @@ BOOL XEngine_Task_Auth(LPCTSTR lpszClientAddr, TCHAR** pptszListHdr, int nHdrCou
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
+	if (!st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
+	{
+		return TRUE;
+	}
 
 	if (STORAGE_NETTYPE_HTTPDOWNLOAD == nSDLen)
 	{
@@ -49,6 +53,36 @@ BOOL XEngine_Task_Auth(LPCTSTR lpszClientAddr, TCHAR** pptszListHdr, int nHdrCou
 		memset(tszUserPass, '\0', sizeof(tszUserPass));
 
 		OPenSsl_Help_BasicDecoder(tszAuthStr, tszUserName, tszUserPass);
+
+		if (_tcslen(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy) > 0)
+		{
+
+		}
+		else
+		{
+			if (Session_User_Exist(tszUserName, tszUserPass))
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.bAuth = TRUE;
+				st_HDRParam.nHttpCode = 200;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("%s:%s,验证用户成功"), lpszClientType, lpszClientAddr);
+				return FALSE;
+			}
+			else
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.bAuth = TRUE;
+				st_HDRParam.nHttpCode = 402;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("%s:%s,验证用户失败,无法继续"), lpszClientType, lpszClientAddr);
+				return FALSE;
+			}
+		}
 	}
 	else
 	{

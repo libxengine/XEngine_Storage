@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Session_Stroage/Session_DLStroage.h"
 #include "Session_Stroage/Session_UPStroage.h"
+#include "Session_User/Session_User.h"
 /********************************************************************
 //    Created:     2021/06/02  14:38:34
 //    File Name:   D:\XEngine_Storage\StorageModule_Session\pch.cpp
@@ -17,6 +18,7 @@ DWORD Session_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CSession_DLStroage m_DLStorage;
 CSession_UPStroage m_UPStorage;
+CSession_User m_User;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义机器
 //////////////////////////////////////////////////////////////////////////
@@ -27,6 +29,21 @@ extern "C" DWORD Session_GetLastError(int* pInt_SysError)
 		*pInt_SysError = errno;
 	}
 	return Session_dwErrorCode;
+}
+/************************************************************************/
+/*                        用户管理导出的函数                            */
+/************************************************************************/
+extern "C" BOOL Session_User_Init(LPCTSTR lpszUserFile)
+{
+	return m_User.Session_User_Init(lpszUserFile);
+}
+extern "C" BOOL Session_User_Destory()
+{
+	return m_User.Session_User_Destory();
+}
+extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass)
+{
+	return m_User.Session_User_Exist(lpszUser, lpszPass);
 }
 /************************************************************************/
 /*                        存储会话导出的函数                            */
