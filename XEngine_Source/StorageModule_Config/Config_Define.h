@@ -32,6 +32,7 @@ typedef struct tag_XEngine_ServerConfig
     struct
     {
         BOOL bHBTime;
+        int nDBMonth;
         int nTimeCheck;
         int nCenterTimeOut;
         int nStorageTimeOut;
@@ -44,14 +45,17 @@ typedef struct tag_XEngine_ServerConfig
     }st_XLog;
     struct
     {
-        TCHAR tszSQLAddr[64];
-        TCHAR tszSQLUser[64];
-        TCHAR tszSQLPass[64];
+        TCHAR tszSQLAddr[128];
+        TCHAR tszSQLUser[128];
+        TCHAR tszSQLPass[128];
+        TCHAR tszDBName[128];                                                
         int nSQLPort;
     }st_XSql;
     struct  
 	{
+        BOOL bRename;
         int nUseMode;
+        int nHashMode;
         TCHAR tszHttpAddr[MAX_PATH];
         TCHAR tszNginAddr[MAX_PATH];
 		TCHAR tszFileDir[MAX_PATH];

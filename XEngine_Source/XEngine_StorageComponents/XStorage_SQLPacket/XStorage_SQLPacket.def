@@ -1,0 +1,21 @@
+LIBRARY
+
+EXPORTS
+	XStorageDB_GetLastError
+	XStorageSQL_Init
+	XStorageSQL_Destory
+
+	XStorageSQL_File_FileInsert
+	XStorageSQL_File_FileDelete
+	XStorageSQL_File_FileQuery
+	XStorageSQL_File_FileQueryForTable
+	XStorageSQL_File_FileQueryForHash
+	XStorageSQL_File_FileGetCount
+
+	XStorageSQL_Info_UserInsert
+	XStorageSQL_Info_UserDelete
+	XStorageSQL_Info_UserQuery
+	XStorageSQL_Info_UserDBFileSet
+	XStorageSQL_Info_UserQueryForToken
+	XStorageSQL_Info_UserSet
+	XStorageSQL_Info_UPCount
