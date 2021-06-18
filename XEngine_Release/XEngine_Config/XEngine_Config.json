@@ -1,9 +1,9 @@
 {
   "tszIPAddr": "127.0.0.1",
   "bDeamon": 0,
-  "nCenterPort": 5001,
-  "nStorageDLPort": 5002,
-  "nStorageUPPort": 5003,
+  "nCenterPort": 5000,
+  "nStorageDLPort": 5001,
+  "nStorageUPPort": 5002,
   "XMax": {
     "MaxClient": 10000,
     "MaxQueue": 10000,
@@ -13,7 +13,8 @@
     "nStorageDLThread": 2
   },
   "XTime": {
-    "bHBTime": 1,
+    "bHBTime": 0,
+    "nDBMonth": 3,
     "nTimeCheck": 3,
     "nCenterTimeOut": 5,
     "nStorageTimeOut": 5
@@ -24,13 +25,15 @@
     "LogLeave": 32
   },
   "XSql": {
-    "SQLAddr": "127.0.0.1",
+    "SQLAddr": "192.168.1.9",
     "SQLPort": 3306,
     "SQLUser": "root",
-    "SQLPass": "123123aa"
+    "SQLPass": "123123Ruiyue"
   },
   "XStorage": {
     "nUseMode": 1,
+    "nHashMode": 2,
+    "bRename": 0,
     "tszHttpAddr": "http://192.168.1.4",
     "tszNginAddr": "http://192.168.1.4:5010",
     "tszFileDir": "./XEngine_File"
@@ -41,6 +44,8 @@
   },
   "XVer": {
     "StorageVersion": [
+      "1.2.0.1001 Build20210618",
+      "1.1.0.1001 Build20210611",
       "1.0.0.1001 Build20210501"
     ]
   }

@@ -3,17 +3,26 @@ UNICODE = 0
 
 FLAGS = RELEASE=$(RELEASE)
 
+COMPONENTS_SQL_PATH = ./XEngine_StorageComponents/XStorage_SQLPacket
+COMPONENTS_PROTOCOL_PATH = ./XEngine_StorageComponents/XStorage_Protocol
+
 BASE_CONFIG_PATH = ./StorageModule_Config
 BASE_SESSION_PATH = ./StorageModule_Session
 
 APPSERVICE_STORAGE_PATH = ./XEngine_StorageApp
 
-NETENGINE_LIB = libStorageModule_Config.so libStorageModule_Session.so                                                                                       \
-		XEngine_StorageApp.exe 
+NETENGINE_LIB = libXStorage_SQLPacket.so libXStorage_Protocol.so                       \
+                libStorageModule_Config.so libStorageModule_Session.so                 \
+		 XEngine_StorageApp.exe 
 
 .PHONY:MakeAll 
 MakeAll:$(NETENGINE_LIB)
 	
+libXStorage_SQLPacket.so:
+	make -C $(COMPONENTS_SQL_PATH) $(FLAGS)
+libXStorage_Protocol.so:
+	make -C $(COMPONENTS_PROTOCOL_PATH) $(FLAGS)
+
 libStorageModule_Config.so:
 	make -C $(BASE_CONFIG_PATH) $(FLAGS)
 libStorageModule_Session.so:

@@ -1,0 +1,12 @@
+只支持POST,业务处理端口
+
+查询文件列表:/api/query/file
+
+{
+    "lpszTimeStart":"开始时间,可NULL",
+    "lpszTimeEnd":"结束时间,可NULL",
+    "lpszFileName":"文件名,可NULL",
+    "lpszFileHash":"文件HASH,可NULL"
+}
+
+NGINX上传代理接口:/api/event/upfile

@@ -83,7 +83,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     pSt_ServerConfig->st_XMax.nStorageUPThread = st_JsonXMax["nStorageUPThread"].asInt();
     pSt_ServerConfig->st_XMax.nStorageDLThread = st_JsonXMax["nStorageDLThread"].asInt();
 
-    if (st_JsonRoot["XTime"].empty() || (4 != st_JsonRoot["XTime"].size()))
+    if (st_JsonRoot["XTime"].empty() || (5 != st_JsonRoot["XTime"].size()))
     {
         Config_IsErrorOccur = TRUE;
         Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XTIME;
@@ -91,6 +91,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     }
     Json::Value st_JsonXTime = st_JsonRoot["XTime"];
     pSt_ServerConfig->st_XTime.bHBTime = st_JsonXTime["bHBTime"].asInt();
+    pSt_ServerConfig->st_XTime.nDBMonth = st_JsonXTime["nDBMonth"].asInt();
     pSt_ServerConfig->st_XTime.nTimeCheck = st_JsonXTime["nTimeCheck"].asInt();
     pSt_ServerConfig->st_XTime.nCenterTimeOut = st_JsonXTime["nCenterTimeOut"].asInt();
     pSt_ServerConfig->st_XTime.nStorageTimeOut = st_JsonXTime["nStorageTimeOut"].asInt();
@@ -118,7 +119,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     _tcscpy(pSt_ServerConfig->st_XSql.tszSQLUser,st_JsonXSql["SQLUser"].asCString());
     _tcscpy(pSt_ServerConfig->st_XSql.tszSQLPass,st_JsonXSql["SQLPass"].asCString());
 
-    if (st_JsonRoot["XStorage"].empty() || (4 != st_JsonRoot["XStorage"].size()))
+    if (st_JsonRoot["XStorage"].empty() || (6 != st_JsonRoot["XStorage"].size()))
     {
         Config_IsErrorOccur = TRUE;
         Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
@@ -126,6 +127,8 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     }
     Json::Value st_JsonXStorage = st_JsonRoot["XStorage"];
 	pSt_ServerConfig->st_XStorage.nUseMode = st_JsonXStorage["nUseMode"].asInt();
+    pSt_ServerConfig->st_XStorage.nHashMode = st_JsonXStorage["nHashMode"].asInt();
+    pSt_ServerConfig->st_XStorage.bRename = st_JsonXStorage["bRename"].asInt();
 	_tcscpy(pSt_ServerConfig->st_XStorage.tszHttpAddr, st_JsonXStorage["tszHttpAddr"].asCString());
 	_tcscpy(pSt_ServerConfig->st_XStorage.tszNginAddr, st_JsonXStorage["tszNginAddr"].asCString());
     _tcscpy(pSt_ServerConfig->st_XStorage.tszFileDir, st_JsonXStorage["tszFileDir"].asCString());

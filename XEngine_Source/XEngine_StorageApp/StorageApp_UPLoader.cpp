@@ -3,7 +3,7 @@
 XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(LPVOID lParam)
 {
 	int nThreadPos = *(int*)lParam;
-	TCHAR tszMsgBuffer[4096];
+	TCHAR tszMsgBuffer[10240];
 	nThreadPos++;
 
 	while (bIsRun)
@@ -23,7 +23,7 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(LPVOID lParam)
 			{
 				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
 				{
-					int nMsgLen = 4096;
+					int nMsgLen = 10240;
 					//获得指定上传客户端触发信息
 					if (RfcComponents_HttpServer_GetClientEx(xhUPHttp, ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, &nMsgLen, &st_HTTPParam))
 					{
@@ -40,7 +40,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 {
 	int nSDLen = 2048;
 	TCHAR tszSDBuffer[2048];
-	TCHAR tszFileDir[512];
+	TCHAR tszFileDir[1024];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
@@ -48,6 +48,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
 	LPCTSTR lpszMethodGet = _T("PUT");
+
 	if (0 != _tcsncmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodGet)))
 	{
 		st_HDRParam.bIsClose = TRUE;
@@ -85,16 +86,38 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 	if (nHDSize >= nRVCount)
 	{
-		st_HDRParam.nHttpCode = 200;
-		_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
+		UCHAR tszHashStr[MAX_PATH];
+		XSTORAGECORE_DBFILE st_ProtocolFile;
 
-		RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d"), lpszClientAddr, tszFileDir, nRVCount);
+		memset(tszHashStr, '\0', MAX_PATH);
+		memset(&st_ProtocolFile, '\0', sizeof(XSTORAGECORE_DBFILE));
+
+		_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
+		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFilePath, st_ServiceCfg.st_XStorage.tszFileDir);
+		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, pSt_HTTPParam->tszHttpUri + 1);
+		st_ProtocolFile.st_ProtocolFile.nFileSize = nRVCount;
+
+		OPenSsl_Api_Digest(tszFileDir, tszHashStr, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
+		BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+		if (XStorageSQL_File_FileInsert(&st_ProtocolFile))
+		{
+			st_HDRParam.nHttpCode = 200;
+			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d"), lpszClientAddr, tszFileDir, nRVCount);
+		}
+		else
+		{
+			st_HDRParam.nHttpCode = 403;
+			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, XStorageDB_GetLastError());
+		}
+		Session_UPStroage_Delete(lpszClientAddr);
 	}
 	else
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("上传客户端:%s,请求上传文件中,文件名:%s,大小:%d"), lpszClientAddr, tszFileDir, nMsgLen);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件中,文件名:%s,大小:%d"), lpszClientAddr, tszFileDir, nMsgLen);
 	}
 	
 	return TRUE;
