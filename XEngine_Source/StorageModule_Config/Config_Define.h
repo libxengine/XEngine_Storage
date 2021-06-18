@@ -53,6 +53,7 @@ typedef struct tag_XEngine_ServerConfig
     }st_XSql;
     struct  
 	{
+        BOOL bRename;
         int nUseMode;
         int nHashMode;
         TCHAR tszHttpAddr[MAX_PATH];

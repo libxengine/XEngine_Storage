@@ -147,15 +147,15 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 			LPCTSTR lpszBoundaryStr = _T("boundary=");
 			TCHAR tszContentStr[MAX_PATH];
 			TCHAR tszBoundarTmp[MAX_PATH];
-			TCHAR tszBoundarStr[MAX_PATH];
 			TCHAR tszFileDir[MAX_PATH];
+			TCHAR tszBoundarStr[512];
 			XSTORAGECORE_DBFILE st_DBFile;
 
 			memset(tszContentStr, '\0', MAX_PATH);
 			memset(tszBoundarTmp, '\0', MAX_PATH);
-			memset(tszBoundarStr, '\0', MAX_PATH);
 			memset(tszContentStr, '\0', MAX_PATH);
 			memset(tszFileDir, '\0', MAX_PATH);
+			memset(tszBoundarStr, '\0', sizeof(tszBoundarStr));
 			memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
 			if (!RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszContentType, tszContentStr))
@@ -179,10 +179,19 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 				return FALSE;
 			}
 			_stprintf(tszBoundarStr, _T("--%s\r\n"), tszBoundarTmp);
-			
 			XStorageProtocol_Core_REQUPEvent(lpszMsgBuffer, tszBoundarStr, st_DBFile.st_ProtocolFile.tszFileName, tszFileDir, st_DBFile.st_ProtocolFile.tszFileHash, &st_DBFile.st_ProtocolFile.nFileSize);
-			_tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, st_ServiceCfg.st_XStorage.tszFileDir);
-
+			
+			if (st_ServiceCfg.st_XStorage.bRename)
+			{
+				memset(st_DBFile.st_ProtocolFile.tszFilePath, '\0', MAX_PATH);
+				_tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, st_ServiceCfg.st_XStorage.tszFileDir);
+			}
+			else
+			{
+				memset(st_DBFile.st_ProtocolFile.tszFileName, '\0', MAX_PATH);
+				BaseLib_OperatorString_GetFileAndPath(tszFileDir, st_DBFile.st_ProtocolFile.tszFilePath, st_DBFile.st_ProtocolFile.tszFileName);
+				st_DBFile.st_ProtocolFile.tszFilePath[_tcslen(st_DBFile.st_ProtocolFile.tszFilePath) - 1] = '\0';
+			}
 			if (XStorageSQL_File_FileInsert(&st_DBFile))
 			{
 				st_HDRParam.nHttpCode = 200;
@@ -196,6 +205,14 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,处理NGINX代理上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, XStorageDB_GetLastError());
+			}
+			if (st_ServiceCfg.st_XStorage.bRename)
+			{
+				TCHAR tszFileTmp[1024];
+				memset(tszFileTmp, '\0', sizeof(tszFileTmp));
+
+				_stprintf(tszFileTmp, _T("%s/%s"), st_DBFile.st_ProtocolFile.tszFilePath, st_DBFile.st_ProtocolFile.tszFileName);
+				_trename(tszFileDir, tszFileTmp);
 			}
 		}
 	}

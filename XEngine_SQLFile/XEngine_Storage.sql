@@ -11,7 +11,7 @@
  Target Server Version : 80025
  File Encoding         : 65001
 
- Date: 10/06/2021 14:42:32
+ Date: 17/06/2021 17:19:07
 */
 
 SET NAMES utf8mb4;
@@ -30,6 +30,6 @@ CREATE TABLE `XStorage_File`  (
   `FileSize` bigint NOT NULL COMMENT '文件大小',
   `FileTime` datetime NOT NULL COMMENT '插入时间',
   PRIMARY KEY (`ID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;
