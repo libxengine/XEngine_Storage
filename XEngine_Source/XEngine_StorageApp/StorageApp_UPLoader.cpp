@@ -24,11 +24,14 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(LPVOID lParam)
 				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
 				{
 					int nMsgLen = 10240;
+					int nHdrCount = 0;
+					CHAR** ppszListHdr = NULL;
 					//获得指定上传客户端触发信息
-					if (RfcComponents_HttpServer_GetClientEx(xhUPHttp, ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, &nMsgLen, &st_HTTPParam))
+					if (RfcComponents_HttpServer_GetClientEx(xhUPHttp, ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
 					{
-						XEngine_Task_HttpUPLoader(ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, nMsgLen, &st_HTTPParam);
+						XEngine_Task_HttpUPLoader(ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
+					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
 				}
 			}
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
@@ -36,7 +39,7 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(LPVOID lParam)
 	}
 	return 0;
 }
-BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam)
+BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, TCHAR** pptszListHdr, int nHdrCount)
 {
 	int nSDLen = 2048;
 	TCHAR tszSDBuffer[2048];
@@ -58,6 +61,14 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,发送的方法不支持"), lpszClientAddr);
 		return FALSE;
+	}
+	if (!XEngine_Task_ProxyAuth(lpszClientAddr, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER))
+	{
+		return FALSE;
+	}
+	if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
+	{
+		st_HDRParam.bAuth = TRUE;
 	}
 	int nRVMode = 0;
 	int nRVCount = 0;

@@ -31,6 +31,7 @@ XHTHREAD CALLBACK XEngine_Center_HTTPThread(LPVOID lParam)
 					{
 						XEngine_Task_HttpCenter(ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
+					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
 				}
 			}
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
@@ -65,6 +66,15 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,发送的方法不支持"), lpszClientAddr);
 		return FALSE;
 	}
+	if (!XEngine_Task_ProxyAuth(lpszClientAddr, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPCENTER))
+	{
+		return FALSE;
+	}
+	if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
+	{
+		st_HDRParam.bAuth = TRUE;
+	}
+
 	if (!RfcComponents_HttpHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIVersion, tszAPIMethod, tszAPIName))
 	{
 		st_HDRParam.bIsClose = TRUE;
@@ -104,7 +114,7 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 200;
-
+			
 			XStorageProtocol_Core_REPQueryFile(tszMsgBuffer, &nMsgLen, &ppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
 			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszMsgBuffer, nMsgLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);

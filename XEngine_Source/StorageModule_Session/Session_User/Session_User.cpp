@@ -127,7 +127,7 @@ BOOL CSession_User::Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass)
 		return FALSE;
 	}
 	
-	if (0 == _tcsncmp(lpszPass, stl_MapIterator->second.tszUserPass, _tcslen(lpszPass)))
+	if (0 != _tcsncmp(lpszPass, stl_MapIterator->second.tszUserPass, _tcslen(lpszPass)))
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PASSWORD;
