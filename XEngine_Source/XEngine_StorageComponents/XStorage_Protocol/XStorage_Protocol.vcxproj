@@ -169,10 +169,10 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="XStorageProtocol_Client\XStorageProtocol_Client.h" />
-    <ClInclude Include="XStorageProtocol_Comm\XStorageProtocol_Comm.h" />
     <ClInclude Include="XStorageProtocol_Core\XStorageProtocol_Core.h" />
     <ClInclude Include="XStorageProtocol_Define.h" />
     <ClInclude Include="XStorageProtocol_Error.h" />
+    <ClInclude Include="XStorageProtocol_Proxy\XStorageProtocol_Proxy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -183,8 +183,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="XStorageProtocol_Client\XStorageProtocol_Client.cpp" />
-    <ClCompile Include="XStorageProtocol_Comm\XStorageProtocol_Comm.cpp" />
     <ClCompile Include="XStorageProtocol_Core\XStorageProtocol_Core.cpp" />
+    <ClCompile Include="XStorageProtocol_Proxy\XStorageProtocol_Proxy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="XStorage_Protocol.def" />

@@ -53,10 +53,8 @@ BOOL XEngine_Task_ProxyAuth(LPCTSTR lpszClientAddr, TCHAR** pptszListHdr, int nH
 		memset(tszUserPass, '\0', sizeof(tszUserPass));
 
 		OPenSsl_Help_BasicDecoder(tszAuthStr, tszUserName, tszUserPass);
-
 		if (_tcslen(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy) > 0)
 		{
-
 		}
 		else
 		{
