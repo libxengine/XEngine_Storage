@@ -29,7 +29,7 @@ feature list:
 
 #### Requirements  
 support system above windows 7sp1 and linux(ubuntu20.04,centos8)  
-XEngine need V7.13 or above  
+XEngine need V7.14 or above  
 vcpkg need 2021.05.11 or above  
 
 #### Windows

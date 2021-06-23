@@ -132,6 +132,9 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 
 	if (bRange)
 	{
+		st_HDRParam.st_Range.nPosStart = nPosStart;
+		st_HDRParam.st_Range.nPosEnd = nPosEnd;
+		st_HDRParam.st_Range.nPosCount = ullCount;
 		st_HDRParam.nHttpCode = 206;
 		_tcscpy(st_HDRParam.tszMimeType, _T("bin"));
 

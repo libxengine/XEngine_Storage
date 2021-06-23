@@ -28,7 +28,7 @@ c c++ file storage service
 
 #### 版本需求
 支持WINDOWS 7SP1和LINUX(UBUNT20.04,CENTOS8)以上系统  
-XEngine版本需要V7.13或者以上版本  
+XEngine版本需要V7.14或者以上版本  
 vcpkg 需要2021.05.11以上版本  
 
 #### Windows

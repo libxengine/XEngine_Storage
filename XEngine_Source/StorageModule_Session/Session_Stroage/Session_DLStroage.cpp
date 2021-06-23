@@ -279,13 +279,13 @@ BOOL CSession_DLStroage::Session_DLStroage_GetList(int nPool, int nIndex, TCHAR*
 		{
 			_tcscpy(ptszClientAddr, stl_ListIterator->tszClientAddr);
 
-			if (stl_ListIterator->ullRWCount >= stl_ListIterator->ullRWLen)
+			if (stl_ListIterator->ullRWLen >= stl_ListIterator->ullRWCount)
 			{
 				*pInt_MsgLen = 0;
 			}
 			else
 			{
-				if ((stl_ListIterator->ullRWCount - stl_ListIterator->ullRWLen) > *pInt_MsgLen)
+				if (*pInt_MsgLen > (stl_ListIterator->ullRWCount - stl_ListIterator->ullRWLen))
 				{
 					*pInt_MsgLen = int(stl_ListIterator->ullRWCount - stl_ListIterator->ullRWLen);
 				}
