@@ -31,18 +31,18 @@
     "SQLPass": "123123Ruiyue"
   },
   "XStorage": {
-    "nUseMode": 1,
+    "nUseMode": 0,
     "nHashMode": 2,
     "bRename": 0,
-    "tszHttpAddr": "http://192.168.1.4",
-    "tszNginAddr": "http://192.168.1.4:5010",
+    "tszHttpAddr": "http://192.168.1.9",
+    "tszNginAddr": "http://192.168.1.9:5010",
     "tszFileDir": "./XEngine_File"
   },
   "XProxy": {
     "XProxyAuth": {
       "bAuth": 0,
       "tszUserList": "./XEngine_Config/UserList.txt",
-      "tszAuthProxy": "http://www.xyry.org/Api/Auth/basic"
+      "tszAuthProxy": ""
     },
     "XProxyPass": {
       "bUPGet": 0,

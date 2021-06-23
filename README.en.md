@@ -13,17 +13,18 @@ This repository has a development and master branch. If you want to use it, plea
 feature list:  
 1. support file http upload and download(use put and get method)  
 2. support http api notify of event and management api interface(planning)  
-3. support encrypt data transimission(planning)  
+3. support http encrypt data transimission(planning)  
 4. support mysql record infomation.  
 5. support load banace(planning)  
-6. supprot http and private auth(planning)  
+6. supprot http auth  
 7. support log and config  
 8. supprot speeds contral  
-9. supprot task start and end proxy forwarding(planning)  
+9. supprot task start and end proxy forwarding    
 10.support p2p,bt and many more(planning)  
 11.support second pass  
 12.support nginx download proxy_pass  
 13.support nginx upload module proxy_pass  
+14.support download Redirect  
 
 ## install
 

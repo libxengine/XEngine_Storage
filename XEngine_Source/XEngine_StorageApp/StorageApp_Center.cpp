@@ -74,6 +74,22 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 	{
 		st_HDRParam.bAuth = TRUE;
 	}
+	//使用重定向?
+	if ((3 == st_ServiceCfg.st_XStorage.nUseMode) || (4 == st_ServiceCfg.st_XStorage.nUseMode))
+	{
+		TCHAR tszHdrBuffer[MAX_PATH];
+		memset(tszHdrBuffer, '\0', MAX_PATH);
+
+		st_HDRParam.bIsClose = TRUE;
+		st_HDRParam.nHttpCode = 302;
+
+		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), st_ServiceCfg.st_XStorage.tszHttpAddr, pSt_HTTPParam->tszHttpUri);
+
+		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求的函数被要求重定向到:%s%s"), lpszClientAddr, st_ServiceCfg.st_XStorage.tszHttpAddr, pSt_HTTPParam->tszHttpUri);
+		return TRUE;
+	}
 
 	if (!RfcComponents_HttpHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIVersion, tszAPIMethod, tszAPIName))
 	{
