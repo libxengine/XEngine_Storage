@@ -12,7 +12,6 @@
 *********************************************************************/
 typedef struct  
 {
-    __int64x nWriteLen;
     time_t nTimeStart;
     SESSION_STORAGEINFO st_StorageInfo;
 }SESSION_STORAGEUPLOADER;
@@ -25,7 +24,7 @@ public:
 public:
     BOOL Session_UPStroage_Init();
     BOOL Session_UPStroage_Destory();
-    BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, int nPos = 0);
+    BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart = 0, int nPostEnd = 0);
     BOOL Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL* pbComplete);
     BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen);
     BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr);

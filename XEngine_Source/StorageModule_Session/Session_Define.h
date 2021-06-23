@@ -18,7 +18,10 @@ typedef struct
 	TCHAR tszFileDir[MAX_PATH];                                           //文件地址
 	TCHAR tszClientAddr[128];                                             //操作的用户地址
 	__int64x ullCount;                                                    //总大小
-	__int64x ullPos;                                                      //位置
+	__int64x ullRWCount;                                                   //读取(写入)总大小
+	__int64x ullRWLen;                                                     //已经读取(写入)的大小
+	__int64x ullPosStart;                                                 //开始位置
+	__int64x ullPosEnd;                                                   //结束位置
 	FILE* pSt_File;
 }SESSION_STORAGEINFO;
 //////////////////////////////////////////////////////////////////////////
@@ -112,19 +115,29 @@ extern "C" BOOL Session_DLStroage_Destory();
  参数.三：pInt_Count
   In/Out：Out
   类型：整数型指针
-  可空：Y
+  可空：N
   意思：输出文件大小
- 参数.四：nPos
+ 参数.四：pInt_LeftCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出需要读取大小
+ 参数.五：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
-  意思：输入要移动的指针位置
+  意思：输入开始位置
+ 参数.六：nPostEnd
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入结束位置
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x* pInt_Count = NULL, int nPos = 0);
+extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0);
 /********************************************************************
 函数名称：Session_DLStroage_GetList
 函数功能：获得下载器中的列表索引信息
@@ -227,17 +240,27 @@ extern "C" BOOL Session_UPStroage_Destory();
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.四：nPos
+ 参数.四：nLeftCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入需要写入的大小
+ 参数.五：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
-  意思：输入要移动的指针位置
+  意思：输入起始位置
+ 参数.六：nPostEnd
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入结束位置
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, int nPos = 0);
+extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart = 0, int nPostEnd = 0);
 /********************************************************************
 函数名称：Session_UPStroage_GetComplete
 函数功能：接受的数据是否完毕

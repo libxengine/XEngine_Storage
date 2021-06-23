@@ -19,11 +19,11 @@ BOOL XEngine_Task_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszPostUrl, TCHAR**
 		return TRUE;
 	}
 
-	if (STORAGE_NETTYPE_HTTPDOWNLOAD == nSDLen)
+	if (STORAGE_NETTYPE_HTTPDOWNLOAD == nSDType)
 	{
 		lpszClientType = _T("下载客户端");
 	}
-	else if (STORAGE_NETTYPE_HTTPUPLOADER == nSDLen)
+	else if (STORAGE_NETTYPE_HTTPUPLOADER == nSDType)
 	{
 		lpszClientType = _T("上传客户端");
 	}
@@ -101,5 +101,46 @@ BOOL XEngine_Task_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszPostUrl, TCHAR**
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("%s:%s,没有验证信息,无法继续"), lpszClientType, lpszClientAddr);
 		return FALSE;
 	}
+	return TRUE;
+}
+BOOL XEngine_Task_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt_EPos, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
+{
+	LPCTSTR lpszRange = _T("Range");
+	LPCTSTR lpszClientType;
+	TCHAR tszKeyStr[128];
+	TCHAR tszValueStr[128];
+	TCHAR tszRangeStr[128];
+
+	memset(tszKeyStr, '\0', sizeof(tszKeyStr));
+	memset(tszValueStr, '\0', sizeof(tszValueStr));
+	memset(tszRangeStr, '\0', sizeof(tszRangeStr));
+
+	if (STORAGE_NETTYPE_HTTPDOWNLOAD == nSDType)
+	{
+		lpszClientType = _T("下载客户端");
+	}
+	else if (STORAGE_NETTYPE_HTTPUPLOADER == nSDType)
+	{
+		lpszClientType = _T("上传客户端");
+	}
+	else
+	{
+		lpszClientType = _T("业务客户端");
+	}
+	//是否有范围
+	if (!RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszRange, tszRangeStr))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("%s:%s,请求内容没有范围信息"), lpszClientType, lpszClientAddr);
+		return FALSE;
+	}
+	//是否没有找到
+	if (!BaseLib_OperatorString_GetWithChar(tszRangeStr, tszKeyStr, tszValueStr, '='))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("%s:%s,请求内容有范围信息,但是解析失败,内容:%s"), lpszClientType, lpszClientAddr, tszRangeStr);
+		return FALSE;
+	}
+	*pInt_SPos = _ttoi(tszKeyStr);
+	*pInt_EPos = _ttoi(tszValueStr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,客户端的请求设置了数据范围:%s - %s"), lpszClientType, lpszClientAddr, tszKeyStr, tszValueStr);
 	return TRUE;
 }
