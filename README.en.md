@@ -5,26 +5,26 @@ c c++ 存储服务 c c++ 文件存储服务
 c c++ file storage service  
 This is an api gateway for uploading and downloading.  
 The service is for users who have business needs for upload and download services (such as developers who need to upload and download servers).  
+best storage service for http,batter than nginx and more convenient to manage. On going maintenance  
 
 ## Software feature
 The purpose of development and implementation based on libXEngine is a cross-platform network storage service  
 This repository has a development and master branch. If you want to use it, please use the master branch  
 
 feature list:  
-1. support file http upload and download(use put and get method)  
-2. support http api notify of event and management api interface(planning)  
-3. support http encrypt data transimission(planning)  
-4. support mysql record infomation.  
-5. support load banace(planning)  
-6. supprot http auth  
-7. support log and config  
-8. supprot speeds contral  
-9. supprot task start and end proxy forwarding    
-10.support p2p,bt and many more(planning)  
-11.support second pass  
-12.support nginx download proxy_pass  
-13.support nginx upload module proxy_pass  
-14.support download Redirect  
+  1. support file http upload and download(use put and get method)  
+  2. support http api notify of event and management api interface  
+  3. support http encrypt and cert data transimission(planning)  
+  4. support mysql record infomation.  
+  5. support load banace(planning)  
+  6. supprot http auth  
+  7. support log and config  
+  8. supprot speeds contral  
+  9. supprot task start and end proxy forwarding    
+  10.support p2p,bt and many more(planning)  
+  11.support second pass  
+  12.support nginx upload module proxy_pass  
+  13.support download Redirect  
 
 ## install
 

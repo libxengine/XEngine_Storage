@@ -37,6 +37,10 @@ extern "C" BOOL XStorageProtocol_Proxy_PacketBasicAuth(LPCTSTR lpszPostUrl, LPCT
 {
 	return m_ProtocolProxy.XStorageProtocol_Proxy_PacketBasicAuth(lpszPostUrl, lpszClientAddr, lpszUser, lpszPass, ptszMsgBuffer, pInt_MsgLen);
 }
+extern "C" BOOL XStorageProtocol_Proxy_PacketUPDown(LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileHash)
+{
+	return m_ProtocolProxy.XStorageProtocol_Proxy_PacketUPDown(lpszFileName, lpszClientAddr, nFileSize, ptszMsgBuffer, pInt_MsgLen, lpszFileHash);
+}
 /************************************************************************/
 /*                      客户端协议操作导出函数                          */
 /************************************************************************/

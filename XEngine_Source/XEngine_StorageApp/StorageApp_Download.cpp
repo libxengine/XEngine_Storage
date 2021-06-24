@@ -64,6 +64,21 @@ XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
 			}
 			if (nMsgLen <= 0)
 			{
+				if (st_ServiceCfg.st_XProxy.st_XProxyPass.bDLPass)
+				{
+					int nPLen = MAX_PATH;
+					int nHttpCode = 0;
+					TCHAR tszProxyStr[MAX_PATH];
+					SESSION_STORAGEINFO st_StorageInfo;
+
+					memset(tszProxyStr, '\0', MAX_PATH);
+					memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
+
+					Session_DLStroage_GetInfo(nThreadPos, i, &st_StorageInfo);
+					XStorageProtocol_Proxy_PacketUPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen);
+					APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("下载客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), tszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass);
+				}
 				Session_DLStroage_Delete(tszClientAddr);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("下载客户端:%s,文件已经发送完毕,用户已经被移除发送列表"), tszClientAddr);
 				continue;
@@ -152,21 +167,15 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.st_Range.nPosEnd = nPosEnd;
 		st_HDRParam.st_Range.nPosCount = ullCount;
 		st_HDRParam.nHttpCode = 206;
-		_tcscpy(st_HDRParam.tszMimeType, _T("bin"));
-
-		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, (int)ullSize);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,请求下载文件成功,文件名:%s,总大小:%llu,发送大小:%llu,范围:%d - %d"), lpszClientAddr, tszFileDir, ullCount, ullSize, nPosStart, nPosEnd);
 	}
 	else
 	{
 		st_HDRParam.nHttpCode = 200;
-		_tcscpy(st_HDRParam.tszMimeType, _T("bin"));
-
-		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, (int)ullSize);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,请求下载文件成功,文件名:%s,大小:%llu"), lpszClientAddr, tszFileDir, ullSize);
 	}
+	_tcscpy(st_HDRParam.tszMimeType, _T("bin"));
+	RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, (int)ullSize);
+	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,请求下载文件成功,文件名:%s,总大小:%llu,发送大小:%llu,范围:%d - %d"), lpszClientAddr, tszFileDir, ullCount, ullSize, nPosStart, nPosEnd);
 	return TRUE;
 }
 BOOL XEngine_Task_SendDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)

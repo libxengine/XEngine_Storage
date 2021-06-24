@@ -300,6 +300,63 @@ BOOL CSession_DLStroage::Session_DLStroage_GetList(int nPool, int nIndex, TCHAR*
 	return TRUE;
 }
 /********************************************************************
+函数名称：Session_DLStroage_GetInfo
+函数功能：获取下载信息
+ 参数.一：nPool
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要操作的下载池
+ 参数.二：nIndex
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要操作的索引
+ 参数.三：pSt_StorageInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出内容
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_DLStroage::Session_DLStroage_GetInfo(int nPool, int nIndex, SESSION_STORAGEINFO* pSt_StorageInfo)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if ((NULL == pSt_StorageInfo))
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+
+	st_Locker.lock_shared();
+	unordered_map<int, SESSION_STORAGELIST>::iterator stl_MapIterator = stl_MapStroage.find(nPool);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	stl_MapIterator->second.st_Locker->lock_shared();
+	list<SESSION_STORAGEINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListStorage->begin();
+	for (int i = 0; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++, i++)
+	{
+		if (nIndex == i)
+		{
+			*pSt_StorageInfo = *stl_ListIterator;
+			break;
+		}
+	}
+	stl_MapIterator->second.st_Locker->unlock_shared();
+	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
 函数名称：Session_DLStroage_GetCount
 函数功能：获取队列拥有的个数
  参数.一：nPool

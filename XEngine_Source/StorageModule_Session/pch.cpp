@@ -64,6 +64,10 @@ extern "C" BOOL Session_DLStroage_GetList(int nPool, int nIndex, TCHAR * ptszCli
 {
 	return m_DLStorage.Session_DLStroage_GetList(nPool, nIndex, ptszClientAddr, ptszMsgBuffer, pInt_MsgLen);
 }
+extern "C" BOOL Session_DLStroage_GetInfo(int nPool, int nIndex, SESSION_STORAGEINFO * pSt_StorageInfo)
+{
+	return m_DLStorage.Session_DLStroage_GetInfo(nPool, nIndex, pSt_StorageInfo);
+}
 extern "C" BOOL Session_DLStroage_GetCount(int nIndex, int* pInt_ListCount)
 {
 	return m_DLStorage.Session_DLStroage_GetCount(nIndex, pInt_ListCount);
@@ -87,6 +91,10 @@ extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
 extern "C" BOOL Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL * pbComplete)
 {
 	return m_UPStorage.Session_UPStroage_GetComplete(lpszClientAddr, pbComplete);
+}
+extern "C" BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO * pSt_StorageInfo)
+{
+	return m_UPStorage.Session_UPStroage_GetInfo(lpszClientAddr, pSt_StorageInfo);
 }
 extern "C" BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
 {

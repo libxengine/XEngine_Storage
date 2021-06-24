@@ -18,6 +18,7 @@ public:
     ~CXStorageProtocol_Proxy();
 public:
     BOOL XStorageProtocol_Proxy_PacketBasicAuth(LPCTSTR lpszPostUrl, LPCTSTR lpszClientAddr, LPCTSTR lpszUser, LPCTSTR lpszPass, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+    BOOL XStorageProtocol_Proxy_PacketUPDown(LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileHash = NULL);
 protected:
 private:
 };

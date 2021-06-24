@@ -188,6 +188,48 @@ BOOL CSession_UPStroage::Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, B
 	return TRUE;
 }
 /********************************************************************
+函数名称：Session_UPStroage_GetInfo
+函数功能：获取上传客户端信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pSt_StorageInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出获取到的内容
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszClientAddr) || (NULL == pSt_StorageInfo))
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+
+	st_Locker.lock_shared();
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	*pSt_StorageInfo = stl_MapIterator->second.st_StorageInfo;
+	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
 函数名称：Session_UPStroage_Write
 函数功能：写入数据到文件
  参数.一：lpszClientAddr

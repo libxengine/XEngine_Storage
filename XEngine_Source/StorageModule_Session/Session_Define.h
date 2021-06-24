@@ -18,8 +18,8 @@ typedef struct
 	TCHAR tszFileDir[MAX_PATH];                                           //文件地址
 	TCHAR tszClientAddr[128];                                             //操作的用户地址
 	__int64x ullCount;                                                    //总大小
-	__int64x ullRWCount;                                                   //读取(写入)总大小
-	__int64x ullRWLen;                                                     //已经读取(写入)的大小
+	__int64x ullRWCount;                                                  //读取(写入)总大小
+	__int64x ullRWLen;                                                    //已经读取(写入)的大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
 	FILE* pSt_File;
@@ -172,6 +172,30 @@ extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
 *********************************************************************/
 extern "C" BOOL Session_DLStroage_GetList(int nPool, int nIndex, TCHAR* ptszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
+函数名称：Session_DLStroage_GetInfo
+函数功能：获取下载信息
+ 参数.一：nPool
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要操作的下载池
+ 参数.二：nIndex
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要操作的索引
+ 参数.三：pSt_StorageInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出内容
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_DLStroage_GetInfo(int nPool, int nIndex, SESSION_STORAGEINFO* pSt_StorageInfo);
+/********************************************************************
 函数名称：Session_DLStroage_GetCount
 函数功能：获取队列拥有的个数
  参数.一：nPool
@@ -280,6 +304,25 @@ extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
 备注：
 *********************************************************************/
 extern "C" BOOL Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL* pbComplete);
+/********************************************************************
+函数名称：Session_UPStroage_GetInfo
+函数功能：获取上传客户端信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pSt_StorageInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出获取到的内容
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
 /********************************************************************
 函数名称：Session_UPStroage_Write
 函数功能：写入数据到文件

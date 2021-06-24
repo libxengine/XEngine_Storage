@@ -4,7 +4,8 @@ EXPORTS
 	XStorageProtocol_GetLastError
 
 	XStorageProtocol_Proxy_PacketBasicAuth
-	
+	XStorageProtocol_Proxy_PacketUPDown
+
 	XStorageProtocol_Client_REQQueryFile
 	XStorageProtocol_Client_REQDelete
 	XStorageProtocol_Client_REQDirOperator

@@ -81,3 +81,62 @@ BOOL CXStorageProtocol_Proxy::XStorageProtocol_Proxy_PacketBasicAuth(LPCTSTR lps
     _tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
     return TRUE;
 }
+/********************************************************************
+函数名称：XStorageProtocol_Proxy_PacketUPDown
+函数功能：上传下载完成代理通知协议
+ 参数.一：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：文件的地址
+ 参数.二：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：用户客户端地址
+ 参数.三：nFileSize
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：文件大小
+ 参数.四：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：数据包
+ 参数.五：pInt_MsgLen
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：导出数据包大小
+ 参数.六：lpszFileHash
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：文件的HASH
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CXStorageProtocol_Proxy::XStorageProtocol_Proxy_PacketUPDown(LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileHash)
+{
+	XStorage_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszFileName) || (NULL == lpszClientAddr))
+	{
+		XStorage_IsErrorOccur = TRUE;
+		XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_COMM_PARAMENT;
+		return FALSE;
+	}
+	Json::Value st_JsonRoot;
+
+	st_JsonRoot["lpszFileName"] = lpszFileName;
+    st_JsonRoot["lpszFileHash"] = lpszFileHash;
+	st_JsonRoot["lpszClientAddr"] = lpszClientAddr;
+	st_JsonRoot["nFileSize"] = nFileSize;
+
+	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	_tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
+	return TRUE;
+}

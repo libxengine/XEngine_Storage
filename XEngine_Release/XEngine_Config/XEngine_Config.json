@@ -47,8 +47,8 @@
     "XProxyPass": {
       "bUPGet": 0,
       "bDLGet": 0,
-      "tszUPPass": "http://www.xyry.org/Api/Pass/upfile",
-      "tszDLPass": "http://www.xyry.org/Api/Pass/dlfile"
+      "tszUPPass": "http://192.168.1.7/Api/Pass/upfile",
+      "tszDLPass": "http://192.168.1.7/Api/Pass/dlfile"
     }
   },
   "XLimit": {

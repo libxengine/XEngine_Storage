@@ -11,6 +11,7 @@ EXPORTS
 	Session_DLStroage_Destory
 	Session_DLStroage_Insert
 	Session_DLStroage_GetList
+	Session_DLStroage_GetInfo
 	Session_DLStroage_GetCount
 	Session_DLStroage_Delete
 
@@ -18,6 +19,7 @@ EXPORTS
 	Session_UPStroage_Destory
 	Session_UPStroage_Insert
 	Session_UPStroage_GetComplete
+	Session_UPStroage_GetInfo
 	Session_UPStroage_Write
 	Session_UPStroage_Exist
 	Session_UPStroage_Delete
