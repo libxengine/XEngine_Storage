@@ -20,10 +20,10 @@ c c++ file storage service
   7. 支持详尽的日志和配置信息  
   8. 支持传输速率控制
   9. 支持任务开始结束代理转发  
-  10.支持P2P,BT,数据分发(规划中)    
-  11.支持秒传    
-  12.支持NGINX UPLOAD MODULE上传代理  
-  13.支持下载重定向  
+10.支持P2P,BT,数据分发(规划中)    
+11.支持秒传    
+12.支持NGINX UPLOAD MODULE上传代理  
+13.支持上传和下载重定向  
 
 ## 安装教程
 
@@ -78,17 +78,15 @@ make FLAGS=CleanAll 清理编译
 - XEngine_Docment  文档目录结构  
 - XEngine_Release  安装目录结构  
 - XEngine_Source   源代目录结构  
-
-## API列表
-POST方法在本服务中用作于API.  
-API用于管理服务器.API列表格式使用URL来识别,比如,POST /api/query/file  
-三段格式是固定的,第一个api固定值,第二个query表示API类型,第三个file表示api名  
-支持的API列表参考:apilist.txt  
+  
 
 ## 秒传实现  
 秒传的实现不是靠服务器实现的,而是靠客户端实现的.  
 上传秒传的实现是先通过HASH查询文件是否在服务器,如果存在就不上传直接提示客户端上传成功.  
 下载秒传的实现是先通过HASH查询本地文件保存路径,如果存在就直接下载完成.  
+
+## 其他问题  
+你可以参考docment目录下的文档.里面包含了API协议和服务说明.
 
 ## 参与贡献
 

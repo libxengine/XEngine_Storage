@@ -21,10 +21,10 @@ feature list:
   7. support log and config  
   8. supprot speeds contral  
   9. supprot task start and end proxy forwarding    
-  10.support p2p,bt and many more(planning)  
-  11.support second pass  
-  12.support nginx upload module proxy_pass  
-  13.support download Redirect  
+10.support p2p,bt and many more(planning)  
+11.support second pass  
+12.support nginx upload module proxy_pass  
+13.support upload and download Redirect  
 
 ## install
 
@@ -75,13 +75,7 @@ make FLAGS=CleanAll clear
 3.  complie
 4.  install
 5.  run
-6.  use curl or postman test upload and download
-
-## api list
-POST Method used as api server  
-it is used as manage service.api format use to url,such as:POST /api/query/file  
-The three-segment format is fixed,first api is a fixed,second api of query is a type,third api of file is a name  
-support api list reference:apilist.txt  
+6.  use curl or postman test upload and download  
 
 ## second pass
 The Second pass is not realized by the server, it is by the client  
@@ -92,6 +86,9 @@ The realization of downloading second transmission is to first query the local f
 - XEngine_Docment  docment directory
 - XEngine_Release  install directory
 - XEngine_Source   code    directory
+
+## other problems   
+You can refer to the document under the docment directory. It contains API protocol and service description.  
 
 ## Participate in contribution
 
