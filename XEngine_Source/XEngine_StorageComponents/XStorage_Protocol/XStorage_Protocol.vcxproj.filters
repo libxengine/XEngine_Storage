@@ -19,17 +19,17 @@
     <Filter Include="源文件\XStorageProtocol_Client">
       <UniqueIdentifier>{61247c0d-88f3-43f5-b9e8-6b3ccfe66d11}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\XStorageProtocol_Comm">
-      <UniqueIdentifier>{9ae31527-6459-4328-80ab-e245d32acb09}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\XStorageProtocol_Comm">
-      <UniqueIdentifier>{195b4260-a064-45f4-bdd3-6612c2ccc5db}</UniqueIdentifier>
-    </Filter>
     <Filter Include="头文件\XStorageProtocol_Core">
       <UniqueIdentifier>{c33a9a8f-8c9c-49fb-9eab-429ee5494076}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\XStorageProtocol_Core">
       <UniqueIdentifier>{069b8f97-10f9-4d76-946f-83bc74860b20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\XStorageProtocol_Proxy">
+      <UniqueIdentifier>{9ae31527-6459-4328-80ab-e245d32acb09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\XStorageProtocol_Proxy">
+      <UniqueIdentifier>{195b4260-a064-45f4-bdd3-6612c2ccc5db}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -42,9 +42,6 @@
     <ClInclude Include="XStorageProtocol_Core\XStorageProtocol_Core.h">
       <Filter>头文件\XStorageProtocol_Core</Filter>
     </ClInclude>
-    <ClInclude Include="XStorageProtocol_Comm\XStorageProtocol_Comm.h">
-      <Filter>头文件\XStorageProtocol_Comm</Filter>
-    </ClInclude>
     <ClInclude Include="XStorageProtocol_Client\XStorageProtocol_Client.h">
       <Filter>头文件\XStorageProtocol_Client</Filter>
     </ClInclude>
@@ -53,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="XStorageProtocol_Error.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XStorageProtocol_Proxy\XStorageProtocol_Proxy.h">
+      <Filter>头文件\XStorageProtocol_Proxy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -65,11 +65,11 @@
     <ClCompile Include="XStorageProtocol_Core\XStorageProtocol_Core.cpp">
       <Filter>源文件\XStorageProtocol_Core</Filter>
     </ClCompile>
-    <ClCompile Include="XStorageProtocol_Comm\XStorageProtocol_Comm.cpp">
-      <Filter>源文件\XStorageProtocol_Comm</Filter>
-    </ClCompile>
     <ClCompile Include="XStorageProtocol_Client\XStorageProtocol_Client.cpp">
       <Filter>源文件\XStorageProtocol_Client</Filter>
+    </ClCompile>
+    <ClCompile Include="XStorageProtocol_Proxy\XStorageProtocol_Proxy.cpp">
+      <Filter>源文件\XStorageProtocol_Proxy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

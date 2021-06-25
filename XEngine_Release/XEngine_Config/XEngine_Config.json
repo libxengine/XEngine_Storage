@@ -31,12 +31,25 @@
     "SQLPass": "123123Ruiyue"
   },
   "XStorage": {
-    "nUseMode": 1,
+    "nUseMode": 0,
     "nHashMode": 2,
     "bRename": 0,
-    "tszHttpAddr": "http://192.168.1.4",
-    "tszNginAddr": "http://192.168.1.4:5010",
+    "tszHttpAddr": "http://192.168.1.9",
+    "tszNginAddr": "http://192.168.1.9:5010",
     "tszFileDir": "./XEngine_File"
+  },
+  "XProxy": {
+    "XProxyAuth": {
+      "bAuth": 0,
+      "tszUserList": "./XEngine_Config/UserList.txt",
+      "tszAuthProxy": ""
+    },
+    "XProxyPass": {
+      "bUPGet": 0,
+      "bDLGet": 0,
+      "tszUPPass": "http://192.168.1.7/Api/Pass/upfile",
+      "tszDLPass": "http://192.168.1.7/Api/Pass/dlfile"
+    }
   },
   "XLimit": {
     "nMaxUPLoad": 0,
@@ -44,6 +57,7 @@
   },
   "XVer": {
     "StorageVersion": [
+      "1.3.0.1001 Build20210625",
       "1.2.0.1001 Build20210618",
       "1.1.0.1001 Build20210611",
       "1.0.0.1001 Build20210501"

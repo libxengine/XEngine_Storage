@@ -70,17 +70,27 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.四：nPos
+ 参数.四：nLeftCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入需要写入的大小
+ 参数.五：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
-  意思：输入要移动的指针位置
+  意思：输入起始位置
+ 参数.六：nPostEnd
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入结束位置
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, int nPos /* = 0 */)
+BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -105,7 +115,9 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	SESSION_STORAGEUPLOADER st_Client;
 	memset(&st_Client, '\0', sizeof(SESSION_STORAGEUPLOADER));
 
-	st_Client.st_StorageInfo.ullPos = nPos;
+	st_Client.st_StorageInfo.ullPosStart = nPosStart;
+	st_Client.st_StorageInfo.ullPosEnd = nPostEnd;
+	st_Client.st_StorageInfo.ullRWCount = nLeftCount;
 	st_Client.st_StorageInfo.ullCount = nFileSize;
 	_tcscpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
 	_tcscpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
@@ -117,7 +129,10 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 		return FALSE;
 	}
-
+	if (nPosStart > 0)
+	{
+		fseek(st_Client.st_StorageInfo.pSt_File, nPosStart, SEEK_SET);
+	}
 	st_Locker.lock();
 	stl_MapStroage.insert(make_pair(lpszClientAddr, st_Client));
 	st_Locker.unlock();
@@ -161,7 +176,7 @@ BOOL CSession_UPStroage::Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, B
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	if (stl_MapIterator->second.nWriteLen >= stl_MapIterator->second.st_StorageInfo.ullCount)
+	if (stl_MapIterator->second.st_StorageInfo.ullRWLen >= stl_MapIterator->second.st_StorageInfo.ullRWCount)
 	{
 		*pbComplete = TRUE;
 	}
@@ -169,6 +184,48 @@ BOOL CSession_UPStroage::Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, B
 	{
 		*pbComplete = FALSE;
 	}
+	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_UPStroage_GetInfo
+函数功能：获取上传客户端信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：pSt_StorageInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出获取到的内容
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszClientAddr) || (NULL == pSt_StorageInfo))
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+
+	st_Locker.lock_shared();
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	*pSt_StorageInfo = stl_MapIterator->second.st_StorageInfo;
 	st_Locker.unlock_shared();
 	return TRUE;
 }
@@ -227,7 +284,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR
 			break;
 		}
 	}
-	stl_MapIterator->second.nWriteLen += nMsgLen;
+	stl_MapIterator->second.st_StorageInfo.ullRWLen += nMsgLen;
 	st_Locker.unlock_shared();
 	return TRUE;
 }

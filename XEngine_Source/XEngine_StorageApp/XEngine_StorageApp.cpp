@@ -37,6 +37,7 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhSDPool);
 		ManagePool_Thread_NQDestroy(xhCTPool);
 		HelpComponents_XLog_Destroy(xhLog);
+		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		XStorageSQL_Destory();
@@ -170,6 +171,25 @@ int main(int argc, char** argv)
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP业务服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
 
+	if (!Session_User_Init(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszUserList))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动用户管理服务失败，错误：%lX"), Session_GetLastError());
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动用户管理服务成功"));
+	if (!Session_DLStroage_Init(st_ServiceCfg.st_XMax.nStorageDLThread))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功"));
+	if (!Session_UPStroage_Init())
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传会话服务失败，错误：%lX"), Session_GetLastError());
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传会话服务成功"));
+
 	if (!NetCore_TCPXCore_StartEx(&xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nStorageDLPort, NetCore_GetLastError());
@@ -196,19 +216,6 @@ int main(int argc, char** argv)
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动业务控制存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetCenter, st_ServiceCfg.nCenterPort, st_ServiceCfg.st_XMax.nIOThread);
 	NetCore_TCPXCore_RegisterCallBackEx(xhNetCenter, XEngine_Callback_CenterLogin, XEngine_Callback_CenterRecv, XEngine_Callback_CenterLeave);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册业务控制存储存储网络服务事件成功！"));
-
-	if (!Session_DLStroage_Init(st_ServiceCfg.st_XMax.nStorageDLThread))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功"));
-	if (!Session_UPStroage_Init())
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传会话服务失败，错误：%lX"), Session_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传会话服务成功"));
 
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread, sizeof(THREADPOOL_PARAMENT));
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListSDThread, st_ServiceCfg.st_XMax.nStorageDLThread, sizeof(THREADPOOL_PARAMENT));
@@ -296,6 +303,7 @@ XENGINE_EXITAPP:
 		ManagePool_Thread_NQDestroy(xhSDPool);
 		ManagePool_Thread_NQDestroy(xhCTPool);
 		HelpComponents_XLog_Destroy(xhLog);
+		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		XStorageSQL_Destory();

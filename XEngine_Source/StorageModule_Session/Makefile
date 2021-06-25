@@ -6,7 +6,7 @@ LOADBIN =
 LIB = 
 LIBEX = -static-libgcc -lrt -ldl -lpthread
 LOADSO = -Wl,-rpath=
-LIBINCLUDE = Session_DLStroage.o Session_UPStroage.o pch.o
+LIBINCLUDE = Session_DLStroage.o Session_UPStroage.o Session_User.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -30,7 +30,9 @@ Session_DLStroage.o:./Session_Stroage/Session_DLStroage.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Session_Stroage/Session_DLStroage.cpp 
 Session_UPStroage.o:./Session_Stroage/Session_UPStroage.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Session_Stroage/Session_UPStroage.cpp 
-						              
+Session_User.o:./Session_User/Session_User.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Session_User/Session_User.cpp
+							              
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./pch.cpp
 

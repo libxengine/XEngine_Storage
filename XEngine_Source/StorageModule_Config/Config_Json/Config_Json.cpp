@@ -133,6 +133,25 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
 	_tcscpy(pSt_ServerConfig->st_XStorage.tszNginAddr, st_JsonXStorage["tszNginAddr"].asCString());
     _tcscpy(pSt_ServerConfig->st_XStorage.tszFileDir, st_JsonXStorage["tszFileDir"].asCString());
 
+	if (st_JsonRoot["XProxy"].empty() || (2 != st_JsonRoot["XProxy"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XPROXY;
+		return FALSE;
+	}
+    Json::Value st_JsonXProxy = st_JsonRoot["XProxy"];
+    Json::Value st_JsonXProxyAuth = st_JsonXProxy["XProxyAuth"];
+    Json::Value st_JsonXProxyPass = st_JsonXProxy["XProxyPass"];
+
+    pSt_ServerConfig->st_XProxy.st_XProxyAuth.bAuth = st_JsonXProxyAuth["bAuth"].asInt();
+    _tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyAuth.tszAuthProxy, st_JsonXProxyAuth["tszAuthProxy"].asCString());
+    _tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyAuth.tszUserList, st_JsonXProxyAuth["tszUserList"].asCString());
+
+    pSt_ServerConfig->st_XProxy.st_XProxyPass.bDLPass = st_JsonXProxyPass["bDLPass"].asInt();
+    pSt_ServerConfig->st_XProxy.st_XProxyPass.bUPPass = st_JsonXProxyPass["bUPGet"].asInt();
+    _tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyPass.tszDLPass, st_JsonXProxyPass["tszDLPass"].asCString());
+    _tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyPass.tszUPPass, st_JsonXProxyPass["tszUPPass"].asCString());
+
 	if (st_JsonRoot["XLimit"].empty() || (2 != st_JsonRoot["XLimit"].size()))
 	{
 		Config_IsErrorOccur = TRUE;

@@ -98,19 +98,29 @@ BOOL CSession_DLStroage::Session_DLStroage_Destory()
  参数.三：pInt_Count
   In/Out：Out
   类型：整数型指针
-  可空：Y
+  可空：N
   意思：输出文件大小
- 参数.四：nPos
+ 参数.四：pInt_LeftCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出需要读取大小
+ 参数.五：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
-  意思：输入要移动的指针位置
+  意思：输入开始位置
+ 参数.六：nPostEnd
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入结束位置
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x* pInt_Count /* = NULL */, int nPos /* = 0 */)
+BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x* pInt_Count, __int64x* pInt_LeftCount, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -148,7 +158,8 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	memset(&st_Client, '\0', sizeof(SESSION_STORAGEINFO));
 	_stat(lpszFileDir, &st_FStat);
 
-	st_Client.ullPos = nPos;
+	st_Client.ullPosStart = nPosStart;
+	st_Client.ullPosEnd = nPostEnd;
 	st_Client.ullCount = st_FStat.st_size;
 	_tcscpy(st_Client.tszFileDir, lpszFileDir);
 	_tcscpy(st_Client.tszClientAddr, lpszClientAddr);
@@ -160,9 +171,31 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 		return FALSE;
 	}
+	//是否有范围
+	if ((nPosStart > 0) || (nPostEnd > 0))
+	{
+		fseek(st_Client.pSt_File, nPosStart, SEEK_SET);
+		//计算需要读取的大小
+		if (nPostEnd > 0)
+		{
+			st_Client.ullRWCount = nPostEnd - nPosStart;
+		}
+		else
+		{
+			st_Client.ullRWCount = st_Client.ullCount - nPosStart;
+		}
+	}
+	else
+	{
+		st_Client.ullRWCount = st_Client.ullCount;
+	}
 	if (NULL != pInt_Count)
 	{
 		*pInt_Count = st_Client.ullCount;
+	}
+	if (NULL != pInt_LeftCount)
+	{
+		*pInt_LeftCount = st_Client.ullRWCount;
 	}
 	//查找一个最小队列
 	int nListPos = 0;
@@ -245,7 +278,77 @@ BOOL CSession_DLStroage::Session_DLStroage_GetList(int nPool, int nIndex, TCHAR*
 		if (nIndex == i)
 		{
 			_tcscpy(ptszClientAddr, stl_ListIterator->tszClientAddr);
-			*pInt_MsgLen = fread(ptszMsgBuffer, 1, *pInt_MsgLen, stl_ListIterator->pSt_File);
+
+			if (stl_ListIterator->ullRWLen >= stl_ListIterator->ullRWCount)
+			{
+				*pInt_MsgLen = 0;
+			}
+			else
+			{
+				if (*pInt_MsgLen > (stl_ListIterator->ullRWCount - stl_ListIterator->ullRWLen))
+				{
+					*pInt_MsgLen = int(stl_ListIterator->ullRWCount - stl_ListIterator->ullRWLen);
+				}
+				*pInt_MsgLen = fread(ptszMsgBuffer, 1, *pInt_MsgLen, stl_ListIterator->pSt_File);
+				stl_ListIterator->ullRWLen += *pInt_MsgLen;
+			}
+			break;
+		}
+	}
+	stl_MapIterator->second.st_Locker->unlock_shared();
+	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_DLStroage_GetInfo
+函数功能：获取下载信息
+ 参数.一：nPool
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要操作的下载池
+ 参数.二：nIndex
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要操作的索引
+ 参数.三：pSt_StorageInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出内容
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_DLStroage::Session_DLStroage_GetInfo(int nPool, int nIndex, SESSION_STORAGEINFO* pSt_StorageInfo)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if ((NULL == pSt_StorageInfo))
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+
+	st_Locker.lock_shared();
+	unordered_map<int, SESSION_STORAGELIST>::iterator stl_MapIterator = stl_MapStroage.find(nPool);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
+	stl_MapIterator->second.st_Locker->lock_shared();
+	list<SESSION_STORAGEINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListStorage->begin();
+	for (int i = 0; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++, i++)
+	{
+		if (nIndex == i)
+		{
+			*pSt_StorageInfo = *stl_ListIterator;
 			break;
 		}
 	}

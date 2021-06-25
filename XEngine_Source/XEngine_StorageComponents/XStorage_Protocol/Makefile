@@ -7,7 +7,7 @@ LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib
 LIB = -lXEngine_BaseLib -ljsoncpp
 LIBEX = -static-libgcc -lrt -ldl 
 LOADSO = -Wl,-rpath=,--disable-new-dtags
-LIBINCLUDE = XStorageProtocol_Client.o XStorageProtocol_Comm.o XStorageProtocol_Core.o pch.o
+LIBINCLUDE = XStorageProtocol_Client.o XStorageProtocol_Proxy.o XStorageProtocol_Core.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -34,8 +34,8 @@ all:$(LIBINCLUDE)
 
 XStorageProtocol_Client.o:./XStorageProtocol_Client/XStorageProtocol_Client.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./XStorageProtocol_Client/XStorageProtocol_Client.cpp  
-XStorageProtocol_Comm.o:./XStorageProtocol_Comm/XStorageProtocol_Comm.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./XStorageProtocol_Comm/XStorageProtocol_Comm.cpp 
+XStorageProtocol_Proxy.o:./XStorageProtocol_Proxy/XStorageProtocol_Proxy.cpp                                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./XStorageProtocol_Proxy/XStorageProtocol_Proxy.cpp 
 XStorageProtocol_Core.o:./XStorageProtocol_Core/XStorageProtocol_Core.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./XStorageProtocol_Core/XStorageProtocol_Core.cpp 
 

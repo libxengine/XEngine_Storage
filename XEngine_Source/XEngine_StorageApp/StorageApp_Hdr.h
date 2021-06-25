@@ -35,6 +35,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Error.h"
 #include "../XEngine_StorageComponents/XStorage_Protocol/XStorageProtocol_Define.h"
@@ -69,17 +71,31 @@ extern XENGINE_SERVERCONFIG st_ServiceCfg;
 
 #include "StorageApp_Network.h"
 #include "StorageApp_Config.h"
+#include "StorageApp_Task.h"
 #include "StorageApp_Download.h"
 #include "StorageApp_UPLoader.h"
 #include "StorageApp_Center.h"
 
 #ifdef _WINDOWS
 #pragma comment(lib,"Ws2_32.lib")
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
+#pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
+#pragma comment(lib,"../x64/Release/XStorage_SQLPacket.lib")
+#pragma comment(lib,"../x64/Release/XStorage_Protocol.lib")
+#pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib.lib")
+#pragma comment(lib,"x64/XEngine_BaseLib/XEngine_Algorithm.lib")
+#pragma comment(lib,"x64/XEngine_Core/XEngine_Core.lib")
+#pragma comment(lib,"x64/XEngine_Core/XEngine_ManagePool.lib")
+#pragma comment(lib,"x64/XEngine_Core/XEngine_OPenSsl.lib")
+#pragma comment(lib,"x64/XEngine_HelpComponents/HelpComponents_XLog.lib")
+#pragma comment(lib,"x64/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
+#pragma comment(lib,"x64/XEngine_NetHelp/NetHelp_APIHelp.lib")
+#else
 #pragma comment(lib,"../Debug/StorageModule_Session.lib")
 #pragma comment(lib,"../Debug/StorageModule_Config.lib")
 #pragma comment(lib,"../Debug/XStorage_SQLPacket.lib")
 #pragma comment(lib,"../Debug/XStorage_Protocol.lib")
-#ifdef WIN32
 #pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"x86/XEngine_BaseLib/XEngine_Algorithm.lib")
 #pragma comment(lib,"x86/XEngine_Core/XEngine_Core.lib")
@@ -87,8 +103,7 @@ extern XENGINE_SERVERCONFIG st_ServiceCfg;
 #pragma comment(lib,"x86/XEngine_Core/XEngine_OPenSsl.lib")
 #pragma comment(lib,"x86/XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"x86/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
-#else
-
+#pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIHelp.lib")
 #endif
 
 #else

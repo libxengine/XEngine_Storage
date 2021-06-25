@@ -17,14 +17,8 @@ public:
     CXStorageProtocol_Client();
     ~CXStorageProtocol_Client();
 public:
-    BOOL XStorageProtocol_Client_REQQueryFile(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileMD5 = NULL);
-    BOOL XStorageProtocol_Client_REQQueryUser(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszUserName, BOOL bQueryKey = FALSE);
-    BOOL XStorageProtocol_Client_REQDelete(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileMD5 = NULL);
-    BOOL XStorageProtocol_Client_REQLogin(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, XENGINE_PROTOCOL_USERAUTH *pSt_ProtocolAuth);
-    BOOL XStorageProtocol_Client_REQFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XNETHANDLE xhToken, LPCTSTR lpszFileMD5 = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFilePath = NULL, BOOL bUPFile = TRUE);
+    BOOL XStorageProtocol_Client_REQQueryFile(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
+    BOOL XStorageProtocol_Client_REQDelete(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
 public:
-    BOOL XStorageProtocol_Client_REQDirOperator(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCTSTR lpszUserDir, BOOL bCreate = TRUE);
-    BOOL XStorageProtocol_Client_REQDirQuery(TCHAR *ptszMsgBuffer, int *pInt_MsgLen);
-public:
-    BOOL XStorageProtocol_Client_REQRegister(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszUser, LPCTSTR lpszPass, LPCTSTR lpszEMailAddr, __int64x nPhoneNumber, __int64x nIDNumber, int nPerimission = 0);
+    BOOL XStorageProtocol_Client_REQDirOperator(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszUserDir, int nOperator);
 };

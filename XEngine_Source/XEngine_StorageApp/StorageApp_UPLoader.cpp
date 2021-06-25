@@ -24,11 +24,14 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(LPVOID lParam)
 				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
 				{
 					int nMsgLen = 10240;
+					int nHdrCount = 0;
+					CHAR** ppszListHdr = NULL;
 					//获得指定上传客户端触发信息
-					if (RfcComponents_HttpServer_GetClientEx(xhUPHttp, ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, &nMsgLen, &st_HTTPParam))
+					if (RfcComponents_HttpServer_GetClientEx(xhUPHttp, ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
 					{
-						XEngine_Task_HttpUPLoader(ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, nMsgLen, &st_HTTPParam);
+						XEngine_Task_HttpUPLoader(ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
+					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
 				}
 			}
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
@@ -36,7 +39,7 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(LPVOID lParam)
 	}
 	return 0;
 }
-BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam)
+BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, TCHAR** pptszListHdr, int nHdrCount)
 {
 	int nSDLen = 2048;
 	TCHAR tszSDBuffer[2048];
@@ -59,15 +62,43 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,发送的方法不支持"), lpszClientAddr);
 		return FALSE;
 	}
+	if (!XEngine_Task_ProxyAuth(lpszClientAddr, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER))
+	{
+		return FALSE;
+	}
+	if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
+	{
+		st_HDRParam.bAuth = TRUE;
+	}
+	//使用重定向?
+	if ((2 == st_ServiceCfg.st_XStorage.nUseMode) || (4 == st_ServiceCfg.st_XStorage.nUseMode))
+	{
+		TCHAR tszHdrBuffer[MAX_PATH];
+		memset(tszHdrBuffer, '\0', MAX_PATH);
+
+		st_HDRParam.bIsClose = TRUE;
+		st_HDRParam.nHttpCode = 302;
+
+		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), st_ServiceCfg.st_XStorage.tszNginAddr, pSt_HTTPParam->tszHttpUri);
+
+		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求的文件被要求重定向到:%s%s"), lpszClientAddr, st_ServiceCfg.st_XStorage.tszNginAddr, pSt_HTTPParam->tszHttpUri);
+		return TRUE;
+	}
+
 	int nRVMode = 0;
 	int nRVCount = 0;
 	int nHDSize = 0;
 	if (!Session_UPStroage_Exist(lpszClientAddr))
 	{
+		int nPosStart = 0;
+		int nPosEnd = 0;
+		XEngine_Task_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER);
 		RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 
 		_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
-		if (!Session_UPStroage_Insert(lpszClientAddr, tszFileDir, nRVCount))
+		if (!Session_UPStroage_Insert(lpszClientAddr, tszFileDir, nRVCount, nRVCount, nPosStart, nPosEnd))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 404;
@@ -80,7 +111,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	}
 	if (nMsgLen <= 0)
 	{
-		return TRUE;;
+		return TRUE;
 	}
 	Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer, nMsgLen);
 	RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
@@ -101,6 +132,21 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		if (XStorageSQL_File_FileInsert(&st_ProtocolFile))
 		{
+			if (st_ServiceCfg.st_XProxy.st_XProxyPass.bUPPass)
+			{
+				int nPLen = MAX_PATH;
+				int nHttpCode = 0;
+				TCHAR tszProxyStr[MAX_PATH];
+				SESSION_STORAGEINFO st_StorageInfo;
+
+				memset(tszProxyStr, '\0', MAX_PATH);
+				memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
+
+				Session_UPStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
+				XStorageProtocol_Proxy_PacketUPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen);
+				APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass, tszProxyStr, &nHttpCode);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("上传客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass);
+			}
 			st_HDRParam.nHttpCode = 200;
 			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);

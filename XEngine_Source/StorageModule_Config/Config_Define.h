@@ -60,6 +60,22 @@ typedef struct tag_XEngine_ServerConfig
         TCHAR tszNginAddr[MAX_PATH];
 		TCHAR tszFileDir[MAX_PATH];
     }st_XStorage;
+    struct  
+    {
+        struct  
+        {
+            BOOL bAuth;
+            TCHAR tszAuthProxy[MAX_PATH];
+            TCHAR tszUserList[MAX_PATH];
+        }st_XProxyAuth;
+        struct  
+        {
+            BOOL bUPPass;
+            BOOL bDLPass;
+            TCHAR tszUPPass[MAX_PATH];
+            TCHAR tszDLPass[MAX_PATH];
+        }st_XProxyPass;
+    }st_XProxy;
 	struct
 	{
         __int64x nMaxUPLoader;

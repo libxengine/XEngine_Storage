@@ -19,15 +19,9 @@ public:
 public:
     BOOL XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgBuffer, TCHAR *ptszTimeStart, TCHAR *ptszTimeEnd, TCHAR *ptszFileName = NULL, TCHAR * ptszFileHash = NULL);
     BOOL XStorageProtocol_Core_REPQueryFile(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL);
-    BOOL XStorageProtocol_Core_REPFile(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, XNETHANDLE xhToken = 0, BOOL bUPFile = TRUE, int nCode = 0, LPCTSTR lpszCodeMsg = NULL, XENGINE_PROTOCOLFILE *pSt_ProtcolFile = NULL);
+public:
+	BOOL XStorageProtocol_Core_REQDirOperator(LPCTSTR lpszMsgBuffer, TCHAR* ptszUserDir, int* pInt_Operator);
+	BOOL XStorageProtocol_Core_REPDirOperator(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, TCHAR*** pppszListEnum, int nListCount);
 public:
 	BOOL XStorageProtocol_Core_REQUPEvent(LPCTSTR lpszMsgBuffer, LPCTSTR lpszBoundary, TCHAR* ptszFileName, TCHAR* ptszFilePath, TCHAR* ptszFileHash, __int64x* pInt_FileSize);
-public:
-	BOOL XStorageProtocol_Core_REQCreateDir(LPCTSTR lpszMsgBuffer, TCHAR* ptszUserDir);
-	BOOL XStorageProtocol_Core_REPQueryDir(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, TCHAR*** pppszListEnum, int nListCount);
-public:
-    BOOL XStorageProtocol_Core_REQUserReg(LPCTSTR lpszMsgBuffer, XSTORAGECORE_USERINFO* pSt_ProtocolRegister);
-public:
-    BOOL XStorageProtocol_Core_REQQueryUser(LPCTSTR lpszMsgBuffer, TCHAR* ptszUserName, BOOL *pbKeyQuery);
-    BOOL XStorageProtocol_Core_REPQueryUser(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPVOID lParam, BOOL bKeyInfo = FALSE);
 };
