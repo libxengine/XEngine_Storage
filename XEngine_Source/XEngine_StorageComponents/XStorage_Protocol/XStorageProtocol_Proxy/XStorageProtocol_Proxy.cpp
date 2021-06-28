@@ -132,9 +132,16 @@ BOOL CXStorageProtocol_Proxy::XStorageProtocol_Proxy_PacketUPDown(LPCTSTR lpszFi
 	Json::Value st_JsonRoot;
 
 	st_JsonRoot["lpszFileName"] = lpszFileName;
-    st_JsonRoot["lpszFileHash"] = lpszFileHash;
 	st_JsonRoot["lpszClientAddr"] = lpszClientAddr;
 	st_JsonRoot["nFileSize"] = nFileSize;
+	if (NULL == lpszFileHash)
+	{
+		st_JsonRoot["lpszFileHash"];
+	}
+	else
+	{
+		st_JsonRoot["lpszFileHash"] = lpszFileHash;
+	}
 
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
 	_tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());

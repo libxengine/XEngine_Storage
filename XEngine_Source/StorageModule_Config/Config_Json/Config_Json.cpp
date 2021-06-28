@@ -147,7 +147,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     _tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyAuth.tszAuthProxy, st_JsonXProxyAuth["tszAuthProxy"].asCString());
     _tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyAuth.tszUserList, st_JsonXProxyAuth["tszUserList"].asCString());
 
-    pSt_ServerConfig->st_XProxy.st_XProxyPass.bDLPass = st_JsonXProxyPass["bDLPass"].asInt();
+    pSt_ServerConfig->st_XProxy.st_XProxyPass.bDLPass = st_JsonXProxyPass["bDLGet"].asInt();
     pSt_ServerConfig->st_XProxy.st_XProxyPass.bUPPass = st_JsonXProxyPass["bUPGet"].asInt();
     _tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyPass.tszDLPass, st_JsonXProxyPass["tszDLPass"].asCString());
     _tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyPass.tszUPPass, st_JsonXProxyPass["tszUPPass"].asCString());
