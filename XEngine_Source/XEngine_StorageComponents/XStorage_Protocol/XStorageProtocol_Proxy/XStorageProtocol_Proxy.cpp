@@ -67,7 +67,7 @@ BOOL CXStorageProtocol_Proxy::XStorageProtocol_Proxy_PacketBasicAuth(LPCTSTR lps
     if ((NULL == lpszUser) || (NULL == lpszPass))
     {
         XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_COMM_PARAMENT;
+        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
     Json::Value st_JsonRoot;
@@ -126,7 +126,7 @@ BOOL CXStorageProtocol_Proxy::XStorageProtocol_Proxy_PacketUPDown(LPCTSTR lpszFi
 	if ((NULL == lpszFileName) || (NULL == lpszClientAddr))
 	{
 		XStorage_IsErrorOccur = TRUE;
-		XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_COMM_PARAMENT;
+		XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARAMENT;
 		return FALSE;
 	}
 	Json::Value st_JsonRoot;
@@ -138,5 +138,75 @@ BOOL CXStorageProtocol_Proxy::XStorageProtocol_Proxy_PacketUPDown(LPCTSTR lpszFi
 
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
 	_tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
+	return TRUE;
+}
+/********************************************************************
+函数名称：XStorageProtocol_Proxy_ParseUPDown
+函数功能：解析上传下载通知协议
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：ptszClientAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件客户端地址
+ 参数.四：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件名称
+ 参数.五：ptszFileHash
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件HASH
+ 参数.六：pInt_FileSize
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：输出文件大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CXStorageProtocol_Proxy::XStorageProtocol_Proxy_ParseNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszClientAddr, TCHAR* ptszFileName, TCHAR* ptszFileHash, __int64x* pInt_FileSize)
+{
+	XStorage_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszMsgBuffer) || (NULL == ptszClientAddr))
+	{
+		XStorage_IsErrorOccur = TRUE;
+		XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARAMENT;
+		return FALSE;
+	}
+	Json::Value st_JsonRoot;
+	Json::CharReaderBuilder st_JsonBuild;
+	Json::CharReader* pSt_JsonReader(st_JsonBuild.newCharReader());
+
+	JSONCPP_STRING st_JsonError;
+	//解析JSON
+	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + _tcslen(lpszMsgBuffer), &st_JsonRoot, &st_JsonError))
+	{
+		XStorage_IsErrorOccur = TRUE;
+		XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARSE;
+		return FALSE;
+	}
+	delete pSt_JsonReader;
+	pSt_JsonReader = NULL;
+
+	_tcscpy(ptszClientAddr, st_JsonRoot["lpszClientAddr"].asCString());
+	_tcscpy(ptszFileName, st_JsonRoot["lpszFileName"].asCString());
+	_tcscpy(ptszFileHash, st_JsonRoot["lpszFileHash"].asCString());
+	*pInt_FileSize = st_JsonRoot["nFileSize"].asInt64();
+
 	return TRUE;
 }

@@ -127,8 +127,8 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	//使用重定向?
 	if ((1 == st_ServiceCfg.st_XStorage.nUseMode) || (4 == st_ServiceCfg.st_XStorage.nUseMode))
 	{
-		TCHAR tszHdrBuffer[MAX_PATH];
-		memset(tszHdrBuffer, '\0', MAX_PATH);
+		TCHAR tszHdrBuffer[1024];
+		memset(tszHdrBuffer, '\0', sizeof(tszHdrBuffer));
 
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 302;

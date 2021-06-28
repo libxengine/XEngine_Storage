@@ -95,6 +95,45 @@ extern "C" BOOL XStorageProtocol_Proxy_PacketBasicAuth(LPCTSTR lpszPostUrl, LPCT
 备注：
 *********************************************************************/
 extern "C" BOOL XStorageProtocol_Proxy_PacketUPDown(LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileHash = NULL);
+/********************************************************************
+函数名称：XStorageProtocol_Proxy_ParseUPDown
+函数功能：解析上传下载通知协议
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：ptszClientAddr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件客户端地址
+ 参数.四：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件名称
+ 参数.五：ptszFileHash
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件HASH
+ 参数.六：pInt_FileSize
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：输出文件大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL XStorageProtocol_Proxy_ParseNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszClientAddr, TCHAR* ptszFileName, TCHAR* ptszFileHash, __int64x* pInt_FileSize);
 /************************************************************************/
 /*                      客户端协议操作导出函数                          */
 /************************************************************************/

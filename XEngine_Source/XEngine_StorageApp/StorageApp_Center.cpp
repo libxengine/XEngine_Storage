@@ -77,8 +77,8 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 	//使用重定向?
 	if ((3 == st_ServiceCfg.st_XStorage.nUseMode) || (4 == st_ServiceCfg.st_XStorage.nUseMode))
 	{
-		TCHAR tszHdrBuffer[MAX_PATH];
-		memset(tszHdrBuffer, '\0', MAX_PATH);
+		TCHAR tszHdrBuffer[1024];
+		memset(tszHdrBuffer, '\0', sizeof(tszHdrBuffer));
 
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 302;
@@ -103,13 +103,44 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 	}
 
 	LPCTSTR lpszEvent = _T("Event");
-	LPCTSTR lpszQuery = _T("query");
-	LPCTSTR lpszEventUPFile = _T("UPFile");
-	LPCTSTR lpszQueryFile = _T("file");
-	if (0 == _tcsnicmp(lpszQuery, tszAPIMethod, _tcslen(lpszQuery)))
+	LPCTSTR lpszQuery = _T("Query");
+	LPCTSTR lpszNotify = _T("Notify");
+
+	LPCTSTR lpszUPFile = _T("UPFile");
+	LPCTSTR lpszDLFile = _T("DLFile");
+	LPCTSTR lpszFile = _T("File");
+
+	//通知类型.用于多服务器
+	if (0 == _tcsnicmp(lpszNotify, tszAPIMethod, _tcslen(lpszNotify)))
 	{
-		if (0 == _tcsnicmp(lpszQueryFile, tszAPIName, _tcslen(lpszQueryFile)))
+		//下载
+		if (0 == _tcsnicmp(lpszDLFile, tszAPIName, _tcslen(lpszDLFile)))
 		{
+			__int64x nFileSize = 0;
+			TCHAR tszFileName[MAX_PATH];
+			TCHAR tszFileHash[MAX_PATH];
+			TCHAR tszClientAddr[128];
+
+			memset(tszFileName, '\0', MAX_PATH);
+			memset(tszFileHash, '\0', MAX_PATH);
+			memset(tszClientAddr, '\0', sizeof(tszClientAddr));
+
+			XStorageProtocol_Proxy_ParseNotify(lpszMsgBuffer, nMsgLen, tszClientAddr, tszFileName, tszFileHash, &nFileSize);
+
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 200;
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求的下载文件通知协议成功,文件:%s,大小:%lld"), lpszClientAddr, tszFileName, nFileSize);
+		}
+	}
+	else if (0 == _tcsnicmp(lpszQuery, tszAPIMethod, _tcslen(lpszQuery)))
+	{
+		//文件查询类型
+		if (0 == _tcsnicmp(lpszFile, tszAPIName, _tcslen(lpszFile)))
+		{
+			//查询文件列表
 			int nMsgLen = 10240;
 			TCHAR tszFileName[MAX_PATH];
 			TCHAR tszFileHash[MAX_PATH];
@@ -140,7 +171,8 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 	}
 	else if (0 == _tcsnicmp(lpszEvent, tszAPIMethod, _tcslen(lpszEvent)))
 	{
-		if (0 == _tcsnicmp(lpszEventUPFile, tszAPIName, _tcslen(lpszEventUPFile)))
+		//事件处理类型,上传事件,用于NGINX
+		if (0 == _tcsnicmp(lpszUPFile, tszAPIName, _tcslen(lpszUPFile)))
 		{
 			LPCTSTR lpszContentType = _T("Content-Type");
 			LPCTSTR lpszBoundaryStr = _T("boundary=");
