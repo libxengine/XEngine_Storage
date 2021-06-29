@@ -104,7 +104,7 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 
 	LPCTSTR lpszEvent = _T("Event");
 	LPCTSTR lpszQuery = _T("Query");
-	LPCTSTR lpszNotify = _T("Notify");
+	LPCTSTR lpszNotify = _T("Pass");
 
 	LPCTSTR lpszUPFile = _T("UPFile");
 	LPCTSTR lpszDLFile = _T("DLFile");
@@ -114,7 +114,27 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 	if (0 == _tcsnicmp(lpszNotify, tszAPIMethod, _tcslen(lpszNotify)))
 	{
 		//下载
-		if (0 == _tcsnicmp(lpszDLFile, tszAPIName, _tcslen(lpszDLFile)))
+		if (0 == _tcsnicmp(lpszUPFile, tszAPIName, _tcslen(lpszUPFile)))
+		{
+			__int64x nFileSize = 0;
+			TCHAR tszFileName[MAX_PATH];
+			TCHAR tszFileHash[MAX_PATH];
+			TCHAR tszClientAddr[128];
+
+			memset(tszFileName, '\0', MAX_PATH);
+			memset(tszFileHash, '\0', MAX_PATH);
+			memset(tszClientAddr, '\0', sizeof(tszClientAddr));
+
+			XStorageProtocol_Proxy_ParseNotify(lpszMsgBuffer, nMsgLen, tszClientAddr, tszFileName, tszFileHash, &nFileSize);
+
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 200;
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求的上传文件通知协议成功,文件:%s,大小:%lld"), lpszClientAddr, tszFileName, nFileSize);
+		}
+		else if (0 == _tcsnicmp(lpszDLFile, tszAPIName, _tcslen(lpszDLFile)))
 		{
 			__int64x nFileSize = 0;
 			TCHAR tszFileName[MAX_PATH];
