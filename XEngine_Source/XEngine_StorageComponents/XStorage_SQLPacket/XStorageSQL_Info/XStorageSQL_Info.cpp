@@ -97,6 +97,7 @@ BOOL CXStorageSQL_Info::XStorageSQL_Info_Destory()
 BOOL CXStorageSQL_Info::XStorageSQL_Info_UserInsert(XSTORAGECORE_USERINFO *pSt_DBUser)
 {
     XStorage_IsErrorOccur = FALSE;
+
     //是否存在,存在直接返回真
     if (XStorageSQL_Info_UserQuery(pSt_DBUser))
     {
