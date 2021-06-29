@@ -68,14 +68,21 @@ XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
 				{
 					int nPLen = MAX_PATH;
 					int nHttpCode = 0;
+					UCHAR tszHashKey[MAX_PATH];
+					TCHAR tszHashStr[MAX_PATH];
 					TCHAR tszProxyStr[MAX_PATH];
 					SESSION_STORAGEINFO st_StorageInfo;
 
+					memset(tszHashKey, '\0', MAX_PATH);
+					memset(tszHashStr, '\0', MAX_PATH);
 					memset(tszProxyStr, '\0', MAX_PATH);
 					memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
+					OPenSsl_Api_Digest(st_StorageInfo.tszFileDir, tszHashKey, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
+					BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, tszHashStr);
 					Session_DLStroage_GetInfo(nThreadPos, i, &st_StorageInfo);
-					XStorageProtocol_Proxy_PacketUPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen);
+
+					XStorageProtocol_Proxy_PacketUPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, tszHashStr);
 					APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode);
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("下载客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), tszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass);
 				}
