@@ -153,11 +153,16 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	st_Locker.unlock_shared();
 
 	SESSION_STORAGEINFO st_Client;
-	struct _stat st_FStat;
+	struct __stat64 st_FStat;
 
 	memset(&st_Client, '\0', sizeof(SESSION_STORAGEINFO));
-	_stat(lpszFileDir, &st_FStat);
-
+	int nRet = _stat64(lpszFileDir, &st_FStat);
+	if (-1 == nRet)
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
+		return FALSE;
+	}
 	st_Client.ullPosStart = nPosStart;
 	st_Client.ullPosEnd = nPostEnd;
 	st_Client.ullCount = st_FStat.st_size;

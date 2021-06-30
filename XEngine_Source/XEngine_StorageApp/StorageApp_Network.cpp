@@ -19,7 +19,7 @@ void CALLBACK XEngine_Callback_DownloadRecv(LPCTSTR lpszClientAddr, SOCKET hSock
 }
 void CALLBACK XEngine_Callback_DownloadLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
-	XEngine_Net_CloseClient(lpszClientAddr, FALSE, STORAGE_NETTYPE_HTTPDOWNLOAD);
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPDOWNLOAD);
 }
 //////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK XEngine_Callback_UPLoaderLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
@@ -42,7 +42,7 @@ void CALLBACK XEngine_Callback_UPLoaderRecv(LPCTSTR lpszClientAddr, SOCKET hSock
 }
 void CALLBACK XEngine_Callback_UPLoaderLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
-	XEngine_Net_CloseClient(lpszClientAddr, FALSE, STORAGE_NETTYPE_HTTPUPLOADER);
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPUPLOADER);
 }
 //////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK XEngine_Callback_CenterLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
@@ -62,28 +62,28 @@ void CALLBACK XEngine_Callback_CenterRecv(LPCTSTR lpszClientAddr, SOCKET hSocket
 }
 void CALLBACK XEngine_Callback_CenterLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
-	XEngine_Net_CloseClient(lpszClientAddr, FALSE, STORAGE_NETTYPE_HTTPCENTER);
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPCENTER);
 }
 //////////////////////////////////////////////////////////////////////////
 void CALLBACK XEngine_Callback_HBDownload(LPCTSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam)
 {
-	XEngine_Net_CloseClient(lpszClientAddr, TRUE, STORAGE_NETTYPE_HTTPDOWNLOAD);
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPDOWNLOAD);
 }
 void CALLBACK XEngine_Callback_HBUPLoader(LPCTSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam)
 {
-	XEngine_Net_CloseClient(lpszClientAddr, TRUE, STORAGE_NETTYPE_HTTPUPLOADER);
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPUPLOADER);
 }
 //////////////////////////////////////////////////////////////////////////
-BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, BOOL bHBLeave, int nType)
+BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClientType)
 {
-	LPCTSTR lpszLeaveMsg = bHBLeave ? _T("心跳超时") : _T("主动断开");
+	LPCTSTR lpszLeaveMsg;
 	tstring m_StrClient;
 
-	if (STORAGE_NETTYPE_HTTPUPLOADER == nType)
+	if (STORAGE_NETTYPE_HTTPUPLOADER == nClientType)
 	{
 		m_StrClient = _T("上传客户端");
 	}
-	else if (STORAGE_NETTYPE_HTTPDOWNLOAD == nType)
+	else if (STORAGE_NETTYPE_HTTPDOWNLOAD == nClientType)
 	{
 		m_StrClient = _T("下载客户端");
 	}
@@ -92,16 +92,28 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, BOOL bHBLeave, int nType)
 		m_StrClient = _T("业务客户端");
 	}
 	
-	if (bHBLeave)
+	if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
 	{
+		lpszLeaveMsg = _T("心跳超时");
 		NetCore_TCPXCore_CloseForClientEx(xhNetDownload, lpszClientAddr);
 		NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
 	}
-	else
+	else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
 	{
+		lpszLeaveMsg = _T("主动断开");
 		SocketOpt_HeartBeat_DeleteAddrEx(xhHBDownload, lpszClientAddr);
 		SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
 	}
+	else
+	{
+		lpszLeaveMsg = _T("主动关闭");
+		NetCore_TCPXCore_CloseForClientEx(xhNetDownload, lpszClientAddr);
+		NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
+
+		SocketOpt_HeartBeat_DeleteAddrEx(xhHBDownload, lpszClientAddr);
+		SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
+	}
+
 	Session_UPStroage_Delete(lpszClientAddr);
 	Session_DLStroage_Delete(lpszClientAddr);
 	RfcComponents_HttpServer_CloseClinetEx(xhUPHttp, lpszClientAddr);

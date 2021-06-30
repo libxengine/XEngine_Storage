@@ -144,3 +144,24 @@ BOOL XEngine_Task_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt_EP
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,客户端的请求设置了数据范围:%s - %s"), lpszClientType, lpszClientAddr, tszKeyStr, tszValueStr);
 	return TRUE;
 }
+BOOL XEngine_Task_VerHash(LPCTSTR lpszClientAddr ,LPCTSTR lpszFileName, LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount)
+{
+	LPCTSTR lpszKeyStr = _T("FileHash");
+	TCHAR tszValueStr[MAX_PATH];
+	memset(tszValueStr, '\0', MAX_PATH);
+
+	if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszKeyStr, tszValueStr))
+	{
+		if (0 != _tcsnicmp(lpszFileHash, tszValueStr, _tcslen(lpszFileHash)))
+		{
+			_tremove(lpszFileName);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,上传的文件信息HASH校验失败,无法继续,文件:%s 已被删除,原始HASH:%s,计算HASH:%s"), lpszClientAddr, lpszFileName, tszValueStr, lpszFileHash);
+			return FALSE;
+		}
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,上传的信息没有附带HASH值,无法验证文件的正确性"), lpszClientAddr);
+	}
+	return TRUE;
+}
