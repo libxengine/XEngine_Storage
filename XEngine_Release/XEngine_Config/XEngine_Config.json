@@ -53,7 +53,7 @@
   },
   "XLimit": {
     "nMaxUPLoad": 0,
-    "nMaxDNLoad": 102400
+    "nMaxDNLoad": 1024000
   },
   "XVer": {
     "StorageVersion": [
