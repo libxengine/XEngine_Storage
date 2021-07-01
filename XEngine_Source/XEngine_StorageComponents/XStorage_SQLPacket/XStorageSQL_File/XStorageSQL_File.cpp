@@ -93,10 +93,7 @@ BOOL CXStorageSQL_File::XStorageSQL_File_Destory()
         return TRUE;
     }
     bIsRun = FALSE;
-    if (pSTDThread->joinable())
-    {
-        pSTDThread->join();
-    }
+    pSTDThread->join();
 
     DataBase_MySQL_Close(xhDBSQL);
 
