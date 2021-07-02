@@ -13,6 +13,7 @@ EXPORTS
 	Session_DLStroage_GetList
 	Session_DLStroage_GetInfo
 	Session_DLStroage_GetCount
+	Session_DLStorage_SetSeek
 	Session_DLStroage_Delete
 
 	Session_UPStroage_Init

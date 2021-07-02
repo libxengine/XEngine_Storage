@@ -13,6 +13,7 @@
 *********************************************************************/
 CSession_DLStroage::CSession_DLStroage()
 {
+	m_nTryTime = 3;
 }
 CSession_DLStroage::~CSession_DLStroage()
 {
@@ -28,12 +29,17 @@ CSession_DLStroage::~CSession_DLStroage()
   类型：整数型
   可空：N
   意思：输入最大运行多少个下载同时进行
+ 参数.二：nTryTime
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入重试次数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_Init(int nPoolCount /* = 1 */)
+BOOL CSession_DLStroage::Session_DLStroage_Init(int nPoolCount /* = 1 */, int nTryTime /* = 3 */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -153,11 +159,16 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	st_Locker.unlock_shared();
 
 	SESSION_STORAGEINFO st_Client;
-	struct _stat st_FStat;
+	struct __stat64 st_FStat;
 
 	memset(&st_Client, '\0', sizeof(SESSION_STORAGEINFO));
-	_stat(lpszFileDir, &st_FStat);
-
+	int nRet = _stat64(lpszFileDir, &st_FStat);
+	if (-1 == nRet)
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
+		return FALSE;
+	}
 	st_Client.ullPosStart = nPosStart;
 	st_Client.ullPosEnd = nPostEnd;
 	st_Client.ullCount = st_FStat.st_size;
@@ -397,6 +408,62 @@ BOOL CSession_DLStroage::Session_DLStroage_GetCount(int nPool, int* pInt_ListCou
 	stl_MapIterator->second.st_Locker->lock_shared();
 	*pInt_ListCount = stl_MapIterator->second.pStl_ListStorage->size();
 	stl_MapIterator->second.st_Locker->unlock_shared();
+	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_DLStorage_SetSeek
+函数功能：移动文件指针
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：nSeek
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入文件位置
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek)
+{
+	Session_IsErrorOccur = FALSE;
+
+	BOOL bFound = FALSE;
+	st_Locker.lock_shared();
+	unordered_map<int, SESSION_STORAGELIST>::iterator stl_MapIterator = stl_MapStroage.begin();
+	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
+	{
+		stl_MapIterator->second.st_Locker->lock_shared();
+		list<SESSION_STORAGEINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListStorage->begin();
+		for (; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++)
+		{
+			if (0 == _tcsncmp(lpszClientAddr, stl_ListIterator->tszClientAddr, _tcslen(lpszClientAddr)))
+			{
+				bFound = TRUE;
+				stl_ListIterator->nErrorCount++;
+				fseek(stl_ListIterator->pSt_File, nSeek, SEEK_CUR);
+				//如果超过次数.返回错误
+				if (stl_ListIterator->nErrorCount > m_nTryTime)
+				{
+					stl_MapIterator->second.st_Locker->unlock_shared();
+					st_Locker.unlock_shared();
+					return FALSE;
+				}
+				break;
+			}
+		}
+		stl_MapIterator->second.st_Locker->unlock_shared();
+
+		if (bFound)
+		{
+			break;
+		}
+	}
 	st_Locker.unlock_shared();
 	return TRUE;
 }

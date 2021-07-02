@@ -68,14 +68,21 @@ XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
 				{
 					int nPLen = MAX_PATH;
 					int nHttpCode = 0;
+					UCHAR tszHashKey[MAX_PATH];
+					TCHAR tszHashStr[MAX_PATH];
 					TCHAR tszProxyStr[MAX_PATH];
 					SESSION_STORAGEINFO st_StorageInfo;
 
+					memset(tszHashKey, '\0', MAX_PATH);
+					memset(tszHashStr, '\0', MAX_PATH);
 					memset(tszProxyStr, '\0', MAX_PATH);
 					memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
+					OPenSsl_Api_Digest(st_StorageInfo.tszFileDir, tszHashKey, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
+					BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, tszHashStr);
 					Session_DLStroage_GetInfo(nThreadPos, i, &st_StorageInfo);
-					XStorageProtocol_Proxy_PacketUPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen);
+
+					XStorageProtocol_Proxy_PacketUPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, tszHashStr);
 					APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode);
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("下载客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), tszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass);
 				}
@@ -85,9 +92,12 @@ XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
 			}
 			XEngine_Task_SendDownload(tszClientAddr, tszMsgBuffer, nMsgLen);
 		}
-		int nTimeWait = 10;
+		int nTimeWait = 1;
+#ifdef _WINDOWS
+		st_ServiceCfg.st_XLimit.nMaxDNLoader = st_ServiceCfg.st_XLimit.nMaxDNLoader * 10;
+#endif
 		Algorithm_Calculation_SleepFlow(&nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, nListCount, 4096);
-		std::this_thread::sleep_for(std::chrono::milliseconds(nTimeWait));
+		std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
 	}
 	return 0;
 }
@@ -127,8 +137,8 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	//使用重定向?
 	if ((1 == st_ServiceCfg.st_XStorage.nUseMode) || (4 == st_ServiceCfg.st_XStorage.nUseMode))
 	{
-		TCHAR tszHdrBuffer[MAX_PATH];
-		memset(tszHdrBuffer, '\0', MAX_PATH);
+		TCHAR tszHdrBuffer[1024];
+		memset(tszHdrBuffer, '\0', sizeof(tszHdrBuffer));
 
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 302;
@@ -167,20 +177,36 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.st_Range.nPosEnd = nPosEnd;
 		st_HDRParam.st_Range.nPosCount = ullCount;
 		st_HDRParam.nHttpCode = 206;
+		st_HDRParam.bIsClose = FALSE;
 	}
 	else
 	{
 		st_HDRParam.nHttpCode = 200;
+		st_HDRParam.bIsClose = FALSE;
 	}
 	_tcscpy(st_HDRParam.tszMimeType, _T("bin"));
-	RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, (int)ullSize);
+	RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize);
 	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,请求下载文件成功,文件名:%s,总大小:%llu,发送大小:%llu,范围:%d - %d"), lpszClientAddr, tszFileDir, ullCount, ullSize, nPosStart, nPosEnd);
 	return TRUE;
 }
 BOOL XEngine_Task_SendDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
 {
-	XEngine_Net_SendMsg(lpszClientAddr, lpszMsgBuffer, nMsgLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,正在发送文件数据,大小:%d"), lpszClientAddr, nMsgLen);
+	if (XEngine_Net_SendMsg(lpszClientAddr, lpszMsgBuffer, nMsgLen, STORAGE_NETTYPE_HTTPDOWNLOAD))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("下载客户端:%s,正在发送文件数据,大小:%d"), lpszClientAddr, nMsgLen);
+	}
+	else
+	{
+		if (Session_DLStorage_SetSeek(lpszClientAddr, -nMsgLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("下载客户端:%s,正在发送文件数据,发送失败,移动指针:%d"), lpszClientAddr, -nMsgLen);
+		}
+		else
+		{
+			XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_CLOSE, STORAGE_NETTYPE_HTTPDOWNLOAD);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,正在发送文件数据,大小:%d,发送超过重试次数,无法继续,移除发送队列"), lpszClientAddr, nMsgLen);
+		}
+	}
 	return TRUE;
 }

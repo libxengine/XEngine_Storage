@@ -41,6 +41,10 @@ extern "C" BOOL XStorageProtocol_Proxy_PacketUPDown(LPCTSTR lpszFileName, LPCTST
 {
 	return m_ProtocolProxy.XStorageProtocol_Proxy_PacketUPDown(lpszFileName, lpszClientAddr, nFileSize, ptszMsgBuffer, pInt_MsgLen, lpszFileHash);
 }
+extern "C" BOOL XStorageProtocol_Proxy_ParseNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszClientAddr, TCHAR * ptszFileName, TCHAR * ptszFileHash, __int64x * pInt_FileSize)
+{
+	return m_ProtocolProxy.XStorageProtocol_Proxy_ParseNotify(lpszMsgBuffer, nMsgLen, ptszClientAddr, ptszFileName, ptszFileHash, pInt_FileSize);
+}
 /************************************************************************/
 /*                      客户端协议操作导出函数                          */
 /************************************************************************/

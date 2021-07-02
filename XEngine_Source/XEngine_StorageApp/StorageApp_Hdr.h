@@ -46,12 +46,16 @@ using namespace std;
 #include "../StorageModule_Config/Config_Define.h"
 #include "../StorageModule_Config/Config_Error.h"
 
+#define STORAGE_LEAVETYPE_HEARTBEAT 1
+#define STORAGE_LEAVETYPE_BYSELF 2
+#define STORAGE_LEAVETYPE_CLOSE 3
 
 #define STORAGE_NETTYPE_HTTPUPLOADER 1
 #define STORAGE_NETTYPE_HTTPDOWNLOAD 2
 #define STORAGE_NETTYPE_HTTPCENTER 3
 
 extern BOOL bIsRun;
+extern BOOL bIsSQL;
 extern XLOG xhLog;
 
 extern XNETHANDLE xhHBDownload;

@@ -62,7 +62,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgB
     if ((NULL == lpszMsgBuffer) || (NULL == ptszTimeStart) || (NULL == ptszTimeEnd))
     {
         XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_CORE_REQQUERYFILE_PARAMENT;
+        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
     Json::Value st_JsonRoot;
@@ -74,7 +74,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgB
     if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + _tcslen(lpszMsgBuffer), &st_JsonRoot, &st_JsonError))
     {
         XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_CORE_REQQUERYFILE_PARSEJSON;
+        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARSE;
         return FALSE;
     }
     delete pSt_JsonReader;
@@ -155,7 +155,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPQueryFile(TCHAR* ptszMsgBu
     if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen) || (NULL == pppSt_DBFile))
     {
         XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_CORE_REPQUERYFILE_PARAMENT;
+        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
     Json::Value st_JsonRoot;
@@ -213,7 +213,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQDirOperator(LPCTSTR lpszMs
     if ((NULL == lpszMsgBuffer) || (NULL == ptszUserDir))
     {
         XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_CORE_CREATEDIR_PARAMENT;
+        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
     Json::Value st_JsonRoot;
@@ -225,7 +225,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQDirOperator(LPCTSTR lpszMs
     if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + _tcslen(lpszMsgBuffer), &st_JsonRoot, &st_JsonError))
     {
         XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_CORE_CREATEDIR_PARSEJSON;
+        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARSE;
         return FALSE;
     }
     delete pSt_JsonReader;
@@ -270,7 +270,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPDirOperator(TCHAR* ptszMsg
     if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
     {
         XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_CORE_REPDIRQUERY_PARAMENT;
+        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
     Json::Value st_JsonRoot;

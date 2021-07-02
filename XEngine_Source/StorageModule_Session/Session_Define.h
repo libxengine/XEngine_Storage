@@ -22,6 +22,7 @@ typedef struct
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
+	int nErrorCount;                                                      //错误次数
 	FILE* pSt_File;
 }SESSION_STORAGEINFO;
 //////////////////////////////////////////////////////////////////////////
@@ -84,12 +85,17 @@ extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass);
   类型：整数型
   可空：N
   意思：输入最大运行多少个下载同时进行
+ 参数.二：nTryTime
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入重试次数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Init(int nPoolCount = 1);
+extern "C" BOOL Session_DLStroage_Init(int nPoolCount = 1, int nTryTime = 3);
 /********************************************************************
 函数名称：Session_DLStroage_Destory
 函数功能：销毁下载管理器
@@ -214,6 +220,25 @@ extern "C" BOOL Session_DLStroage_GetInfo(int nPool, int nIndex, SESSION_STORAGE
 备注：
 *********************************************************************/
 extern "C" BOOL Session_DLStroage_GetCount(int nIndex, int* pInt_ListCount);
+/********************************************************************
+函数名称：Session_DLStorage_SetSeek
+函数功能：移动文件指针
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+ 参数.二：nSeek
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入文件位置
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek);
 /********************************************************************
 函数名称：Session_DLStroage_Delete
 函数功能：删除一个队列

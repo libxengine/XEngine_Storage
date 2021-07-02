@@ -5,6 +5,7 @@ EXPORTS
 
 	XStorageProtocol_Proxy_PacketBasicAuth
 	XStorageProtocol_Proxy_PacketUPDown
+	XStorageProtocol_Proxy_ParseNotify
 
 	XStorageProtocol_Client_REQQueryFile
 	XStorageProtocol_Client_REQDelete

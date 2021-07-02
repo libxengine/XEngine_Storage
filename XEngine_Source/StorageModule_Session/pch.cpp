@@ -48,9 +48,9 @@ extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass)
 /************************************************************************/
 /*                        存储会话导出的函数                            */
 /************************************************************************/
-extern "C" BOOL Session_DLStroage_Init(int nPoolCount)
+extern "C" BOOL Session_DLStroage_Init(int nPoolCount, int nTryTime)
 {
-	return m_DLStorage.Session_DLStroage_Init(nPoolCount);
+	return m_DLStorage.Session_DLStroage_Init(nPoolCount, nTryTime);
 }
 extern "C" BOOL Session_DLStroage_Destory()
 {
@@ -71,6 +71,10 @@ extern "C" BOOL Session_DLStroage_GetInfo(int nPool, int nIndex, SESSION_STORAGE
 extern "C" BOOL Session_DLStroage_GetCount(int nIndex, int* pInt_ListCount)
 {
 	return m_DLStorage.Session_DLStroage_GetCount(nIndex, pInt_ListCount);
+}
+extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek)
+{
+	return m_DLStorage.Session_DLStorage_SetSeek(lpszClientAddr, nSeek);
 }
 extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 {
