@@ -79,7 +79,7 @@ XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
 					memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
 					OPenSsl_Api_Digest(st_StorageInfo.tszFileDir, tszHashKey, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
-					BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, tszHashStr);
+					BaseLib_OperatorString_StrToHex((char*)tszHashKey, 20, tszHashStr);
 					Session_DLStroage_GetInfo(nThreadPos, i, &st_StorageInfo);
 
 					XStorageProtocol_Proxy_PacketUPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, tszHashStr);
