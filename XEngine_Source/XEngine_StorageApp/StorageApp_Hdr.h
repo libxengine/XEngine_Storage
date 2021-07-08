@@ -82,6 +82,7 @@ extern XENGINE_SERVERCONFIG st_ServiceCfg;
 #include "Storage_APPTask/Storage_TaskEvent.h"
 #include "Storage_APPTask/Storage_TaskPass.h"
 #include "Storage_APPTask/Storage_TaskQuery.h"
+#include "Storage_APPTask/Storage_TaskP2P.h"
 
 #ifdef _WINDOWS
 #pragma comment(lib,"Ws2_32.lib")
@@ -90,6 +91,7 @@ extern XENGINE_SERVERCONFIG st_ServiceCfg;
 #pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
 #pragma comment(lib,"../x64/Release/XStorage_SQLPacket.lib")
 #pragma comment(lib,"../x64/Release/XStorage_Protocol.lib")
+#pragma comment(lib,"../x64/Release/XEngine_P2XPProtocol.lib")
 #pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"x64/XEngine_BaseLib/XEngine_Algorithm.lib")
 #pragma comment(lib,"x64/XEngine_Core/XEngine_Core.lib")
@@ -99,10 +101,19 @@ extern XENGINE_SERVERCONFIG st_ServiceCfg;
 #pragma comment(lib,"x64/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
 #pragma comment(lib,"x64/XEngine_NetHelp/NetHelp_APIHelp.lib")
 #else
+#ifdef _DEBUG
 #pragma comment(lib,"../Debug/StorageModule_Session.lib")
 #pragma comment(lib,"../Debug/StorageModule_Config.lib")
 #pragma comment(lib,"../Debug/XStorage_SQLPacket.lib")
 #pragma comment(lib,"../Debug/XStorage_Protocol.lib")
+#pragma comment(lib,"../Debug/XEngine_P2XPProtocol.lib")
+#else
+#pragma comment(lib,"../Release/StorageModule_Session.lib")
+#pragma comment(lib,"../Release/StorageModule_Config.lib")
+#pragma comment(lib,"../Release/XStorage_SQLPacket.lib")
+#pragma comment(lib,"../Release/XStorage_Protocol.lib")
+#pragma comment(lib,"../Release/XEngine_P2XPProtocol.lib")
+#endif
 #pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"x86/XEngine_BaseLib/XEngine_Algorithm.lib")
 #pragma comment(lib,"x86/XEngine_Core/XEngine_Core.lib")

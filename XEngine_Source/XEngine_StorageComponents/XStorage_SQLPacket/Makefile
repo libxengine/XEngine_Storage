@@ -6,7 +6,7 @@ FILECENTOS = /etc/redhat-release
 LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_HelpComponents
 LIB = -lXEngine_BaseLib -lHelpComponents_DataBase
 LIBEX = -static-libgcc -lrt -ldl 
-LOADSO = -Wl,-rpath=,--disable-new-dtags
+LOADSO = -Wl,-rpath=./,--disable-new-dtags
 LIBINCLUDE = XStorageSQL_File.o XStorageSQL_Info.o pch.o
 
 ifeq ($(RELEASE),1)

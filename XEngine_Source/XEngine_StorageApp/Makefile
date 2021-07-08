@@ -5,7 +5,7 @@ LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XE
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lHelpComponents_XLog -lXEngine_ProcSdk -lXEngine_SystemApi -lRfcComponents_HttpServer -lNetHelp_APIHelp -lXStorage_SQLPacket -lXStorage_Protocol -lStorageModule_Config -lStorageModule_Session
 LIBEX = -static-libgcc -ldl -lrt -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = StorageApp_Config.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o StorageApp_Task.o Storage_TaskEvent.o Storage_TaskPass.o Storage_TaskQuery.o XEngine_StorageApp.o
+LIBINCLUDE = StorageApp_Config.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o StorageApp_Task.o Storage_TaskEvent.o Storage_TaskPass.o Storage_TaskQuery.o Storage_TaskP2P.o XEngine_StorageApp.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -43,7 +43,9 @@ Storage_TaskPass.o:./Storage_APPTask/Storage_TaskPass.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Storage_APPTask/Storage_TaskPass.cpp
 Storage_TaskQuery.o:./Storage_APPTask/Storage_TaskQuery.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Storage_APPTask/Storage_TaskQuery.cpp
-			
+Storage_TaskP2P.o:./Storage_APPTask/Storage_TaskP2P.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Storage_APPTask/Storage_TaskP2P.cpp
+				
 XEngine_StorageApp.o:./XEngine_StorageApp.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./XEngine_StorageApp.cpp   
 
