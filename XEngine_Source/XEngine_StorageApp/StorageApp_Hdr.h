@@ -79,6 +79,9 @@ extern XENGINE_SERVERCONFIG st_ServiceCfg;
 #include "StorageApp_Download.h"
 #include "StorageApp_UPLoader.h"
 #include "StorageApp_Center.h"
+#include "Storage_APPTask/Storage_TaskEvent.h"
+#include "Storage_APPTask/Storage_TaskPass.h"
+#include "Storage_APPTask/Storage_TaskQuery.h"
 
 #ifdef _WINDOWS
 #pragma comment(lib,"Ws2_32.lib")

@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\Storage_APPTask">
+      <UniqueIdentifier>{dfe2238c-82ee-4ce4-b234-e75db3c6352d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Storage_APPTask">
+      <UniqueIdentifier>{40f770d9-b733-4850-8351-c1ab77d56900}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XEngine_StorageApp.cpp">
@@ -36,6 +42,15 @@
     <ClCompile Include="StorageApp_Task.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Storage_APPTask\Storage_TaskEvent.cpp">
+      <Filter>源文件\Storage_APPTask</Filter>
+    </ClCompile>
+    <ClCompile Include="Storage_APPTask\Storage_TaskPass.cpp">
+      <Filter>源文件\Storage_APPTask</Filter>
+    </ClCompile>
+    <ClCompile Include="Storage_APPTask\Storage_TaskQuery.cpp">
+      <Filter>源文件\Storage_APPTask</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StorageApp_Config.h">
@@ -58,6 +73,15 @@
     </ClInclude>
     <ClInclude Include="StorageApp_Task.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage_APPTask\Storage_TaskEvent.h">
+      <Filter>头文件\Storage_APPTask</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage_APPTask\Storage_TaskPass.h">
+      <Filter>头文件\Storage_APPTask</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage_APPTask\Storage_TaskQuery.h">
+      <Filter>头文件\Storage_APPTask</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -156,6 +156,9 @@
     <ClCompile Include="StorageApp_Network.cpp" />
     <ClCompile Include="StorageApp_Task.cpp" />
     <ClCompile Include="StorageApp_UPLoader.cpp" />
+    <ClCompile Include="Storage_APPTask\Storage_TaskEvent.cpp" />
+    <ClCompile Include="Storage_APPTask\Storage_TaskPass.cpp" />
+    <ClCompile Include="Storage_APPTask\Storage_TaskQuery.cpp" />
     <ClCompile Include="XEngine_StorageApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +169,9 @@
     <ClInclude Include="StorageApp_Network.h" />
     <ClInclude Include="StorageApp_Task.h" />
     <ClInclude Include="StorageApp_UPLoader.h" />
+    <ClInclude Include="Storage_APPTask\Storage_TaskEvent.h" />
+    <ClInclude Include="Storage_APPTask\Storage_TaskPass.h" />
+    <ClInclude Include="Storage_APPTask\Storage_TaskQuery.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
