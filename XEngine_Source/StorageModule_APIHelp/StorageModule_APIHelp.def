@@ -1,0 +1,7 @@
+LIBRARY
+
+EXPORTS
+	StorageHelp_GetLastError
+
+	APIHelp_Distributed_IsMode
+	APIHelp_Distributed_RandomAddr

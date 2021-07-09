@@ -71,19 +71,23 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.bAuth = TRUE;
 	}
 	//使用重定向?
-	if ((2 == st_ServiceCfg.st_XStorage.nUseMode) || (4 == st_ServiceCfg.st_XStorage.nUseMode))
+	if (APIHelp_Distributed_IsMode(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUseMode, STORAGE_NETTYPE_HTTPUPLOADER))
 	{
 		TCHAR tszHdrBuffer[1024];
+		TCHAR tszStorageAddr[128];
+
 		memset(tszHdrBuffer, '\0', sizeof(tszHdrBuffer));
+		memset(tszStorageAddr, '\0', sizeof(tszStorageAddr));
 
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 302;
 
-		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), st_ServiceCfg.st_XStorage.tszNginAddr, pSt_HTTPParam->tszHttpUri);
+		APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUPLoader, tszStorageAddr);
+		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), tszStorageAddr, pSt_HTTPParam->tszHttpUri);
 
 		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求的文件被要求重定向到:%s%s"), lpszClientAddr, st_ServiceCfg.st_XStorage.tszNginAddr, pSt_HTTPParam->tszHttpUri);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求的文件被要求重定向到:%s%s"), lpszClientAddr, tszStorageAddr, pSt_HTTPParam->tszHttpUri);
 		return TRUE;
 	}
 

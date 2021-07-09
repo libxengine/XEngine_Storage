@@ -18,6 +18,7 @@ XHANDLE xhDLHttp = NULL;
 XHANDLE xhCenterHttp = NULL;
 
 XENGINE_SERVERCONFIG st_ServiceCfg;
+XENGINE_LBCONFIG st_LoadbalanceCfg;
 
 void ServiceApp_Stop(int signo)
 {
@@ -94,8 +95,9 @@ int main(int argc, char** argv)
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceCfg, '\0', sizeof(XENGINE_SERVERCONFIG));
+	memset(&st_LoadbalanceCfg, '\0', sizeof(XENGINE_LBCONFIG));
 
-	if (!StorageApp_Config_Parament(argc, argv, &st_ServiceCfg))
+	if (!StorageApp_Config_Parament(argc, argv))
 	{
 		return -1;
 	}

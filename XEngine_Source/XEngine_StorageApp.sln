@@ -19,9 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_P2XPComponents", "X
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_P2XPProtocol", "XEngine_P2XPComponents\XEngine_P2XPProtocol\XEngine_P2XPProtocol.vcxproj", "{27C23732-90E5-41DB-89E2-FB69FBA66EC2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_Client", "StorageModule_Client\StorageModule_Client.vcxproj", "{053C8DBB-B5EA-4C1A-847F-D31C31CFB17A}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_P2XPPeer", "XEngine_P2XPComponents\XEngine_P2XPPeer\XEngine_P2XPPeer.vcxproj", "{626FD38B-EC3A-4DC6-9781-075EDACC806C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_APIHelp", "StorageModule_APIHelp\StorageModule_APIHelp.vcxproj", "{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,14 +79,6 @@ Global
 		{27C23732-90E5-41DB-89E2-FB69FBA66EC2}.Release|x64.Build.0 = Release|x64
 		{27C23732-90E5-41DB-89E2-FB69FBA66EC2}.Release|x86.ActiveCfg = Release|Win32
 		{27C23732-90E5-41DB-89E2-FB69FBA66EC2}.Release|x86.Build.0 = Release|Win32
-		{053C8DBB-B5EA-4C1A-847F-D31C31CFB17A}.Debug|x64.ActiveCfg = Debug|x64
-		{053C8DBB-B5EA-4C1A-847F-D31C31CFB17A}.Debug|x64.Build.0 = Debug|x64
-		{053C8DBB-B5EA-4C1A-847F-D31C31CFB17A}.Debug|x86.ActiveCfg = Debug|Win32
-		{053C8DBB-B5EA-4C1A-847F-D31C31CFB17A}.Debug|x86.Build.0 = Debug|Win32
-		{053C8DBB-B5EA-4C1A-847F-D31C31CFB17A}.Release|x64.ActiveCfg = Release|x64
-		{053C8DBB-B5EA-4C1A-847F-D31C31CFB17A}.Release|x64.Build.0 = Release|x64
-		{053C8DBB-B5EA-4C1A-847F-D31C31CFB17A}.Release|x86.ActiveCfg = Release|Win32
-		{053C8DBB-B5EA-4C1A-847F-D31C31CFB17A}.Release|x86.Build.0 = Release|Win32
 		{626FD38B-EC3A-4DC6-9781-075EDACC806C}.Debug|x64.ActiveCfg = Debug|x64
 		{626FD38B-EC3A-4DC6-9781-075EDACC806C}.Debug|x64.Build.0 = Debug|x64
 		{626FD38B-EC3A-4DC6-9781-075EDACC806C}.Debug|x86.ActiveCfg = Debug|Win32
@@ -95,6 +87,14 @@ Global
 		{626FD38B-EC3A-4DC6-9781-075EDACC806C}.Release|x64.Build.0 = Release|x64
 		{626FD38B-EC3A-4DC6-9781-075EDACC806C}.Release|x86.ActiveCfg = Release|Win32
 		{626FD38B-EC3A-4DC6-9781-075EDACC806C}.Release|x86.Build.0 = Release|Win32
+		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Debug|x64.ActiveCfg = Debug|x64
+		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Debug|x64.Build.0 = Debug|x64
+		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Debug|x86.ActiveCfg = Debug|Win32
+		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Debug|x86.Build.0 = Debug|Win32
+		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Release|x64.ActiveCfg = Release|x64
+		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Release|x64.Build.0 = Release|x64
+		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Release|x86.ActiveCfg = Release|Win32
+		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

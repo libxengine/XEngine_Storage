@@ -1,14 +1,20 @@
 ﻿#include "StorageApp_Hdr.h"
 
-BOOL StorageApp_Config_Parament(int argc,char **argv, XENGINE_SERVERCONFIG *pSt_ServerConfig)
+BOOL StorageApp_Config_Parament(int argc,char **argv)
 {
-    LPCTSTR lpszCfg = _T("./XEngine_Config/XEngine_Config.json");
+    LPCTSTR lpszBaseCfg = _T("./XEngine_Config/XEngine_Config.json");
+    LPCTSTR lpszLoadCfg = _T("./XEngine_Config/XEngine_LBConfig.json");
 
-    if (!Config_Json_File(lpszCfg,pSt_ServerConfig))
+    if (!Config_Json_File(lpszBaseCfg, &st_ServiceCfg))
     {
         printf("解析配置文件失败,Config_Json_File:%lX\n",Config_GetLastError());
         return FALSE;
     }
+	if (!Config_Json_LoadBalance(lpszLoadCfg, &st_LoadbalanceCfg))
+	{
+		printf("解析配置文件失败,Config_Json_LoadBalance:%lX\n", Config_GetLastError());
+		return FALSE;
+	}
 
     for (int i = 0;i < argc;i++)
     {
@@ -25,11 +31,11 @@ BOOL StorageApp_Config_Parament(int argc,char **argv, XENGINE_SERVERCONFIG *pSt_
         }
         else if (0 == _tcscmp("-l",argv[i]))
         {
-            pSt_ServerConfig->st_XLog.nLogLeave = _ttoi(argv[i + 1]);
+            st_ServiceCfg.st_XLog.nLogLeave = _ttoi(argv[i + 1]);
         }
         else if (0 == _tcscmp("-d",argv[i]))
         {
-            pSt_ServerConfig->bDeamon = _ttoi(argv[i + 1]);
+            st_ServiceCfg.bDeamon = _ttoi(argv[i + 1]);
         }
     }
 
