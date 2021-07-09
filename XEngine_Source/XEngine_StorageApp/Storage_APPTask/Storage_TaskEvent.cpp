@@ -93,5 +93,13 @@ BOOL XEngine_Task_Event(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lps
 			_trename(tszFileDir, tszFileTmp);
 		}
 	}
+	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_CONFIG, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_CONFIG)))
+	{
+		StorageApp_Config_Parament(0, NULL);
+		st_HDRParam.nHttpCode = 200;
+		RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,处理用户重载配置文件成功"), lpszClientAddr);
+	}
 	return TRUE;
 }

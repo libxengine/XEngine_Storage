@@ -101,6 +101,16 @@ int main(int argc, char** argv)
 	{
 		return -1;
 	}
+	if (st_ServiceCfg.st_Memory.bReload)
+	{
+		//重载配置文件后退出
+		TCHAR tszAddr[128];
+		memset(tszAddr, '\0', sizeof(tszAddr));
+
+		_stprintf(tszAddr, _T("Http://127.0.0.1:%d/Api/Event/Config"), st_ServiceCfg.nCenterPort);
+		APIHelp_HttpRequest_Post(tszAddr);
+		return 0;
+	}
 	st_XLogConfig.XLog_MaxBackupFile = st_ServiceCfg.st_XLog.nMaxCount;
 	st_XLogConfig.XLog_MaxSize = st_ServiceCfg.st_XLog.nMaxSize;
 	_tcscpy(st_XLogConfig.tszFileName, _T("./XEngine_XLog/XEngine_StorageApp.log"));

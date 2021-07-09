@@ -16,15 +16,17 @@ feature list:
 2. support http api notify of event and management api interface  
 3. support http encrypt and cert data transimission(planning)  \
 4. support mysql record infomation.  
-5. support load banace(planning)  
+5. support load banace  
 6. supprot http auth  
 7. support log and config  
 8. supprot speeds contral  
 9. supprot task start and end proxy forwarding  
-10. support p2p,bt and many more(planning)  
-11. support second pass  
-12. support nginx upload module proxy_pass  
-13. support upload and download Redirect  
+10. support p2p  
+11. bt(planning)  
+12. data distributed(planning)  
+13. support second pass  
+14. support nginx upload module proxy_pass  
+15. support upload and download Redirect  
 
 ## install
 

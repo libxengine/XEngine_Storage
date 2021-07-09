@@ -20,6 +20,10 @@ typedef struct tag_XEngine_ServerConfig
     int nCenterPort;
     int nStorageDLPort;
     int nStorageUPPort;
+    struct 
+    {
+        BOOL bReload;
+    }st_Memory;
     struct
     {
         int nMaxClient;

@@ -37,6 +37,10 @@ BOOL StorageApp_Config_Parament(int argc,char **argv)
         {
             st_ServiceCfg.bDeamon = _ttoi(argv[i + 1]);
         }
+		else if (0 == _tcscmp("-r", argv[i]))
+		{
+            st_ServiceCfg.st_Memory.bReload = TRUE;
+		}
     }
 
     return TRUE;
@@ -50,5 +54,6 @@ void StorageApp_Config_ParamentHelp()
     printf(_T("-v or -V：输出版本号\n"));
     printf(_T("-l：设置日志输出级别\n"));
     printf(_T("-d：1 启用守护进程，2不启用\n"));
+    printf(_T("-r：无重启,重载配置文件\n"));
     printf(_T("--------------------------启动参数帮助结束--------------------------\n"));
 }
