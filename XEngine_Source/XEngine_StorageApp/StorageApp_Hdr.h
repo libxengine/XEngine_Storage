@@ -82,7 +82,6 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 
 #include "StorageApp_Network.h"
 #include "StorageApp_Config.h"
-#include "StorageApp_Task.h"
 #include "StorageApp_Download.h"
 #include "StorageApp_UPLoader.h"
 #include "StorageApp_Center.h"
@@ -90,6 +89,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "Storage_APPTask/Storage_TaskPass.h"
 #include "Storage_APPTask/Storage_TaskQuery.h"
 #include "Storage_APPTask/Storage_TaskP2P.h"
+#include "Storage_APPHelp/Storage_APPHelp.h"
 
 #ifdef _WINDOWS
 #pragma comment(lib,"Ws2_32.lib")

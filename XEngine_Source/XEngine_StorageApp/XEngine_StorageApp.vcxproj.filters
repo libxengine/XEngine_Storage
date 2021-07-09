@@ -19,6 +19,12 @@
     <Filter Include="源文件\Storage_APPTask">
       <UniqueIdentifier>{40f770d9-b733-4850-8351-c1ab77d56900}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Storage_APPHelp">
+      <UniqueIdentifier>{a417f386-25d6-47ac-a994-5ffcf8b453ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Storage_APPHelp">
+      <UniqueIdentifier>{5625d0f7-4a2d-4a18-86b6-adaaa214ad88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XEngine_StorageApp.cpp">
@@ -39,9 +45,6 @@
     <ClCompile Include="StorageApp_Center.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="StorageApp_Task.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Storage_APPTask\Storage_TaskEvent.cpp">
       <Filter>源文件\Storage_APPTask</Filter>
     </ClCompile>
@@ -53,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="Storage_APPTask\Storage_TaskP2P.cpp">
       <Filter>源文件\Storage_APPTask</Filter>
+    </ClCompile>
+    <ClCompile Include="Storage_APPHelp\Storage_APPHelp.cpp">
+      <Filter>源文件\Storage_APPHelp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,9 +80,6 @@
     <ClInclude Include="StorageApp_Center.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="StorageApp_Task.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Storage_APPTask\Storage_TaskEvent.h">
       <Filter>头文件\Storage_APPTask</Filter>
     </ClInclude>
@@ -88,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="Storage_APPTask\Storage_TaskP2P.h">
       <Filter>头文件\Storage_APPTask</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage_APPHelp\Storage_APPHelp.h">
+      <Filter>头文件\Storage_APPHelp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

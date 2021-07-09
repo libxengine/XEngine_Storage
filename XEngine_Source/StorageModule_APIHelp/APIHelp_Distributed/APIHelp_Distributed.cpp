@@ -40,7 +40,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<tstring>* pStl_Li
 
 	BaseLib_OperatorHandle_Create(&xhToken, 1, pStl_ListAddr->size());
 	list<tstring>::const_iterator stl_ListIterator = pStl_ListAddr->begin();
-	for (int i = 0; stl_ListIterator != pStl_ListAddr->end(); stl_ListIterator++, i++)
+	for (XNETHANDLE i = 0; stl_ListIterator != pStl_ListAddr->end(); stl_ListIterator++, i++)
 	{
 		if (xhToken == i)
 		{

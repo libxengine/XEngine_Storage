@@ -62,7 +62,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,发送的方法不支持"), lpszClientAddr);
 		return FALSE;
 	}
-	if (!XEngine_Task_ProxyAuth(lpszClientAddr, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER))
+	if (!XEngine_APPHelp_ProxyAuth(lpszClientAddr, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER))
 	{
 		return FALSE;
 	}
@@ -98,7 +98,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	{
 		int nPosStart = 0;
 		int nPosEnd = 0;
-		XEngine_Task_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER);
+		XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER);
 		RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 
 		_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
@@ -136,7 +136,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		OPenSsl_Api_Digest(tszFileDir, tszHashStr, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
 		BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		//验证HASH值
-		if (XEngine_Task_VerHash(lpszClientAddr, tszFileDir, st_ProtocolFile.st_ProtocolFile.tszFileHash, pptszListHdr, nHdrCount))
+		if (XEngine_APPHelp_VerHash(lpszClientAddr, tszFileDir, st_ProtocolFile.st_ProtocolFile.tszFileHash, pptszListHdr, nHdrCount))
 		{
 			if (bIsSQL)
 			{

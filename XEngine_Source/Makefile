@@ -10,12 +10,13 @@ P2XP_PROTOCOL_PATH = ./XEngine_P2XPComponents/XEngine_P2XPProtocol
 
 BASE_CONFIG_PATH = ./StorageModule_Config
 BASE_SESSION_PATH = ./StorageModule_Session
+BASE_APIHELP_PATH = ./StorageModule_APIHelp
 
 APPSERVICE_STORAGE_PATH = ./XEngine_StorageApp
 
 NETENGINE_LIB = libXStorage_SQLPacket.so libXStorage_Protocol.so                       \
                 libXEngine_P2XPPeer.so libXEngine_P2XPProtocol.so                      \
-                libStorageModule_Config.so libStorageModule_Session.so                 \
+                libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so                 \
 		 XEngine_StorageApp.exe 
 
 .PHONY:MakeAll 
@@ -35,6 +36,8 @@ libStorageModule_Config.so:
 	make -C $(BASE_CONFIG_PATH) $(FLAGS)
 libStorageModule_Session.so:
 	make -C $(BASE_SESSION_PATH) $(FLAGS)
+libStorageModule_APIHelp.so:
+	make -C $(BASE_APIHELP_PATH) $(FLAGS)
 
 XEngine_StorageApp.exe:
 	make -C $(APPSERVICE_STORAGE_PATH) $(FLAGS)

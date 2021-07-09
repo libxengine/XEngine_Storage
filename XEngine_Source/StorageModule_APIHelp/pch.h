@@ -14,10 +14,12 @@
 #endif
 
 #endif //PCH_H
+#include <string.h>
 #include <list>
 #include <string>
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
+#include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 /********************************************************************
@@ -34,8 +36,10 @@ using namespace std;
 extern BOOL APIHelp_IsErrorOccur;
 extern DWORD APIHelp_dwErrorCode;
 
+#ifdef _WINDOWS
 #ifdef _WIN64
 #pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib")
 #else
 #pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib")
+#endif
 #endif
