@@ -12,19 +12,19 @@ The purpose of development and implementation based on libXEngine is a cross-pla
 This repository has a development and master branch. If you want to use it, please use the master branch  
 
 feature list:  
-  1. support file http upload and download(use put and get method)  
-  2. support http api notify of event and management api interface  
-  3. support http encrypt and cert data transimission(planning)  
-  4. support mysql record infomation.  
-  5. support load banace(planning)  
-  6. supprot http auth  
-  7. support log and config  
-  8. supprot speeds contral  
-  9. supprot task start and end proxy forwarding    
-10.support p2p,bt and many more(planning)  
-11.support second pass  
-12.support nginx upload module proxy_pass  
-13.support upload and download Redirect  
+1. support file http upload and download(use put and get method)  
+2. support http api notify of event and management api interface  
+3. support http encrypt and cert data transimission(planning)  \
+4. support mysql record infomation.  
+5. support load banace(planning)  
+6. supprot http auth  
+7. support log and config  
+8. supprot speeds contral  
+9. supprot task start and end proxy forwarding  
+10. support p2p,bt and many more(planning)  
+11. support second pass  
+12. support nginx upload module proxy_pass  
+13. support upload and download Redirect  
 
 ## install
 
@@ -85,7 +85,8 @@ The realization of downloading second transmission is to first query the local f
 ## directory struct
 - XEngine_Docment  docment directory
 - XEngine_Release  install directory
-- XEngine_Source   code    directory
+- XEngine_Source   code    directory  
+- XEngine_APPClient client code dir  
 
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  
