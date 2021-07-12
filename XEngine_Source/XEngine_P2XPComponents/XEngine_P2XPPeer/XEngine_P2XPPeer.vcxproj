@@ -123,8 +123,8 @@
       <ModuleDefinitionFile>XEngine_P2XPPeer.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)Release\XEngine_P2XPPeer.lib" "../../../XEngine_Release/XEngine_Windows/x86/XEngine_P2xp/XEngine_P2XPPeer.lib"
-copy "$(SolutionDir)Release\XEngine_P2XPPeer.dll" "../../../XEngine_Release/XEngine_Windows/x86/XEngine_P2xp/XEngine_P2XPPeer.dll"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
