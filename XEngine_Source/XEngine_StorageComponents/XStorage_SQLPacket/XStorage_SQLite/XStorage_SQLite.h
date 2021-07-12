@@ -28,6 +28,7 @@ protected:
 	BOOL XStorage_SQLite_CreateTable();
 	BOOL XStorage_SQLite_TimeMonth(LPCTSTR lpszStartTime, int* pInt_Month);
 	BOOL XStorage_SQLite_TimeDel();
+	BOOL XStorage_SQLite_IsNumber(LPCTSTR lpszStr);
 protected:
 	static XHTHREAD XStorage_SQLite_Thread(LPVOID lParam);
 private:

@@ -92,10 +92,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_Destory()
         return TRUE;
     }
     bIsRun = FALSE;
-    if (NULL != pSTDThread)
-    {
-        pSTDThread->join();
-    }
+    pSTDThread->join();
 	DataBase_SQLite_Close(xhSQL);
 	return TRUE;
 }
@@ -148,7 +145,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileInsert(XSTORAGECORE_DBFILE* pSt_DBFil
         _stprintf_s(tszTableName, _T("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
     }
     //插入语句
-    _stprintf_s(tszSQLStatement, _T("INSERT INTO `%s` (FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s',%lld,now())"), tszTableName, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize);
+    _stprintf_s(tszSQLStatement, _T("INSERT INTO `%s` (FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s',%lld,DATETIME('now', 'localtime'))"), tszTableName, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize);
     if (!DataBase_SQLite_Exec(xhSQL, tszSQLStatement))
     {
         XStorage_IsErrorOccur = TRUE;
@@ -273,16 +270,16 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
     {
         if (_tcslen(lpszTimeStart) > 0 && _tcslen(lpszTimeEnd) > 0)
         {
-            _stprintf_s(tszSQLStatement, _T("SELECT NAME FROM SQLITE_MASTER WHERE TYPE = 'TABLE' AND NAME BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
+            _stprintf_s(tszSQLStatement, _T("SELECT NAME FROM SQLITE_MASTER WHERE TYPE = 'table' AND NAME BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
         }
         else
         {
-            _stprintf_s(tszSQLStatement, _T("SELECT NAME FROM SQLITE_MASTER WHERE TYPE = 'TABLE'"));
+            _stprintf_s(tszSQLStatement, _T("SELECT NAME FROM SQLITE_MASTER WHERE TYPE = 'table'"));
         }
     }
     else
     {
-        _stprintf_s(tszSQLStatement, _T("SELECT NAME FROM SQLITE_MASTER WHERE TYPE = 'TABLE'"));
+        _stprintf_s(tszSQLStatement, _T("SELECT NAME FROM SQLITE_MASTER WHERE TYPE = 'table'"));
     }
     if (!DataBase_SQLite_GetTable(xhSQL, tszSQLStatement, &pptszResult, &nLine, &nRow))
     {
@@ -294,6 +291,10 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
 	//轮训
 	for (int i = 0; i < nLine; i++)
 	{
+		if (!XStorage_SQLite_IsNumber(pptszResult[i]))
+		{
+			continue;
+		}
 		int nLineResult = 0;
 		int nFieldResult = 0;
 		memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
@@ -324,14 +325,14 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
         TCHAR** pptszFileResult;
         if (DataBase_SQLite_GetTable(xhSQL, tszSQLStatement, &pptszFileResult, &nLineResult, &nFieldResult))
 		{
-            int nFiled = 0;
+            int nFiled = nFieldResult;
 			//循环获取所有查找到的文件
 			for (int j = 0; j < nLineResult; j++)
 			{
 				XSTORAGECORE_DBFILE st_DBFile;
 				memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
-				_tcscpy(st_DBFile.tszTableName, pptszResult[0]);
+				_tcscpy(st_DBFile.tszTableName, pptszResult[i]);
                 nFiled++;
 
                 _tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[nFiled]);
@@ -490,20 +491,18 @@ BOOL CXStorage_SQLite::XStorage_SQLite_CreateTable()
             _stprintf_s(tszTableName, _T("%04d%02d"), st_DBTime.wYear, st_DBTime.wMonth + i);
         }
 
-		_stprintf_s(tszSQLQuery, _T("DROP TABLE IF EXISTS `%s`;"
-			"CREATE TABLE `%s`  ("
-			"  `ID` int NOT NULL AUTO_INCREMENT COMMENT 'ID序号',"
-			"  `FilePath` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件路径',"
-			"  `FileName` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件名称',"
-			"  `FileHash` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件HASH',"
-			"  `FileUser` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件所属用户',"
-			"  `FileUser` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件所属用户',"
-			"  `FileSize` bigint NOT NULL COMMENT '文件大小',"
-			"  `FileTime` datetime NOT NULL COMMENT '插入时间',"
-			"  PRIMARY KEY (`ID`) USING BTREE"
-			") ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;"
-			"SET FOREIGN_KEY_CHECKS = 1;"
-        ), tszTableName, tszTableName);
+		_stprintf_s(tszSQLQuery, _T("PRAGMA foreign_keys = false;"
+			"CREATE TABLE IF NOT EXISTS \"%s\" ("
+			"  \"ID\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+			"  \"FilePath\" TEXT NOT NULL,"
+			"  \"FileName\" TEXT NOT NULL,"
+			"  \"FileHash\" TEXT,"
+			"  \"FileUser\" TEXT,"
+			"  \"FileSize\" integer NOT NULL,"
+			"  \"FileTime\" TEXT NOT NULL"
+			");"
+			"PRAGMA foreign_keys = true;"
+        ), tszTableName);
 
         if (!DataBase_SQLite_Exec(xhSQL, tszSQLQuery))
         {
@@ -572,12 +571,16 @@ BOOL CXStorage_SQLite::XStorage_SQLite_TimeDel()
     TCHAR tszSQLQuery[2048];
 
     memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
-    _stprintf_s(tszSQLQuery, _T("SELECT NAME FROM SQLITE_MASTER WHERE TYPE = 'TABLE' ORDER BY NAME"));
+    _stprintf_s(tszSQLQuery, _T("SELECT NAME FROM SQLITE_MASTER WHERE TYPE = 'table' ORDER BY NAME"));
     if (DataBase_SQLite_GetTable(xhSQL, tszSQLQuery, &pptszResult, &nLine, &nField))
     {
         for (int i = 0; i < nLine; i++)
         {
             int nTimeMonth = 0;
+			if (!XStorage_SQLite_IsNumber(pptszResult[i]))
+			{
+				continue;
+			}
             //只有在处理正确的情况下才进行删除操作
             if (XStorage_SQLite_TimeMonth(pptszResult[i], &nTimeMonth))
             {
@@ -606,6 +609,18 @@ BOOL CXStorage_SQLite::XStorage_SQLite_TimeDel()
         }
     }
     DataBase_SQLite_FreeTable(pptszResult);
+    return TRUE;
+}
+BOOL CXStorage_SQLite::XStorage_SQLite_IsNumber(LPCTSTR lpszStr)
+{
+    int nLen = _tcslen(lpszStr);
+    for (int i = 0; i < nLen; i++)
+    {
+        if (0 == isdigit(lpszStr[i]))
+        {
+            return FALSE;
+        }
+    }
     return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////

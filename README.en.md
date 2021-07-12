@@ -14,8 +14,8 @@ This repository has a development and master branch. If you want to use it, plea
 feature list:  
 1. support file http upload and download(use put and get method)  
 2. support http api notify of event and management api interface  
-3. support http encrypt and cert data transimission(planning)  \
-4. support mysql record infomation.  
+3. support http encrypt and cert data transimission(planning)  
+4. support database(mysql and sqlite) record infomation.  
 5. support load banace  
 6. supprot http auth  
 7. support log and config  
@@ -89,6 +89,9 @@ The realization of downloading second transmission is to first query the local f
 - XEngine_Release  install directory
 - XEngine_Source   code    directory  
 - XEngine_APPClient client code dir  
+
+## now task
+P2P
 
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  

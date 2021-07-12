@@ -25,6 +25,8 @@
     "LogLeave": 32
   },
   "XSql": {
+    "SQLType": 1,
+    "SQLFile": "./XEngine_SQL/SQLFile.db",
     "SQLAddr": "192.168.1.9",
     "SQLPort": 3306,
     "SQLUser": "root",

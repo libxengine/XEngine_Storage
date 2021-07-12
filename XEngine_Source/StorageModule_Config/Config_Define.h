@@ -49,13 +49,13 @@ typedef struct tag_XEngine_ServerConfig
     }st_XLog;
     struct
     {
-        TCHAR tszSQLFile[MAX_PATH];
         TCHAR tszSQLAddr[128];
         TCHAR tszSQLUser[128];
         TCHAR tszSQLPass[128];
         TCHAR tszDBName[128];                                         
         int nSQLPort;
         int nSQLType;
+        TCHAR tszSQLFile[MAX_PATH];
     }st_XSql;
     struct  
 	{
