@@ -233,32 +233,3 @@ extern "C" BOOL P2XPProtocol_UserMsg_RequestLan(CHAR *ptszMsgBuffer, int *pInt_L
 备注：
 *********************************************************************/
 extern "C" BOOL P2XPProtocol_UserMsg_RequestHeartBeat(CHAR *ptszMsgBuffer, int *pInt_Len);
-/********************************************************************
-函数名称：P2XPProtocol_UserMsg_RequestQueryUser
-函数功能：查询用户是否在线封装协议函数
- 参数.一：pSt_Client
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入要查询的对方用户信息
- 参数.二：ptszMsgBuffer
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：导出组好包的数据
- 参数.三：pInt_Len
-  In/Out：In
-  类型：整数型指针
-  可空：N
-  意思：导出组好包的数据长度
- 参数.四：wPacketSerial
-  In/Out：In
-  类型：无符号短整数型
-  可空：Y
-  意思：设置这个包的序列,可以不设置,服务器返回的包序列也是这个
-返回值
-  类型：逻辑型
-  意思：是否成功构造
-备注：XENGINE_P2XPIO_PROTOCOL 只需要填写tszDestUser 其他不用填写
-*********************************************************************/
-extern "C" BOOL P2XPProtocol_UserMsg_RequestQueryUser(XENGINE_P2XPPEER_PROTOCOL *pSt_Client, CHAR *ptszMsgBuffer, int *pInt_Len, WORD wPacketSerial = 0);

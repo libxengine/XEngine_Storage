@@ -56,10 +56,6 @@ extern "C" BOOL P2XPProtocol_UserMsg_RequestLan(TCHAR * ptszMsgBuffer, int* pInt
 {
 	return m_UserMsg.P2XPProtocol_UserMsg_RequestLan(ptszMsgBuffer, pInt_Len, bWlan, wPacketSerial);
 }
-extern "C" BOOL P2XPProtocol_UserMsg_RequestQueryUser(XENGINE_P2XPPEER_PROTOCOL * pSt_Client, TCHAR * ptszMsgBuffer, int* pInt_Len, WORD wPacketSerial)
-{
-	return m_UserMsg.P2XPProtocol_UserMsg_RequestQueryUser(pSt_Client, ptszMsgBuffer, pInt_Len, wPacketSerial);
-}
 extern "C" BOOL P2XPProtocol_UserMsg_RequestHeartBeat(CHAR * ptszMsgBuffer, int* pInt_Len)
 {
 	return m_UserMsg.P2XPProtocol_UserMsg_RequestHeartBeat(ptszMsgBuffer, pInt_Len);

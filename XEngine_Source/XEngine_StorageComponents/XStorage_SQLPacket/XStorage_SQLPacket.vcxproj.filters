@@ -25,6 +25,12 @@
     <Filter Include="头文件\XStorageSQL_Info">
       <UniqueIdentifier>{34130f68-14d6-4037-9684-96b3923ad9c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\XStorage_SQLite">
+      <UniqueIdentifier>{f92a7d20-6347-4bf9-88a9-951d86f7c916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\XStorage_SQLite">
+      <UniqueIdentifier>{f77185f0-e584-48c9-9d37-cd3400aaf4ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -45,6 +51,9 @@
     <ClInclude Include="XStorageSQL_Info\XStorageSQL_Info.h">
       <Filter>头文件\XStorageSQL_Info</Filter>
     </ClInclude>
+    <ClInclude Include="XStorage_SQLite\XStorage_SQLite.h">
+      <Filter>头文件\XStorage_SQLite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -58,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="XStorageSQL_Info\XStorageSQL_Info.cpp">
       <Filter>源文件\XStorageSQL_Info</Filter>
+    </ClCompile>
+    <ClCompile Include="XStorage_SQLite\XStorage_SQLite.cpp">
+      <Filter>源文件\XStorage_SQLite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

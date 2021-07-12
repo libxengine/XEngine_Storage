@@ -61,7 +61,6 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPCENTER 3
 
 extern BOOL bIsRun;
-extern BOOL bIsSQL;
 extern XLOG xhLog;
 
 extern XNETHANDLE xhHBDownload;

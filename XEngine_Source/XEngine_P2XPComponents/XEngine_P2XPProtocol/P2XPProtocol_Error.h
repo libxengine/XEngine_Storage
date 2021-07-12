@@ -17,7 +17,6 @@
 #define ERROR_NETENGINE_P2XP_PROTOCOL_USERMSG_REQUESTHB_PARAMENT 0xB0F1020    //参数错误
 #define ERROR_NETENGINE_P2XP_PROTOCOL_USERMSG_REQUESTIONET_PARAMENT 0xB0F1030 //参数错误
 #define ERROR_NETENGINE_P2XP_PROTOCOL_USERMSG_REQUESTLIST_PARAMENT 0xB0F1040
-#define ERROR_NETENGINE_P2XP_PROTOCOL_USERMSG_REQUESTQUERYUSER_PARAMENT 0xB0F1050
 /************************************************************************/
 /*                  服务协议错误表                                      */
 /************************************************************************/

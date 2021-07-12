@@ -30,9 +30,16 @@ BOOL XEngine_Task_Query(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lps
 		XSTORAGECORE_DBFILE** ppSt_ListFile;
 		XStorageProtocol_Core_REQQueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszFileHash);
 
-		if (bIsSQL)
+		if (0 == st_ServiceCfg.st_XSql.nSQLType)
 		{
-			XStorageSQL_File_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
+			if (1 == st_ServiceCfg.st_XSql.nSQLType)
+			{
+				XStorageSQL_File_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
+			}
+			else
+			{
+				XStorage_SQLite_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
+			}
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 200;
 

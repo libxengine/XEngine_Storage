@@ -210,60 +210,6 @@ BOOL CP2XPProtocol_UserMsg::P2XPProtocol_UserMsg_RequestLan(TCHAR *ptszMsgBuffer
     return TRUE;
 }
 /********************************************************************
-函数名称：P2XPProtocol_UserMsg_RequestOpenIONet
-函数功能：查询用户是否在线封装协议函数
- 参数.一：pSt_Client
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入要查询的对方用户信息
- 参数.二：ptszMsgBuffer
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：导出组好包的数据
- 参数.三：pInt_Len
-  In/Out：In
-  类型：整数型指针
-  可空：N
-  意思：导出组好包的数据长度
- 参数.四：wPacketSerial
-  In/Out：In
-  类型：无符号短整数型
-  可空：Y
-  意思：设置这个包的序列,可以不设置,服务器返回的包序列也是这个
-返回值
-  类型：逻辑型
-  意思：是否成功构造
-备注：XENGINE_P2XPIO_PROTOCOL 只需要填写tszDestUser 其他不用填写
-*********************************************************************/
-BOOL CP2XPProtocol_UserMsg::P2XPProtocol_UserMsg_RequestQueryUser(XENGINE_P2XPPEER_PROTOCOL *pSt_Client,TCHAR *ptszMsgBuffer, int *pInt_Len, WORD wPacketSerial /* = 0 */)
-{
-    P2XPProtocol_IsErrorOccur = FALSE;
-
-    if ((NULL == ptszMsgBuffer) || (NULL == pInt_Len))
-    {
-        P2XPProtocol_IsErrorOccur = FALSE;
-        P2XPProtocol_dwErrorCode = ERROR_NETENGINE_P2XP_PROTOCOL_USERMSG_REQUESTQUERYUSER_PARAMENT;
-        return FALSE;
-    }
-    XENGINE_PROTOCOLHDR st_ProtocolHdr;
-    memset(&st_ProtocolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
-
-    st_ProtocolHdr.wHeader = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_HEADER;
-    st_ProtocolHdr.unOperatorType = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_P2XP;
-    st_ProtocolHdr.byVersion = 1;
-    st_ProtocolHdr.wTail = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_TAIL;
-    st_ProtocolHdr.unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REQUSERQUERY;
-    st_ProtocolHdr.unPacketSize = 0;
-    st_ProtocolHdr.byIsReply = TRUE;
-
-    *pInt_Len = st_ProtocolHdr.unPacketSize + sizeof(XENGINE_PROTOCOLHDR);
-    memcpy(ptszMsgBuffer, &st_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
-    memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), pSt_Client, sizeof(XENGINE_P2XPPEER_PROTOCOL));
-    return TRUE;
-}
-/********************************************************************
 函数名称：P2XPProtocol_UserMsg_RequestHeartBeat
 函数功能：封装一个心跳请求的包
  参数.一：ptszMsgBuffer

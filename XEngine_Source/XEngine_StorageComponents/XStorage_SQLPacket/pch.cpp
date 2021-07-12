@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "XStorageSQL_File/XStorageSQL_File.h"
 #include "XStorageSQL_Info/XStorageSQL_Info.h"
+#include "XStorage_SQLite/XStorage_SQLite.h"
 /********************************************************************
 //    Created:     2021/06/10  11:10:16
 //    File Name:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageComponents\XStorage_SQLPacket\pch.cpp
@@ -17,6 +18,7 @@ DWORD XStorage_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CXStorageSQL_File m_DBFile;
 CXStorageSQL_Info m_DBInfo;
+CXStorage_SQLite m_SQLite;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -106,4 +108,31 @@ extern "C" BOOL XStorageSQL_Info_UserSet(LPCTSTR lpszUser, XNETHANDLE xhToken, i
 extern "C" BOOL XStorageSQL_Info_UPCount(__int64x nFileSize, BOOL bAdd)
 {
 	return m_DBInfo.XStorageSQL_Info_UPCount(nFileSize, bAdd);
+}
+/************************************************************************/
+/*                         SQLITE数据库函数                             */
+/************************************************************************/
+extern "C" BOOL XStorage_SQLite_Init(LPCTSTR lpszSQLFile, int nTimeMonth)
+{
+	return m_SQLite.XStorage_SQLite_Init(lpszSQLFile, nTimeMonth);
+}
+extern "C" BOOL XStorage_SQLite_Destory()
+{
+	return m_SQLite.XStorage_SQLite_Destory();
+}
+extern "C" BOOL XStorage_SQLite_FileInsert(XSTORAGECORE_DBFILE * pSt_DBManage)
+{
+	return m_SQLite.XStorage_SQLite_FileInsert(pSt_DBManage);
+}
+extern "C" BOOL XStorage_SQLite_FileDelete(LPCTSTR lpszFile, LPCTSTR lpszHash)
+{
+	return m_SQLite.XStorage_SQLite_FileDelete(lpszFile, lpszHash);
+}
+extern "C" BOOL XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszFile, LPCTSTR lpszHash)
+{
+	return m_SQLite.XStorage_SQLite_FileQuery(pppSt_ListFile, pInt_ListCount, lpszTimeStart, lpszTimeEnd, lpszFile, lpszHash);
+}
+extern "C" BOOL XStorage_SQLite_FileQueryForTable(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTableName)
+{
+	return m_SQLite.XStorage_SQLite_FileQueryForTable(pppSt_ListFile, pInt_ListCount, lpszTableName);
 }

@@ -62,9 +62,18 @@ BOOL XEngine_Task_Event(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lps
 			st_DBFile.st_ProtocolFile.tszFilePath[_tcslen(st_DBFile.st_ProtocolFile.tszFilePath) - 1] = '\0';
 		}
 
-		if (bIsSQL)
+		if (0 != st_ServiceCfg.st_XSql.nSQLType)
 		{
-			if (XStorageSQL_File_FileInsert(&st_DBFile))
+			BOOL bRet = FALSE;
+			if (1 == st_ServiceCfg.st_XSql.nSQLType)
+			{
+				bRet = XStorageSQL_File_FileInsert(&st_DBFile);
+			}
+			else
+			{
+				bRet = XStorage_SQLite_FileInsert(&st_DBFile);
+			}
+			if (bRet)
 			{
 				st_HDRParam.nHttpCode = 200;
 				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);

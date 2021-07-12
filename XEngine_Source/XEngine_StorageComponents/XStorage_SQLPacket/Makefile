@@ -7,7 +7,7 @@ LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XE
 LIB = -lXEngine_BaseLib -lHelpComponents_DataBase
 LIBEX = -static-libgcc -lrt -ldl 
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = XStorageSQL_File.o XStorageSQL_Info.o pch.o
+LIBINCLUDE = XStorageSQL_File.o XStorageSQL_Info.o XStorage_SQLite.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -30,7 +30,9 @@ XStorageSQL_File.o:./XStorageSQL_File/XStorageSQL_File.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./XStorageSQL_File/XStorageSQL_File.cpp  
 XStorageSQL_Info.o:./XStorageSQL_Info/XStorageSQL_Info.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./XStorageSQL_Info/XStorageSQL_Info.cpp 
-
+XStorage_SQLite.o:./XStorage_SQLite/XStorage_SQLite.cpp                                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./XStorage_SQLite/XStorage_SQLite.cpp 
+	
 pch.o:pch.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) pch.cpp
 

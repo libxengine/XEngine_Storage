@@ -11,5 +11,4 @@ EXPORTS
 	P2XPProtocol_UserMsg_RequestLogin
 	P2XPProtocol_UserMsg_RequestConnect
 	P2XPProtocol_UserMsg_RequestLan
-	P2XPProtocol_UserMsg_RequestQueryUser
 	P2XPProtocol_UserMsg_RequestHeartBeat

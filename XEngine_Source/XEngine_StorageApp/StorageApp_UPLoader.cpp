@@ -138,9 +138,18 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		//验证HASH值
 		if (XEngine_APPHelp_VerHash(lpszClientAddr, tszFileDir, st_ProtocolFile.st_ProtocolFile.tszFileHash, pptszListHdr, nHdrCount))
 		{
-			if (bIsSQL)
+			if (0 != st_ServiceCfg.st_XSql.nSQLType)
 			{
-				if (XStorageSQL_File_FileInsert(&st_ProtocolFile))
+				BOOL bRet = FALSE;
+				if (1 == st_ServiceCfg.st_XSql.nSQLType)
+				{
+					bRet = XStorageSQL_File_FileInsert(&st_ProtocolFile);
+				}
+				else
+				{
+					bRet = XStorage_SQLite_FileInsert(&st_ProtocolFile);
+				}
+				if (bRet)
 				{
 					if (st_ServiceCfg.st_XProxy.st_XProxyPass.bUPPass)
 					{

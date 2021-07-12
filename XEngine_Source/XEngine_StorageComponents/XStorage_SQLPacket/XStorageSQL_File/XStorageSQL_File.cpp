@@ -799,20 +799,20 @@ BOOL CXStorageSQL_File::XStorageSQL_File_TimeDel()
         for (DWORD64 i = 0; i < dwLine; i++)
         {
             TCHAR** pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhTableResult);
-            if (NULL == pptszResult[i])
+            if (NULL == pptszResult[0])
             {
                 continue;
             }
             int nTimeMonth = 0;
             //只有在处理正确的情况下才进行删除操作
-            if (XStorageSQL_File_TimeMonth(pptszResult[i], &nTimeMonth))
+            if (XStorageSQL_File_TimeMonth(pptszResult[0], &nTimeMonth))
             {
                 if (nTimeMonth > m_nTimeMonth)
                 {
                     //删除文件
                     int nListCount = 0;
                     XSTORAGECORE_DBFILE **ppSt_ListFile;
-                    XStorageSQL_File_FileQueryForTable(&ppSt_ListFile, &nListCount, pptszResult[i]);
+                    XStorageSQL_File_FileQueryForTable(&ppSt_ListFile, &nListCount, pptszResult[0]);
 
                     for (int i = 0; i < nListCount; i++)
                     {
@@ -834,7 +834,7 @@ BOOL CXStorageSQL_File::XStorageSQL_File_TimeDel()
                     }
                     //删除数据库
                     memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
-                    _stprintf_s(tszSQLQuery, _T("DROP TABLE `%s`"), pptszResult[i]);
+                    _stprintf_s(tszSQLQuery, _T("DROP TABLE `%s`"), pptszResult[0]);
                     DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery);
                     BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
                 }

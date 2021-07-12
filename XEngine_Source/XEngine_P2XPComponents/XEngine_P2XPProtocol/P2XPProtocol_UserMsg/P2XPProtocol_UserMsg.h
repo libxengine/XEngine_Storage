@@ -20,7 +20,6 @@ public:
     BOOL P2XPProtocol_UserMsg_RequestLogin(XENGINE_P2XPPEER_PROTOCOL *pSt_ClientInfo, XENGINE_PROTOCOL_USERAUTH *pSt_UserLogin, TCHAR *ptszMsgBuffer, int *pInt_Len, WORD wPacketSerial = 0);
     BOOL P2XPProtocol_UserMsg_RequestConnect(XENGINE_P2XPIO_PROTOCOL*pSt_ClientIONet, TCHAR *ptszMsgBuffer, int *pInt_Len, WORD wPacketSerial = 0);
     BOOL P2XPProtocol_UserMsg_RequestLan(TCHAR *ptszMsgBuffer, int *pInt_Len, BOOL bWlan = FALSE, WORD wPacketSerial = 0);
-    BOOL P2XPProtocol_UserMsg_RequestQueryUser(XENGINE_P2XPPEER_PROTOCOL *pSt_Client, TCHAR *ptszMsgBuffer, int *pInt_Len, WORD wPacketSerial = 0);
     BOOL P2XPProtocol_UserMsg_RequestHeartBeat(TCHAR *ptszMsgBuffer, int *pInt_Len);
 protected:
 private:
