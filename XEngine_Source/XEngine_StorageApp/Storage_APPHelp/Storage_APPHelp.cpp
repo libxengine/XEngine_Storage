@@ -1,6 +1,6 @@
 ﻿#include "../StorageApp_Hdr.h"
 
-BOOL XEngine_APPHelp_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszPostUrl, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
+BOOL XEngine_APPHelp_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszMethod, LPCTSTR lpszPostUrl, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
 {
 	int nSDLen = 1024;
 	int nAuthType = 0;
@@ -58,7 +58,7 @@ BOOL XEngine_APPHelp_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszPostUrl, TCHA
 			tstring m_StrBody;
 			int nResponseCode = 0;
 			
-			XStorageProtocol_Proxy_PacketBasicAuth(lpszPostUrl, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
+			XStorageProtocol_Proxy_PacketBasicAuth(lpszMethod, lpszPostUrl, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
 			APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &m_StrBody);
 
 			if (200 != nResponseCode)

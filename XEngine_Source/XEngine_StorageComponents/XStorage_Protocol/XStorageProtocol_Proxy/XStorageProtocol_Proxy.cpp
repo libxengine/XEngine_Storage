@@ -25,32 +25,37 @@ CXStorageProtocol_Proxy::~CXStorageProtocol_Proxy()
 /********************************************************************
 函数名称：XStorageProtocol_Proxy_PacketBasicAuth
 函数功能：基本验证协议代理转发
- 参数.一：lpszPostUrl
+ 参数.一：lpszMethod
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：方法名称
+ 参数.二：lpszPostUrl
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：用户提交的地址
- 参数.二：lpszClientAddr
+ 参数.三：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：用户发送的客户端地址
- 参数.三：lpszUser
+ 参数.四：lpszUser
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：用户
- 参数.四：lpszPass
+ 参数.五：lpszPass
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：密码
- 参数.五：ptszMsgBuffer
+ 参数.六：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：转发数据包
- 参数.六：pInt_MsgLen
+ 参数.七：pInt_MsgLen
   In/Out：Out
   类型：整数型
   可空：N
@@ -60,7 +65,7 @@ CXStorageProtocol_Proxy::~CXStorageProtocol_Proxy()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CXStorageProtocol_Proxy::XStorageProtocol_Proxy_PacketBasicAuth(LPCTSTR lpszPostUrl, LPCTSTR lpszClientAddr, LPCTSTR lpszUser, LPCTSTR lpszPass, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+BOOL CXStorageProtocol_Proxy::XStorageProtocol_Proxy_PacketBasicAuth(LPCTSTR lpszMethod, LPCTSTR lpszPostUrl, LPCTSTR lpszClientAddr, LPCTSTR lpszUser, LPCTSTR lpszPass, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
     XStorage_IsErrorOccur = FALSE;
 
@@ -72,6 +77,7 @@ BOOL CXStorageProtocol_Proxy::XStorageProtocol_Proxy_PacketBasicAuth(LPCTSTR lps
     }
     Json::Value st_JsonRoot;
 
+	st_JsonRoot["lpszMethod"] = lpszMethod;
     st_JsonRoot["lpszPostUrl"] = lpszPostUrl;
     st_JsonRoot["lpszClientAddr"] = lpszClientAddr;
     st_JsonRoot["lpszUser"] = lpszUser;
