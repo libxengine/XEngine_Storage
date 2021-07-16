@@ -836,6 +836,7 @@ BOOL CXStorageSQL_File::XStorageSQL_File_TimeDel()
                     memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
                     _stprintf_s(tszSQLQuery, _T("DROP TABLE `%s`"), pptszResult[0]);
                     DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery);
+                    BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
                 }
             }
         }

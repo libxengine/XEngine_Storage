@@ -1,0 +1,21 @@
+{
+  "tszIPAddr": "127.0.0.1",
+  "bDistributed": 1,
+  "LBConfig": {
+    "nServerMode": 1
+  },
+  "LoadBalance": {
+    "nUseMode": [
+      0
+    ],
+    "CenterAddr": [
+      "http://192.168.1.9:5100"
+    ],
+    "DownloadAddr": [
+      "http://192.168.1.9:5010"
+    ],
+    "UPLoaderAddr": [
+      "http://192.168.1.9:5102"
+    ]
+  }
+}

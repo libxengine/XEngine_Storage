@@ -1,6 +1,6 @@
-﻿#include "StorageApp_Hdr.h"
+﻿#include "../StorageApp_Hdr.h"
 
-BOOL XEngine_Task_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszPostUrl, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
+BOOL XEngine_APPHelp_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszMethod, LPCTSTR lpszPostUrl, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
 {
 	int nSDLen = 1024;
 	int nAuthType = 0;
@@ -58,7 +58,7 @@ BOOL XEngine_Task_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszPostUrl, TCHAR**
 			tstring m_StrBody;
 			int nResponseCode = 0;
 			
-			XStorageProtocol_Proxy_PacketBasicAuth(lpszPostUrl, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
+			XStorageProtocol_Proxy_PacketBasicAuth(lpszMethod, lpszPostUrl, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
 			APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &m_StrBody);
 
 			if (200 != nResponseCode)
@@ -103,7 +103,7 @@ BOOL XEngine_Task_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszPostUrl, TCHAR**
 	}
 	return TRUE;
 }
-BOOL XEngine_Task_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt_EPos, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
+BOOL XEngine_APPHelp_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt_EPos, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
 {
 	LPCTSTR lpszRange = _T("Range");
 	LPCTSTR lpszClientType;
@@ -144,7 +144,7 @@ BOOL XEngine_Task_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt_EP
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,客户端的请求设置了数据范围:%s - %s"), lpszClientType, lpszClientAddr, tszKeyStr, tszValueStr);
 	return TRUE;
 }
-BOOL XEngine_Task_VerHash(LPCTSTR lpszClientAddr ,LPCTSTR lpszFileName, LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount)
+BOOL XEngine_APPHelp_VerHash(LPCTSTR lpszClientAddr ,LPCTSTR lpszFileName, LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount)
 {
 	LPCTSTR lpszKeyStr = _T("FileHash");
 	TCHAR tszValueStr[MAX_PATH];

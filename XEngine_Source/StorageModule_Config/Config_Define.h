@@ -20,6 +20,10 @@ typedef struct tag_XEngine_ServerConfig
     int nCenterPort;
     int nStorageDLPort;
     int nStorageUPPort;
+    struct 
+    {
+        BOOL bReload;
+    }st_Memory;
     struct
     {
         int nMaxClient;
@@ -48,16 +52,15 @@ typedef struct tag_XEngine_ServerConfig
         TCHAR tszSQLAddr[128];
         TCHAR tszSQLUser[128];
         TCHAR tszSQLPass[128];
-        TCHAR tszDBName[128];                                                
+        TCHAR tszDBName[128];                                         
         int nSQLPort;
+        int nSQLType;
+        TCHAR tszSQLFile[MAX_PATH];
     }st_XSql;
     struct  
 	{
         BOOL bRename;
-        int nUseMode;
         int nHashMode;
-        TCHAR tszHttpAddr[MAX_PATH];
-        TCHAR tszNginAddr[MAX_PATH];
 		TCHAR tszFileDir[MAX_PATH];
     }st_XStorage;
     struct  
@@ -86,6 +89,22 @@ typedef struct tag_XEngine_ServerConfig
         list<tstring> *pStl_ListStorage;
     }st_XVer;
 }XENGINE_SERVERCONFIG;
+typedef struct
+{
+	TCHAR tszIPAddr[128];
+	BOOL bDistributed;
+    struct  
+    {
+        int nServerMode;
+    }st_LBConfig;
+	struct
+	{
+        list<int>* pStl_ListUseMode;
+        list<tstring>* pStl_ListCenter;
+		list<tstring>* pStl_ListDownload;
+		list<tstring>* pStl_ListUPLoader;
+	}st_LoadBalance;
+}XENGINE_LBCONFIG;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义
 //////////////////////////////////////////////////////////////////////////
@@ -93,4 +112,5 @@ extern "C" DWORD Config_GetLastError(int *pInt_ErrorCode = NULL);
 /************************************************************************/
 /*                        文件配置读取                                  */
 /************************************************************************/
-extern "C" BOOL Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG *pSt_ServerConfig);
+extern "C" BOOL Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG * pSt_ServerConfig);
+extern "C" BOOL Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCONFIG * pSt_ServerConfig);

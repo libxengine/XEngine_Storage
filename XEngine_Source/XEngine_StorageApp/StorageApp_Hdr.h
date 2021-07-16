@@ -41,10 +41,16 @@ using namespace std;
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Error.h"
 #include "../XEngine_StorageComponents/XStorage_Protocol/XStorageProtocol_Define.h"
 #include "../XEngine_StorageComponents/XStorage_Protocol/XStorageProtocol_Error.h"
+#include "../XEngine_P2XPComponents/XEngine_P2XPPeer/P2XPPeer_Define.h"
+#include "../XEngine_P2XPComponents/XEngine_P2XPPeer/P2XPPeer_Error.h"
+#include "../XEngine_P2XPComponents/XEngine_P2XPProtocol/P2XPProtocol_Define.h"
+#include "../XEngine_P2XPComponents/XEngine_P2XPProtocol/P2XPProtocol_Error.h"
 #include "../StorageModule_Session/Session_Define.h"
 #include "../StorageModule_Session/Session_Error.h"
 #include "../StorageModule_Config/Config_Define.h"
 #include "../StorageModule_Config/Config_Error.h"
+#include "../StorageModule_APIHelp/APIHelp_Define.h"
+#include "../StorageModule_APIHelp/APIHelp_Error.h"
 
 #define STORAGE_LEAVETYPE_HEARTBEAT 1
 #define STORAGE_LEAVETYPE_BYSELF 2
@@ -55,7 +61,6 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPCENTER 3
 
 extern BOOL bIsRun;
-extern BOOL bIsSQL;
 extern XLOG xhLog;
 
 extern XNETHANDLE xhHBDownload;
@@ -72,21 +77,29 @@ extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
 
 extern XENGINE_SERVERCONFIG st_ServiceCfg;
+extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 
 #include "StorageApp_Network.h"
 #include "StorageApp_Config.h"
-#include "StorageApp_Task.h"
 #include "StorageApp_Download.h"
 #include "StorageApp_UPLoader.h"
 #include "StorageApp_Center.h"
+#include "Storage_APPTask/Storage_TaskEvent.h"
+#include "Storage_APPTask/Storage_TaskPass.h"
+#include "Storage_APPTask/Storage_TaskQuery.h"
+#include "Storage_APPTask/Storage_TaskP2P.h"
+#include "Storage_APPHelp/Storage_APPHelp.h"
 
 #ifdef _WINDOWS
 #pragma comment(lib,"Ws2_32.lib")
 #ifdef _WIN64
 #pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
+#pragma comment(lib,"../x64/Release/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../x64/Release/XStorage_SQLPacket.lib")
 #pragma comment(lib,"../x64/Release/XStorage_Protocol.lib")
+#pragma comment(lib,"../x64/Release/XEngine_P2XPPeer.lib")
+#pragma comment(lib,"../x64/Release/XEngine_P2XPProtocol.lib")
 #pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"x64/XEngine_BaseLib/XEngine_Algorithm.lib")
 #pragma comment(lib,"x64/XEngine_Core/XEngine_Core.lib")
@@ -96,10 +109,23 @@ extern XENGINE_SERVERCONFIG st_ServiceCfg;
 #pragma comment(lib,"x64/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
 #pragma comment(lib,"x64/XEngine_NetHelp/NetHelp_APIHelp.lib")
 #else
+#ifdef _DEBUG
 #pragma comment(lib,"../Debug/StorageModule_Session.lib")
 #pragma comment(lib,"../Debug/StorageModule_Config.lib")
+#pragma comment(lib,"../Debug/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../Debug/XStorage_SQLPacket.lib")
 #pragma comment(lib,"../Debug/XStorage_Protocol.lib")
+#pragma comment(lib,"../Debug/XEngine_P2XPPeer.lib")
+#pragma comment(lib,"../Debug/XEngine_P2XPProtocol.lib")
+#else
+#pragma comment(lib,"../Release/StorageModule_Session.lib")
+#pragma comment(lib,"../Release/StorageModule_Config.lib")
+#pragma comment(lib,"../Release/StorageModule_APIHelp.lib")
+#pragma comment(lib,"../Release/XStorage_SQLPacket.lib")
+#pragma comment(lib,"../Release/XStorage_Protocol.lib")
+#pragma comment(lib,"../Release/XEngine_P2XPPeer.lib")
+#pragma comment(lib,"../Release/XEngine_P2XPProtocol.lib")
+#endif
 #pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"x86/XEngine_BaseLib/XEngine_Algorithm.lib")
 #pragma comment(lib,"x86/XEngine_Core/XEngine_Core.lib")

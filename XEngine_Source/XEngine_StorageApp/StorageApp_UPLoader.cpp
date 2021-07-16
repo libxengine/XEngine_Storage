@@ -62,7 +62,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,发送的方法不支持"), lpszClientAddr);
 		return FALSE;
 	}
-	if (!XEngine_Task_ProxyAuth(lpszClientAddr, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER))
+	if (!XEngine_APPHelp_ProxyAuth(lpszClientAddr, lpszMethodGet, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER))
 	{
 		return FALSE;
 	}
@@ -71,19 +71,23 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.bAuth = TRUE;
 	}
 	//使用重定向?
-	if ((2 == st_ServiceCfg.st_XStorage.nUseMode) || (4 == st_ServiceCfg.st_XStorage.nUseMode))
+	if (APIHelp_Distributed_IsMode(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUseMode, STORAGE_NETTYPE_HTTPUPLOADER))
 	{
 		TCHAR tszHdrBuffer[1024];
+		TCHAR tszStorageAddr[128];
+
 		memset(tszHdrBuffer, '\0', sizeof(tszHdrBuffer));
+		memset(tszStorageAddr, '\0', sizeof(tszStorageAddr));
 
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 302;
 
-		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), st_ServiceCfg.st_XStorage.tszNginAddr, pSt_HTTPParam->tszHttpUri);
+		APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUPLoader, tszStorageAddr);
+		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), tszStorageAddr, pSt_HTTPParam->tszHttpUri);
 
 		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求的文件被要求重定向到:%s%s"), lpszClientAddr, st_ServiceCfg.st_XStorage.tszNginAddr, pSt_HTTPParam->tszHttpUri);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求的文件被要求重定向到:%s%s"), lpszClientAddr, tszStorageAddr, pSt_HTTPParam->tszHttpUri);
 		return TRUE;
 	}
 
@@ -94,7 +98,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	{
 		int nPosStart = 0;
 		int nPosEnd = 0;
-		XEngine_Task_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER);
+		XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER);
 		RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 
 		_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
@@ -111,12 +115,14 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	}
 	if (nMsgLen <= 0)
 	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,用户数据大小为0?"), lpszClientAddr);
 		return TRUE;
 	}
 	Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer, nMsgLen);
 	RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 	if (nHDSize >= nRVCount)
 	{
+		int nHashLen = 0;
 		UCHAR tszHashStr[MAX_PATH];
 		XSTORAGECORE_DBFILE st_ProtocolFile;
 
@@ -128,15 +134,23 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, pSt_HTTPParam->tszHttpUri + 1);
 		st_ProtocolFile.st_ProtocolFile.nFileSize = nRVCount;
 
-		
-		OPenSsl_Api_Digest(tszFileDir, tszHashStr, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
-		BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+		OPenSsl_Api_Digest(tszFileDir, tszHashStr, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
+		BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		//验证HASH值
-		if (XEngine_Task_VerHash(lpszClientAddr, tszFileDir, st_ProtocolFile.st_ProtocolFile.tszFileHash, pptszListHdr, nHdrCount))
+		if (XEngine_APPHelp_VerHash(lpszClientAddr, tszFileDir, st_ProtocolFile.st_ProtocolFile.tszFileHash, pptszListHdr, nHdrCount))
 		{
-			if (bIsSQL)
+			if (0 != st_ServiceCfg.st_XSql.nSQLType)
 			{
-				if (XStorageSQL_File_FileInsert(&st_ProtocolFile))
+				BOOL bRet = FALSE;
+				if (1 == st_ServiceCfg.st_XSql.nSQLType)
+				{
+					bRet = XStorageSQL_File_FileInsert(&st_ProtocolFile);
+				}
+				else
+				{
+					bRet = XStorage_SQLite_FileInsert(&st_ProtocolFile);
+				}
+				if (bRet)
 				{
 					if (st_ServiceCfg.st_XProxy.st_XProxyPass.bUPPass)
 					{
@@ -153,7 +167,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 						APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass, tszProxyStr, &nHttpCode);
 						XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("上传客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass);
 					}
-					st_HDRParam.bIsClose = FALSE;
+					st_HDRParam.bIsClose = TRUE;
 					st_HDRParam.nHttpCode = 200;
 					RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
@@ -161,7 +175,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 				}
 				else
 				{
-					st_HDRParam.bIsClose = FALSE;
+					st_HDRParam.bIsClose = TRUE;
 					st_HDRParam.nHttpCode = 403;
 					RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
@@ -177,7 +191,8 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	}
 	else
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("上传客户端:%s,请求上传文件中,文件名:%s,大小:%d"), lpszClientAddr, tszFileDir, nMsgLen);
+		_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件中,文件名:%s,大小:%d"), lpszClientAddr, tszFileDir, nMsgLen);
 	}
 	
 	return TRUE;

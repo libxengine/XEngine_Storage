@@ -1,14 +1,20 @@
 ﻿#include "StorageApp_Hdr.h"
 
-BOOL StorageApp_Config_Parament(int argc,char **argv, XENGINE_SERVERCONFIG *pSt_ServerConfig)
+BOOL StorageApp_Config_Parament(int argc,char **argv)
 {
-    LPCTSTR lpszCfg = _T("./XEngine_Config/XEngine_Config.json");
+    LPCTSTR lpszBaseCfg = _T("./XEngine_Config/XEngine_Config.json");
+    LPCTSTR lpszLoadCfg = _T("./XEngine_Config/XEngine_LBConfig.json");
 
-    if (!Config_Json_File(lpszCfg,pSt_ServerConfig))
+    if (!Config_Json_File(lpszBaseCfg, &st_ServiceCfg))
     {
         printf("解析配置文件失败,Config_Json_File:%lX\n",Config_GetLastError());
         return FALSE;
     }
+	if (!Config_Json_LoadBalance(lpszLoadCfg, &st_LoadbalanceCfg))
+	{
+		printf("解析配置文件失败,Config_Json_LoadBalance:%lX\n", Config_GetLastError());
+		return FALSE;
+	}
 
     for (int i = 0;i < argc;i++)
     {
@@ -25,12 +31,16 @@ BOOL StorageApp_Config_Parament(int argc,char **argv, XENGINE_SERVERCONFIG *pSt_
         }
         else if (0 == _tcscmp("-l",argv[i]))
         {
-            pSt_ServerConfig->st_XLog.nLogLeave = _ttoi(argv[i + 1]);
+            st_ServiceCfg.st_XLog.nLogLeave = _ttoi(argv[i + 1]);
         }
         else if (0 == _tcscmp("-d",argv[i]))
         {
-            pSt_ServerConfig->bDeamon = _ttoi(argv[i + 1]);
+            st_ServiceCfg.bDeamon = _ttoi(argv[i + 1]);
         }
+		else if (0 == _tcscmp("-r", argv[i]))
+		{
+            st_ServiceCfg.st_Memory.bReload = TRUE;
+		}
     }
 
     return TRUE;
@@ -44,5 +54,6 @@ void StorageApp_Config_ParamentHelp()
     printf(_T("-v or -V：输出版本号\n"));
     printf(_T("-l：设置日志输出级别\n"));
     printf(_T("-d：1 启用守护进程，2不启用\n"));
+    printf(_T("-r：无重启,重载配置文件\n"));
     printf(_T("--------------------------启动参数帮助结束--------------------------\n"));
 }

@@ -172,6 +172,7 @@
     <ClInclude Include="SQLPacket_Error.h" />
     <ClInclude Include="XStorageSQL_File\XStorageSQL_File.h" />
     <ClInclude Include="XStorageSQL_Info\XStorageSQL_Info.h" />
+    <ClInclude Include="XStorage_SQLite\XStorage_SQLite.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -183,6 +184,7 @@
     </ClCompile>
     <ClCompile Include="XStorageSQL_File\XStorageSQL_File.cpp" />
     <ClCompile Include="XStorageSQL_Info\XStorageSQL_Info.cpp" />
+    <ClCompile Include="XStorage_SQLite\XStorage_SQLite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="XStorage_SQLPacket.def" />

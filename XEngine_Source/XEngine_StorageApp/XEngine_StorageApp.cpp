@@ -1,7 +1,6 @@
 ﻿#include "StorageApp_Hdr.h"
 
 BOOL bIsRun = FALSE;
-BOOL bIsSQL = FALSE;
 XLOG xhLog = NULL;
 
 XNETHANDLE xhHBDownload = 0;
@@ -18,6 +17,7 @@ XHANDLE xhDLHttp = NULL;
 XHANDLE xhCenterHttp = NULL;
 
 XENGINE_SERVERCONFIG st_ServiceCfg;
+XENGINE_LBCONFIG st_LoadbalanceCfg;
 
 void ServiceApp_Stop(int signo)
 {
@@ -42,6 +42,7 @@ void ServiceApp_Stop(int signo)
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		XStorageSQL_Destory();
+		XStorage_SQLite_Destory();
 		exit(0);
 	}
 }
@@ -94,10 +95,21 @@ int main(int argc, char** argv)
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceCfg, '\0', sizeof(XENGINE_SERVERCONFIG));
+	memset(&st_LoadbalanceCfg, '\0', sizeof(XENGINE_LBCONFIG));
 
-	if (!StorageApp_Config_Parament(argc, argv, &st_ServiceCfg))
+	if (!StorageApp_Config_Parament(argc, argv))
 	{
 		return -1;
+	}
+	if (st_ServiceCfg.st_Memory.bReload)
+	{
+		//重载配置文件后退出
+		TCHAR tszAddr[128];
+		memset(tszAddr, '\0', sizeof(tszAddr));
+
+		_stprintf(tszAddr, _T("Http://127.0.0.1:%d/Api/Event/Config"), st_ServiceCfg.nCenterPort);
+		APIHelp_HttpRequest_Post(tszAddr);
+		return 0;
 	}
 	st_XLogConfig.XLog_MaxBackupFile = st_ServiceCfg.st_XLog.nMaxCount;
 	st_XLogConfig.XLog_MaxSize = st_ServiceCfg.st_XLog.nMaxSize;
@@ -144,22 +156,26 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，心跳管理服务配置为不启用..."));
 	}
 
-	if (st_ServiceCfg.st_XSql.nSQLPort > 0)
+	if (1 == st_ServiceCfg.st_XSql.nSQLType)
 	{
-		if (XStorageSQL_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql, st_ServiceCfg.st_XTime.nDBMonth))
+		if (!XStorageSQL_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql, st_ServiceCfg.st_XTime.nDBMonth))
 		{
-			bIsSQL = TRUE;
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化数据库服务成功"));
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化MYSQL数据库服务失败，错误：%lX"), XStorageDB_GetLastError());
+			goto XENGINE_EXITAPP;
 		}
-		else
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化MYSQL数据库服务成功"));
+	}
+	else if (2 == st_ServiceCfg.st_XSql.nSQLType)
+	{
+		if (!XStorage_SQLite_Init(st_ServiceCfg.st_XSql.tszSQLFile, st_ServiceCfg.st_XTime.nDBMonth))
 		{
-			bIsSQL = FALSE;
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化数据库服务失败，错误：%lX"), XStorageDB_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化SQLITE数据库服务失败，错误：%lX"), XStorageDB_GetLastError());
+			goto XENGINE_EXITAPP;
 		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化SQLITE数据库服务成功"));
 	}
 	else
 	{
-		bIsSQL = FALSE;
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，数据库被设置为不启用"));
 	}
 
@@ -321,6 +337,7 @@ XENGINE_EXITAPP:
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		XStorageSQL_Destory();
+		XStorage_SQLite_Destory();
 	}
 #ifdef _WINDOWS
 	WSACleanup();

@@ -33,9 +33,9 @@ extern "C" DWORD XStorageProtocol_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                      代理协议操作导出函数                            */
 /************************************************************************/
-extern "C" BOOL XStorageProtocol_Proxy_PacketBasicAuth(LPCTSTR lpszPostUrl, LPCTSTR lpszClientAddr, LPCTSTR lpszUser, LPCTSTR lpszPass, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+extern "C" BOOL XStorageProtocol_Proxy_PacketBasicAuth(LPCTSTR lpszMethod, LPCTSTR lpszPostUrl, LPCTSTR lpszClientAddr, LPCTSTR lpszUser, LPCTSTR lpszPass, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
-	return m_ProtocolProxy.XStorageProtocol_Proxy_PacketBasicAuth(lpszPostUrl, lpszClientAddr, lpszUser, lpszPass, ptszMsgBuffer, pInt_MsgLen);
+	return m_ProtocolProxy.XStorageProtocol_Proxy_PacketBasicAuth(lpszMethod, lpszPostUrl, lpszClientAddr, lpszUser, lpszPass, ptszMsgBuffer, pInt_MsgLen);
 }
 extern "C" BOOL XStorageProtocol_Proxy_PacketUPDown(LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileHash)
 {

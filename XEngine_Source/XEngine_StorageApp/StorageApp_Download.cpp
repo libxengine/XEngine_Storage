@@ -79,7 +79,7 @@ XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
 					memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
 					OPenSsl_Api_Digest(st_StorageInfo.tszFileDir, tszHashKey, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
-					BaseLib_OperatorString_StrToHex((char*)tszHashStr, 20, tszHashStr);
+					BaseLib_OperatorString_StrToHex((char*)tszHashKey, 20, tszHashStr);
 					Session_DLStroage_GetInfo(nThreadPos, i, &st_StorageInfo);
 
 					XStorageProtocol_Proxy_PacketUPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, tszHashStr);
@@ -126,7 +126,7 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,发送的方法不支持"), lpszClientAddr);
 		return FALSE;
 	}
-	if (!XEngine_Task_ProxyAuth(lpszClientAddr, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPDOWNLOAD))
+	if (!XEngine_APPHelp_ProxyAuth(lpszClientAddr, lpszMethodGet, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPDOWNLOAD))
 	{
 		return FALSE;
 	}
@@ -135,26 +135,30 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.bAuth = TRUE;
 	}
 	//使用重定向?
-	if ((1 == st_ServiceCfg.st_XStorage.nUseMode) || (4 == st_ServiceCfg.st_XStorage.nUseMode))
+	if (APIHelp_Distributed_IsMode(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUseMode, STORAGE_NETTYPE_HTTPDOWNLOAD))
 	{
 		TCHAR tszHdrBuffer[1024];
+		TCHAR tszStorageAddr[128];
+
 		memset(tszHdrBuffer, '\0', sizeof(tszHdrBuffer));
+		memset(tszStorageAddr, '\0', sizeof(tszStorageAddr));
 
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 302;
 		
-		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), st_ServiceCfg.st_XStorage.tszNginAddr, pSt_HTTPParam->tszHttpUri);
+		APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListDownload, tszStorageAddr);
+		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), tszStorageAddr, pSt_HTTPParam->tszHttpUri);
 
 		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,请求的文件被要求重定向到:%s%s"), lpszClientAddr, st_ServiceCfg.st_XStorage.tszNginAddr, pSt_HTTPParam->tszHttpUri);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,请求的文件被要求重定向到:%s%s"), lpszClientAddr, tszStorageAddr, pSt_HTTPParam->tszHttpUri);
 		return TRUE;
 	}
 	
 	BOOL bRange = FALSE;
 	int nPosStart = 0;
 	int nPosEnd = 0;
-	if (XEngine_Task_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPDOWNLOAD))
+	if (XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPDOWNLOAD))
 	{
 		bRange = TRUE;
 	}
@@ -177,12 +181,12 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.st_Range.nPosEnd = nPosEnd;
 		st_HDRParam.st_Range.nPosCount = ullCount;
 		st_HDRParam.nHttpCode = 206;
-		st_HDRParam.bIsClose = FALSE;
+		st_HDRParam.bIsClose = TRUE;
 	}
 	else
 	{
 		st_HDRParam.nHttpCode = 200;
-		st_HDRParam.bIsClose = FALSE;
+		st_HDRParam.bIsClose = TRUE;
 	}
 	_tcscpy(st_HDRParam.tszMimeType, _T("bin"));
 	RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize);

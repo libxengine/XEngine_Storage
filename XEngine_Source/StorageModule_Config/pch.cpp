@@ -33,3 +33,7 @@ extern "C" BOOL Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG * 
 {
 	return m_ConfigJson.Config_Json_File(lpszConfigFile, pSt_ServerConfig);
 }
+extern "C" BOOL Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCONFIG* pSt_ServerConfig)
+{
+	return m_ConfigJson.Config_Json_LoadBalance(lpszConfigFile, pSt_ServerConfig);
+}
