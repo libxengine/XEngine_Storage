@@ -65,7 +65,7 @@ sudo dnf install jsoncpp-devel
 you can install xengine env to your system by shell   
 like this:sudo XEngine_RunEnv.sh -i 3  
 ##### complie
-execute command in XEngine_Source path
+execute command in XEngine_Source path  
 make complie  
 make FLAGS=InstallAll install  
 make FLAGS=CleanAll clear  

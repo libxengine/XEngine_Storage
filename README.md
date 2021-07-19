@@ -62,7 +62,7 @@ sudo dnf install jsoncpp-devel
 ##### XEngine环境
 XEngine可以通过脚本文件安装sudo XEngine_RunEnv.sh -i 3
 ##### 编译命令
-在XEngine_Source目录下执行命令
+在XEngine_Source目录下执行命令  
 make 编译  
 make FLAGS=InstallAll 安装库程序  
 make FLAGS=CleanAll 清理编译  

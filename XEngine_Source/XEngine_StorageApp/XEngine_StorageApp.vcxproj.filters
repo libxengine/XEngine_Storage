@@ -57,7 +57,7 @@
     <ClCompile Include="Storage_APPHelp\Storage_APPHelp.cpp">
       <Filter>源文件\Storage_APPHelp</Filter>
     </ClCompile>
-    <ClCompile Include="Storage_TaskP2P.cpp">
+    <ClCompile Include="StorageApp_P2XPNet.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
