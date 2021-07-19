@@ -124,17 +124,22 @@ extern "C" BOOL P2XPProtocol_Parse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, X
 /********************************************************************
 函数名称：P2XPProtocol_Parse_Login
 函数功能：登录解析函数
- 参数.一：lpszMsgBuffer
+ 参数.一：pSt_ProtocolHdr
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要打包的协议头
+ 参数.二：lpszMsgBuffer
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：输入要解析的缓冲区
- 参数.二：nMsgLen
+ 参数.三：nMsgLen
   In/Out：In
   类型：整数型
   可空：N
   意思：输入缓冲区大小
- 参数.三：pSt_P2XPPeer
+ 参数.四：pSt_P2XPPeer
   In/Out：In
   类型：数据结构指针
   可空：N
@@ -144,26 +149,60 @@ extern "C" BOOL P2XPProtocol_Parse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, X
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL P2XPProtocol_Packet_Common(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCTSTR lpszMsgBuffer = NULL);
+extern "C" BOOL P2XPProtocol_Packet_Common(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCTSTR lpszMsgBuffer = NULL);
 /********************************************************************
 函数名称：P2XPProtocol_Packet_Lan
 函数功能：响应同步局域网地址列表
- 参数.一：pppSt_ListClients
+ 参数.一：pSt_ProtocolHdr
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要打包的协议头
+ 参数.二：pppSt_ListClients
   In/Out：In
   类型：三级指针
   可空：N
   意思：输入局域网地址信息列表
- 参数.二：nListCount
+ 参数.三：nListCount
   In/Out：In
   类型：整数型
   可空：N
   意思：局域网地址列表个数
+ 参数.四：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：导出封装好的缓冲区
+ 参数.五：pInt_MsgLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入你的缓冲区大小,输出缓冲区真实大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL P2XPProtocol_Packet_Lan(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL*** pppSt_ListClients, int nListCount, TCHAR* ptszMsgBuffer, int* pInt_Len);
+/********************************************************************
+函数名称：P2XPProtocol_Packet_User
+函数功能：响应用户查询用户信息的请求协议封包函数
+ 参数.一：pSt_ProtocolHdr
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要打包的协议头
+ 参数.二：pSt_PeerInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入获取到的用户信息
  参数.三：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：导出封装好的缓冲区
- 参数.四：pInt_Len
+ 参数.四：pInt_MsgLen
   In/Out：In/Out
   类型：整数型指针
   可空：N
@@ -173,21 +212,26 @@ extern "C" BOOL P2XPProtocol_Packet_Common(TCHAR* ptszMsgBuffer, int* pInt_MsgLe
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL P2XPProtocol_Packet_Lan(XENGINE_P2XPPEER_PROTOCOL*** pppSt_ListClients, int nListCount, TCHAR* ptszMsgBuffer, int* pInt_Len);
+extern "C" BOOL P2XPProtocol_Packet_User(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, TCHAR* ptszMsgBuffer, int* pInt_Len);
 /********************************************************************
-函数名称：P2XPProtocol_Packet_User
-函数功能：响应用户查询用户信息的请求协议封包函数
- 参数.一：pSt_PeerInfo
+函数名称：P2XPProtocol_Packet_Connect
+函数功能：请求连接打包函数
+ 参数.一：pSt_ProtocolHdr
   In/Out：In
   类型：数据结构指针
   可空：N
-  意思：输入获取到的用户信息
- 参数.二：ptszMsgBuffer
+  意思：输入要打包的协议头
+ 参数.二：pSt_IOProtocol
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入连接信息
+ 参数.三：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：导出封装好的缓冲区
- 参数.三：pInt_Len
+ 参数.四：pInt_MsgLen
   In/Out：In/Out
   类型：整数型指针
   可空：N
@@ -197,4 +241,4 @@ extern "C" BOOL P2XPProtocol_Packet_Lan(XENGINE_P2XPPEER_PROTOCOL*** pppSt_ListC
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL P2XPProtocol_Packet_User(XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, TCHAR* ptszMsgBuffer, int* pInt_Len);
+extern "C" BOOL P2XPProtocol_Packet_Connect(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, XENGINE_P2XPIO_PROTOCOL* pSt_IOProtocol, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);

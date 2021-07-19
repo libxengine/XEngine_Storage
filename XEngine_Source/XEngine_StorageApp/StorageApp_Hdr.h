@@ -35,10 +35,13 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
+#include <XEngine_Include/XEngine_HelpComponents/Packets_Define.h>
+#include <XEngine_Include/XEngine_HelpComponents/Packets_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
+#include "../XStorage_Protocol.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Error.h"
 #include "../XEngine_StorageComponents/XStorage_Protocol/XStorageProtocol_Define.h"
@@ -61,24 +64,30 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPUPLOADER 1
 #define STORAGE_NETTYPE_HTTPDOWNLOAD 2
 #define STORAGE_NETTYPE_HTTPCENTER 3
+#define STORAGE_NETTYPE_TCPP2XP 4
 
 extern BOOL bIsRun;
 extern XLOG xhLog;
 
 extern XNETHANDLE xhHBDownload;
 extern XNETHANDLE xhHBUPLoader;
+extern XNETHANDLE xhHBP2xp;
+
 extern XNETHANDLE xhNetDownload;
 extern XNETHANDLE xhNetUPLoader;
 extern XNETHANDLE xhNetCenter;
 extern XNETHANDLE xhNetP2xp;
+
 extern XNETHANDLE xhUPPool;
 extern XNETHANDLE xhDLPool;
 extern XNETHANDLE xhSDPool;
 extern XNETHANDLE xhCTPool;
 extern XNETHANDLE xhP2XPPool;
+
 extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
+extern XNETHANDLE xhP2XPPacket;
 
 extern XENGINE_SERVERCONFIG st_ServiceCfg;
 extern XENGINE_LBCONFIG st_LoadbalanceCfg;
@@ -88,10 +97,10 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "StorageApp_Download.h"
 #include "StorageApp_UPLoader.h"
 #include "StorageApp_Center.h"
+#include "StorageApp_P2XPNet.h"
 #include "Storage_APPTask/Storage_TaskEvent.h"
 #include "Storage_APPTask/Storage_TaskPass.h"
 #include "Storage_APPTask/Storage_TaskQuery.h"
-#include "Storage_APPTask/Storage_TaskP2P.h"
 #include "Storage_APPHelp/Storage_APPHelp.h"
 
 #ifdef _WINDOWS
@@ -109,7 +118,9 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"x64/XEngine_Core/XEngine_Core.lib")
 #pragma comment(lib,"x64/XEngine_Core/XEngine_ManagePool.lib")
 #pragma comment(lib,"x64/XEngine_Core/XEngine_OPenSsl.lib")
+#pragma comment(lib,"x64/XEngine_Core/XEngine_NetXApi.lib")
 #pragma comment(lib,"x64/XEngine_HelpComponents/HelpComponents_XLog.lib")
+#pragma comment(lib,"x64/XEngine_HelpComponents/HelpComponents_Packets.lib")
 #pragma comment(lib,"x64/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
 #pragma comment(lib,"x64/XEngine_NetHelp/NetHelp_APIHelp.lib")
 #else
@@ -135,7 +146,9 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"x86/XEngine_Core/XEngine_Core.lib")
 #pragma comment(lib,"x86/XEngine_Core/XEngine_ManagePool.lib")
 #pragma comment(lib,"x86/XEngine_Core/XEngine_OPenSsl.lib")
+#pragma comment(lib,"x86/XEngine_Core/XEngine_NetXApi.lib")
 #pragma comment(lib,"x86/XEngine_HelpComponents/HelpComponents_XLog.lib")
+#pragma comment(lib,"x86/XEngine_HelpComponents/HelpComponents_Packets.lib")
 #pragma comment(lib,"x86/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
 #pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIHelp.lib")
 #endif

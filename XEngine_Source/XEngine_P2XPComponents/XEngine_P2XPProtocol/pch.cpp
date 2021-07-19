@@ -48,15 +48,19 @@ extern "C" BOOL P2XPProtocol_Parse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, X
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
-extern "C" BOOL P2XPProtocol_Packet_Common(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, int nCode, LPCTSTR lpszMsgBuffer)
+extern "C" BOOL P2XPProtocol_Packet_Common(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen, int nCode, LPCTSTR lpszMsgBuffer)
 {
-	return m_P2XPPacket.P2XPProtocol_Packet_Common(ptszMsgBuffer, pInt_MsgLen, nCode, lpszMsgBuffer);
+	return m_P2XPPacket.P2XPProtocol_Packet_Common(pSt_ProtocolHdr, ptszMsgBuffer, pInt_MsgLen, nCode, lpszMsgBuffer);
 }
-extern "C" BOOL P2XPProtocol_Packet_Lan(XENGINE_P2XPPEER_PROTOCOL * **pppSt_ListClients, int nListCount, TCHAR * ptszMsgBuffer, int* pInt_Len)
+extern "C" BOOL P2XPProtocol_Packet_Lan(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL * **pppSt_ListClients, int nListCount, TCHAR * ptszMsgBuffer, int* pInt_Len)
 {
-	return m_P2XPPacket.P2XPProtocol_Packet_Lan(pppSt_ListClients, nListCount, ptszMsgBuffer, pInt_Len);
+	return m_P2XPPacket.P2XPProtocol_Packet_Lan(pSt_ProtocolHdr, pppSt_ListClients, nListCount, ptszMsgBuffer, pInt_Len);
 }
-extern "C" BOOL P2XPProtocol_Packet_User(XENGINE_P2XPPEER_PROTOCOL * pSt_PeerInfo, TCHAR * ptszMsgBuffer, int* pInt_Len)
+extern "C" BOOL P2XPProtocol_Packet_User(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL * pSt_PeerInfo, TCHAR * ptszMsgBuffer, int* pInt_Len)
 {
-	return m_P2XPPacket.P2XPProtocol_Packet_User(pSt_PeerInfo, ptszMsgBuffer, pInt_Len);
+	return m_P2XPPacket.P2XPProtocol_Packet_User(pSt_ProtocolHdr, pSt_PeerInfo, ptszMsgBuffer, pInt_Len);
+}
+extern "C" BOOL P2XPProtocol_Packet_Connect(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPIO_PROTOCOL * pSt_IOProtocol, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
+{
+	return m_P2XPPacket.P2XPProtocol_Packet_Connect(pSt_ProtocolHdr, pSt_IOProtocol, ptszMsgBuffer, pInt_MsgLen);
 }

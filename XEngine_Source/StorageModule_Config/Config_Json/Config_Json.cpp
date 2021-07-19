@@ -67,9 +67,10 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asInt();
     pSt_ServerConfig->nCenterPort = st_JsonRoot["nCenterPort"].asInt();
     pSt_ServerConfig->nStorageDLPort = st_JsonRoot["nStorageDLPort"].asInt();
-    pSt_ServerConfig->nStorageUPPort = st_JsonRoot["nStorageUPPort"].asInt();
+	pSt_ServerConfig->nStorageUPPort = st_JsonRoot["nStorageUPPort"].asInt();
+	pSt_ServerConfig->nP2XPPort = st_JsonRoot["nP2XPPort"].asInt();
 
-    if (st_JsonRoot["XMax"].empty() || (6 != st_JsonRoot["XMax"].size()))
+    if (st_JsonRoot["XMax"].empty() || (7 != st_JsonRoot["XMax"].size()))
     {
         Config_IsErrorOccur = TRUE;
         Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XMAX;
@@ -82,8 +83,9 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     pSt_ServerConfig->st_XMax.nCenterThread = st_JsonXMax["CenterThread"].asInt();
     pSt_ServerConfig->st_XMax.nStorageUPThread = st_JsonXMax["nStorageUPThread"].asInt();
     pSt_ServerConfig->st_XMax.nStorageDLThread = st_JsonXMax["nStorageDLThread"].asInt();
+    pSt_ServerConfig->st_XMax.nP2XPThread = st_JsonXMax["nP2XPThread"].asInt();
 
-    if (st_JsonRoot["XTime"].empty() || (5 != st_JsonRoot["XTime"].size()))
+    if (st_JsonRoot["XTime"].empty() || (6 != st_JsonRoot["XTime"].size()))
     {
         Config_IsErrorOccur = TRUE;
         Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XTIME;
@@ -95,7 +97,8 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     pSt_ServerConfig->st_XTime.nTimeCheck = st_JsonXTime["nTimeCheck"].asInt();
     pSt_ServerConfig->st_XTime.nCenterTimeOut = st_JsonXTime["nCenterTimeOut"].asInt();
     pSt_ServerConfig->st_XTime.nStorageTimeOut = st_JsonXTime["nStorageTimeOut"].asInt();
-    
+    pSt_ServerConfig->st_XTime.nP2XPTimeOut = st_JsonXTime["nP2XPTimeOut"].asInt();
+
     if (st_JsonRoot["XLog"].empty() || (3 != st_JsonRoot["XLog"].size()))
     {
         Config_IsErrorOccur = TRUE;
@@ -161,6 +164,15 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
 	Json::Value st_JsonXLimit = st_JsonRoot["XLimit"];
 	pSt_ServerConfig->st_XLimit.nMaxDNLoader = st_JsonXLimit["nMaxDNLoad"].asInt64();
     pSt_ServerConfig->st_XLimit.nMaxUPLoader = st_JsonXLimit["nMaxUPLoad"].asInt64();
+
+	if (st_JsonRoot["XP2xp"].empty() || (1 != st_JsonRoot["XP2xp"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_P2XP;
+		return FALSE;
+	}
+	Json::Value st_JsonP2xp = st_JsonRoot["XP2xp"];
+    _tcscpy(pSt_ServerConfig->st_P2xp.tszQQWryFile, st_JsonP2xp["tszQQWryFile"].asCString());
 
 	if (st_JsonRoot["XVer"].empty() || (1 != st_JsonRoot["XVer"].size()))
 	{
