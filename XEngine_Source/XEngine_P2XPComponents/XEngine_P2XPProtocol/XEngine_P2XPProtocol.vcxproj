@@ -92,7 +92,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;XENGINEP2XPPROTOCOL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;XENGINEP2XPPROTOCOL_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -177,14 +177,14 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="P2XPProtocol_Define.h" />
     <ClInclude Include="P2XPProtocol_Error.h" />
-    <ClInclude Include="P2XPProtocol_ServiceMsg\P2XPProtocol_ServiceMsg.h" />
-    <ClInclude Include="P2XPProtocol_UserMsg\P2XPProtocol_UserMsg.h" />
+    <ClInclude Include="P2XPProtocol_Packet\P2XPProtocol_Packet.h" />
+    <ClInclude Include="P2XPProtocol_Parse\P2XPProtocol_Parse.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="P2XPProtocol_ServiceMsg\P2XPProtocol_ServiceMsg.cpp" />
-    <ClCompile Include="P2XPProtocol_UserMsg\P2XPProtocol_UserMsg.cpp" />
+    <ClCompile Include="P2XPProtocol_Packet\P2XPProtocol_Packet.cpp" />
+    <ClCompile Include="P2XPProtocol_Parse\P2XPProtocol_Parse.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

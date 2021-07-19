@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
-#include "P2XPProtocol_UserMsg/P2XPProtocol_UserMsg.h"
-#include "P2XPProtocol_ServiceMsg/P2XPProtocol_ServiceMsg.h"
+#include "P2XPProtocol_Parse/P2XPProtocol_Parse.h"
+#include "P2XPProtocol_Packet/P2XPProtocol_Packet.h"
 /********************************************************************
 //	Created:	2013/1/18  12:37
 //	File Name: 	G:\U_DISK_Path\NetSocketEngine\NetEngine_P2xp\NetEngine_P2XPProtocol\NetEngine_P2XPProtocol.cpp
@@ -15,8 +15,8 @@
 BOOL P2XPProtocol_IsErrorOccur = FALSE;
 DWORD P2XPProtocol_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
-CP2XPProtocol_ServiceMsg m_ServiceMsg;
-CP2XPProtocol_UserMsg m_UserMsg;
+CP2XPProtocol_Parse m_P2XPParse;
+CP2XPProtocol_Packet m_P2XPPacket;
 //////////////////////////////////////////////////////////////////////////
 extern "C" DWORD P2XPProtocol_GetLastError(int* pInt_ErrorCode)
 {
@@ -27,36 +27,36 @@ extern "C" DWORD P2XPProtocol_GetLastError(int* pInt_ErrorCode)
 	return P2XPProtocol_dwErrorCode;
 }
 /************************************************************************/
-/*                        服务协议导出                                  */
+/*                        解析协议导出                                  */
 /************************************************************************/
-extern "C" BOOL P2XPProtocol_ServiceMsg_ResponseJson(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, TCHAR * ptszMsgBuffer, int* pInt_Len, int nCode, LPCTSTR lpszCodeMsg)
+extern "C" BOOL P2XPProtocol_Parse_Login(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_P2XPPEER_PROTOCOL * pSt_P2XPPeer)
 {
-	return m_ServiceMsg.P2XPProtocol_ServiceMsg_ResponseJson(pSt_ProtocolHdr, ptszMsgBuffer, pInt_Len, nCode, lpszCodeMsg);
+	return m_P2XPParse.P2XPProtocol_Parse_Login(lpszMsgBuffer, nMsgLen, pSt_P2XPPeer);
 }
-extern "C" BOOL P2XPProtocol_ServiceMsg_ResponseLan(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL * **pppSt_ListClients, int nListCount, TCHAR * ptszMsgBuffer, int* pInt_Len)
+extern "C" BOOL P2XPProtocol_Parse_List(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszPubAddr, TCHAR * ptszPriAddr)
 {
-	return m_ServiceMsg.P2XPProtocol_ServiceMsg_ResponseLan(pSt_ProtocolHdr, pppSt_ListClients, nListCount, ptszMsgBuffer, pInt_Len);
+	return m_P2XPParse.P2XPProtocol_Parse_List(lpszMsgBuffer, nMsgLen, ptszPubAddr, ptszPriAddr);
 }
-extern "C" BOOL P2XPProtocol_ServiceMsg_ResponseQueryUser(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL * pSt_PeerInfo, TCHAR * ptszMsgBuffer, int* pInt_Len)
+extern "C" BOOL P2XPProtocol_Parse_User(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszUserName)
 {
-	return m_ServiceMsg.P2XPProtocol_ServiceMsg_ResponseQueryUser(pSt_ProtocolHdr, pSt_PeerInfo, ptszMsgBuffer, pInt_Len);
+	return m_P2XPParse.P2XPProtocol_Parse_User(lpszMsgBuffer, nMsgLen, ptszUserName);
+}
+extern "C" BOOL P2XPProtocol_Parse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_P2XPIO_PROTOCOL * pSt_IOProtocol)
+{
+	return m_P2XPParse.P2XPProtocol_Parse_Connect(lpszMsgBuffer, nMsgLen, pSt_IOProtocol);
 }
 /************************************************************************/
-/*                        用户协议导出                                  */
+/*                        打包协议导出                                  */
 /************************************************************************/
-extern "C" BOOL P2XPProtocol_UserMsg_RequestLogin(XENGINE_P2XPPEER_PROTOCOL * pSt_ClientInfo, XENGINE_PROTOCOL_USERAUTH * pSt_UserLogin, TCHAR * ptszMsgBuffer, int* pInt_Len, WORD wPacketSerial)
+extern "C" BOOL P2XPProtocol_Packet_Common(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, int nCode, LPCTSTR lpszMsgBuffer)
 {
-	return m_UserMsg.P2XPProtocol_UserMsg_RequestLogin(pSt_ClientInfo, pSt_UserLogin, ptszMsgBuffer, pInt_Len, wPacketSerial);
+	return m_P2XPPacket.P2XPProtocol_Packet_Common(ptszMsgBuffer, pInt_MsgLen, nCode, lpszMsgBuffer);
 }
-extern "C" BOOL P2XPProtocol_UserMsg_RequestConnect(XENGINE_P2XPIO_PROTOCOL * pSt_ClientIONet, TCHAR * ptszMsgBuffer, int* pInt_Len, WORD wPacketSerial)
+extern "C" BOOL P2XPProtocol_Packet_Lan(XENGINE_P2XPPEER_PROTOCOL * **pppSt_ListClients, int nListCount, TCHAR * ptszMsgBuffer, int* pInt_Len)
 {
-	return m_UserMsg.P2XPProtocol_UserMsg_RequestConnect(pSt_ClientIONet, ptszMsgBuffer, pInt_Len, wPacketSerial);
+	return m_P2XPPacket.P2XPProtocol_Packet_Lan(pppSt_ListClients, nListCount, ptszMsgBuffer, pInt_Len);
 }
-extern "C" BOOL P2XPProtocol_UserMsg_RequestLan(TCHAR * ptszMsgBuffer, int* pInt_Len, BOOL bWlan, WORD wPacketSerial)
+extern "C" BOOL P2XPProtocol_Packet_User(XENGINE_P2XPPEER_PROTOCOL * pSt_PeerInfo, TCHAR * ptszMsgBuffer, int* pInt_Len)
 {
-	return m_UserMsg.P2XPProtocol_UserMsg_RequestLan(ptszMsgBuffer, pInt_Len, bWlan, wPacketSerial);
-}
-extern "C" BOOL P2XPProtocol_UserMsg_RequestHeartBeat(CHAR * ptszMsgBuffer, int* pInt_Len)
-{
-	return m_UserMsg.P2XPProtocol_UserMsg_RequestHeartBeat(ptszMsgBuffer, pInt_Len);
+	return m_P2XPPacket.P2XPProtocol_Packet_User(pSt_PeerInfo, ptszMsgBuffer, pInt_Len);
 }

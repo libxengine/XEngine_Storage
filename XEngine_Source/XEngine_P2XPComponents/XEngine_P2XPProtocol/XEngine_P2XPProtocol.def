@@ -4,11 +4,11 @@ LIBRARY
 EXPORTS
 	P2XPProtocol_GetLastError
 
-	P2XPProtocol_ServiceMsg_ResponseJson
-	P2XPProtocol_ServiceMsg_ResponseLan
-	P2XPProtocol_ServiceMsg_ResponseQueryUser
+	P2XPProtocol_Parse_Login
+	P2XPProtocol_Parse_List
+	P2XPProtocol_Parse_User
+	P2XPProtocol_Parse_Connect
 
-	P2XPProtocol_UserMsg_RequestLogin
-	P2XPProtocol_UserMsg_RequestConnect
-	P2XPProtocol_UserMsg_RequestLan
-	P2XPProtocol_UserMsg_RequestHeartBeat
+	P2XPProtocol_Packet_Common
+	P2XPProtocol_Packet_Lan
+	P2XPProtocol_Packet_User

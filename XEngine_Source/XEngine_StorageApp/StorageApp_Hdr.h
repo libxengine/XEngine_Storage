@@ -29,6 +29,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/ManagePool_Error.h>
 #include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
 #include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
+#include <XEngine_Include/XEngine_Core/NetXApi_Define.h>
+#include <XEngine_Include/XEngine_Core/NetXApi_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
@@ -68,10 +70,12 @@ extern XNETHANDLE xhHBUPLoader;
 extern XNETHANDLE xhNetDownload;
 extern XNETHANDLE xhNetUPLoader;
 extern XNETHANDLE xhNetCenter;
+extern XNETHANDLE xhNetP2xp;
 extern XNETHANDLE xhUPPool;
 extern XNETHANDLE xhDLPool;
 extern XNETHANDLE xhSDPool;
 extern XNETHANDLE xhCTPool;
+extern XNETHANDLE xhP2XPPool;
 extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;

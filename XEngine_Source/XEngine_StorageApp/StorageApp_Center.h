@@ -10,6 +10,9 @@
 #define XENGINE_STORAGE_APP_METHOD_DLFILE  _T("DLFile")
 #define XENGINE_STORAGE_APP_METHOD_FILE  _T("File")
 #define XENGINE_STORAGE_APP_METHOD_LOGIN  _T("Login")
+#define XENGINE_STORAGE_APP_METHOD_LIST  _T("List")
+#define XENGINE_STORAGE_APP_METHOD_USER  _T("User")
+#define XENGINE_STORAGE_APP_METHOD_CONNECT  _T("Connect")
 
 XHTHREAD CALLBACK XEngine_Center_HTTPThread(LPVOID lParam);
 BOOL XEngine_Task_HttpCenter_APIList(LPCTSTR lpszUrlName, TCHAR* ptszAPIVersion, TCHAR* ptszAPIMethod, TCHAR* ptszAPIName);
