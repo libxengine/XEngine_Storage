@@ -4,20 +4,23 @@
   "nCenterPort": 5100,
   "nStorageDLPort": 5101,
   "nStorageUPPort": 5102,
+  "nP2XPPort": 5103,
   "XMax": {
     "MaxClient": 10000,
     "MaxQueue": 10000,
     "IOThread": 2,
     "CenterThread": 2,
     "nStorageUPThread": 2,
-    "nStorageDLThread": 2
+    "nStorageDLThread": 2,
+    "nP2XPThread": 2
   },
   "XTime": {
     "bHBTime": 0,
     "nDBMonth": 3,
     "nTimeCheck": 3,
     "nCenterTimeOut": 5,
-    "nStorageTimeOut": 5
+    "nStorageTimeOut": 5,
+    "nP2XPTimeOut": 5
   },
   "XLog": {
     "MaxSize": 1024000,
@@ -53,6 +56,9 @@
   "XLimit": {
     "nMaxUPLoad": 0,
     "nMaxDNLoad": 1024000
+  },
+  "XP2xp": {
+    "tszQQWryFile": "./XEngine_SQL/qqwry.dat"
   },
   "XVer": {
     "StorageVersion": [

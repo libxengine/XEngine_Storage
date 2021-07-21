@@ -39,7 +39,7 @@ typedef struct tag_XEngine_P2XPPeer_Protocol
 	CHAR tszPublicAddr[32];                                               //外网地址
 	CHAR tszConnectAddr[32];                                              //链接地址
 	CHAR tszUserLocation[32];                                             //位置信息
-	CHAR tszUserArea[20];                                                 //用户ISP
+	CHAR tszUserISP[20];                                                  //用户ISP
 	WORD dwConnectType;                                                   //连接类型
 	WORD dwPeerType;                                                      //节点类型
 }XENGINE_P2XPPEER_PROTOCOL, * LPXENGINE_P2XPPEER_PROTOCOL;

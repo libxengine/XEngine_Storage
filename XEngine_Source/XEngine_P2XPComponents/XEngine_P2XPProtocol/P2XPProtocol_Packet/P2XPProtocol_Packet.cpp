@@ -186,7 +186,7 @@ BOOL CP2XPProtocol_Packet::P2XPProtocol_Packet_User(XENGINE_PROTOCOLHDR* pSt_Pro
     st_JsonRoot["tszConnectAddr"] = pSt_PeerInfo->tszConnectAddr;
     st_JsonRoot["tszPrivateAddr"] = pSt_PeerInfo->tszPrivateAddr;
     st_JsonRoot["tszPublicAddr"] = pSt_PeerInfo->tszPublicAddr;
-    st_JsonRoot["tszUserArea"] = pSt_PeerInfo->tszUserArea;
+    st_JsonRoot["tszUserISP"] = pSt_PeerInfo->tszUserISP;
     st_JsonRoot["tszUserLocation"] = pSt_PeerInfo->tszUserLocation;
     st_JsonRoot["tszUserName"] = pSt_PeerInfo->tszUserName;
 
