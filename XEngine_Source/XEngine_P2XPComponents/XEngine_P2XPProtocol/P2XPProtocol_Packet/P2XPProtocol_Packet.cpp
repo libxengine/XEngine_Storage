@@ -69,7 +69,7 @@ BOOL CP2XPProtocol_Packet::P2XPProtocol_Packet_Common(XENGINE_PROTOCOLHDR* pSt_P
 	}
     pSt_ProtocolHdr->unPacketSize = st_JsonRoot.toStyledString().length();
 
-    *pInt_MsgLen = st_JsonRoot.toStyledString().length();
+    *pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + st_JsonRoot.toStyledString().length();
     memcpy(ptszMsgBuffer, pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
     memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), st_JsonRoot.toStyledString().c_str(), pSt_ProtocolHdr->unPacketSize);
 	return TRUE;
@@ -133,7 +133,7 @@ BOOL CP2XPProtocol_Packet::P2XPProtocol_Packet_Lan(XENGINE_PROTOCOLHDR* pSt_Prot
 
 	pSt_ProtocolHdr->unPacketSize = st_JsonRoot.toStyledString().length();
 
-	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + st_JsonRoot.toStyledString().length();
 	memcpy(ptszMsgBuffer, pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
 	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), st_JsonRoot.toStyledString().c_str(), pSt_ProtocolHdr->unPacketSize);
     return TRUE;
@@ -177,6 +177,7 @@ BOOL CP2XPProtocol_Packet::P2XPProtocol_Packet_User(XENGINE_PROTOCOLHDR* pSt_Pro
         return FALSE;
     }
     Json::Value st_JsonRoot;
+    Json::StreamWriterBuilder st_JsonBuilder;
 
     st_JsonRoot["Code"] = 0;
     st_JsonRoot["lpszMsgBuffer"] = "sucess";
@@ -189,11 +190,13 @@ BOOL CP2XPProtocol_Packet::P2XPProtocol_Packet_User(XENGINE_PROTOCOLHDR* pSt_Pro
     st_JsonRoot["tszUserLocation"] = pSt_PeerInfo->tszUserLocation;
     st_JsonRoot["tszUserName"] = pSt_PeerInfo->tszUserName;
 
-	pSt_ProtocolHdr->unPacketSize = st_JsonRoot.toStyledString().length();
+    st_JsonBuilder["emitUTF8"] = true;
 
-	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	pSt_ProtocolHdr->unPacketSize = Json::writeString(st_JsonBuilder, st_JsonRoot).length();
+
+	*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + st_JsonRoot.toStyledString().length();
 	memcpy(ptszMsgBuffer, pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
-	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), st_JsonRoot.toStyledString().c_str(), pSt_ProtocolHdr->unPacketSize);
+	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), Json::writeString(st_JsonBuilder, st_JsonRoot).c_str(), pSt_ProtocolHdr->unPacketSize);
     return TRUE;
 }
 /********************************************************************
@@ -244,7 +247,7 @@ BOOL CP2XPProtocol_Packet::P2XPProtocol_Packet_Connect(XENGINE_PROTOCOLHDR* pSt_
 
 	pSt_ProtocolHdr->unPacketSize = st_JsonRoot.toStyledString().length();
 
-	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + st_JsonRoot.toStyledString().length();
 	memcpy(ptszMsgBuffer, pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
 	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), st_JsonRoot.toStyledString().c_str(), pSt_ProtocolHdr->unPacketSize);
 	return TRUE;

@@ -47,7 +47,7 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 	TCHAR tszSDBuffer[4096];
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 
-	if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_P2XP != pSt_ProtocolHdr->unOperatorType)
+	if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_P2XP == pSt_ProtocolHdr->unOperatorType)
 	{
 		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REQLOGIN == pSt_ProtocolHdr->unOperatorCode)
 		{
@@ -63,7 +63,20 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 				return FALSE;
 			}
 			//获取外网IP所在位置
+#ifdef _WINDOWS
+			TCHAR tszLocation[128];
+			TCHAR tszISPInfo[128];
+
+			memset(tszLocation, '\0', sizeof(tszLocation));
+			memset(tszISPInfo, '\0', sizeof(tszISPInfo));
+
+			NetXApi_Address_IPtoAddr(st_ClientPeer.st_PeerAddr.tszPublicAddr, tszLocation, tszISPInfo);
+			int nLen = _tcslen(tszISPInfo);
+			BaseLib_OperatorString_UTFToAnsi(tszLocation, st_ClientPeer.st_PeerAddr.tszUserLocation, &nLen);
+			BaseLib_OperatorString_UTFToAnsi(tszISPInfo, st_ClientPeer.st_PeerAddr.tszUserArea, &nLen);
+#else
 			NetXApi_Address_IPtoAddr(st_ClientPeer.st_PeerAddr.tszPublicAddr, st_ClientPeer.st_PeerAddr.tszUserLocation, st_ClientPeer.st_PeerAddr.tszUserArea);
+#endif
 			st_ClientPeer.st_PeerTimer.dwUserTime = time(NULL);
 			st_ClientPeer.st_PeerTimer.dwKeepAlive = time(NULL);
 			st_ClientPeer.bIsLogin = TRUE;

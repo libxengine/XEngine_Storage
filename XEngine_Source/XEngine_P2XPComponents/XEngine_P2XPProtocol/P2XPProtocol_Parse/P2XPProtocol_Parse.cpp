@@ -86,6 +86,10 @@ BOOL CP2XPProtocol_Parse::P2XPProtocol_Parse_Login(LPCTSTR lpszMsgBuffer, int nM
 	{
 		pSt_P2XPPeer->dwConnectType = st_JsonRoot["dwConnectType"].asInt();
 	}
+	if (!st_JsonRoot["dwPeerType"].isNull())
+	{
+		pSt_P2XPPeer->dwPeerType = st_JsonRoot["dwPeerType"].asInt();
+	}
 	return TRUE;
 }
 /********************************************************************

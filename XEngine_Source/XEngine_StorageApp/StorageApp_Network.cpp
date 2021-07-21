@@ -118,6 +118,7 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClient
 	else
 	{
 		m_StrClient = _T("P2XP客户端");
+		P2XPPeer_Manage_Delete(lpszClientAddr);
 	}
 	
 	if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
