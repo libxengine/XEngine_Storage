@@ -118,9 +118,5 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 	{
 		XEngine_Task_Event(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
 	}
-	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_P2P, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_P2P)))
-	{
-		XEngine_Task_P2P(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
-	}
 	return TRUE;
 }

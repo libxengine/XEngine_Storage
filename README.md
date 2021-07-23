@@ -5,6 +5,7 @@ c c++ 存储服务 c c++ 文件存储服务
 c c++ file storage service  
 这是一个上传下载服务API网关,不是文件同步服务,也不是云存储.  
 这个服务的主要目的是为了给有上传下载服务业务需求的用户使用(比如需要开发上传下载服务的开发人员).  
+此服务器更偏向于存储API接口方向.  
 目前最好的HTTP存储服务,比NGINX更优秀,更方便管理.持续维护中...  
 
 ## 软件特性
@@ -31,7 +32,7 @@ c c++ file storage service
 
 #### 版本需求
 支持WINDOWS 7SP1和LINUX(UBUNT20.04,CENTOS8)以上系统  
-XEngine版本需要V7.14或者以上版本  
+XEngine版本需要V7.17或者以上版本  
 vcpkg 需要2021.05.11以上版本  
 
 #### Windows
@@ -62,7 +63,7 @@ sudo dnf install jsoncpp-devel
 ##### XEngine环境
 XEngine可以通过脚本文件安装sudo XEngine_RunEnv.sh -i 3
 ##### 编译命令
-在XEngine_Source目录下执行命令
+在XEngine_Source目录下执行命令  
 make 编译  
 make FLAGS=InstallAll 安装库程序  
 make FLAGS=CleanAll 清理编译  
@@ -89,7 +90,8 @@ make FLAGS=CleanAll 清理编译
 下载秒传的实现是先通过HASH查询本地文件保存路径,如果存在就直接下载完成.  
 
 ## 当前任务
-实现P2P
+扩展管理接口  
+实现P2P  
 
 ## 其他问题  
 你可以参考docment目录下的文档.里面包含了API协议和服务说明.

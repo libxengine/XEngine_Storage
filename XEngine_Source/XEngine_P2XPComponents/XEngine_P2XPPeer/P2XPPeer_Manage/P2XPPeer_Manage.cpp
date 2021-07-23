@@ -49,7 +49,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_Add(XENGINE_P2XP_PEERINFO st_Pee
     stl_MapIterator = stl_MapPeerAddr.begin();
     for (;stl_MapIterator != stl_MapPeerAddr.end();stl_MapIterator++)
     {
-        if (0 == _tcsncmp(stl_MapIterator->second->st_AuthUser.tszUserName, st_PeerInfo.st_AuthUser.tszUserName, _tcslen(stl_MapIterator->second->st_AuthUser.tszUserName)))
+        if (0 == _tcsncmp(stl_MapIterator->second->st_PeerAddr.tszUserName, st_PeerInfo.st_PeerAddr.tszUserName, _tcslen(stl_MapIterator->second->st_PeerAddr.tszUserName)))
         {
             PeerManage_IsErrorOccur = TRUE;
             PeerManage_dwErrorCode = ERROR_XENGINE_P2XP_PEER_MANAGE_ADD_ISEXIST;
@@ -157,7 +157,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_GetUser(LPCTSTR lpszUser, XENGIN
     unordered_map<tstring, LPNETENGINE_P2XP_PEERINFO>::const_iterator stl_MapIterator = stl_MapPeerAddr.begin();
     for (;stl_MapIterator != stl_MapPeerAddr.end();stl_MapIterator++)
     {
-        if (0 == _tcsncmp(lpszUser,stl_MapIterator->second->st_AuthUser.tszUserName,_tcslen(lpszUser)))
+        if (0 == _tcsncmp(lpszUser,stl_MapIterator->second->st_PeerAddr.tszUserName,_tcslen(lpszUser)))
         {
             bIsFound = TRUE;
             break;

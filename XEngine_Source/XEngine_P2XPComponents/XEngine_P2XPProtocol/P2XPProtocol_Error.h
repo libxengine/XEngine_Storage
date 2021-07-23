@@ -10,17 +10,5 @@
 //	Purpose:	P2XP协议构造分析器错误码导出
 //	History:
 *********************************************************************/
-/************************************************************************/
-/*                  用户协议错误表                                      */
-/************************************************************************/
-#define ERROR_NETENGINE_P2XP_PROTOCOL_USERMSG_REQUESTLOGIN_PARAMENT 0xB0F1010 //参数错误
-#define ERROR_NETENGINE_P2XP_PROTOCOL_USERMSG_REQUESTHB_PARAMENT 0xB0F1020    //参数错误
-#define ERROR_NETENGINE_P2XP_PROTOCOL_USERMSG_REQUESTIONET_PARAMENT 0xB0F1030 //参数错误
-#define ERROR_NETENGINE_P2XP_PROTOCOL_USERMSG_REQUESTLIST_PARAMENT 0xB0F1040
-/************************************************************************/
-/*                  服务协议错误表                                      */
-/************************************************************************/
-#define ERROR_NETENGINE_P2XP_PROTOCOL_SVRMSG_RESPONSEJSON_PARAMENT 0xB0F2000  //参数错误
-#define ERROR_NETENGINE_P2XP_PROTOCOL_SVRMSG_RESPONSELAN_PARAMENT 0xB0F2010   //参数错误
-#define ERROR_NETENGINE_P2XP_PROTOCOL_SVRMSG_RESPONSELAN_LEN 0xB0F2011        //提供的缓冲区大小不够
-#define ERROR_NETENGINE_P2XP_PROTOCOL_SVRMSG_REPQUERYUSER_PARAMENT 0xB0F2020  //参数错误
+#define ERROR_XENGINE_P2XP_PROTOCOL_PARAMENT 0xB0F1001
+#define ERROR_XENGINE_P2XP_PROTOCOL_PARSE 0xB0F1002 

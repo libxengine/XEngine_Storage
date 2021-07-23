@@ -24,7 +24,6 @@ typedef struct tag_P2XP_Timer_Information
 //一个节点信息
 typedef struct tag_NetEngine_P2XPPeer_Info
 {
-    XENGINE_PROTOCOL_USERAUTH st_AuthUser;                                //用户登录信息
     XENGINE_P2XPPEER_PROTOCOL st_PeerAddr;                                //P2P通信的时候使用的地址（客户方使用）
     P2XP_TIMER_INFOMATION st_PeerTimer;                                   //节点时间信息
     BOOL bIsLogin;

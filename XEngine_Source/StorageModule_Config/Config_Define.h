@@ -20,6 +20,7 @@ typedef struct tag_XEngine_ServerConfig
     int nCenterPort;
     int nStorageDLPort;
     int nStorageUPPort;
+    int nP2XPPort;
     struct 
     {
         BOOL bReload;
@@ -32,6 +33,7 @@ typedef struct tag_XEngine_ServerConfig
         int nCenterThread;
         int nStorageDLThread;
         int nStorageUPThread;
+        int nP2XPThread;
     }st_XMax;
     struct
     {
@@ -40,6 +42,7 @@ typedef struct tag_XEngine_ServerConfig
         int nTimeCheck;
         int nCenterTimeOut;
         int nStorageTimeOut;
+        int nP2XPTimeOut;
     }st_XTime;
     struct
     {
@@ -84,6 +87,10 @@ typedef struct tag_XEngine_ServerConfig
         __int64x nMaxUPLoader;
         __int64x nMaxDNLoader;
 	}st_XLimit;
+    struct  
+    {
+        TCHAR tszQQWryFile[MAX_PATH];
+    }st_P2xp;
     struct
     {
         list<tstring> *pStl_ListStorage;

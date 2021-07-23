@@ -5,6 +5,7 @@ c c++ 存储服务 c c++ 文件存储服务
 c c++ file storage service  
 This is an api gateway for uploading and downloading.  
 The service is for users who have business needs for upload and download services (such as developers who need to upload and download servers).  
+This server is more inclined to store the API interface direction  
 best storage service for http,batter than nginx and more convenient to manage. On going maintenance  
 
 ## Software feature
@@ -32,7 +33,7 @@ feature list:
 
 #### Requirements  
 support system above windows 7sp1 and linux(ubuntu20.04,centos8)  
-XEngine need V7.14 or above  
+XEngine need V7.17 or above  
 vcpkg need 2021.05.11 or above  
 
 #### Windows
@@ -65,7 +66,7 @@ sudo dnf install jsoncpp-devel
 you can install xengine env to your system by shell   
 like this:sudo XEngine_RunEnv.sh -i 3  
 ##### complie
-execute command in XEngine_Source path
+execute command in XEngine_Source path  
 make complie  
 make FLAGS=InstallAll install  
 make FLAGS=CleanAll clear  
@@ -91,6 +92,7 @@ The realization of downloading second transmission is to first query the local f
 - XEngine_APPClient client code dir  
 
 ## now task
+expand management interface  
 P2P
 
 ## other problems   
