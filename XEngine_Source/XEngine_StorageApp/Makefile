@@ -1,11 +1,11 @@
 CC = g++ -Wall
 RELEASE = 0
 UNICODE = 0  
-LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_HelpComponents -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L /usr/local/lib/XEngine_Release/XEngine_RfcComponents -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../XEngine_StorageComponents/XStorage_SQLPacket -L ../XEngine_StorageComponents/XStorage_Protocol -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp
-LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lHelpComponents_XLog -lXEngine_ProcSdk -lXEngine_SystemApi -lRfcComponents_HttpServer -lNetHelp_APIHelp -lXStorage_SQLPacket -lXStorage_Protocol -lStorageModule_Config -lStorageModule_Session -lStorageModule_APIHelp
+LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_HelpComponents -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L /usr/local/lib/XEngine_Release/XEngine_RfcComponents -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../XEngine_StorageComponents/XStorage_SQLPacket -L ../XEngine_StorageComponents/XStorage_Protocol -L ../XEngine_P2XPComponents/XEngine_P2XPPeer -L ../XEngine_P2XPComponents/XEngine_P2XPProtocol -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp
+LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_NetXApi -lXEngine_OPenSsl -lHelpComponents_XLog -lHelpComponents_Packets -lXEngine_ProcSdk -lXEngine_SystemApi -lRfcComponents_HttpServer -lNetHelp_APIHelp -lXStorage_SQLPacket -lXStorage_Protocol -lXEngine_P2XPPeer -lXEngine_P2XPProtocol -lStorageModule_Config -lStorageModule_Session -lStorageModule_APIHelp
 LIBEX = -static-libgcc -ldl -lrt -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = StorageApp_Config.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o Storage_APPHelp.o Storage_TaskEvent.o Storage_TaskPass.o Storage_TaskQuery.o Storage_TaskP2P.o XEngine_StorageApp.o
+LIBINCLUDE = StorageApp_Config.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o StorageApp_P2XPNet.o Storage_APPHelp.o Storage_TaskEvent.o Storage_TaskPass.o Storage_TaskQuery.o XEngine_StorageApp.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -34,7 +34,9 @@ StorageApp_Center.o:./StorageApp_Center.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./StorageApp_Center.cpp
 StorageApp_UPLoader.o:./StorageApp_UPLoader.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./StorageApp_UPLoader.cpp
-	
+StorageApp_P2XPNet.o:./StorageApp_P2XPNet.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./StorageApp_P2XPNet.cpp
+		
 Storage_APPHelp.o:./Storage_APPHelp/Storage_APPHelp.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Storage_APPHelp/Storage_APPHelp.cpp
 	
@@ -44,8 +46,6 @@ Storage_TaskPass.o:./Storage_APPTask/Storage_TaskPass.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Storage_APPTask/Storage_TaskPass.cpp
 Storage_TaskQuery.o:./Storage_APPTask/Storage_TaskQuery.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Storage_APPTask/Storage_TaskQuery.cpp
-Storage_TaskP2P.o:./Storage_APPTask/Storage_TaskP2P.cpp
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./Storage_APPTask/Storage_TaskP2P.cpp
 				
 XEngine_StorageApp.o:./XEngine_StorageApp.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) ./XEngine_StorageApp.cpp   

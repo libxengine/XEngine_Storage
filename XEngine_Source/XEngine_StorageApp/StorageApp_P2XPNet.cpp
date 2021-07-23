@@ -75,7 +75,7 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			BaseLib_OperatorString_UTFToAnsi(tszLocation, st_ClientPeer.st_PeerAddr.tszUserLocation, &nLen);
 			BaseLib_OperatorString_UTFToAnsi(tszISPInfo, st_ClientPeer.st_PeerAddr.tszUserISP, &nLen);
 #else
-			NetXApi_Address_IPtoAddr(st_ClientPeer.st_PeerAddr.tszPublicAddr, st_ClientPeer.st_PeerAddr.tszUserLocation, st_ClientPeer.st_PeerAddr.tszUserArea);
+			NetXApi_Address_IPtoAddr(st_ClientPeer.st_PeerAddr.tszPublicAddr, st_ClientPeer.st_PeerAddr.tszUserLocation, st_ClientPeer.st_PeerAddr.tszUserISP);
 #endif
 			st_ClientPeer.st_PeerTimer.dwUserTime = time(NULL);
 			st_ClientPeer.st_PeerTimer.dwKeepAlive = time(NULL);
@@ -132,7 +132,6 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REQCONNECT == pSt_ProtocolHdr->unOperatorCode)
 		{
-			int nResponseLen = 2048;
 			TCHAR tszMsgResponse[2048];
 			XENGINE_P2XPIO_PROTOCOL st_P2XPIONet;
 			XENGINE_P2XP_PEERINFO st_P2XPDestPeer;
