@@ -69,6 +69,34 @@ BOOL XEngine_Task_P2p(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPONENT
 	memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
 	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
+	//首先判断本机存在不
+	if (0 != st_ServiceCfg.st_XSql.nSQLType)
+	{
+		int nListCount = 0;
+		XSTORAGECORE_DBFILE** pppSt_ListFile;
+		if (1 == st_ServiceCfg.st_XSql.nSQLType)
+		{
+			XStorageSQL_File_FileQuery(&pppSt_ListFile, &nListCount, NULL, NULL, NULL, lpszFileHash);
+		}
+		else
+		{
+			XStorage_SQLite_FileQuery(&pppSt_ListFile, &nListCount, NULL, NULL, NULL, lpszFileHash);
+		}
+		if (nListCount > 0)
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 200;
+
+			_stprintf(pppSt_ListFile[0]->tszTableName, _T("127.0.0.1"));
+			XStorageProtocol_Core_REPQueryFile(tszRVBuffer, &nRVLen, &pppSt_ListFile, nListCount);
+			BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam, tszRVBuffer, nRVLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszMsgBuffer, nMsgLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("广播端:%s,请求文件查询,发现本地拥有此文件.直接返回"), lpszClientAddr);
+			return TRUE;
+		}
+	}
 	//根据使用模式来操作
 	if (st_ServiceCfg.st_P2xp.bBroad)
 	{
