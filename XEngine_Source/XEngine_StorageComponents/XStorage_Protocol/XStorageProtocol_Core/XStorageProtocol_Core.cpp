@@ -89,7 +89,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgB
     }
     if (NULL != ptszTimeEnd)
     {
-		if (!st_JsonRoot["lpszTimeEnd"].asCString())
+		if (!st_JsonRoot["lpszTimeEnd"].isNull())
 		{
 			_tcscpy(ptszTimeEnd, st_JsonRoot["lpszTimeEnd"].asCString());
 		}

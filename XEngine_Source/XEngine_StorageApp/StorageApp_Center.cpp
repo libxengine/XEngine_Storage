@@ -122,7 +122,7 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		{
 			st_HDRParam.bAuth = TRUE;
 		}
-		XEngine_Task_P2p(pSt_HTTPParam->tszHttpUri, lpszClientAddr, pSt_HTTPParam);
+		XEngine_Task_P2p(pSt_HTTPParam->tszHttpUri + 1, lpszClientAddr, pSt_HTTPParam);
 	}
 	else
 	{

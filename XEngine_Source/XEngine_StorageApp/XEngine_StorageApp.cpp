@@ -375,7 +375,7 @@ int main(int argc, char** argv)
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nP2XPThread);
 
-	if (!NetCore_BroadCast_RecvInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
+	if (!NetCore_BroadCast_SendInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动广播网络服务失败，错误：%d"), errno);
 		goto XENGINE_EXITAPP;
