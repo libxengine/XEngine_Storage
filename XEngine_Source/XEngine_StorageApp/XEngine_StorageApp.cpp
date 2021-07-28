@@ -23,8 +23,8 @@ XHANDLE xhDLHttp = NULL;
 XHANDLE xhCenterHttp = NULL;
 XNETHANDLE xhP2XPPacket = 0;
 
-SOCKET hBroadSocket;
-shared_ptr<std::thread> pSTDThread;
+SOCKET hBroadSocket = 0;
+shared_ptr<std::thread> pSTDThread = NULL;
 
 XENGINE_SERVERCONFIG st_ServiceCfg;
 XENGINE_LBCONFIG st_LoadbalanceCfg;
@@ -64,8 +64,11 @@ void ServiceApp_Stop(int signo)
 		XStorageSQL_Destory();
 		XStorage_SQLite_Destory();
 
-		NetCore_BroadCast_Close(hBroadSocket);
-		pSTDThread->join();
+		if (NULL != pSTDThread)
+		{
+			NetCore_BroadCast_Close(hBroadSocket);
+			pSTDThread->join();
+		}
 		exit(0);
 	}
 }
@@ -375,19 +378,26 @@ int main(int argc, char** argv)
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nP2XPThread);
 
-	if (!NetCore_BroadCast_SendInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr))
+	if (st_ServiceCfg.st_P2xp.nMode > 0)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动广播网络服务失败，错误：%d"), errno);
-		goto XENGINE_EXITAPP;
+		if (!NetCore_BroadCast_SendInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务成功,端口:%d"), st_ServiceCfg.st_P2xp.nRVPort);
+		pSTDThread = make_shared<std::thread>(XEngine_Task_P2PThread);
+		if (!pSTDThread->joinable())
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务线程失败，错误：%d"), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务线程成功"));
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动广播网络服务成功,端口:%d"), st_ServiceCfg.st_P2xp.nRVPort);
-	pSTDThread = make_shared<std::thread>(XEngine_Task_P2PThread);
-	if (!pSTDThread->joinable())
+	else
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动广播服务线程失败，错误：%d"), errno);
-		goto XENGINE_EXITAPP;
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，P2P存储服务配置为不启动"));
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动广播服务线程成功"));
 
 	m_StrVersion = st_ServiceCfg.st_XVer.pStl_ListStorage->front();
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), m_StrVersion.c_str());
@@ -432,8 +442,11 @@ XENGINE_EXITAPP:
 		XStorageSQL_Destory();
 		XStorage_SQLite_Destory();
 
-		NetCore_BroadCast_Close(hBroadSocket);
-		pSTDThread->join();
+		if (NULL != pSTDThread)
+		{
+			NetCore_BroadCast_Close(hBroadSocket);
+			pSTDThread->join();
+		}
 	}
 #ifdef _WINDOWS
 	WSACleanup();

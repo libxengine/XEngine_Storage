@@ -1,5 +1,5 @@
 {
-  "tszIPAddr": "127.0.0.1",
+  "tszIPAddr": "192.168.1.7",
   "bDeamon": 0,
   "nCenterPort": 5100,
   "nStorageDLPort": 5101,
@@ -28,7 +28,7 @@
     "LogLeave": 32
   },
   "XSql": {
-    "SQLType": 0,
+    "SQLType": 2,
     "SQLFile": "./XEngine_SQL/SQLFile.db",
     "SQLAddr": "192.168.1.9",
     "SQLPort": 3306,
@@ -58,10 +58,15 @@
     "nMaxDNLoad": 1024000
   },
   "XP2xp": {
+    "nMode": 0,
+    "nTime": 2,
+    "nSDPort": 15000,
+    "nRVPort": 15001,
     "tszQQWryFile": "./XEngine_SQL/qqwry.dat"
   },
   "XVer": {
     "StorageVersion": [
+      "2.1.0.1001 Build20210805",
       "2.0.0.1001 Build20210723",
       "1.5.0.1001 Build20210716",
       "1.4.0.1001 Build20210702",

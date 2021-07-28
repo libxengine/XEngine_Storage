@@ -89,7 +89,7 @@ typedef struct tag_XEngine_ServerConfig
 	}st_XLimit;
     struct  
     {
-        BOOL bBroad;
+        int nMode;
         int nTime;
         int nSDPort;
         int nRVPort;

@@ -98,7 +98,17 @@ BOOL XEngine_Task_P2p(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPONENT
 		}
 	}
 	//根据使用模式来操作
-	if (st_ServiceCfg.st_P2xp.bBroad)
+	if (0 == st_ServiceCfg.st_P2xp.nMode)
+	{
+		st_HDRParam.bIsClose = TRUE;
+		st_HDRParam.nHttpCode = 405;
+
+		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam);
+		XEngine_Net_SendMsg(lpszClientAddr, tszMsgBuffer, nMsgLen, STORAGE_NETTYPE_HTTPCENTER);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("广播端:%s,暂时不支持的请求"), lpszClientAddr);
+		return FALSE;
+	}
+	else if (1 == st_ServiceCfg.st_P2xp.nMode)
 	{
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 405;
