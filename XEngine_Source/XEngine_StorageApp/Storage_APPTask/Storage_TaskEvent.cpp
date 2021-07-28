@@ -22,7 +22,6 @@ BOOL XEngine_Task_Event(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lps
 
 		memset(tszContentStr, '\0', MAX_PATH);
 		memset(tszBoundarTmp, '\0', MAX_PATH);
-		memset(tszContentStr, '\0', MAX_PATH);
 		memset(tszFileDir, '\0', MAX_PATH);
 		memset(tszBoundarStr, '\0', sizeof(tszBoundarStr));
 		memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));

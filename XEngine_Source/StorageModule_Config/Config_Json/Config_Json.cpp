@@ -165,13 +165,16 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
 	pSt_ServerConfig->st_XLimit.nMaxDNLoader = st_JsonXLimit["nMaxDNLoad"].asInt64();
     pSt_ServerConfig->st_XLimit.nMaxUPLoader = st_JsonXLimit["nMaxUPLoad"].asInt64();
 
-	if (st_JsonRoot["XP2xp"].empty() || (1 != st_JsonRoot["XP2xp"].size()))
+	if (st_JsonRoot["XP2xp"].empty() || (4 != st_JsonRoot["XP2xp"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_P2XP;
 		return FALSE;
 	}
 	Json::Value st_JsonP2xp = st_JsonRoot["XP2xp"];
+    pSt_ServerConfig->st_P2xp.bBroad = st_JsonP2xp["bBroad"].asInt();
+    pSt_ServerConfig->st_P2xp.nRVPort = st_JsonP2xp["nRVPort"].asInt();
+    pSt_ServerConfig->st_P2xp.nSDPort = st_JsonP2xp["nSDPort"].asInt();
     _tcscpy(pSt_ServerConfig->st_P2xp.tszQQWryFile, st_JsonP2xp["tszQQWryFile"].asCString());
 
 	if (st_JsonRoot["XVer"].empty() || (1 != st_JsonRoot["XVer"].size()))

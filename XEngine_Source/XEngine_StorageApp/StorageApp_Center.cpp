@@ -55,8 +55,76 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 	memset(tszAPIName, '\0', sizeof(tszAPIName));
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
-	LPCTSTR lpszMethodName = _T("POST");
-	if (0 != _tcsncmp(lpszMethodName, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodName)))
+	LPCTSTR lpszMethodPost = _T("POST");
+	LPCTSTR lpszMethodGet = _T("GET");
+	if (0 == _tcsnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodPost)))
+	{
+		if (!XEngine_APPHelp_ProxyAuth(lpszClientAddr, lpszMethodPost, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPCENTER))
+		{
+			return FALSE;
+		}
+		if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
+		{
+			st_HDRParam.bAuth = TRUE;
+		}
+		//使用重定向?
+		if (APIHelp_Distributed_IsMode(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUseMode, STORAGE_NETTYPE_HTTPCENTER))
+		{
+			TCHAR tszHdrBuffer[1024];
+			TCHAR tszStorageAddr[128];
+
+			memset(tszHdrBuffer, '\0', sizeof(tszHdrBuffer));
+			memset(tszStorageAddr, '\0', sizeof(tszStorageAddr));
+
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 302;
+
+			APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter, tszStorageAddr);
+			_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), tszStorageAddr, pSt_HTTPParam->tszHttpUri);
+
+			RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求的函数被要求重定向到:%s%s"), lpszClientAddr, tszStorageAddr, pSt_HTTPParam->tszHttpUri);
+			return TRUE;
+		}
+
+		if (!RfcComponents_HttpHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIVersion, tszAPIMethod, tszAPIName))
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 404;
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求的API不支持"), lpszClientAddr);
+			return FALSE;
+		}
+		//通知类型.用于多服务器
+		if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_PASS, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_PASS)))
+		{
+			XEngine_Task_Pass(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
+		}
+		else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_QUERY, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_QUERY)))
+		{
+			XEngine_Task_Query(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
+		}
+		else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_EVENT, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_EVENT)))
+		{
+			XEngine_Task_Event(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
+		}
+	}
+	else if (0 == _tcsnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodGet)))
+	{
+		if (!XEngine_APPHelp_ProxyAuth(lpszClientAddr, lpszMethodGet, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPCENTER))
+		{
+			return FALSE;
+		}
+		if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
+		{
+			st_HDRParam.bAuth = TRUE;
+		}
+		XEngine_Task_P2p(pSt_HTTPParam->tszHttpUri, lpszClientAddr, pSt_HTTPParam);
+	}
+	else
 	{
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 405;
@@ -66,57 +134,6 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,发送的方法不支持"), lpszClientAddr);
 		return FALSE;
 	}
-	if (!XEngine_APPHelp_ProxyAuth(lpszClientAddr, lpszMethodName, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPCENTER))
-	{
-		return FALSE;
-	}
-	if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
-	{
-		st_HDRParam.bAuth = TRUE;
-	}
-	//使用重定向?
-	if (APIHelp_Distributed_IsMode(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUseMode, STORAGE_NETTYPE_HTTPCENTER))
-	{
-		TCHAR tszHdrBuffer[1024];
-		TCHAR tszStorageAddr[128];
-
-		memset(tszHdrBuffer, '\0', sizeof(tszHdrBuffer));
-		memset(tszStorageAddr, '\0', sizeof(tszStorageAddr));
-
-		st_HDRParam.bIsClose = TRUE;
-		st_HDRParam.nHttpCode = 302;
-
-		APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter, tszStorageAddr);
-		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), tszStorageAddr, pSt_HTTPParam->tszHttpUri);
-
-		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求的函数被要求重定向到:%s%s"), lpszClientAddr, tszStorageAddr, pSt_HTTPParam->tszHttpUri);
-		return TRUE;
-	}
-
-	if (!RfcComponents_HttpHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIVersion, tszAPIMethod, tszAPIName))
-	{
-		st_HDRParam.bIsClose = TRUE;
-		st_HDRParam.nHttpCode = 404;
-
-		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求的API不支持"), lpszClientAddr);
-		return FALSE;
-	}
-	//通知类型.用于多服务器
-	if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_PASS, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_PASS)))
-	{
-		XEngine_Task_Pass(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
-	}
-	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_QUERY, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_QUERY)))
-	{
-		XEngine_Task_Query(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
-	}
-	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_EVENT, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_EVENT)))
-	{
-		XEngine_Task_Event(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
-	}
+	
 	return TRUE;
 }

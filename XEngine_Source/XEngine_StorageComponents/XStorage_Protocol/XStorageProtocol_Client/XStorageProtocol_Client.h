@@ -17,7 +17,7 @@ public:
     CXStorageProtocol_Client();
     ~CXStorageProtocol_Client();
 public:
-    BOOL XStorageProtocol_Client_REQQueryFile(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
+    BOOL XStorageProtocol_Client_REQQueryFile(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
     BOOL XStorageProtocol_Client_REQDelete(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
 public:
     BOOL XStorageProtocol_Client_REQDirOperator(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszUserDir, int nOperator);

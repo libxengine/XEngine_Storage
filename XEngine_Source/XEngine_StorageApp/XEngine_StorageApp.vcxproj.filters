@@ -60,6 +60,9 @@
     <ClCompile Include="StorageApp_P2XPNet.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Storage_APPTask\Storage_TaskP2p.cpp">
+      <Filter>源文件\Storage_APPTask</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StorageApp_Config.h">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="StorageApp_P2XPNet.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage_APPTask\Storage_TaskP2p.h">
+      <Filter>头文件\Storage_APPTask</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

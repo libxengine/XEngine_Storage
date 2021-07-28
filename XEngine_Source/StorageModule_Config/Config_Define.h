@@ -89,6 +89,9 @@ typedef struct tag_XEngine_ServerConfig
 	}st_XLimit;
     struct  
     {
+        BOOL bBroad;
+        int nSDPort;
+        int nRVPort;
         TCHAR tszQQWryFile[MAX_PATH];
     }st_P2xp;
     struct

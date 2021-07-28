@@ -89,6 +89,9 @@ extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
 extern XNETHANDLE xhP2XPPacket;
 
+extern SOCKET hBroadSocket;
+extern shared_ptr<std::thread> pSTDThread;
+
 extern XENGINE_SERVERCONFIG st_ServiceCfg;
 extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 
@@ -101,6 +104,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "Storage_APPTask/Storage_TaskEvent.h"
 #include "Storage_APPTask/Storage_TaskPass.h"
 #include "Storage_APPTask/Storage_TaskQuery.h"
+#include "Storage_APPTask/Storage_TaskP2p.h"
 #include "Storage_APPHelp/Storage_APPHelp.h"
 
 #ifdef _WINDOWS

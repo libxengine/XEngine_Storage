@@ -155,22 +155,12 @@ extern "C" BOOL XStorageProtocol_Proxy_ParseNotify(LPCTSTR lpszMsgBuffer, int nM
   类型：整数型指针
   可空：N
   意思：输出缓冲区大小
- 参数.三：lpszTimeStart
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：查询文件所属开始时间
- 参数.四：lpszTimeEnd
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：查询文件所属结束时间
- 参数.五：lpszFileName
+ 参数.三：lpszFileName
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入要查询的文件名
- 参数.六：lpszFileHash
+ 参数.四：lpszFileHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -180,7 +170,7 @@ extern "C" BOOL XStorageProtocol_Proxy_ParseNotify(LPCTSTR lpszMsgBuffer, int nM
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL XStorageProtocol_Client_REQQueryFile(CHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCSTR lpszTimeStart, LPCSTR lpszTimeEnd, LPCSTR lpszFileName = NULL, LPCSTR lpszFileHash = NULL);
+extern "C" BOOL XStorageProtocol_Client_REQQueryFile(CHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCSTR lpszFileName = NULL, LPCSTR lpszFileHash = NULL);
 /********************************************************************
 函数名称：XStorageProtocol_Client_REQDelete
 函数功能：删除文件请求函数

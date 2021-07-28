@@ -32,6 +32,15 @@ BOOL XEngine_Task_Query(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lps
 
 		if (0 == st_ServiceCfg.st_XSql.nSQLType)
 		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 406;
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端:%s,请求查询文件列表失败,服务器没有启用这个功能"), lpszClientAddr);
+		}
+		else
+		{
 			if (1 == st_ServiceCfg.st_XSql.nSQLType)
 			{
 				XStorageSQL_File_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
@@ -48,15 +57,6 @@ BOOL XEngine_Task_Query(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lps
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求查询文件列表成功,列表个数:%d"), lpszClientAddr, nListCount);
-		}
-		else
-		{
-			st_HDRParam.bIsClose = TRUE;
-			st_HDRParam.nHttpCode = 406;
-
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端:%s,请求查询文件列表失败,服务器没有启用这个功能"), lpszClientAddr);
 		}
 	}
 	return TRUE;
