@@ -170,12 +170,23 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPQueryFile(TCHAR* ptszMsgBu
         st_JsonObject["tszFileHash"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileHash;
         st_JsonObject["tszFileTime"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileTime;
         st_JsonObject["nFileSize"] = (*pppSt_DBFile)[i]->st_ProtocolFile.nFileSize;
+        //只有在P2P下取文件列表才有效
+        if (_tcslen((*pppSt_DBFile)[i]->tszTableName) > 0)
+        {
+            st_JsonObject["tszTableName"] = (*pppSt_DBFile)[i]->tszTableName;
+        }
         st_JsonArray.append(st_JsonObject);
     }
     st_JsonRoot["Count"] = nListCount;
     st_JsonRoot["List"] = st_JsonArray;
-    st_JsonRoot["lpszTimeStart"] = lpszTimeStart;
-    st_JsonRoot["lpszTimeEnd"] = lpszTimeEnd;
+    if (NULL != lpszTimeStart)
+    {
+        st_JsonRoot["lpszTimeStart"] = lpszTimeStart;
+    }
+    if (NULL != lpszTimeEnd)
+    {
+        st_JsonRoot["lpszTimeEnd"] = lpszTimeEnd;
+    }
     st_JsonRoot["Code"] = 0;
     st_JsonRoot["Msg"] = _T("ok");
     //打包输出信息

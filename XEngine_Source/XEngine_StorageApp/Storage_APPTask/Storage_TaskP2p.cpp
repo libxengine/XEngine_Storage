@@ -39,6 +39,7 @@ XHTHREAD XEngine_Task_P2PThread()
 					}
 					if (nListCount > 0)
 					{
+						_stprintf(pppSt_ListFile[0]->tszTableName, _T("%s:%d"), st_ServiceCfg.tszIPAddr, st_ServiceCfg.nStorageDLPort);
 						XStorageProtocol_Core_REPQueryFile(tszMsgBuffer, &nMsgLen, &pppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
 						BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
 
@@ -81,8 +82,6 @@ BOOL XEngine_Task_P2p(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPONENT
 	}
 	else
 	{
-		TCHAR tszIPAddr[128];
-		memset(tszIPAddr, '\0', sizeof(tszIPAddr));
 		//开始广播请求文件
 		XStorageProtocol_Client_REQQueryFile(tszSDBuffer, &nSDLen, NULL, lpszFileHash);
 		if (!NetCore_BroadCast_Send(hBroadSocket, tszSDBuffer, nSDLen))
@@ -97,26 +96,49 @@ BOOL XEngine_Task_P2p(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPONENT
 		}
 
 		SOCKET hRVSocket;
+		list<APIHELP_LBFILEINFO> stl_ListFile;
 		NetCore_BroadCast_RecvInit(&hRVSocket, st_ServiceCfg.st_P2xp.nSDPort);
-		if (!NetCore_BroadCast_Recv(hRVSocket, tszRVBuffer, &nRVLen, tszIPAddr, 2000))
+		time_t nTimeStart = time(NULL);
+		while (1)
 		{
-			st_HDRParam.bIsClose = TRUE;
-			st_HDRParam.nHttpCode = 404;
+			APIHELP_LBFILEINFO st_FileInfo;
+			memset(&st_FileInfo, '\0', sizeof(APIHELP_LBFILEINFO));
 
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam);
-			XEngine_Net_SendMsg(lpszClientAddr, tszMsgBuffer, nMsgLen, STORAGE_NETTYPE_HTTPCENTER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("广播端:%s,发送广播请求失败,错误:%lX"), lpszClientAddr, NetCore_GetLastError());
-			NetCore_BroadCast_Close(hRVSocket);
-			return FALSE;
+			st_FileInfo.nMsgLen = sizeof(st_FileInfo.tszMsgBuffer);
+			if (NetCore_BroadCast_Recv(hRVSocket, st_FileInfo.tszMsgBuffer, &st_FileInfo.nMsgLen))
+			{
+				stl_ListFile.push_back(st_FileInfo);
+			}
+			time_t nTimeEnd = time(NULL);
+			if ((nTimeEnd - nTimeStart) > st_ServiceCfg.st_P2xp.nTime)
+			{
+				//大于ntime秒,退出
+				break;
+			}
 		}
 		NetCore_BroadCast_Close(hRVSocket);
 
-		st_HDRParam.bIsClose = TRUE;
-		st_HDRParam.nHttpCode = 200;
+		if (stl_ListFile.empty())
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 404;
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam);
+		}
+		else
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 200;
 
-		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam, tszRVBuffer, nRVLen);
+			int nListCount = 0;
+			XSTORAGECORE_DBFILE** ppSt_ListPacket;
+			APIHelp_Distributed_FileList(&stl_ListFile, &ppSt_ListPacket, &nListCount);
+			XStorageProtocol_Core_REPQueryFile(tszRVBuffer, &nRVLen, &ppSt_ListPacket, nListCount);
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam, tszRVBuffer, nRVLen);
+			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListPacket, nListCount);
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("广播端:%s,请求局域网文件列表成功,文件分布服务器个数:%d"), lpszClientAddr, stl_ListFile.size());
 		XEngine_Net_SendMsg(lpszClientAddr, tszMsgBuffer, nMsgLen, STORAGE_NETTYPE_HTTPCENTER);
-		printf("%s\n", tszRVBuffer);
+		stl_ListFile.clear();
 	}
 	return TRUE;
 }

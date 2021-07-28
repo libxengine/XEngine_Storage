@@ -90,6 +90,7 @@ typedef struct tag_XEngine_ServerConfig
     struct  
     {
         BOOL bBroad;
+        int nTime;
         int nSDPort;
         int nRVPort;
         TCHAR tszQQWryFile[MAX_PATH];

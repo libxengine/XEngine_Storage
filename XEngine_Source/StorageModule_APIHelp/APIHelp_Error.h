@@ -10,3 +10,5 @@
 //    Purpose:     导出错误
 //    History:
 *********************************************************************/
+#define ERROR_STORAGE_MODULE_APIHELP_PARAMENT 0x0030001  
+#define ERROR_STORAGE_MODULE_APIHELP_PARSE 0x0030002

@@ -37,3 +37,7 @@ extern "C" BOOL APIHelp_Distributed_RandomAddr(list<tstring>*pStl_ListAddr, TCHA
 {
 	return m_APIDistributed.APIHelp_Distributed_RandomAddr(pStl_ListAddr, ptszAddr);
 }
+extern "C" BOOL APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>*pStl_ListParse, XSTORAGECORE_DBFILE * **pppSt_ListPacket, int* pInt_ListCount)
+{
+	return m_APIDistributed.APIHelp_Distributed_FileList(pStl_ListParse, pppSt_ListPacket, pInt_ListCount);
+}
