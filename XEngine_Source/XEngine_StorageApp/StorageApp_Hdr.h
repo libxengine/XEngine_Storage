@@ -105,6 +105,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "Storage_APPTask/Storage_TaskPass.h"
 #include "Storage_APPTask/Storage_TaskQuery.h"
 #include "Storage_APPTask/Storage_TaskP2p.h"
+#include "Storage_APPTask/Storage_TaskManage.h"
 #include "Storage_APPHelp/Storage_APPHelp.h"
 
 #ifdef _WINDOWS

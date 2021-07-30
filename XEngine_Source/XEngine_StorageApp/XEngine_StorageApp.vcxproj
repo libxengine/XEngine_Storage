@@ -157,6 +157,7 @@
     <ClCompile Include="StorageApp_UPLoader.cpp" />
     <ClCompile Include="Storage_APPHelp\Storage_APPHelp.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskEvent.cpp" />
+    <ClCompile Include="Storage_APPTask\Storage_TaskManage.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskP2p.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskPass.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskQuery.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="StorageApp_UPLoader.h" />
     <ClInclude Include="Storage_APPHelp\Storage_APPHelp.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskEvent.h" />
+    <ClInclude Include="Storage_APPTask\Storage_TaskManage.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskP2p.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskPass.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskQuery.h" />

@@ -86,32 +86,6 @@ XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
 					APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode);
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("下载客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), tszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass);
 				}
-				//如果启用了数据库并且启用了P2P存储网络
-				if ((0 != st_ServiceCfg.st_XSql.nSQLType) && (st_ServiceCfg.st_P2xp.nMode > 0))
-				{
-					UCHAR tszHashKey[MAX_PATH];
-					XSTORAGECORE_DBFILE st_DBFile;
-					SESSION_STORAGEINFO st_StorageInfo;
-
-					memset(tszHashKey, '\0', MAX_PATH);
-					memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
-					memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
-
-					Session_DLStroage_GetInfo(nThreadPos, i, &st_StorageInfo);
-
-					st_DBFile.st_ProtocolFile.nFileSize = st_StorageInfo.ullCount;
-					OPenSsl_Api_Digest(st_StorageInfo.tszFileDir, tszHashKey, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
-					BaseLib_OperatorString_StrToHex((char*)tszHashKey, 20, st_DBFile.st_ProtocolFile.tszFileHash);
-					BaseLib_OperatorString_GetFileAndPath(st_StorageInfo.tszFileDir, st_DBFile.st_ProtocolFile.tszFilePath, st_DBFile.st_ProtocolFile.tszFileName);
-					if (1 == st_ServiceCfg.st_XSql.nSQLType)
-					{
-						XStorageSQL_File_FileInsert(&st_DBFile);
-					}
-					else
-					{
-						XStorage_SQLite_FileInsert(&st_DBFile);
-					}
-				}
 				Session_DLStroage_Delete(tszClientAddr);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("下载客户端:%s,文件已经发送完毕,用户已经被移除发送列表"), tszClientAddr);
 				continue;

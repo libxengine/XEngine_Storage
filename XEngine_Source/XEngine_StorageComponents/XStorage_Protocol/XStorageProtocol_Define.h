@@ -306,6 +306,35 @@ extern "C" BOOL XStorageProtocol_Core_REQQueryFile(LPCSTR lpszMsgBuffer, CHAR *p
 *********************************************************************/
 extern "C" BOOL XStorageProtocol_Core_REPQueryFile(CHAR *ptszMsgBuffer, int *pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL);
 /********************************************************************
+函数名称：XStorageProtocol_Core_ReportFileParse
+函数功能：解析文件报告协议
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的内容大小
+ 参数.三：pppSt_DBFile
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出解析到的文件列表
+ 参数.四：pInt_ListCount
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL XStorageProtocol_Core_ReportFileParse(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int* pInt_ListCount);
+/********************************************************************
 函数名称：XStorageProtocol_Core_REQDirOperator
 函数功能：文件夹操作协议
  参数.一：lpszMsgBuffer

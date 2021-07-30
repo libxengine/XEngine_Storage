@@ -71,6 +71,10 @@ extern "C" BOOL XStorageProtocol_Core_REPQueryFile(TCHAR * ptszMsgBuffer, int* p
 {
 	return m_ProtocolCore.XStorageProtocol_Core_REPQueryFile(ptszMsgBuffer, pInt_MsgLen, pppSt_DBFile, nListCount, lpszTimeStart, lpszTimeEnd);
 }
+extern "C" BOOL XStorageProtocol_Core_ReportFileParse(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int* pInt_ListCount)
+{
+	return m_ProtocolCore.XStorageProtocol_Core_ReportFileParse(lpszMsgBuffer, nMsgLen, pppSt_DBFile, pInt_ListCount);
+}
 extern "C" BOOL XStorageProtocol_Core_REQDirOperator(LPCTSTR lpszMsgBuffer, TCHAR * ptszUserDir, int* pInt_Operator)
 {
 	return m_ProtocolCore.XStorageProtocol_Core_REQDirOperator(lpszMsgBuffer, ptszUserDir, pInt_Operator);
