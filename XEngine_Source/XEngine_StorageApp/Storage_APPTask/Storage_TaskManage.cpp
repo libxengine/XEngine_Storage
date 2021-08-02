@@ -89,8 +89,8 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 							TCHAR tszFilePath[1024];
 							memset(tszFilePath, '\0', sizeof(tszFilePath));
 
-							_stprintf(tszFilePath, _T("%s/%s"), ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
-							XStorageSQL_File_FileDelete(NULL, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
+							_stprintf(tszFilePath, _T("%s/%s"), ppSt_DBQuery[i]->st_ProtocolFile.tszFilePath, ppSt_DBQuery[i]->st_ProtocolFile.tszFileName);
+							XStorageSQL_File_FileDelete(NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
 						}
 					}
 					else
@@ -102,20 +102,60 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 							TCHAR tszFilePath[1024];
 							memset(tszFilePath, '\0', sizeof(tszFilePath));
 
-							_stprintf(tszFilePath, _T("%s/%s"), ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
-							XStorage_SQLite_FileDelete(NULL, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
+							_stprintf(tszFilePath, _T("%s/%s"), ppSt_DBQuery[i]->st_ProtocolFile.tszFilePath, ppSt_DBQuery[i]->st_ProtocolFile.tszFileName);
+							XStorage_SQLite_FileDelete(NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
 						}
 					}
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求删除文件HASH成功,文件名:%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
 				}
 				else
 				{
-
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求删除文件失败,因为没有启用数据库,删除的HASH:%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
 				}
 			}
 			else
 			{
+				if (0 != st_ServiceCfg.st_XSql.nSQLType)
+				{
+					int nQueryCount = 0;
+					TCHAR tszFileDir[1024];
+					XSTORAGECORE_DBFILE** ppSt_DBQuery;
+
+					memset(tszFileDir, '\0', sizeof(tszFileDir));
+					_stprintf(tszFileDir, _T("%s/%s"), ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
+					if (1 == st_ServiceCfg.st_XSql.nSQLType)
+					{
+						XStorageSQL_File_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, tszFileDir);
+						//删除数据库与文件
+						for (int i = 0; i < nQueryCount; i++)
+						{
+							TCHAR tszFilePath[1024];
+							memset(tszFilePath, '\0', sizeof(tszFilePath));
+
+							_stprintf(tszFilePath, _T("%s/%s"), ppSt_DBQuery[i]->st_ProtocolFile.tszFilePath, ppSt_DBQuery[i]->st_ProtocolFile.tszFileName);
+							XStorageSQL_File_FileDelete(NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
+						}
+					}
+					else
+					{
+						XStorage_SQLite_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, tszFileDir);
+						//删除数据库与文件
+						for (int i = 0; i < nQueryCount; i++)
+						{
+							TCHAR tszFilePath[1024];
+							memset(tszFilePath, '\0', sizeof(tszFilePath));
+
+							_stprintf(tszFilePath, _T("%s/%s"), ppSt_DBQuery[i]->st_ProtocolFile.tszFilePath, ppSt_DBQuery[i]->st_ProtocolFile.tszFileName);
+							XStorage_SQLite_FileDelete(NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
+						}
+					}
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求删除文件名称成功,文件名:%s/%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
+				}
+				else
+				{
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求删除文件名称失败,因为没有启用数据库,删除的HASH:%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
+				}
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求删除文件成功,文件名:%s/%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
 		}
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 200;

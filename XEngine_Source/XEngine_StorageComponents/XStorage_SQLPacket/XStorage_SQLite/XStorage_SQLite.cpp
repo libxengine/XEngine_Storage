@@ -303,7 +303,14 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
 		{
 			if (_tcslen(lpszFile) > 0)
 			{
-				_stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s` WHERE FileName = '%s'"), pptszResult[i], lpszFile);
+				TCHAR tszFilePath[MAX_PATH];
+				TCHAR tszFileName[MAX_PATH];
+
+				memset(tszFilePath, '\0', MAX_PATH);
+				memset(tszFileName, '\0', MAX_PATH);
+
+				BaseLib_OperatorString_GetFileAndPath(lpszFile, tszFilePath, tszFileName);
+                _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s` WHERE FilePath = '%s' AND FileName = '%s'"), pptszResult[i], tszFilePath, tszFileName);
 			}
 			else
 			{
