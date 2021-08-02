@@ -23,6 +23,7 @@
 #include <string.h>
 #include <list>
 #include <string>
+#include <memory>
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>

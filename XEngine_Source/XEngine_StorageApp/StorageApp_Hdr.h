@@ -8,6 +8,7 @@
 #include <thread>
 #include <list>
 #include <sys/types.h>
+#include <sys/stat.h>
 #ifdef _WINDOWS
 #include <windows.h>
 #include <tchar.h>
