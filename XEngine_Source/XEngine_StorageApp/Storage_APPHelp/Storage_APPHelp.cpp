@@ -55,13 +55,17 @@ BOOL XEngine_APPHelp_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszMethod, LPCTS
 		OPenSsl_Help_BasicDecoder(tszAuthStr, tszUserName, tszUserPass);
 		if (_tcslen(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy) > 0)
 		{
-			tstring m_StrBody;
+			int nBLen = 0;
 			int nResponseCode = 0;
+			TCHAR* ptszBody = NULL;
 			
 			XStorageProtocol_Proxy_PacketBasicAuth(lpszMethod, lpszPostUrl, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
-			APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &m_StrBody);
-
-			if (200 != nResponseCode)
+			APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &ptszBody, &nBLen);
+			if (200 == nResponseCode)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientType, lpszClientAddr, st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszUserName, tszUserPass);
+			}
+			else
 			{
 				st_HDRParam.bIsClose = TRUE;
 				st_HDRParam.bAuth = TRUE;
@@ -69,10 +73,9 @@ BOOL XEngine_APPHelp_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszMethod, LPCTS
 
 				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nSDType);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("%s:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), lpszClientType, lpszClientAddr, tszUserPass, tszUserPass, nResponseCode, m_StrBody.c_str());
-				return FALSE;
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("%s:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), lpszClientType, lpszClientAddr, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientType, lpszClientAddr, st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszUserName, tszUserPass);
+			BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
 		}
 		else
 		{
