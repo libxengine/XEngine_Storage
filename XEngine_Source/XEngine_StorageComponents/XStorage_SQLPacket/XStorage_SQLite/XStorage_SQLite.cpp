@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "XStorage_SQLite.h"
 /********************************************************************
 //    Created:     2021/07/12  09:32:21
@@ -6,9 +6,9 @@
 //    File Path:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageComponents\XStorage_SQLPacket\XStorage_SQLite
 //    File Base:   XStorage_SQLite
 //    File Ext:    cpp
-//    Project:     XEngine(ÍøÂçÍ¨ĞÅÒıÇæ)
+//    Project:     XEngine(ç½‘ç»œé€šä¿¡å¼•æ“)
 //    Author:      qyt
-//    Purpose:     sqlite²Ù×÷
+//    Purpose:     sqliteæ“ä½œ
 //    History:
 *********************************************************************/
 CXStorage_SQLite::CXStorage_SQLite()
@@ -21,34 +21,34 @@ CXStorage_SQLite::~CXStorage_SQLite()
 
 }
 //////////////////////////////////////////////////////////////////////////
-//                             ¹«ÓĞº¯Êı
+//                             å…¬æœ‰å‡½æ•°
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-º¯ÊıÃû³Æ£ºXStorage_SQLite_Init
-º¯Êı¹¦ÄÜ£º³õÊ¼»¯SQLITEÎÄ¼şÏµÍ³
- ²ÎÊı.Ò»£ºlpszSQLFile
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª²Ù×÷µÄSQLÎÄ¼ş
- ²ÎÊı.¶ş£ºnTimeMonth
-  In/Out£ºIn
-  ÀàĞÍ£ºÕûÊıĞÍ
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÔÊĞí±£´æµÄÊ±¼ä,µ¥Î»ÔÂ
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šXStorage_SQLite_Init
+å‡½æ•°åŠŸèƒ½ï¼šåˆå§‹åŒ–SQLITEæ–‡ä»¶ç³»ç»Ÿ
+ å‚æ•°.ä¸€ï¼šlpszSQLFile
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦æ“ä½œçš„SQLæ–‡ä»¶
+ å‚æ•°.äºŒï¼šnTimeMonth
+  In/Outï¼šIn
+  ç±»å‹ï¼šæ•´æ•°å‹
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥å…è®¸ä¿å­˜çš„æ—¶é—´,å•ä½æœˆ
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CXStorage_SQLite::XStorage_SQLite_Init(LPCTSTR lpszSQLFile, int nTimeMonth /* = 1 */)
 {
 	XStorage_IsErrorOccur = FALSE;
 
-	//´´½¨Êı¾İ¿â
+	//åˆ›å»ºæ•°æ®åº“
 	if (!DataBase_SQLite_Create(lpszSQLFile))
 	{
-		//Èç¹û²»ÊÇÕâ¸ö´íÎó£¬ËµÃ÷´´½¨Êı¾İ¿âÊ§°ÜÁË
+		//å¦‚æœä¸æ˜¯è¿™ä¸ªé”™è¯¯ï¼Œè¯´æ˜åˆ›å»ºæ•°æ®åº“å¤±è´¥äº†
 		if (ERROR_HELPCOMPONENTS_DATABASE_SQLITE_CREATE_ISEXIST != DataBase_GetLastError())
 		{
 			XStorage_IsErrorOccur = TRUE;
@@ -56,7 +56,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_Init(LPCTSTR lpszSQLFile, int nTimeMonth 
 			return FALSE;
 		}
 	}
-	//´ò¿ªÊı¾İ¿â
+	//æ‰“å¼€æ•°æ®åº“
 	if (!DataBase_SQLite_Open(&xhSQL, lpszSQLFile))
 	{
 		XStorage_IsErrorOccur = TRUE;
@@ -76,12 +76,12 @@ BOOL CXStorage_SQLite::XStorage_SQLite_Init(LPCTSTR lpszSQLFile, int nTimeMonth 
 	return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºXStorage_SQLite_Destory
-º¯Êı¹¦ÄÜ£ºÏú»Ù
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šXStorage_SQLite_Destory
+å‡½æ•°åŠŸèƒ½ï¼šé”€æ¯
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CXStorage_SQLite::XStorage_SQLite_Destory()
 {
@@ -97,17 +97,17 @@ BOOL CXStorage_SQLite::XStorage_SQLite_Destory()
 	return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºXStorage_SQLite_FileInsert
-º¯Êı¹¦ÄÜ£º²åÈëÒ»¸öÎÄ¼şÊı¾İµ½Êı¾İ¿âÖĞ
- ²ÎÊı.Ò»£ºpSt_DBManage
-  In/Out£ºIn
-  ÀàĞÍ£ºÊı¾İ½á¹¹Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÒª²åÈëµÄÊı¾İĞÅÏ¢
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£ºÕâ¸ö½á¹¹ËùÓĞÖµ¶¼±ØĞëÌî³ä
+å‡½æ•°åç§°ï¼šXStorage_SQLite_FileInsert
+å‡½æ•°åŠŸèƒ½ï¼šæ’å…¥ä¸€ä¸ªæ–‡ä»¶æ•°æ®åˆ°æ•°æ®åº“ä¸­
+ å‚æ•°.ä¸€ï¼špSt_DBManage
+  In/Outï¼šIn
+  ç±»å‹ï¼šæ•°æ®ç»“æ„æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¦æ’å…¥çš„æ•°æ®ä¿¡æ¯
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼šè¿™ä¸ªç»“æ„æ‰€æœ‰å€¼éƒ½å¿…é¡»å¡«å……
 *********************************************************************/
 BOOL CXStorage_SQLite::XStorage_SQLite_FileInsert(XSTORAGECORE_DBFILE* pSt_DBFile)
 {
@@ -134,7 +134,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileInsert(XSTORAGECORE_DBFILE* pSt_DBFil
     memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
     memset(tszTableName, '\0', sizeof(tszTableName));
     memset(&st_LibTimer, '\0', sizeof(XENGINE_LIBTIMER));
-    //»ñµÃ²åÈëÈÕÆÚ±í
+    //è·å¾—æ’å…¥æ—¥æœŸè¡¨
     BaseLib_OperatorTime_GetSysTime(&st_LibTimer);
     if (_tcslen(pSt_DBFile->tszTableName) > 0)
     {
@@ -144,7 +144,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileInsert(XSTORAGECORE_DBFILE* pSt_DBFil
     {
         _stprintf_s(tszTableName, _T("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
     }
-    //²åÈëÓï¾ä
+    //æ’å…¥è¯­å¥
     _stprintf_s(tszSQLStatement, _T("INSERT INTO `%s` (FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s',%lld,DATETIME('now', 'localtime'))"), tszTableName, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize);
     if (!DataBase_SQLite_Exec(xhSQL, tszSQLStatement))
     {
@@ -155,22 +155,22 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileInsert(XSTORAGECORE_DBFILE* pSt_DBFil
     return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºXStorage_SQLite_FileDelete
-º¯Êı¹¦ÄÜ£ºÉ¾³ıÒ»¸öÊı¾İ¿âÎÄ¼şĞÅÏ¢
- ²ÎÊı.Ò»£ºlpszFile
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÒªÉ¾³ıµÄÎÄ¼şÈ«Â·¾¶
- ²ÎÊı.¶ş£ºlpszHash
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÒªÉ¾³ıµÄÎÄ¼şHASH
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º²ÎÊı²»ÄÜÈ«Îª¿Õ,²»»áÉ¾³ıÎÄ¼ş
+å‡½æ•°åç§°ï¼šXStorage_SQLite_FileDelete
+å‡½æ•°åŠŸèƒ½ï¼šåˆ é™¤ä¸€ä¸ªæ•°æ®åº“æ–‡ä»¶ä¿¡æ¯
+ å‚æ•°.ä¸€ï¼šlpszFile
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¦åˆ é™¤çš„æ–‡ä»¶å…¨è·¯å¾„
+ å‚æ•°.äºŒï¼šlpszHash
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¦åˆ é™¤çš„æ–‡ä»¶HASH
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼šå‚æ•°ä¸èƒ½å…¨ä¸ºç©º,ä¸ä¼šåˆ é™¤æ–‡ä»¶
 *********************************************************************/
 BOOL CXStorage_SQLite::XStorage_SQLite_FileDelete(LPCTSTR lpszFile, LPCTSTR lpszHash)
 {
@@ -189,7 +189,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileDelete(LPCTSTR lpszFile, LPCTSTR lpsz
     {
         return FALSE;
     }
-    //ÂÖÑµ²éÕÒÉ¾³ı
+    //è½®è®­æŸ¥æ‰¾åˆ é™¤
     for (int i = 0; i < nListCount; i++)
     {
         memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
@@ -212,42 +212,42 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileDelete(LPCTSTR lpszFile, LPCTSTR lpsz
     return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºXStorage_SQLite_FileQuery
-º¯Êı¹¦ÄÜ£º²éÑ¯ÎÄ¼şĞÅÏ¢
- ²ÎÊı.Ò»£ºpppSt_ListFile
-  In/Out£ºOut
-  ÀàĞÍ£ºÈı¼¶Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºµ¼³ö²éÑ¯µ½µÄÎÄ¼şÁĞ±í,´Ëº¯ÊıĞèÒªµ÷ÓÃ»ù´¡¿âµÄÄÚ´æÊÍ·Åº¯Êı
- ²ÎÊı.¶ş£ºpInt_ListCount
-  In/Out£ºOut
-  ÀàĞÍ£ºÈı¼¶Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºµ¼³öÎÄ¼ş¸öÊı
- ²ÎÊı.Èı£ºlpszTimeStart
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£º²éÕÒ¿ªÊ¼Ê±¼ä,20190701
- ²ÎÊı.ËÄ£ºlpszTimeEnd
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£º²éÕÒ½áÊøÊ±¼ä,20190730
- ²ÎÊı.Îå£ºlpszFile
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÒª²éÑ¯µÄÃû³Æ
- ²ÎÊı.Áù£ºlpszHash
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÒª²éÑ¯µÄÎÄ¼şHASH
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º·µ»Ø¼Ù¿ÉÄÜÃ»ÓĞ²éÕÒµ½,ÕâÌõ¼ÇÂ¼²»´æÔÚ.²ÎÊılpszFileºÍlpszHash²»ÄÜÈ«Îª¿Õ
+å‡½æ•°åç§°ï¼šXStorage_SQLite_FileQuery
+å‡½æ•°åŠŸèƒ½ï¼šæŸ¥è¯¢æ–‡ä»¶ä¿¡æ¯
+ å‚æ•°.ä¸€ï¼špppSt_ListFile
+  In/Outï¼šOut
+  ç±»å‹ï¼šä¸‰çº§æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šå¯¼å‡ºæŸ¥è¯¢åˆ°çš„æ–‡ä»¶åˆ—è¡¨,æ­¤å‡½æ•°éœ€è¦è°ƒç”¨åŸºç¡€åº“çš„å†…å­˜é‡Šæ”¾å‡½æ•°
+ å‚æ•°.äºŒï¼špInt_ListCount
+  In/Outï¼šOut
+  ç±»å‹ï¼šä¸‰çº§æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šå¯¼å‡ºæ–‡ä»¶ä¸ªæ•°
+ å‚æ•°.ä¸‰ï¼šlpszTimeStart
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šæŸ¥æ‰¾å¼€å§‹æ—¶é—´,20190701
+ å‚æ•°.å››ï¼šlpszTimeEnd
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šæŸ¥æ‰¾ç»“æŸæ—¶é—´,20190730
+ å‚æ•°.äº”ï¼šlpszFile
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¦æŸ¥è¯¢çš„åç§°
+ å‚æ•°.å…­ï¼šlpszHash
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¦æŸ¥è¯¢çš„æ–‡ä»¶HASH
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼šè¿”å›å‡å¯èƒ½æ²¡æœ‰æŸ¥æ‰¾åˆ°,è¿™æ¡è®°å½•ä¸å­˜åœ¨.å‚æ•°lpszFileå’ŒlpszHashä¸èƒ½å…¨ä¸ºç©º
 *********************************************************************/
 BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */)
 {
@@ -259,13 +259,13 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
         XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_PARAMENT;
         return FALSE;
     }
-    //²éÑ¯
+    //æŸ¥è¯¢
     int nLine = 0;
     int nRow = 0;
     TCHAR** pptszResult;
     TCHAR tszSQLStatement[1024];
     memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-    //¼ì²éÊÇ·ñÊ±¼ä·¶Î§¼ìË÷
+    //æ£€æŸ¥æ˜¯å¦æ—¶é—´èŒƒå›´æ£€ç´¢
     if ((NULL != lpszTimeStart) && (NULL != lpszTimeEnd))
     {
         if (_tcslen(lpszTimeStart) > 0 && _tcslen(lpszTimeEnd) > 0)
@@ -288,7 +288,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
         return FALSE;
     }
 	list<XSTORAGECORE_DBFILE> stl_ListFile;
-	//ÂÖÑµ
+	//è½®è®­
 	for (int i = 0; i < nLine; i++)
 	{
 		if (!XStorage_SQLite_IsNumber(pptszResult[i]))
@@ -298,7 +298,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
 		int nLineResult = 0;
 		int nFieldResult = 0;
 		memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-		//ÅĞ¶Ï²éÑ¯·½Ê½
+		//åˆ¤æ–­æŸ¥è¯¢æ–¹å¼
 		if (NULL != lpszFile)
 		{
 			if (_tcslen(lpszFile) > 0)
@@ -328,12 +328,12 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
 				_stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s`"), pptszResult[i]);
 			}
 		}
-		//²éÑ¯ÎÄ¼ş
+		//æŸ¥è¯¢æ–‡ä»¶
         TCHAR** pptszFileResult;
         if (DataBase_SQLite_GetTable(xhSQL, tszSQLStatement, &pptszFileResult, &nLineResult, &nFieldResult))
 		{
             int nFiled = nFieldResult;
-			//Ñ­»·»ñÈ¡ËùÓĞ²éÕÒµ½µÄÎÄ¼ş
+			//å¾ªç¯è·å–æ‰€æœ‰æŸ¥æ‰¾åˆ°çš„æ–‡ä»¶
 			for (int j = 0; j < nLineResult; j++)
 			{
 				XSTORAGECORE_DBFILE st_DBFile;
@@ -383,27 +383,27 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
 	return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºXStorage_SQLite_FileQueryForTable
-º¯Êı¹¦ÄÜ£ºÍ¨¹ıÖ¸¶¨±íÃû³Æ²éÑ¯ËùÓĞÎÄ¼ş
- ²ÎÊı.Ò»£ºpppSt_ListFile
-  In/Out£ºOut
-  ÀàĞÍ£ºÈı¼¶Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³ö²éÑ¯µ½µÄÎÄ¼şĞÅÏ¢
- ²ÎÊı.¶ş£ºpInt_ListCount
-  In/Out£ºOut
-  ÀàĞÍ£ºÈı¼¶Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºµ¼³ö»ñÈ¡µ½µÄÁĞ±í¸öÊı
- ²ÎÊı.Èı£ºlpszTableName
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª²éÑ¯µÄ±íÃû³Æ
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º²ÎÊıÒ»ĞèÒªµ÷ÓÃ»ù´¡¿âµÄÄÚ´æÊÍ·Åº¯Êı½øĞĞÊÍ·ÅÄÚ´æ
+å‡½æ•°åç§°ï¼šXStorage_SQLite_FileQueryForTable
+å‡½æ•°åŠŸèƒ½ï¼šé€šè¿‡æŒ‡å®šè¡¨åç§°æŸ¥è¯¢æ‰€æœ‰æ–‡ä»¶
+ å‚æ•°.ä¸€ï¼špppSt_ListFile
+  In/Outï¼šOut
+  ç±»å‹ï¼šä¸‰çº§æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºæŸ¥è¯¢åˆ°çš„æ–‡ä»¶ä¿¡æ¯
+ å‚æ•°.äºŒï¼špInt_ListCount
+  In/Outï¼šOut
+  ç±»å‹ï¼šä¸‰çº§æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šå¯¼å‡ºè·å–åˆ°çš„åˆ—è¡¨ä¸ªæ•°
+ å‚æ•°.ä¸‰ï¼šlpszTableName
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦æŸ¥è¯¢çš„è¡¨åç§°
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼šå‚æ•°ä¸€éœ€è¦è°ƒç”¨åŸºç¡€åº“çš„å†…å­˜é‡Šæ”¾å‡½æ•°è¿›è¡Œé‡Šæ”¾å†…å­˜
 *********************************************************************/
 BOOL CXStorage_SQLite::XStorage_SQLite_FileQueryForTable(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTableName)
 {
@@ -415,14 +415,14 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQueryForTable(XSTORAGECORE_DBFILE*** 
         XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILETABLE_PARAMENT;
         return FALSE;
     }
-    //²éÑ¯
+    //æŸ¥è¯¢
     XHDATA xhTable = 0;
     int nLine = 0;
     int nRow = 0;
     TCHAR** pptszResulte;
     TCHAR tszSQLStatement[1024];
     memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-    //¼ì²éÊÇ·ñÊ±¼ä·¶Î§¼ìË÷
+    //æ£€æŸ¥æ˜¯å¦æ—¶é—´èŒƒå›´æ£€ç´¢
     _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s`"), lpszTableName);
     DataBase_SQLite_GetTable(xhSQL, tszSQLStatement, &pptszResulte, &nLine, &nRow);
     if (nLine <= 0)
@@ -433,7 +433,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQueryForTable(XSTORAGECORE_DBFILE*** 
     }
     *pInt_ListCount = nLine;
     BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ListFile, nLine, sizeof(XSTORAGECORE_DBFILE));
-    //Ñ­»·»ñÈ¡ËùÓĞ²éÕÒµ½µÄÎÄ¼ş
+    //å¾ªç¯è·å–æ‰€æœ‰æŸ¥æ‰¾åˆ°çš„æ–‡ä»¶
     int nFiled = nRow;
     for (int i = 0; i < nLine; i++)
     {
@@ -462,15 +462,15 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQueryForTable(XSTORAGECORE_DBFILE*** 
     return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
-//                    ±£»¤º¯Êı
+//                    ä¿æŠ¤å‡½æ•°
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-º¯ÊıÃû³Æ£ºXStorage_SQLite_CreateTable
-º¯Êı¹¦ÄÜ£º´´½¨°´ÕÕÔÂ·İµÄÎÄ¼ş±í
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šXStorage_SQLite_CreateTable
+å‡½æ•°åŠŸèƒ½ï¼šåˆ›å»ºæŒ‰ç…§æœˆä»½çš„æ–‡ä»¶è¡¨
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CXStorage_SQLite::XStorage_SQLite_CreateTable()
 {
@@ -521,22 +521,22 @@ BOOL CXStorage_SQLite::XStorage_SQLite_CreateTable()
     return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºXStorage_SQLite_TimeDay
-º¯Êı¹¦ÄÜ£º¼ÆËãÖ¸¶¨Ê±¼äÓëµ±Ç°Ê±¼ä¼ä¸ôÌìÊı
- ²ÎÊı.Ò»£ºlpszStartTime
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈë¿ªÊ¼¼ÆËãµÄÊ±¼ä
- ²ÎÊı.¶ş£ºpInt_Month
-  In/Out£ºOut
-  ÀàĞÍ£ºÕûÊıĞÍÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³öÏà²îÔÂ·İ
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šXStorage_SQLite_TimeDay
+å‡½æ•°åŠŸèƒ½ï¼šè®¡ç®—æŒ‡å®šæ—¶é—´ä¸å½“å‰æ—¶é—´é—´éš”å¤©æ•°
+ å‚æ•°.ä¸€ï¼šlpszStartTime
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥å¼€å§‹è®¡ç®—çš„æ—¶é—´
+ å‚æ•°.äºŒï¼špInt_Month
+  In/Outï¼šOut
+  ç±»å‹ï¼šæ•´æ•°å‹æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºç›¸å·®æœˆä»½
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CXStorage_SQLite::XStorage_SQLite_TimeMonth(LPCTSTR lpszStartTime, int* pInt_Month)
 {
@@ -561,12 +561,12 @@ BOOL CXStorage_SQLite::XStorage_SQLite_TimeMonth(LPCTSTR lpszStartTime, int* pIn
     return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºXStorage_SQLite_TimeDel
-º¯Êı¹¦ÄÜ£ºÉ¾³ı¹ıÆÚÈÕÆÚ±íÊı¾İ
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šXStorage_SQLite_TimeDel
+å‡½æ•°åŠŸèƒ½ï¼šåˆ é™¤è¿‡æœŸæ—¥æœŸè¡¨æ•°æ®
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CXStorage_SQLite::XStorage_SQLite_TimeDel()
 {
@@ -588,25 +588,25 @@ BOOL CXStorage_SQLite::XStorage_SQLite_TimeDel()
 			{
 				continue;
 			}
-            //Ö»ÓĞÔÚ´¦ÀíÕıÈ·µÄÇé¿öÏÂ²Å½øĞĞÉ¾³ı²Ù×÷
+            //åªæœ‰åœ¨å¤„ç†æ­£ç¡®çš„æƒ…å†µä¸‹æ‰è¿›è¡Œåˆ é™¤æ“ä½œ
             if (XStorage_SQLite_TimeMonth(pptszResult[i], &nTimeMonth))
             {
                 if (nTimeMonth > m_nTimeMonth)
                 {
-                    //É¾³ıÎÄ¼ş
+                    //åˆ é™¤æ–‡ä»¶
                     int nListCount = 0;
                     XSTORAGECORE_DBFILE** ppSt_ListFile;
                     XStorage_SQLite_FileQueryForTable(&ppSt_ListFile, &nListCount, pptszResult[i]);
                     for (int i = 0; i < nListCount; i++)
                     {
-                        //É¾³ıÎÄ¼ş
+                        //åˆ é™¤æ–‡ä»¶
                         TCHAR tszFilePath[2048];
                         memset(tszFilePath, '\0', sizeof(tszFilePath));
 
                         _stprintf(tszFilePath, _T("%s/%s"), ppSt_ListFile[i]->st_ProtocolFile.tszFilePath, ppSt_ListFile[i]->st_ProtocolFile.tszFileName);
                         _tremove(tszFilePath);
                     }
-                    //É¾³ıÊı¾İ¿â
+                    //åˆ é™¤æ•°æ®åº“
                     memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
                     _stprintf_s(tszSQLQuery, _T("DROP TABLE `%s`"), pptszResult[0]);
                     DataBase_SQLite_Exec(xhSQL, tszSQLQuery);
@@ -631,7 +631,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_IsNumber(LPCTSTR lpszStr)
     return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
-//                      Ïß³Ìº¯Êı
+//                      çº¿ç¨‹å‡½æ•°
 //////////////////////////////////////////////////////////////////////////
 XHTHREAD CXStorage_SQLite::XStorage_SQLite_Thread(LPVOID lParam)
 {

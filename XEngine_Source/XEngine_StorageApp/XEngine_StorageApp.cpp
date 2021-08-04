@@ -128,6 +128,7 @@ int main(int argc, char** argv)
 	{
 		return -1;
 	}
+	
 	if (st_ServiceCfg.st_Memory.bReload)
 	{
 		//重载配置文件后退出

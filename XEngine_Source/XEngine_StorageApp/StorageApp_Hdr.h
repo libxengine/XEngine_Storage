@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <thread>
 #include <list>
+#include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef _WINDOWS
@@ -42,6 +43,13 @@ using namespace std;
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
+
+#ifdef _UNICODE
+typedef std::wstring tstring;
+#else
+typedef std::string tstring;
+#endif
+
 #include "../XStorage_Protocol.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Error.h"
