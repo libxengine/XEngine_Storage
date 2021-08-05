@@ -24,7 +24,7 @@ feature list:
 9. supprot task start and end proxy forwarding  
 10. support p2p  
 11. bt(planning)  
-12. data distributed(planning)  
+12. data distributed  
 13. support second pass  
 14. support nginx upload module proxy_pass  
 15. support upload and download Redirect  
@@ -33,7 +33,7 @@ feature list:
 
 #### Requirements  
 support system above windows 7sp1 and linux(ubuntu20.04,centos8)  
-XEngine need V7.17 or above  
+XEngine need V7.18 or above  
 vcpkg need 2021.05.11 or above  
 
 #### Windows
@@ -86,10 +86,11 @@ upload file second pass is first check the HASH file is on the server, if has fi
 The realization of downloading second transmission is to first query the local file save path through HASH, and download it directly if it exists.
 
 ## directory struct
-- XEngine_Docment  docment directory
-- XEngine_Release  install directory
-- XEngine_Source   code    directory  
-- XEngine_APPClient client code dir  
+- XEngine_Docment   docment directory
+- XEngine_Release   install directory
+- XEngine_Source    code    directory  
+- XEngine_APPClient client  code dir  
+- XEngine_SQLFile   database sql file
 
 ## now task
 expand management interface  
@@ -104,6 +105,9 @@ You can refer to the document under the docment directory. It contains API proto
 2. Create new Feat_xxx branch
 3. Submit the code
 4. New Pull Request
+
+## Follow us
+If you think this software is helpful to you, please give us a START
 
 ## post issues
 
