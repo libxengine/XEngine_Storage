@@ -44,7 +44,6 @@ CXStorage_SQLite::~CXStorage_SQLite()
 BOOL CXStorage_SQLite::XStorage_SQLite_Init(LPCTSTR lpszSQLFile, int nTimeMonth /* = 1 */)
 {
 	XStorage_IsErrorOccur = FALSE;
-
 	//创建数据库
 	if (!DataBase_SQLite_Create(lpszSQLFile))
 	{
@@ -66,7 +65,8 @@ BOOL CXStorage_SQLite::XStorage_SQLite_Init(LPCTSTR lpszSQLFile, int nTimeMonth 
     bIsRun = TRUE;
 	m_nTimeMonth = nTimeMonth;
 	
-	pSTDThread = make_shared<std::thread>(XStorage_SQLite_Thread, this);
+    pSTDThread = new std::thread(XStorage_SQLite_Thread, this);
+    //pSTDThread = make_shared<std::thread>(XStorage_SQLite_Thread, this);
 	if (!pSTDThread->joinable())
 	{
 		XStorage_IsErrorOccur = TRUE;
@@ -93,6 +93,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_Destory()
     }
     bIsRun = FALSE;
     pSTDThread->join();
+    delete pSTDThread;
 	DataBase_SQLite_Close(xhSQL);
 	return TRUE;
 }
