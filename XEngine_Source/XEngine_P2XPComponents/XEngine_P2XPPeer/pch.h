@@ -47,6 +47,11 @@ using namespace std;
 extern BOOL PeerManage_IsErrorOccur;
 extern DWORD PeerManage_dwErrorCode;
 
+#ifdef _UNICODE
+typedef std::wstring tstring;
+#else
+typedef std::string tstring;
+#endif
 
 #ifdef _WINDOWS
 #ifdef _WIN64

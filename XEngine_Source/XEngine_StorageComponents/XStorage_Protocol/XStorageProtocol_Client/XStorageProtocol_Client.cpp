@@ -35,22 +35,12 @@ CXStorageProtocol_Client::~CXStorageProtocol_Client()
   类型：整数型指针
   可空：N
   意思：输出缓冲区大小
- 参数.三：lpszTimeStart
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：查询文件所属开始时间
- 参数.四：lpszTimeEnd
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：查询文件所属结束时间
- 参数.五：lpszFileName
+ 参数.三：lpszFileName
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入要查询的文件名
- 参数.六：lpszFileHash
+ 参数.四：lpszFileHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -60,7 +50,7 @@ CXStorageProtocol_Client::~CXStorageProtocol_Client()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CXStorageProtocol_Client::XStorageProtocol_Client_REQQueryFile(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */)
+BOOL CXStorageProtocol_Client::XStorageProtocol_Client_REQQueryFile(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */)
 {
     XStorage_IsErrorOccur = FALSE;
 
@@ -71,8 +61,6 @@ BOOL CXStorageProtocol_Client::XStorageProtocol_Client_REQQueryFile(TCHAR *ptszM
         return FALSE;
     }
     Json::Value st_JsonRoot;
-    st_JsonRoot["lpszTimeStart"] = lpszTimeStart;
-    st_JsonRoot["lpszTimeEnd"] = lpszTimeEnd;
     if (NULL != lpszFileName)
     {
         st_JsonRoot["lpszFileName"] = lpszFileName;
@@ -81,6 +69,8 @@ BOOL CXStorageProtocol_Client::XStorageProtocol_Client_REQQueryFile(TCHAR *ptszM
     {
         st_JsonRoot["lpszFileHash"] = lpszFileHash;
     }
+    st_JsonRoot["unOperatorType"] = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_STORAGE;
+    st_JsonRoot["unOperatorCode"] = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQQUERY;
     //打包输出信息
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);

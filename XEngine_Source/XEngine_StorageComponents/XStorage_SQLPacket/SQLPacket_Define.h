@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 /********************************************************************
 //	Created:	2019/6/28   14:56
 //	Filename: 	E:\NetEngine_Windows\NetEngine_SourceCode\NetEngine_Storage\NetEngine_XStorageCore\XStorageCore_Define.h
@@ -20,11 +20,11 @@ typedef struct tag_XStorageCore_DBFILE
 }XSTORAGECORE_DBFILE, *LPXSTORAGECORE_DBFILE;
 typedef struct tag_XStorageCore_UserInfo
 {
-    XENGINE_PROTOCOL_USERREG st_ProtocolUser;
+    XENGINE_PROTOCOL_USERINFO st_ProtocolUser;
     __int64x nFileCount;                                                   //拥有的文件个数
     __int64x nFileSize;                                                    //文件占用大小
-    XNETHANDLE xhToken;                                                   //用户临时会话句柄
-    CHAR tszIPAddr[64];                                                   //最后登录IP地址
+    XNETHANDLE xhToken;                                                    //用户临时会话句柄
+    CHAR tszIPAddr[64];                                                    //最后登录IP地址
 }XSTORAGECORE_USERINFO, *LPXSTORAGECORE_USERINFO;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数

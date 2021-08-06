@@ -11,17 +11,37 @@
 // 添加要在此处预编译的标头
 #include "framework.h"
 #include <tchar.h>
+#include <json/json.h>
+#else
+#ifdef _CENTOS
+#include <json/json.h>
+#else
+#include <jsoncpp/json/json.h>
 #endif
-
+#endif
 #endif //PCH_H
 #include <string.h>
 #include <list>
 #include <string>
+#include <memory>
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
+#include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
+#include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
+#include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
+
+#ifdef _UNICODE
+typedef std::wstring tstring;
+#else
+typedef std::string tstring;
+#endif
+
+#include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
+#include "APIHelp_Define.h"
+#include "APIHelp_Error.h"
 /********************************************************************
 //    Created:     2021/07/08  16:41:05
 //    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_APIHelp\pch.h

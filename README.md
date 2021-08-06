@@ -23,7 +23,7 @@ c c++ file storage service
 9. 支持任务开始结束代理转发  
 10. 支持P2P  
 11. BT(规划中)  
-12. 数据分发(规划中)  
+12. 数据分发  
 13. 支持秒传  
 14. 支持NGINX UPLOAD MODULE上传代理  
 15. 支持上传和下载重定向  
@@ -32,7 +32,7 @@ c c++ file storage service
 
 #### 版本需求
 支持WINDOWS 7SP1和LINUX(UBUNT20.04,CENTOS8)以上系统  
-XEngine版本需要V7.17或者以上版本  
+XEngine版本需要V7.18或者以上版本  
 vcpkg 需要2021.05.11以上版本  
 
 #### Windows
@@ -82,6 +82,7 @@ make FLAGS=CleanAll 清理编译
 - XEngine_Release    安装目录结构  
 - XEngine_Source     源代目录结构  
 - XEngine_APPClient  客户端演示代码  
+- XEngine_SQLFile    数据库脚本文件
   
 
 ## 秒传实现  
@@ -103,6 +104,9 @@ make FLAGS=CleanAll 清理编译
 3.  提交代码
 4.  新建 Pull Request  
 
+## 关注我们
+如果你觉得这个软件对你有帮助,请你给我们一个START吧
+
 ## 提交问题
 
-如果你有问题,可以在issues中提交
+如果你有问题或者发现程序有BUG和意见,可以在issues中提交  

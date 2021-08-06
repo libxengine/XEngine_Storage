@@ -134,7 +134,7 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	{
 		st_HDRParam.bAuth = TRUE;
 	}
-	//使用重定向?
+	//使用重定向,这是分布式重定向实现
 	if (APIHelp_Distributed_IsMode(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUseMode, STORAGE_NETTYPE_HTTPDOWNLOAD))
 	{
 		TCHAR tszHdrBuffer[1024];

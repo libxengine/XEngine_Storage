@@ -1,13 +1,13 @@
-#pragma once
+ï»¿#pragma once
 /********************************************************************
 //    Created:     2021/07/12  09:31:03
 //    File Name:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageComponents\XStorage_SQLPacket\XStorage_SQLite\XStorage_SQLite.h
 //    File Path:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageComponents\XStorage_SQLPacket\XStorage_SQLite
 //    File Base:   XStorage_SQLite
 //    File Ext:    h
-//    Project:     XEngine(ÍøÂçÍ¨ĞÅÒıÇæ)
+//    Project:     XEngine(ç½‘ç»œé€šä¿¡å¼•æ“)
 //    Author:      qyt
-//    Purpose:     SQLITE²Ù×÷Àà
+//    Purpose:     SQLITEæ“ä½œç±»
 //    History:
 *********************************************************************/
 
@@ -36,5 +36,6 @@ private:
 	int m_nTimeMonth;
 	XHDATA xhSQL;
 private:
-	shared_ptr<std::thread> pSTDThread;
+	std::thread* pSTDThread;
+	//shared_ptr<std::thread> pSTDThread;  don't know incorrent in linux.
 };

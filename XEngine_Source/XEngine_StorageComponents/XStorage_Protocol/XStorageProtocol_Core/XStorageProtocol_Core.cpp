@@ -89,7 +89,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgB
     }
     if (NULL != ptszTimeEnd)
     {
-		if (!st_JsonRoot["lpszTimeEnd"].asCString())
+		if (!st_JsonRoot["lpszTimeEnd"].isNull())
 		{
 			_tcscpy(ptszTimeEnd, st_JsonRoot["lpszTimeEnd"].asCString());
 		}
@@ -170,17 +170,114 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPQueryFile(TCHAR* ptszMsgBu
         st_JsonObject["tszFileHash"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileHash;
         st_JsonObject["tszFileTime"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileTime;
         st_JsonObject["nFileSize"] = (*pppSt_DBFile)[i]->st_ProtocolFile.nFileSize;
+        //只有在P2P下取文件列表才有效
+        if (_tcslen((*pppSt_DBFile)[i]->tszTableName) > 0)
+        {
+            st_JsonObject["tszTableName"] = (*pppSt_DBFile)[i]->tszTableName;
+        }
         st_JsonArray.append(st_JsonObject);
     }
     st_JsonRoot["Count"] = nListCount;
     st_JsonRoot["List"] = st_JsonArray;
-    st_JsonRoot["lpszTimeStart"] = lpszTimeStart;
-    st_JsonRoot["lpszTimeEnd"] = lpszTimeEnd;
+    if (NULL != lpszTimeStart)
+    {
+        st_JsonRoot["lpszTimeStart"] = lpszTimeStart;
+    }
+    if (NULL != lpszTimeEnd)
+    {
+        st_JsonRoot["lpszTimeEnd"] = lpszTimeEnd;
+    }
     st_JsonRoot["Code"] = 0;
     st_JsonRoot["Msg"] = _T("ok");
     //打包输出信息
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
+    return TRUE;
+}
+/********************************************************************
+函数名称：XStorageProtocol_Core_ReportFileParse
+函数功能：解析文件报告协议
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的内容大小
+ 参数.三：pppSt_DBFile
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出解析到的文件列表
+ 参数.四：pInt_ListCount
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CXStorageProtocol_Core::XStorageProtocol_Core_ReportFileParse(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int *pInt_ListCount)
+{
+    XStorage_IsErrorOccur = FALSE;
+
+	Json::Value st_JsonRoot;
+	Json::CharReaderBuilder st_JsonBuild;
+	Json::CharReader* pSt_JsonReader(st_JsonBuild.newCharReader());
+
+	JSONCPP_STRING st_JsonError;
+	//解析JSON
+	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
+	{
+		XStorage_IsErrorOccur = TRUE;
+		XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARSE;
+		return FALSE;
+	}
+	delete pSt_JsonReader;
+	pSt_JsonReader = NULL;
+
+    int nCount = st_JsonRoot["Count"].asInt();
+    Json::Value st_JsonArray = st_JsonRoot["List"];
+
+    BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_DBFile, nCount, sizeof(XSTORAGECORE_DBFILE));
+    for (int i = 0; i < nCount; i++)
+    {
+        if (st_JsonArray[i]["nFileSize"].isNull())
+        {
+            (*pppSt_DBFile)[i]->st_ProtocolFile.nFileSize = 0;
+        }
+        else
+        {
+            (*pppSt_DBFile)[i]->st_ProtocolFile.nFileSize = st_JsonArray[i]["nFileSize"].asInt64();
+        }
+
+        if (!st_JsonArray[i]["tszFileName"].isNull())
+        {
+            _tcscpy((*pppSt_DBFile)[i]->st_ProtocolFile.tszFileName, st_JsonArray[i]["tszFileName"].asCString());
+        }
+        if (!st_JsonArray[i]["tszFilePath"].isNull())
+        {
+            _tcscpy((*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath, st_JsonArray[i]["tszFilePath"].asCString());
+        }
+        if (!st_JsonArray[i]["tszFileHash"].isNull())
+        {
+            _tcscpy((*pppSt_DBFile)[i]->st_ProtocolFile.tszFileHash, st_JsonArray[i]["tszFileHash"].asCString());
+        }
+        if (!st_JsonArray[i]["tszFileTime"].isNull())
+        {
+            _tcscpy((*pppSt_DBFile)[i]->st_ProtocolFile.tszFileTime, st_JsonArray[i]["tszFileTime"].asCString());
+        }
+        if (!st_JsonArray[i]["tszFileUser"].isNull())
+        {
+            _tcscpy((*pppSt_DBFile)[i]->st_ProtocolFile.tszFileUser, st_JsonArray[i]["tszFileUser"].asCString());
+        }
+    }
+    *pInt_ListCount = nCount;
     return TRUE;
 }
 /********************************************************************

@@ -7,7 +7,7 @@ LOADBIN =
 LIB = -ljsoncpp
 LIBEX = -static-libgcc -lrt -ldl 
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = P2XPProtocol_ServiceMsg.o P2XPProtocol_UserMsg.o pch.o
+LIBINCLUDE = P2XPProtocol_Parse.o P2XPProtocol_Packet.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -32,10 +32,10 @@ endif
 all:$(LIBINCLUDE)
 	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libXEngine_P2XPProtocol.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
-P2XPProtocol_ServiceMsg.o:./P2XPProtocol_ServiceMsg/P2XPProtocol_ServiceMsg.cpp                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./P2XPProtocol_ServiceMsg/P2XPProtocol_ServiceMsg.cpp
-P2XPProtocol_UserMsg.o:./P2XPProtocol_UserMsg/P2XPProtocol_UserMsg.cpp                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./P2XPProtocol_UserMsg/P2XPProtocol_UserMsg.cpp
+P2XPProtocol_Parse.o:./P2XPProtocol_Parse/P2XPProtocol_Parse.cpp                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./P2XPProtocol_Parse/P2XPProtocol_Parse.cpp
+P2XPProtocol_Packet.o:./P2XPProtocol_Packet/P2XPProtocol_Packet.cpp                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./P2XPProtocol_Packet/P2XPProtocol_Packet.cpp
 	
 pch.o:pch.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) pch.cpp

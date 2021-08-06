@@ -48,9 +48,9 @@ extern "C" BOOL XStorageProtocol_Proxy_ParseNotify(LPCTSTR lpszMsgBuffer, int nM
 /************************************************************************/
 /*                      客户端协议操作导出函数                          */
 /************************************************************************/
-extern "C" BOOL XStorageProtocol_Client_REQQueryFile(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */)
+extern "C" BOOL XStorageProtocol_Client_REQQueryFile(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */)
 {
-	return m_ProtocolClient.XStorageProtocol_Client_REQQueryFile(ptszMsgBuffer, pInt_MsgLen, lpszTimeStart, lpszTimeEnd, lpszFileName, lpszFileHash);
+	return m_ProtocolClient.XStorageProtocol_Client_REQQueryFile(ptszMsgBuffer, pInt_MsgLen, lpszFileName, lpszFileHash);
 }
 extern "C" BOOL XStorageProtocol_Client_REQDelete(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName, LPCTSTR lpszFileHash)
 {
@@ -70,6 +70,10 @@ extern "C" BOOL XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgBuffer, TCHAR 
 extern "C" BOOL XStorageProtocol_Core_REPQueryFile(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
 {
 	return m_ProtocolCore.XStorageProtocol_Core_REPQueryFile(ptszMsgBuffer, pInt_MsgLen, pppSt_DBFile, nListCount, lpszTimeStart, lpszTimeEnd);
+}
+extern "C" BOOL XStorageProtocol_Core_ReportFileParse(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int* pInt_ListCount)
+{
+	return m_ProtocolCore.XStorageProtocol_Core_ReportFileParse(lpszMsgBuffer, nMsgLen, pppSt_DBFile, pInt_ListCount);
 }
 extern "C" BOOL XStorageProtocol_Core_REQDirOperator(LPCTSTR lpszMsgBuffer, TCHAR * ptszUserDir, int* pInt_Operator)
 {

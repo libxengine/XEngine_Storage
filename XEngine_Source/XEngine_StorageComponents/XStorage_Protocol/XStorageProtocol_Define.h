@@ -155,22 +155,12 @@ extern "C" BOOL XStorageProtocol_Proxy_ParseNotify(LPCTSTR lpszMsgBuffer, int nM
   类型：整数型指针
   可空：N
   意思：输出缓冲区大小
- 参数.三：lpszTimeStart
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：查询文件所属开始时间
- 参数.四：lpszTimeEnd
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：查询文件所属结束时间
- 参数.五：lpszFileName
+ 参数.三：lpszFileName
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入要查询的文件名
- 参数.六：lpszFileHash
+ 参数.四：lpszFileHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -180,7 +170,7 @@ extern "C" BOOL XStorageProtocol_Proxy_ParseNotify(LPCTSTR lpszMsgBuffer, int nM
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL XStorageProtocol_Client_REQQueryFile(CHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCSTR lpszTimeStart, LPCSTR lpszTimeEnd, LPCSTR lpszFileName = NULL, LPCSTR lpszFileHash = NULL);
+extern "C" BOOL XStorageProtocol_Client_REQQueryFile(CHAR *ptszMsgBuffer, int *pInt_MsgLen, LPCSTR lpszFileName = NULL, LPCSTR lpszFileHash = NULL);
 /********************************************************************
 函数名称：XStorageProtocol_Client_REQDelete
 函数功能：删除文件请求函数
@@ -315,6 +305,35 @@ extern "C" BOOL XStorageProtocol_Core_REQQueryFile(LPCSTR lpszMsgBuffer, CHAR *p
 备注：
 *********************************************************************/
 extern "C" BOOL XStorageProtocol_Core_REPQueryFile(CHAR *ptszMsgBuffer, int *pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL);
+/********************************************************************
+函数名称：XStorageProtocol_Core_ReportFileParse
+函数功能：解析文件报告协议
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的内容大小
+ 参数.三：pppSt_DBFile
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出解析到的文件列表
+ 参数.四：pInt_ListCount
+  In/Out：In
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL XStorageProtocol_Core_ReportFileParse(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int* pInt_ListCount);
 /********************************************************************
 函数名称：XStorageProtocol_Core_REQDirOperator
 函数功能：文件夹操作协议
