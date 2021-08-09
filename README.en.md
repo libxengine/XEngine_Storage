@@ -25,7 +25,7 @@ feature list:
 10. support p2p  
 11. bt(planning)  
 12. data distributed  
-13. support second pass  
+13. support second pass and Resumable   
 14. support nginx upload module proxy_pass  
 15. support upload and download Redirect  
 
@@ -94,7 +94,6 @@ The realization of downloading second transmission is to first query the local f
 
 ## now task
 expand management interface  
-P2P
 
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  

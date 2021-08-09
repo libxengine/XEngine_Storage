@@ -24,7 +24,7 @@ c c++ file storage service
 10. 支持P2P  
 11. BT(规划中)  
 12. 数据分发  
-13. 支持秒传  
+13. 支持秒传和断点续传  
 14. 支持NGINX UPLOAD MODULE上传代理  
 15. 支持上传和下载重定向  
 
@@ -92,7 +92,6 @@ make FLAGS=CleanAll 清理编译
 
 ## 当前任务
 扩展管理接口  
-实现P2P  
 
 ## 其他问题  
 你可以参考docment目录下的文档.里面包含了API协议和服务说明.
