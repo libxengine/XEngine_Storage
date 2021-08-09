@@ -160,7 +160,6 @@
     <ClCompile Include="Storage_APPTask\Storage_TaskManage.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskP2p.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskPass.cpp" />
-    <ClCompile Include="Storage_APPTask\Storage_TaskQuery.cpp" />
     <ClCompile Include="StorageApp_P2XPNet.cpp" />
     <ClCompile Include="XEngine_StorageApp.cpp" />
   </ItemGroup>
@@ -177,7 +176,6 @@
     <ClInclude Include="Storage_APPTask\Storage_TaskManage.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskP2p.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskPass.h" />
-    <ClInclude Include="Storage_APPTask\Storage_TaskQuery.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
