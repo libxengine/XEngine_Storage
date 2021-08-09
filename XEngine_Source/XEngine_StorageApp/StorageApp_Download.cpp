@@ -93,9 +93,6 @@ XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
 			XEngine_Task_SendDownload(tszClientAddr, tszMsgBuffer, nMsgLen);
 		}
 		int nTimeWait = 1;
-#ifdef _WINDOWS
-		st_ServiceCfg.st_XLimit.nMaxDNLoader = st_ServiceCfg.st_XLimit.nMaxDNLoader * 10;
-#endif
 		Algorithm_Calculation_SleepFlow(&nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, nListCount, 4096);
 		std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
 	}
