@@ -163,7 +163,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_DBFile, nListCount);
 	}
-	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_QUERY, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_QUERY)))
+	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_QUERYFILE, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_QUERYFILE)))
 	{
 		//查询文件列表
 		int nMsgLen = 10240;

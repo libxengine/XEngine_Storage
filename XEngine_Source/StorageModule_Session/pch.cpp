@@ -60,21 +60,21 @@ extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
 {
 	return m_DLStorage.Session_DLStroage_Insert(lpszClientAddr, lpszFileDir, pInt_Count, pInt_LeftCount, nPosStart, nPostEnd);
 }
-extern "C" BOOL Session_DLStroage_GetList(int nPool, int nIndex, TCHAR * ptszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
+extern "C" BOOL Session_DLStroage_GetList(int nPool, LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
-	return m_DLStorage.Session_DLStroage_GetList(nPool, nIndex, ptszClientAddr, ptszMsgBuffer, pInt_MsgLen);
+	return m_DLStorage.Session_DLStroage_GetList(nPool, lpszClientAddr, ptszMsgBuffer, pInt_MsgLen);
 }
-extern "C" BOOL Session_DLStroage_GetInfo(int nPool, int nIndex, SESSION_STORAGEINFO * pSt_StorageInfo)
+extern "C" BOOL Session_DLStroage_GetInfo(int nPool, LPCTSTR lpszClientAddr, SESSION_STORAGEINFO * pSt_StorageInfo)
 {
-	return m_DLStorage.Session_DLStroage_GetInfo(nPool, nIndex, pSt_StorageInfo);
+	return m_DLStorage.Session_DLStroage_GetInfo(nPool, lpszClientAddr, pSt_StorageInfo);
 }
-extern "C" BOOL Session_DLStroage_GetCount(int nIndex, int* pInt_ListCount)
+extern "C" BOOL Session_DLStroage_GetCount(int nIndex, list<string>*pStl_ListClient)
 {
-	return m_DLStorage.Session_DLStroage_GetCount(nIndex, pInt_ListCount);
+	return m_DLStorage.Session_DLStroage_GetCount(nIndex, pStl_ListClient);
 }
-extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek)
+extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError, SESSION_STORAGEDYNAMICRATE * pSt_StorageRate)
 {
-	return m_DLStorage.Session_DLStorage_SetSeek(lpszClientAddr, nSeek);
+	return m_DLStorage.Session_DLStorage_SetSeek(lpszClientAddr, nSeek, bError, pSt_StorageRate);
 }
 extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 {

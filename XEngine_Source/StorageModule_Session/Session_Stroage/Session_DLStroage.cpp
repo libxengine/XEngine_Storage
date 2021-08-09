@@ -238,23 +238,18 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
   类型：整数型
   可空：N
   意思：输入要操作的队列
- 参数.二：nIndex
+ 参数.二：lpszClientAddr
   In/Out：In
-  类型：整数型
+  类型：常量字符指针
   可空：N
-  意思：输入要操作的队列索引
- 参数.三：ptszClientAddr
+  意思：输入客户端地址
+ 参数.三：ptszMsgBuffer
   In/Out：In
-  类型：整数型
+  类型：字符指针
   可空：N
-  意思：输出客户端地址
- 参数.四：ptszMsgBuffer
+ 参数.四：pInt_MsgLen
   In/Out：In
-  类型：整数型
-  可空：N
- 参数.五：pInt_MsgLen
-  In/Out：In
-  类型：整数型
+  类型：整数型指针
   可空：N
   意思：输出获取的缓冲区大小
 返回值
@@ -262,11 +257,11 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_GetList(int nPool, int nIndex, TCHAR* ptszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+BOOL CSession_DLStroage::Session_DLStroage_GetList(int nPool, LPCTSTR lpszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
 	Session_IsErrorOccur = FALSE;
 
-	if ((NULL == ptszClientAddr) || (NULL == ptszMsgBuffer))
+	if ((NULL == lpszClientAddr) || (NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
@@ -286,10 +281,8 @@ BOOL CSession_DLStroage::Session_DLStroage_GetList(int nPool, int nIndex, TCHAR*
 	list<SESSION_STORAGEINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListStorage->begin();
 	for (int i = 0; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++, i++)
 	{
-		if (nIndex == i)
+		if (0 == _tcsncmp(lpszClientAddr, stl_ListIterator->tszClientAddr, _tcslen(lpszClientAddr)))
 		{
-			_tcscpy(ptszClientAddr, stl_ListIterator->tszClientAddr);
-
 			if (stl_ListIterator->ullRWLen >= stl_ListIterator->ullRWCount)
 			{
 				*pInt_MsgLen = 0;
@@ -318,11 +311,11 @@ BOOL CSession_DLStroage::Session_DLStroage_GetList(int nPool, int nIndex, TCHAR*
   类型：整数型
   可空：N
   意思：输入要操作的下载池
- 参数.二：nIndex
+ 参数.二：lpszClientAddr
   In/Out：In
-  类型：整数型
+  类型：常量字符指针
   可空：N
-  意思：输入要操作的索引
+  意思：输入要操作的客户端
  参数.三：pSt_StorageInfo
   In/Out：Out
   类型：数据结构指针
@@ -333,7 +326,7 @@ BOOL CSession_DLStroage::Session_DLStroage_GetList(int nPool, int nIndex, TCHAR*
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_GetInfo(int nPool, int nIndex, SESSION_STORAGEINFO* pSt_StorageInfo)
+BOOL CSession_DLStroage::Session_DLStroage_GetInfo(int nPool, LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -357,7 +350,7 @@ BOOL CSession_DLStroage::Session_DLStroage_GetInfo(int nPool, int nIndex, SESSIO
 	list<SESSION_STORAGEINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListStorage->begin();
 	for (int i = 0; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++, i++)
 	{
-		if (nIndex == i)
+		if (0 == _tcsncmp(lpszClientAddr, stl_ListIterator->tszClientAddr, _tcslen(lpszClientAddr)))
 		{
 			*pSt_StorageInfo = *stl_ListIterator;
 			break;
@@ -375,21 +368,21 @@ BOOL CSession_DLStroage::Session_DLStroage_GetInfo(int nPool, int nIndex, SESSIO
   类型：整数型
   可空：N
   意思：输入要操作的队列
- 参数.二：pInt_ListCount
+ 参数.二：pStl_ListClient
   In/Out：Out
-  类型：整数型指针
+  类型：STL容器指针
   可空：N
-  意思：输出队列个数
+  意思：输出要发送的队列个数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_GetCount(int nPool, int* pInt_ListCount)
+BOOL CSession_DLStroage::Session_DLStroage_GetCount(int nPool, list<string>* pStl_ListClient)
 {
 	Session_IsErrorOccur = FALSE;
 
-	if (NULL == pInt_ListCount)
+	if (NULL == pStl_ListClient)
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
@@ -406,7 +399,34 @@ BOOL CSession_DLStroage::Session_DLStroage_GetCount(int nPool, int* pInt_ListCou
 		return FALSE;
 	}
 	stl_MapIterator->second.st_Locker->lock_shared();
-	*pInt_ListCount = stl_MapIterator->second.pStl_ListStorage->size();
+	list<SESSION_STORAGEINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListStorage->begin();
+	for (; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++)
+	{
+		//是否需要等待恢复
+		if (stl_ListIterator->st_DynamicRate.nTimeWait > 0)
+		{
+			time_t nTimeNow = time(NULL);
+			if ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) > stl_ListIterator->st_DynamicRate.nTimeWait)
+			{
+				//等待时间超过,可以加入
+				pStl_ListClient->push_back(stl_ListIterator->tszClientAddr);
+			}
+			//速率恢复测算
+			if ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) > (stl_ListIterator->st_DynamicRate.nErrorCount * 2))
+			{
+				stl_ListIterator->st_DynamicRate.nErrorCount--;
+				if (0 == stl_ListIterator->st_DynamicRate.nErrorCount)
+				{
+					stl_ListIterator->st_DynamicRate.nTimeWait = 0;
+					stl_ListIterator->st_DynamicRate.nTimeError = 0;
+				}
+			}
+		}
+		else
+		{
+			pStl_ListClient->push_back(stl_ListIterator->tszClientAddr);
+		}
+	}
 	stl_MapIterator->second.st_Locker->unlock_shared();
 	st_Locker.unlock_shared();
 	return TRUE;
@@ -424,12 +444,22 @@ BOOL CSession_DLStroage::Session_DLStroage_GetCount(int nPool, int* pInt_ListCou
   类型：整数型
   可空：N
   意思：输入文件位置
+ 参数.三：bError
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否因为错误引起的
+ 参数.四：pSt_StorageRate
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：输出速率错误信息
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek)
+BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError /* = TRUE */, SESSION_STORAGEDYNAMICRATE* pSt_StorageRate /* = NULL */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -445,10 +475,26 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 			if (0 == _tcsncmp(lpszClientAddr, stl_ListIterator->tszClientAddr, _tcslen(lpszClientAddr)))
 			{
 				bFound = TRUE;
-				stl_ListIterator->nErrorCount++;
+				if (bError)
+				{
+					time_t nTimeNow = time(NULL);
+					//如果发送错误事件小于等于1秒
+					if ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) <= 1)
+					{
+						//那么根据错误次数计算等待时间
+						stl_ListIterator->st_DynamicRate.nTimeWait = stl_ListIterator->st_DynamicRate.nErrorCount + 1;
+					}
+					stl_ListIterator->st_DynamicRate.nErrorCount++;
+					stl_ListIterator->st_DynamicRate.nTimeError = time(NULL);
+
+					if (NULL != pSt_StorageRate)
+					{
+						*pSt_StorageRate = stl_ListIterator->st_DynamicRate;
+					}
+				}
 				fseek(stl_ListIterator->pSt_File, nSeek, SEEK_CUR);
 				//如果超过次数.返回错误
-				if (stl_ListIterator->nErrorCount > m_nTryTime)
+				if (stl_ListIterator->st_DynamicRate.nErrorCount > m_nTryTime)
 				{
 					stl_MapIterator->second.st_Locker->unlock_shared();
 					st_Locker.unlock_shared();

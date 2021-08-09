@@ -15,6 +15,13 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct
 {
+	time_t nTimeError;                                                //最后错误时间
+	int nErrorCount;                                                  //错误次数
+	int nTimeWait;                                                    //等待恢复时间,单位秒
+}SESSION_STORAGEDYNAMICRATE;
+typedef struct
+{
+	SESSION_STORAGEDYNAMICRATE st_DynamicRate;
 	TCHAR tszFileDir[MAX_PATH];                                           //文件地址
 	TCHAR tszClientAddr[128];                                             //操作的用户地址
 	__int64x ullCount;                                                    //总大小
@@ -22,7 +29,6 @@ typedef struct
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
-	int nErrorCount;                                                      //错误次数
 	FILE* pSt_File;
 }SESSION_STORAGEINFO;
 //////////////////////////////////////////////////////////////////////////
@@ -152,23 +158,18 @@ extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
   类型：整数型
   可空：N
   意思：输入要操作的队列
- 参数.二：nIndex
+ 参数.二：lpszClientAddr
   In/Out：In
-  类型：整数型
+  类型：常量字符指针
   可空：N
-  意思：输入要操作的队列索引
- 参数.三：ptszClientAddr
+  意思：输入客户端地址
+ 参数.三：ptszMsgBuffer
   In/Out：In
-  类型：整数型
+  类型：字符指针
   可空：N
-  意思：输出客户端地址
- 参数.四：ptszMsgBuffer
+ 参数.四：pInt_MsgLen
   In/Out：In
-  类型：整数型
-  可空：N
- 参数.五：pInt_MsgLen
-  In/Out：In
-  类型：整数型
+  类型：整数型指针
   可空：N
   意思：输出获取的缓冲区大小
 返回值
@@ -176,7 +177,7 @@ extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetList(int nPool, int nIndex, TCHAR* ptszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" BOOL Session_DLStroage_GetList(int nPool, LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：Session_DLStroage_GetInfo
 函数功能：获取下载信息
@@ -185,11 +186,11 @@ extern "C" BOOL Session_DLStroage_GetList(int nPool, int nIndex, TCHAR* ptszClie
   类型：整数型
   可空：N
   意思：输入要操作的下载池
- 参数.二：nIndex
+ 参数.二：lpszClientAddr
   In/Out：In
-  类型：整数型
+  类型：常量字符指针
   可空：N
-  意思：输入要操作的索引
+  意思：输入要操作的客户端
  参数.三：pSt_StorageInfo
   In/Out：Out
   类型：数据结构指针
@@ -200,7 +201,7 @@ extern "C" BOOL Session_DLStroage_GetList(int nPool, int nIndex, TCHAR* ptszClie
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetInfo(int nPool, int nIndex, SESSION_STORAGEINFO* pSt_StorageInfo);
+extern "C" BOOL Session_DLStroage_GetInfo(int nPool, LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
 /********************************************************************
 函数名称：Session_DLStroage_GetCount
 函数功能：获取队列拥有的个数
@@ -209,17 +210,17 @@ extern "C" BOOL Session_DLStroage_GetInfo(int nPool, int nIndex, SESSION_STORAGE
   类型：整数型
   可空：N
   意思：输入要操作的队列
- 参数.二：pInt_ListCount
+ 参数.二：pStl_ListClient
   In/Out：Out
-  类型：整数型指针
+  类型：STL容器指针
   可空：N
-  意思：输出队列个数
+  意思：输出要发送的队列个数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetCount(int nIndex, int* pInt_ListCount);
+extern "C" BOOL Session_DLStroage_GetCount(int nPool, list<string>*pStl_ListClient);
 /********************************************************************
 函数名称：Session_DLStorage_SetSeek
 函数功能：移动文件指针
@@ -233,12 +234,22 @@ extern "C" BOOL Session_DLStroage_GetCount(int nIndex, int* pInt_ListCount);
   类型：整数型
   可空：N
   意思：输入文件位置
+ 参数.三：bError
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否因为错误引起的
+ 参数.四：pSt_StorageRate
+  In/Out：In
+  类型：数据结构指针
+  可空：Y
+  意思：输出速率错误信息
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek);
+extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError = TRUE, SESSION_STORAGEDYNAMICRATE * pSt_StorageRate = NULL);
 /********************************************************************
 函数名称：Session_DLStroage_Delete
 函数功能：删除一个队列
