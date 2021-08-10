@@ -4,10 +4,13 @@
 BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, TCHAR** pptszListHdr, int nHdrCount)
 {
 	int nSDLen = 2048;
+	int nRVLen = 2048;
 	TCHAR tszSDBuffer[2048];
+	TCHAR tszRVBuffer[2048];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
+	memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
 	//文件存储成功的事件上传
@@ -210,6 +213,73 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求查询文件列表成功,列表个数:%d"), lpszClientAddr, nListCount);
+		}
+	}
+	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_DIR, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_DIR)))
+	{
+		int nOPCode = 0;
+		int nListCount = 0;
+		CHAR** ppszListDir = NULL;
+		TCHAR tszUserDir[MAX_PATH];
+		TCHAR tszRealDir[MAX_PATH];
+
+		memset(tszUserDir, '\0', MAX_PATH);
+		memset(tszRealDir, '\0', MAX_PATH);
+
+		st_HDRParam.bIsClose = TRUE;
+		st_HDRParam.nHttpCode = 200;
+
+		XStorageProtocol_Core_REQDirOperator(lpszMsgBuffer, tszUserDir, &nOPCode);
+		_stprintf(tszRealDir, _T("%s/%s"), st_ServiceCfg.st_XStorage.tszFileDir, tszUserDir);
+		if (0 == nOPCode)
+		{
+			if (!SystemApi_File_EnumFile(tszRealDir, &ppszListDir, &nListCount, NULL, NULL, TRUE, 2))
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 404;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求查询文件夹:%s,失败,错误:%lX"), lpszClientAddr, tszRealDir, SystemApi_GetLastError());
+				return FALSE;
+			}
+			XStorageProtocol_Core_REPDirOperator(tszRVBuffer, &nRVLen, &ppszListDir, nListCount);
+			BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListDir, nListCount);
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求查询文件夹:%s,成功,文件夹个数:%d"), lpszClientAddr, tszRealDir, nListCount);
+		}
+		else if (1 == nOPCode)
+		{
+			if (!SystemApi_File_CreateMutilFolder(tszRealDir))
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 404;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求创建文件夹:%s,失败,错误:%lX"), lpszClientAddr, tszRealDir, SystemApi_GetLastError());
+				return FALSE;
+			}
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求创建文件夹:%s,成功"), lpszClientAddr, tszRealDir);
+		}
+		else if (2 == nOPCode)
+		{
+			if (!SystemApi_File_DeleteMutilFolder(tszRealDir))
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 404;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求删除文件夹:%s,失败,错误:%lX"), lpszClientAddr, tszRealDir, SystemApi_GetLastError());
+				return FALSE;
+			}
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求删除文件夹:%s,成功"), lpszClientAddr, tszRealDir);
 		}
 	}
 	return TRUE;

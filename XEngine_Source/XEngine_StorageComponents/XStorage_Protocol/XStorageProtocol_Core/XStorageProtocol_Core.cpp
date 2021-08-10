@@ -328,7 +328,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQDirOperator(LPCTSTR lpszMs
     delete pSt_JsonReader;
     pSt_JsonReader = NULL;
 
-    *pInt_Operator = st_JsonRoot["lpszUserDir"].asInt();
+    *pInt_Operator = st_JsonRoot["nOPerator"].asInt();
     _tcscpy(ptszUserDir, st_JsonRoot["lpszUserDir"].asCString());
     return TRUE;
 }
@@ -382,7 +382,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPDirOperator(TCHAR* ptszMsg
     st_JsonRoot["Count"] = st_JsonArray.size();
     st_JsonRoot["List"] = st_JsonArray;
     st_JsonRoot["Code"] = 0;
-    st_JsonRoot["Msg"] = _T("查询用户目录成功");
+    st_JsonRoot["Msg"] = _T("ok");
     //打包输出信息
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
