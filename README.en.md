@@ -1,4 +1,7 @@
+[中文](README.md)  
+[English](README.en.md)  
 # XEngine_Storage
+This repository has a development and master branch. If you want to use it, please use the master branch  
 
 ## Introduction
 c c++ 存储服务 c c++ 文件存储服务  
@@ -10,7 +13,6 @@ best storage service for http,batter than nginx and more convenient to manage. O
 
 ## Software feature
 The purpose of development and implementation based on libXEngine is a cross-platform network storage service  
-This repository has a development and master branch. If you want to use it, please use the master branch  
 
 feature list:  
 1. support file http upload and download(use put and get method)  
@@ -28,6 +30,7 @@ feature list:
 13. support second pass and Resumable   
 14. support nginx upload module proxy_pass  
 15. support upload and download Redirect  
+16. dynamic rate of the download
 
 ## install
 

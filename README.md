@@ -1,4 +1,7 @@
+[中文](README.md)  
+[English](README.en.md)  
 # XEngine_Storage
+本仓库有开发和主分支,如果要使用,请使用master分支下的代码  
 
 ## 介绍
 c c++ 存储服务 c c++ 文件存储服务  
@@ -10,7 +13,6 @@ c c++ file storage service
 
 ## 软件特性
 基于libXEngine开发并实现的一套简洁高性能跨平台网络存储服务  
-本仓库有开发和主分支,如果要使用,请使用master分支下的代码  
 软件特性:  
 1. 支持HTTP协议上传和下载(采用PUT和GET)  
 2. 支持HTTP API接口事件通知与管理  
@@ -27,6 +29,7 @@ c c++ file storage service
 13. 支持秒传和断点续传  
 14. 支持NGINX UPLOAD MODULE上传代理  
 15. 支持上传和下载重定向  
+16. 下载动态速率
 
 ## 安装教程
 
