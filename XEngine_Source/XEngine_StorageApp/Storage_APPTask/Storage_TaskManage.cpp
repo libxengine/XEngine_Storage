@@ -221,10 +221,10 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		int nListCount = 0;
 		CHAR** ppszListDir = NULL;
 		TCHAR tszUserDir[MAX_PATH];
-		TCHAR tszRealDir[MAX_PATH];
+		TCHAR tszRealDir[1024];
 
 		memset(tszUserDir, '\0', MAX_PATH);
-		memset(tszRealDir, '\0', MAX_PATH);
+		memset(tszRealDir, '\0', sizeof(tszRealDir));
 
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 200;

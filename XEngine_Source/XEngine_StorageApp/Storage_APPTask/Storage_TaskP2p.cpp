@@ -87,7 +87,7 @@ BOOL XEngine_Task_P2PGet(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPON
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 200;
 
-			_stprintf(pppSt_ListFile[0]->tszTableName, _T("127.0.0.1"));
+			_stprintf(pppSt_ListFile[0]->tszTableName, _T("127.0.0.1:%d"), st_ServiceCfg.nStorageDLPort);
 			XStorageProtocol_Core_REPQueryFile(tszRVBuffer, &nRVLen, &pppSt_ListFile, nListCount);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
 
@@ -121,8 +121,15 @@ BOOL XEngine_Task_P2PGet(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPON
 	else
 	{
 		//开始广播请求文件
+		SOCKET hSDSocket;
+		SOCKET hRVSocket;
+		list<APIHELP_LBFILEINFO> stl_ListFile;
+
 		XStorageProtocol_Client_REQQueryFile(tszSDBuffer, &nSDLen, NULL, lpszFileHash);
-		if (!NetCore_BroadCast_Send(hBroadSocket, tszSDBuffer, nSDLen))
+		NetCore_BroadCast_SendInit(&hSDSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr);
+		NetCore_BroadCast_RecvInit(&hRVSocket, st_ServiceCfg.st_P2xp.nSDPort);
+
+		if (!NetCore_BroadCast_Send(hSDSocket, tszSDBuffer, nSDLen))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 500;
@@ -132,10 +139,8 @@ BOOL XEngine_Task_P2PGet(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPON
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("广播端:%s,发送广播请求失败,错误:%lX"), lpszClientAddr, NetCore_GetLastError());
 			return FALSE;
 		}
-
-		SOCKET hRVSocket;
-		list<APIHELP_LBFILEINFO> stl_ListFile;
-		NetCore_BroadCast_RecvInit(&hRVSocket, st_ServiceCfg.st_P2xp.nSDPort);
+		NetCore_BroadCast_Close(hSDSocket);
+		
 		time_t nTimeStart = time(NULL);
 		while (1)
 		{

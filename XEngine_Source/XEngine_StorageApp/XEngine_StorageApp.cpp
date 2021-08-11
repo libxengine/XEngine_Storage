@@ -381,7 +381,7 @@ int main(int argc, char** argv)
 
 	if (st_ServiceCfg.st_P2xp.nMode > 0)
 	{
-		if (!NetCore_BroadCast_SendInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr))
+		if (!NetCore_BroadCast_RecvInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
