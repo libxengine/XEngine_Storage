@@ -1,5 +1,4 @@
-[中文](README.md)  
-[English](README.en.md)  
+[中文](README.md) ||  [English](README.en.md)  
 # XEngine_Storage
 This repository has a development and master branch. If you want to use it, please use the master branch  
 

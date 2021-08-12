@@ -1,5 +1,4 @@
-[中文](README.md)  
-[English](README.en.md)  
+[中文](README.md) ||  [English](README.en.md)  
 # XEngine_Storage
 本仓库有开发和主分支,如果要使用,请使用master分支下的代码  
 
