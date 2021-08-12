@@ -133,12 +133,17 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgB
   类型：整数型
   可空：N
   意思：输入文件列表个数
- 参数.五：lpszTimeStart
+ 参数.五：lpszRootDir
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：某些时候可能需要跳过字符串
+ 参数.六：lpszTimeStart
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入查询请求的开始时间
- 参数.六：lpszTimeEnd
+ 参数.七：lpszTimeEnd
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -148,7 +153,7 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgB
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPQueryFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
+BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPQueryFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszRootDir, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
 {
     XStorage_IsErrorOccur = FALSE;
 
@@ -164,7 +169,22 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPQueryFile(TCHAR* ptszMsgBu
     for (int i = 0; i < nListCount; i++)
     {
         Json::Value st_JsonObject;
-        st_JsonObject["tszFilePath"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath;
+
+        if (NULL == lpszRootDir)
+        {
+            st_JsonObject["tszFilePath"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath;
+        }
+        else
+        {
+			if (NULL == _tcsstr((*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath, lpszRootDir))
+			{
+				st_JsonObject["tszFilePath"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath;
+			}
+			else
+			{
+				st_JsonObject["tszFilePath"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath + _tcslen(lpszRootDir);
+			}
+        }
         st_JsonObject["tszFileName"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileName;
         st_JsonObject["tszFileUser"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileUser;
         st_JsonObject["tszFileHash"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileHash;

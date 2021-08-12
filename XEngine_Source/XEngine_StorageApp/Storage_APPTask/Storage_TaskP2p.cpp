@@ -40,7 +40,7 @@ XHTHREAD XEngine_Task_P2PThread()
 					if (nListCount > 0)
 					{
 						_stprintf(pppSt_ListFile[0]->tszTableName, _T("%s:%d"), st_ServiceCfg.tszIPAddr, st_ServiceCfg.nStorageDLPort);
-						XStorageProtocol_Core_REPQueryFile(tszMsgBuffer, &nMsgLen, &pppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
+						XStorageProtocol_Core_REPQueryFile(tszMsgBuffer, &nMsgLen, &pppSt_ListFile, nListCount, st_ServiceCfg.st_XStorage.tszFileDir, tszTimeStart, tszTimeEnd);
 						BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
 
 						SOCKET hSDSocket;
@@ -88,7 +88,7 @@ BOOL XEngine_Task_P2PGet(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPON
 			st_HDRParam.nHttpCode = 200;
 
 			_stprintf(pppSt_ListFile[0]->tszTableName, _T("127.0.0.1:%d"), st_ServiceCfg.nStorageDLPort);
-			XStorageProtocol_Core_REPQueryFile(tszRVBuffer, &nRVLen, &pppSt_ListFile, nListCount);
+			XStorageProtocol_Core_REPQueryFile(tszRVBuffer, &nRVLen, &pppSt_ListFile, nListCount, st_ServiceCfg.st_XStorage.tszFileDir);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
 
 			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam, tszRVBuffer, nRVLen);
@@ -175,7 +175,7 @@ BOOL XEngine_Task_P2PGet(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPON
 			int nListCount = 0;
 			XSTORAGECORE_DBFILE** ppSt_ListPacket;
 			APIHelp_Distributed_FileList(&stl_ListFile, &ppSt_ListPacket, &nListCount);
-			XStorageProtocol_Core_REPQueryFile(tszRVBuffer, &nRVLen, &ppSt_ListPacket, nListCount);
+			XStorageProtocol_Core_REPQueryFile(tszRVBuffer, &nRVLen, &ppSt_ListPacket, nListCount, st_ServiceCfg.st_XStorage.tszFileDir);
 			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListPacket, nListCount);
 		}

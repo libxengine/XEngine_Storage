@@ -208,7 +208,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 200;
 
-			XStorageProtocol_Core_REPQueryFile(tszMsgBuffer, &nMsgLen, &ppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
+			XStorageProtocol_Core_REPQueryFile(tszMsgBuffer, &nMsgLen, &ppSt_ListFile, nListCount, st_ServiceCfg.st_XStorage.tszFileDir, tszTimeStart, tszTimeEnd);
 			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszMsgBuffer, nMsgLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);

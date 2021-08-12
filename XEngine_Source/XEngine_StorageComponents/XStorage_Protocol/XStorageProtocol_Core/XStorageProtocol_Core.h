@@ -18,7 +18,7 @@ public:
     ~CXStorageProtocol_Core();
 public:
     BOOL XStorageProtocol_Core_REQQueryFile(LPCTSTR lpszMsgBuffer, TCHAR *ptszTimeStart, TCHAR *ptszTimeEnd, TCHAR *ptszFileName = NULL, TCHAR * ptszFileHash = NULL);
-    BOOL XStorageProtocol_Core_REPQueryFile(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL);
+    BOOL XStorageProtocol_Core_REPQueryFile(TCHAR *ptszMsgBuffer, int *pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszRootDir, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL);
     BOOL XStorageProtocol_Core_ReportFileParse(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int* pInt_ListCount);
 public:
 	BOOL XStorageProtocol_Core_REQDirOperator(LPCTSTR lpszMsgBuffer, TCHAR* ptszUserDir, int* pInt_Operator);

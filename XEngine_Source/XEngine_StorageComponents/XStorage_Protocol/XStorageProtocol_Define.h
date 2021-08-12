@@ -289,12 +289,17 @@ extern "C" BOOL XStorageProtocol_Core_REQQueryFile(LPCSTR lpszMsgBuffer, CHAR *p
   类型：整数型
   可空：N
   意思：输入文件列表个数
- 参数.五：lpszTimeStart
+ 参数.五：lpszRootDir
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：某些时候可能需要跳过字符串
+ 参数.六：lpszTimeStart
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入查询请求的开始时间
- 参数.六：lpszTimeEnd
+ 参数.七：lpszTimeEnd
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -304,7 +309,7 @@ extern "C" BOOL XStorageProtocol_Core_REQQueryFile(LPCSTR lpszMsgBuffer, CHAR *p
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL XStorageProtocol_Core_REPQueryFile(CHAR *ptszMsgBuffer, int *pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL);
+extern "C" BOOL XStorageProtocol_Core_REPQueryFile(CHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCTSTR lpszRootDir, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL);
 /********************************************************************
 函数名称：XStorageProtocol_Core_ReportFileParse
 函数功能：解析文件报告协议
