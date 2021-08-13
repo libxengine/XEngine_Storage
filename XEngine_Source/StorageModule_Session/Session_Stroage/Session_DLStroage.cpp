@@ -39,7 +39,7 @@ CSession_DLStroage::~CSession_DLStroage()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_Init(int nPoolCount /* = 1 */, int nTryTime /* = 3 */)
+BOOL CSession_DLStroage::Session_DLStroage_Init(int nPoolCount /* = 1 */, int nTryTime /* = 3 */, BOOL bAutoSpeed /* = TRUE */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -54,6 +54,8 @@ BOOL CSession_DLStroage::Session_DLStroage_Init(int nPoolCount /* = 1 */, int nT
 		stl_MapStroage.insert(make_pair(i, st_StorageList));
 		st_Locker.unlock();
 	}
+	m_nTryTime = nTryTime;
+	m_bAutoSpeed = bAutoSpeed;
 	return TRUE;
 }
 /********************************************************************
@@ -406,21 +408,25 @@ BOOL CSession_DLStroage::Session_DLStroage_GetCount(int nPool, list<string>* pSt
 		if (stl_ListIterator->st_DynamicRate.nTimeWait > 0)
 		{
 			time_t nTimeNow = time(NULL);
-			if ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) > stl_ListIterator->st_DynamicRate.nTimeWait)
+			if ((stl_ListIterator->st_DynamicRate.nTimeSend > 0) && ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeSend) > stl_ListIterator->st_DynamicRate.nTimeWait))
 			{
 				//等待时间超过,可以加入
 				pStl_ListClient->push_back(stl_ListIterator->tszClientAddr);
+				printf("1-m_bAutoSpeed:%d,nTimeNow:%ld nTimeSend:%ld nTimeWait:%d\n", m_bAutoSpeed, nTimeNow, stl_ListIterator->st_DynamicRate.nTimeSend, stl_ListIterator->st_DynamicRate.nTimeWait);
 			}
 			//速率恢复测算
-			if ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) > (stl_ListIterator->st_DynamicRate.nErrorCount * 2))
+			if (m_bAutoSpeed && ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) > (stl_ListIterator->st_DynamicRate.nErrorCount * 2)))
 			{
+				printf("2-m_bAutoSpeed:%d,nTimeNow:%ld - nTimeError:%ld nErrorCount:%d\n", m_bAutoSpeed, nTimeNow, stl_ListIterator->st_DynamicRate.nTimeError, stl_ListIterator->st_DynamicRate.nErrorCount * 2);
 				stl_ListIterator->st_DynamicRate.nErrorCount--;
+				stl_ListIterator->st_DynamicRate.nTimeError = time(NULL);
 				if (0 == stl_ListIterator->st_DynamicRate.nErrorCount)
 				{
 					stl_ListIterator->st_DynamicRate.nTimeWait = 0;
 					stl_ListIterator->st_DynamicRate.nTimeError = 0;
 				}
 			}
+			stl_ListIterator->st_DynamicRate.nTimeSend = nTimeNow;
 		}
 		else
 		{
@@ -477,15 +483,10 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 				bFound = TRUE;
 				if (bError)
 				{
-					time_t nTimeNow = time(NULL);
-					//如果发送错误事件小于等于1秒
-					if ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) <= 1)
-					{
-						//那么根据错误次数计算等待时间
-						stl_ListIterator->st_DynamicRate.nTimeWait = stl_ListIterator->st_DynamicRate.nErrorCount + 1;
-					}
 					stl_ListIterator->st_DynamicRate.nErrorCount++;
 					stl_ListIterator->st_DynamicRate.nTimeError = time(NULL);
+					//那么根据错误次数计算等待时间
+					stl_ListIterator->st_DynamicRate.nTimeWait = stl_ListIterator->st_DynamicRate.nErrorCount;
 
 					if (NULL != pSt_StorageRate)
 					{

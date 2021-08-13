@@ -163,7 +163,11 @@ BOOL XEngine_Net_SendMsg(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsg
 
 	if (STORAGE_NETTYPE_HTTPDOWNLOAD == nType)
 	{
+#if ((XENGINE_VERSION_KERNEL >= 7) && (XENGINE_VERSION_MAIN > 18))
+		bRet = NetCore_TCPXCore_SendEx(xhNetDownload, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 10);
+#else
 		bRet = NetCore_TCPXCore_SendEx(xhNetDownload, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+#endif
 		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBDownload, lpszClientAddr);
