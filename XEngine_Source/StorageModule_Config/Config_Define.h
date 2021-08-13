@@ -84,6 +84,8 @@ typedef struct tag_XEngine_ServerConfig
     }st_XProxy;
 	struct
 	{
+        BOOL bAutoSpeed;
+        int nDLTry;
         __int64x nMaxUPLoader;
         __int64x nMaxDNLoader;
 	}st_XLimit;
