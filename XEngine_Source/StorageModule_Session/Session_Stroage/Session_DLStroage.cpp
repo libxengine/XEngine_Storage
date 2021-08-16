@@ -411,18 +411,21 @@ BOOL CSession_DLStroage::Session_DLStroage_GetCount(int nPool, list<string>* pSt
 		//是否需要等待恢复
 		if (stl_ListIterator->st_DynamicRate.ullTimeWait > 0)
 		{
+			XENGINE_VALTIME st_TimeVal;
 			time_t nTimeNow = time(NULL);
-			ULONGLONG ullTimeNow = BaseLib_OperatorTime_GetTickCount();
-			if (((ullTimeNow - stl_ListIterator->st_DynamicRate.ullTimeSend) > stl_ListIterator->st_DynamicRate.ullTimeWait) && ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) > 1))
+
+			memset(&st_TimeVal, '\0', sizeof(XENGINE_VALTIME));
+			BaseLib_OperatorTime_GetTimeOfday(&st_TimeVal);
+			if (((st_TimeVal.tv_value - stl_ListIterator->st_DynamicRate.ullTimeSend) > stl_ListIterator->st_DynamicRate.ullTimeWait) && ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) > 1))
 			{
 				//等待时间超过,可以加入
 				pStl_ListClient->push_back(stl_ListIterator->tszClientAddr);
-				stl_ListIterator->st_DynamicRate.ullTimeSend = BaseLib_OperatorTime_GetTickCount();
+				stl_ListIterator->st_DynamicRate.ullTimeSend = st_TimeVal.tv_value;
 			}
 			//速率恢复测算
 			if ((stl_ListIterator->st_DynamicRate.nAutoNumber <= m_nTryAuto) && ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) > (stl_ListIterator->st_DynamicRate.nErrorCount * stl_ListIterator->st_DynamicRate.nAutoNumber)))
 			{
-				printf("2-m_bAutoSpeed:%d,ullTimeNow:%llu - nTimeError:%llu nErrorCount:%lu\n", m_nTryAuto, nTimeNow, stl_ListIterator->st_DynamicRate.nTimeError, stl_ListIterator->st_DynamicRate.nErrorCount * 2);
+				//printf("2-m_bAutoSpeed:%d,ullTimeNow:%lu - nTimeError:%lu nErrorCount:%d\n", m_nTryAuto, nTimeNow, stl_ListIterator->st_DynamicRate.nTimeError, stl_ListIterator->st_DynamicRate.nErrorCount * 2);
 				stl_ListIterator->st_DynamicRate.nAutoNumber++;
 				stl_ListIterator->st_DynamicRate.nErrorCount--;
 				stl_ListIterator->st_DynamicRate.ullTimeWait -= XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME;
