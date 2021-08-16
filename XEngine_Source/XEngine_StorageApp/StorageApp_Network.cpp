@@ -172,33 +172,39 @@ BOOL XEngine_Net_SendMsg(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsg
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBDownload, lpszClientAddr);
 		}
-	}
-	else if (STORAGE_NETTYPE_HTTPUPLOADER == nType)
-	{
-		bRet = NetCore_TCPXCore_SendEx(xhNetUPLoader, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
+		if (!bRet)
 		{
-			SocketOpt_HeartBeat_ActiveAddrEx(xhHBUPLoader, lpszClientAddr);
+			return FALSE;
 		}
 	}
-	else if (STORAGE_NETTYPE_HTTPCENTER == nType)
+	else
 	{
-		bRet = NetCore_TCPXCore_SendEx(xhNetCenter, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-	}
-	else if (STORAGE_NETTYPE_TCPP2XP == nType)
-	{
-		bRet = NetCore_TCPXCore_SendEx(xhNetP2xp, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
+		if (STORAGE_NETTYPE_HTTPUPLOADER == nType)
 		{
-			SocketOpt_HeartBeat_ActiveAddrEx(xhHBP2xp, lpszClientAddr);
+			bRet = NetCore_TCPXCore_SendEx(xhNetUPLoader, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+			if (bRet && st_ServiceCfg.st_XTime.bHBTime)
+			{
+				SocketOpt_HeartBeat_ActiveAddrEx(xhHBUPLoader, lpszClientAddr);
+			}
 		}
-	}
-
-	if (!bRet)
-	{
-		DWORD dwRet = NetCore_GetLastError();
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("客户端：%s，网络类型:%d,发送数据失败，发送大小：%d，错误：%lX,%d"), lpszClientAddr, nType, nMsgLen, dwRet, errno);
-		return FALSE;
+		else if (STORAGE_NETTYPE_HTTPCENTER == nType)
+		{
+			bRet = NetCore_TCPXCore_SendEx(xhNetCenter, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		}
+		else if (STORAGE_NETTYPE_TCPP2XP == nType)
+		{
+			bRet = NetCore_TCPXCore_SendEx(xhNetP2xp, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+			if (bRet && st_ServiceCfg.st_XTime.bHBTime)
+			{
+				SocketOpt_HeartBeat_ActiveAddrEx(xhHBP2xp, lpszClientAddr);
+			}
+		}
+		if (!bRet)
+		{
+			DWORD dwRet = NetCore_GetLastError();
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("客户端：%s，网络类型:%d,发送数据失败，发送大小：%d，错误：%lX,%d"), lpszClientAddr, nType, nMsgLen, dwRet, errno);
+			return FALSE;
+		}
 	}
 	return TRUE;
 }

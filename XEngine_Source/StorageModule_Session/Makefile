@@ -2,8 +2,8 @@ CC = g++ -Wall -std=c++17 -fPIC
 RELEASE = 0
 UNICODE = 0
 INCLUDE = -I ./
-LOADBIN = 
-LIB = 
+LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib
+LIB = -lXEngine_BaseLib
 LIBEX = -static-libgcc -lrt -ldl -lpthread
 LOADSO = -Wl,-rpath=
 LIBINCLUDE = Session_DLStroage.o Session_UPStroage.o Session_User.o pch.o

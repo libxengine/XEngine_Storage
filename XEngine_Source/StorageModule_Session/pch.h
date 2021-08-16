@@ -30,6 +30,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include "Session_Define.h"
 #include "Session_Error.h"
 /********************************************************************
@@ -50,4 +52,12 @@ extern DWORD Session_dwErrorCode;
 typedef std::wstring tstring;
 #else
 typedef std::string tstring;
+#endif
+
+#ifdef _WINDOWS
+#ifdef _WIN64
+#pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib.lib")
+#else
+#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib.lib")
+#endif
 #endif

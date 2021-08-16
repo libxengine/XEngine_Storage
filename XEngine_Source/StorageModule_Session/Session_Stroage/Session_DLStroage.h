@@ -10,6 +10,8 @@
 //    Purpose:     存储下载会话
 //    History:
 *********************************************************************/
+#define XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME 1
+
 typedef struct
 {
     shared_ptr<shared_mutex> st_Locker;
@@ -22,7 +24,7 @@ public:
     CSession_DLStroage();
     ~CSession_DLStroage();
 public:
-    BOOL Session_DLStroage_Init(int nPoolCount = 1, int nTryTime = 3, BOOL bAutoSpeed = TRUE);
+    BOOL Session_DLStroage_Init(int nPoolCount = 1, int nTryTime = 3, int nAutoSpeed = 3);
     BOOL Session_DLStroage_Destory();
     BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x* pInt_Count, __int64x* pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0);
     BOOL Session_DLStroage_GetList(int nPool, LPCTSTR lpszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
@@ -32,7 +34,7 @@ public:
     BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr);
 private:
     int m_nTryTime;
-    BOOL m_bAutoSpeed;
+    int m_nTryAuto;
     shared_mutex st_Locker;
 private:
     unordered_map<int, SESSION_STORAGELIST> stl_MapStroage;

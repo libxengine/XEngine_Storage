@@ -15,10 +15,11 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct
 {
+	ULONGLONG ullTimeSend;                                                 //最后发送时间
+	ULONGLONG ullTimeWait;                                                 //等待恢复时间,单位毫秒
 	time_t nTimeError;                                                //最后错误时间
-	time_t nTimeSend;                                                 //最后发送时间
 	int nErrorCount;                                                  //错误次数
-	int nTimeWait;                                                    //等待恢复时间,单位秒
+	int nAutoNumber;                                                  //恢复次数
 }SESSION_STORAGEDYNAMICRATE;
 typedef struct
 {
@@ -97,17 +98,17 @@ extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass);
   类型：整数型
   可空：Y
   意思：输入重试次数
- 参数.三：bAutoSpeed
+ 参数.三：nAutoSpeed
   In/Out：In
-  类型：逻辑型
+  类型：整数型
   可空：Y
-  意思：是否允许恢复速度
+  意思：输入恢复次数,超过次数不在恢复
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Init(int nPoolCount = 1, int nTryTime = 3, BOOL bAutoSpeed = TRUE);
+extern "C" BOOL Session_DLStroage_Init(int nPoolCount = 1, int nTryTime = 3, int nAutoSpeed = 3);
 /********************************************************************
 函数名称：Session_DLStroage_Destory
 函数功能：销毁下载管理器

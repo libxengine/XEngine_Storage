@@ -162,8 +162,8 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
 		return FALSE;
 	}
 	Json::Value st_JsonXLimit = st_JsonRoot["XLimit"];
-    pSt_ServerConfig->st_XLimit.bAutoSpeed = st_JsonXLimit["bAutoSpeed"].asUInt();
     pSt_ServerConfig->st_XLimit.nDLTry = st_JsonXLimit["nDLTry"].asUInt();
+    pSt_ServerConfig->st_XLimit.nDLError = st_JsonXLimit["nDLError"].asUInt();
 	pSt_ServerConfig->st_XLimit.nMaxDNLoader = st_JsonXLimit["nMaxDNLoad"].asInt64();
     pSt_ServerConfig->st_XLimit.nMaxUPLoader = st_JsonXLimit["nMaxUPLoad"].asInt64();
 

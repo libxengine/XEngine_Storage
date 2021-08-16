@@ -48,9 +48,9 @@ extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass)
 /************************************************************************/
 /*                        存储会话导出的函数                            */
 /************************************************************************/
-extern "C" BOOL Session_DLStroage_Init(int nPoolCount, int nTryTime, BOOL bAutoSpeed)
+extern "C" BOOL Session_DLStroage_Init(int nPoolCount, int nTryTime, int nAutoSpeed)
 {
-	return m_DLStorage.Session_DLStroage_Init(nPoolCount, nTryTime, bAutoSpeed);
+	return m_DLStorage.Session_DLStroage_Init(nPoolCount, nTryTime, nAutoSpeed);
 }
 extern "C" BOOL Session_DLStroage_Destory()
 {

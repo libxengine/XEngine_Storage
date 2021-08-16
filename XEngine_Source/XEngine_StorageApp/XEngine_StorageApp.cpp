@@ -256,7 +256,7 @@ int main(int argc, char** argv)
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动用户管理服务成功"));
-	if (!Session_DLStroage_Init(st_ServiceCfg.st_XMax.nStorageDLThread, st_ServiceCfg.st_XLimit.nDLTry, st_ServiceCfg.st_XLimit.bAutoSpeed))
+	if (!Session_DLStroage_Init(st_ServiceCfg.st_XMax.nStorageDLThread, st_ServiceCfg.st_XLimit.nDLTry, st_ServiceCfg.st_XLimit.nDLError))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
 		goto XENGINE_EXITAPP;
