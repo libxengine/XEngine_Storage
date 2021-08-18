@@ -513,6 +513,7 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 					st_Locker.unlock_shared();
 					return FALSE;
 				}
+				stl_ListIterator->ullRWLen -= nSeek;
 				break;
 			}
 		}

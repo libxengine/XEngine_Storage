@@ -10,7 +10,7 @@
 //    Purpose:     存储下载会话
 //    History:
 *********************************************************************/
-#define XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME 1
+#define XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME 10
 
 typedef struct
 {
