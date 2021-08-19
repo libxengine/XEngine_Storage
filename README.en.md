@@ -88,7 +88,6 @@ upload file second pass is first check the HASH file is on the server, if has fi
 The realization of downloading second transmission is to first query the local file save path through HASH, and download it directly if it exists.
 
 ## 关于P2P
-the design and development of the P2P interface has been completed, and there is no time for verification and testing  
 P2P distributed download has been supported, but currently only in the lan,cross-network segment is not supported for the time being, you need to wait for the development to be completed  
 P2P distributed download is the same as the hyper-threaded download of other download tools. The principle is to use the HTTP RANGE field. You can implement this function through libraries such as libcurl.  
 
