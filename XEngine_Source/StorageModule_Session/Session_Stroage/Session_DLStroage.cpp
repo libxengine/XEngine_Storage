@@ -425,7 +425,7 @@ BOOL CSession_DLStroage::Session_DLStroage_GetCount(int nPool, list<string>* pSt
 			//速率恢复测算
 			if ((stl_ListIterator->st_DynamicRate.nAutoNumber <= m_nTryAuto) && ((nTimeNow - stl_ListIterator->st_DynamicRate.nTimeError) > (stl_ListIterator->st_DynamicRate.nErrorCount * stl_ListIterator->st_DynamicRate.nAutoNumber)))
 			{
-				//printf("2-m_bAutoSpeed:%d,ullTimeNow:%lu - nTimeError:%lu nErrorCount:%d\n", m_nTryAuto, nTimeNow, stl_ListIterator->st_DynamicRate.nTimeError, stl_ListIterator->st_DynamicRate.nErrorCount * 2);
+				//printf("nAutoNumber:%d <= m_nTryAuto:%d,nTimeNow:%lu - nTimeError:%lu nErrorCount:%d\n", stl_ListIterator->st_DynamicRate.nAutoNumber, m_nTryAuto, nTimeNow, stl_ListIterator->st_DynamicRate.nTimeError, stl_ListIterator->st_DynamicRate.nErrorCount * stl_ListIterator->st_DynamicRate.nAutoNumber);
 				stl_ListIterator->st_DynamicRate.nAutoNumber++;
 				stl_ListIterator->st_DynamicRate.nErrorCount--;
 				stl_ListIterator->st_DynamicRate.ullTimeWait -= XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME;
@@ -513,7 +513,7 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 					st_Locker.unlock_shared();
 					return FALSE;
 				}
-				stl_ListIterator->ullRWLen -= nSeek;
+				stl_ListIterator->ullRWLen += nSeek;
 				break;
 			}
 		}
