@@ -43,6 +43,10 @@ using namespace std;
 #include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
+#include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/ProcFile_Error.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 
 #ifdef _UNICODE
 typedef std::wstring tstring;
@@ -112,7 +116,6 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "StorageApp_P2XPNet.h"
 #include "Storage_APPTask/Storage_TaskEvent.h"
 #include "Storage_APPTask/Storage_TaskPass.h"
-#include "Storage_APPTask/Storage_TaskQuery.h"
 #include "Storage_APPTask/Storage_TaskP2p.h"
 #include "Storage_APPTask/Storage_TaskManage.h"
 #include "Storage_APPHelp/Storage_APPHelp.h"
@@ -137,6 +140,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"x64/XEngine_HelpComponents/HelpComponents_Packets.lib")
 #pragma comment(lib,"x64/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
 #pragma comment(lib,"x64/XEngine_NetHelp/NetHelp_APIHelp.lib")
+#pragma comment(lib,"x64/XEngine_SystemSdk/XEngine_SystemApi.lib")
 #else
 #ifdef _DEBUG
 #pragma comment(lib,"../Debug/StorageModule_Session.lib")
@@ -165,6 +169,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"x86/XEngine_HelpComponents/HelpComponents_Packets.lib")
 #pragma comment(lib,"x86/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
 #pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIHelp.lib")
+#pragma comment(lib,"x86/XEngine_SystemSdk/XEngine_SystemApi.lib")
 #endif
 
 #else

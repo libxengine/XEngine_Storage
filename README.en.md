@@ -1,4 +1,6 @@
+[中文](README.md) ||  [English](README.en.md)  
 # XEngine_Storage
+This repository has a development and master branch. If you want to use it, please use the master branch  
 
 ## Introduction
 c c++ 存储服务 c c++ 文件存储服务  
@@ -10,7 +12,6 @@ best storage service for http,batter than nginx and more convenient to manage. O
 
 ## Software feature
 The purpose of development and implementation based on libXEngine is a cross-platform network storage service  
-This repository has a development and master branch. If you want to use it, please use the master branch  
 
 feature list:  
 1. support file http upload and download(use put and get method)  
@@ -25,9 +26,10 @@ feature list:
 10. support p2p  
 11. bt(planning)  
 12. data distributed  
-13. support second pass  
+13. support second pass and Resumable   
 14. support nginx upload module proxy_pass  
 15. support upload and download Redirect  
+16. dynamic rate of the download
 
 ## install
 
@@ -85,6 +87,10 @@ The Second pass is not realized by the server, it is by the client
 upload file second pass is first check the HASH file is on the server, if has file on the server, it will directly prompt the upload is successful.  
 The realization of downloading second transmission is to first query the local file save path through HASH, and download it directly if it exists.
 
+## 关于P2P
+P2P distributed download has been supported, but currently only in the lan,cross-network segment is not supported for the time being, you need to wait for the development to be completed  
+P2P distributed download is the same as the hyper-threaded download of other download tools. The principle is to use the HTTP RANGE field. You can implement this function through libraries such as libcurl.  
+
 ## directory struct
 - XEngine_Docment   docment directory
 - XEngine_Release   install directory
@@ -94,7 +100,6 @@ The realization of downloading second transmission is to first query the local f
 
 ## now task
 expand management interface  
-P2P
 
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  

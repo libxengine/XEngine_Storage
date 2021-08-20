@@ -105,6 +105,9 @@ static int ServiceApp_Deamon(int wait)
 
 int main(int argc, char** argv)
 {
+#if (XENGINE_VERSION_KERNEL < 7) && (XENGINE_VERSION_MAIN < 19)
+	printf("XEngine版本过低,无法继续\n");
+#endif
 #ifdef _WINDOWS
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
@@ -256,7 +259,7 @@ int main(int argc, char** argv)
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动用户管理服务成功"));
-	if (!Session_DLStroage_Init(st_ServiceCfg.st_XMax.nStorageDLThread))
+	if (!Session_DLStroage_Init(st_ServiceCfg.st_XMax.nStorageDLThread, st_ServiceCfg.st_XLimit.nDLTry, st_ServiceCfg.st_XLimit.nDLError))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
 		goto XENGINE_EXITAPP;
@@ -271,7 +274,7 @@ int main(int argc, char** argv)
 
 	if (!NetCore_TCPXCore_StartEx(&xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nStorageDLPort, NetCore_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载存储网络服务失败,端口:%d，错误：%lX,%d"), st_ServiceCfg.nStorageDLPort, NetCore_GetLastError(), errno);
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nIOThread);
@@ -381,7 +384,7 @@ int main(int argc, char** argv)
 
 	if (st_ServiceCfg.st_P2xp.nMode > 0)
 	{
-		if (!NetCore_BroadCast_SendInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr))
+		if (!NetCore_BroadCast_RecvInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;

@@ -1,5 +1,5 @@
 {
-  "tszIPAddr": "192.168.1.7",
+  "tszIPAddr": "192.168.1.9",
   "bDeamon": 0,
   "nCenterPort": 5100,
   "nStorageDLPort": 5101,
@@ -38,7 +38,7 @@
   "XStorage": {
     "nHashMode": 2,
     "bRename": 0,
-    "tszFileDir": "./XEngine_File"
+    "tszFileDir": "/home/ubuntu/桌面/XEngine_Storage/XEngine_Source/Debug/XEngine_File"
   },
   "XProxy": {
     "XProxyAuth": {
@@ -54,11 +54,13 @@
     }
   },
   "XLimit": {
+    "nDLTry": 100,
+    "nDLError": 10,
     "nMaxUPLoad": 0,
-    "nMaxDNLoad": 1024000
+    "nMaxDNLoad": 10240000
   },
   "XP2xp": {
-    "nMode": 0,
+    "nMode": 2,
     "nTime": 2,
     "nSDPort": 15000,
     "nRVPort": 15001,
@@ -66,6 +68,7 @@
   },
   "XVer": {
     "StorageVersion": [
+      "2.2.0.1001 Build20210820",
       "2.1.0.1001 Build20210805",
       "2.0.0.1001 Build20210723",
       "1.5.0.1001 Build20210716",

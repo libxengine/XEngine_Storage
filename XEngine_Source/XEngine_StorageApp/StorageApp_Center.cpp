@@ -57,6 +57,8 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 
 	LPCTSTR lpszMethodPost = _T("POST");
 	LPCTSTR lpszMethodGet = _T("GET");
+	LPCTSTR lpszMethodOption = _T("OPTIONS");
+
 	if (0 == _tcsnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodPost)))
 	{
 		if (!XEngine_APPHelp_ProxyAuth(lpszClientAddr, lpszMethodPost, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPCENTER))
@@ -103,10 +105,6 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		{
 			XEngine_Task_Pass(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
 		}
-		else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_QUERY, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_QUERY)))
-		{
-			XEngine_Task_Query(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
-		}
 		else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_EVENT, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_EVENT)))
 		{
 			XEngine_Task_Event(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
@@ -127,6 +125,16 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 			st_HDRParam.bAuth = TRUE;
 		}
 		XEngine_Task_P2PGet(pSt_HTTPParam->tszHttpUri + 1, lpszClientAddr, pSt_HTTPParam);
+	}
+	else if (0 == _tcsnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodOption)))
+	{
+		//用于心跳
+		st_HDRParam.bIsClose = TRUE;
+		st_HDRParam.nHttpCode = 200;
+		LPCTSTR lpszHdrBuffer = _T("Allow: POST OPTIONS\r\n");
+		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求OPTIONS心跳方法成功"), lpszClientAddr);
 	}
 	else
 	{
