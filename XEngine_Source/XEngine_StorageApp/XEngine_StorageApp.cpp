@@ -281,7 +281,7 @@ int main(int argc, char** argv)
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传会话服务成功"));
 
-	if (!NetCore_TCPXCore_StartEx(&xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread))
+	if (!NetCore_TCPXCore_StartEx(&xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载存储网络服务失败,端口:%d，错误：%lX,%d"), st_ServiceCfg.nStorageDLPort, NetCore_GetLastError(), errno);
 		goto XENGINE_EXITAPP;
@@ -290,7 +290,7 @@ int main(int argc, char** argv)
 	NetCore_TCPXCore_RegisterCallBackEx(xhNetDownload, XEngine_Callback_DownloadLogin, XEngine_Callback_DownloadRecv, XEngine_Callback_DownloadLeave);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册下载存储网络服务事件成功！"));
 
-	if (!NetCore_TCPXCore_StartEx(&xhNetUPLoader, st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread))
+	if (!NetCore_TCPXCore_StartEx(&xhNetUPLoader, st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nStorageUPPort, NetCore_GetLastError());
 		goto XENGINE_EXITAPP;
@@ -299,7 +299,7 @@ int main(int argc, char** argv)
 	NetCore_TCPXCore_RegisterCallBackEx(xhNetUPLoader, XEngine_Callback_UPLoaderLogin, XEngine_Callback_UPLoaderRecv, XEngine_Callback_UPLoaderLeave);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册上传存储网络服务事件成功！"));
 
-	if (!NetCore_TCPXCore_StartEx(&xhNetCenter, st_ServiceCfg.nCenterPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread))
+	if (!NetCore_TCPXCore_StartEx(&xhNetCenter, st_ServiceCfg.nCenterPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动业务控制存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nCenterPort, NetCore_GetLastError());
 		goto XENGINE_EXITAPP;
@@ -308,7 +308,7 @@ int main(int argc, char** argv)
 	NetCore_TCPXCore_RegisterCallBackEx(xhNetCenter, XEngine_Callback_CenterLogin, XEngine_Callback_CenterRecv, XEngine_Callback_CenterLeave);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册业务控制存储存储网络服务事件成功！"));
 
-	if (!NetCore_TCPXCore_StartEx(&xhNetP2xp, st_ServiceCfg.nP2XPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nP2XPThread))
+	if (!NetCore_TCPXCore_StartEx(&xhNetP2xp, st_ServiceCfg.nP2XPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nP2XPThread, FALSE, st_ServiceCfg.bReuseraddr))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动P2XP网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nP2XPPort, NetCore_GetLastError());
 		goto XENGINE_EXITAPP;
