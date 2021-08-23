@@ -237,8 +237,8 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	return TRUE;
 }
 /********************************************************************
-函数名称：Session_DLStroage_GetList
-函数功能：获得下载器中的列表索引信息
+函数名称：Session_DLStroage_GetBuffer
+函数功能：获得下载器中指定缓冲区
  参数.一：nPool
   In/Out：In
   类型：整数型
@@ -263,7 +263,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_GetList(int nPool, LPCTSTR lpszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+BOOL CSession_DLStroage::Session_DLStroage_GetBuffer(int nPool, LPCTSTR lpszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
 	Session_IsErrorOccur = FALSE;
 

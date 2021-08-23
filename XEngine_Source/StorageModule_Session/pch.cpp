@@ -60,9 +60,9 @@ extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
 {
 	return m_DLStorage.Session_DLStroage_Insert(lpszClientAddr, lpszFileDir, pInt_Count, pInt_LeftCount, nPosStart, nPostEnd);
 }
-extern "C" BOOL Session_DLStroage_GetList(int nPool, LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
+extern "C" BOOL Session_DLStroage_GetBuffer(int nPool, LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
-	return m_DLStorage.Session_DLStroage_GetList(nPool, lpszClientAddr, ptszMsgBuffer, pInt_MsgLen);
+	return m_DLStorage.Session_DLStroage_GetBuffer(nPool, lpszClientAddr, ptszMsgBuffer, pInt_MsgLen);
 }
 extern "C" BOOL Session_DLStroage_GetInfo(int nPool, LPCTSTR lpszClientAddr, SESSION_STORAGEINFO * pSt_StorageInfo)
 {

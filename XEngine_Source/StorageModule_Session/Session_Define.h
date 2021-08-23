@@ -158,8 +158,8 @@ extern "C" BOOL Session_DLStroage_Destory();
 *********************************************************************/
 extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0);
 /********************************************************************
-函数名称：Session_DLStroage_GetList
-函数功能：获得下载器中的列表索引信息
+函数名称：Session_DLStroage_GetBuffer
+函数功能：获得下载器中指定缓冲区
  参数.一：nPool
   In/Out：In
   类型：整数型
@@ -184,7 +184,7 @@ extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetList(int nPool, LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" BOOL Session_DLStroage_GetBuffer(int nPool, LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：Session_DLStroage_GetInfo
 函数功能：获取下载信息

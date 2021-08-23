@@ -10,7 +10,7 @@ EXPORTS
 	Session_DLStroage_Init
 	Session_DLStroage_Destory
 	Session_DLStroage_Insert
-	Session_DLStroage_GetList
+	Session_DLStroage_GetBuffer
 	Session_DLStroage_GetInfo
 	Session_DLStroage_GetCount
 	Session_DLStorage_SetSeek
