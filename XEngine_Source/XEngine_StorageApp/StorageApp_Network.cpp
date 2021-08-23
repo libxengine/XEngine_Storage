@@ -175,52 +175,41 @@ BOOL XEngine_Net_SendMsg(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsg
 
 	if (STORAGE_NETTYPE_HTTPDOWNLOAD == nType)
 	{
-#if ((XENGINE_VERSION_KERNEL >= 7) && (XENGINE_VERSION_MAIN > 18))
 		bRet = NetCore_TCPXCore_SendEx(xhNetDownload, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 10);
-#else
-		bRet = NetCore_TCPXCore_SendEx(xhNetDownload, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-#endif
 		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBDownload, lpszClientAddr);
 		}
-		if (!bRet)
+	}
+	else if(STORAGE_NETTYPE_HTTPUPLOADER == nType)
+	{
+		bRet = NetCore_TCPXCore_SendEx(xhNetUPLoader, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
-			return FALSE;
+			SocketOpt_HeartBeat_ActiveAddrEx(xhHBUPLoader, lpszClientAddr);
 		}
 	}
-	else
+	else if (STORAGE_NETTYPE_HTTPCENTER == nType)
 	{
-		if (STORAGE_NETTYPE_HTTPUPLOADER == nType)
+		bRet = NetCore_TCPXCore_SendEx(xhNetCenter, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
-			bRet = NetCore_TCPXCore_SendEx(xhNetUPLoader, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-			if (bRet && st_ServiceCfg.st_XTime.bHBTime)
-			{
-				SocketOpt_HeartBeat_ActiveAddrEx(xhHBUPLoader, lpszClientAddr);
-			}
+			SocketOpt_HeartBeat_ActiveAddrEx(xhHBCenter, lpszClientAddr);
 		}
-		else if (STORAGE_NETTYPE_HTTPCENTER == nType)
+	}
+	else if (STORAGE_NETTYPE_TCPP2XP == nType)
+	{
+		bRet = NetCore_TCPXCore_SendEx(xhNetP2xp, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
-			bRet = NetCore_TCPXCore_SendEx(xhNetCenter, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-			if (bRet && st_ServiceCfg.st_XTime.bHBTime)
-			{
-				SocketOpt_HeartBeat_ActiveAddrEx(xhHBCenter, lpszClientAddr);
-			}
+			SocketOpt_HeartBeat_ActiveAddrEx(xhHBP2xp, lpszClientAddr);
 		}
-		else if (STORAGE_NETTYPE_TCPP2XP == nType)
-		{
-			bRet = NetCore_TCPXCore_SendEx(xhNetP2xp, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-			if (bRet && st_ServiceCfg.st_XTime.bHBTime)
-			{
-				SocketOpt_HeartBeat_ActiveAddrEx(xhHBP2xp, lpszClientAddr);
-			}
-		}
-		if (!bRet)
-		{
-			DWORD dwRet = NetCore_GetLastError();
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("客户端：%s，网络类型:%d,发送数据失败，发送大小：%d，错误：%lX,%d"), lpszClientAddr, nType, nMsgLen, dwRet, errno);
-			return FALSE;
-		}
+	}
+	if (!bRet)
+	{
+		DWORD dwRet = NetCore_GetLastError();
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("客户端：%s，网络类型:%d,发送数据失败，发送大小：%d，错误：%lX,%d"), lpszClientAddr, nType, nMsgLen, dwRet, errno);
+		return FALSE;
 	}
 	return TRUE;
 }
