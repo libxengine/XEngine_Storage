@@ -84,6 +84,7 @@ extern XLOG xhLog;
 
 extern XNETHANDLE xhHBDownload;
 extern XNETHANDLE xhHBUPLoader;
+extern XNETHANDLE xhHBCenter;
 extern XNETHANDLE xhHBP2xp;
 
 extern XNETHANDLE xhNetDownload;

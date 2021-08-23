@@ -5,6 +5,7 @@ XLOG xhLog = NULL;
 
 XNETHANDLE xhHBDownload = 0;
 XNETHANDLE xhHBUPLoader = 0;
+XNETHANDLE xhHBCenter = 0;
 XNETHANDLE xhHBP2xp = 0;
 
 XNETHANDLE xhNetDownload = 0;
@@ -48,6 +49,7 @@ void ServiceApp_Stop(int signo)
 
 		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
 		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
+		SocketOpt_HeartBeat_DestoryEx(xhHBCenter);
 		SocketOpt_HeartBeat_DestoryEx(xhHBP2xp);
 
 		ManagePool_Thread_NQDestroy(xhUPPool);
@@ -188,6 +190,13 @@ int main(int argc, char** argv)
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化上传心跳管理服务成功，句柄：%llu,时间:%d,次数:%d"), xhHBUPLoader, st_ServiceCfg.st_XTime.nStorageTimeOut, st_ServiceCfg.st_XTime.nTimeCheck);
+
+		if (!SocketOpt_HeartBeat_InitEx(&xhHBCenter, st_ServiceCfg.st_XTime.nCenterTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBCenter))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化业务管理服务失败，错误：%lX"), NetCore_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化业务管理服务成功，句柄：%llu,时间:%d,次数:%d"), xhHBUPLoader, st_ServiceCfg.st_XTime.nCenterTimeOut, st_ServiceCfg.st_XTime.nTimeCheck);
 
 		if (!SocketOpt_HeartBeat_InitEx(&xhHBP2xp, st_ServiceCfg.st_XTime.nP2XPTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBP2xp))
 		{
@@ -430,6 +439,7 @@ XENGINE_EXITAPP:
 
 		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
 		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
+		SocketOpt_HeartBeat_DestoryEx(xhHBCenter);
 		SocketOpt_HeartBeat_DestoryEx(xhHBP2xp);
 
 		ManagePool_Thread_NQDestroy(xhUPPool);
