@@ -76,6 +76,10 @@ extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOO
 {
 	return m_DLStorage.Session_DLStorage_SetSeek(lpszClientAddr, nSeek, bError, pSt_StorageRate);
 }
+extern "C" BOOL Session_DLStorage_GetAll(int nPool, SESSION_STORAGEINFO * **pppSt_StorageInfo, int* pInt_ListCount)
+{
+	return m_DLStorage.Session_DLStorage_GetAll(nPool, pppSt_StorageInfo, pInt_ListCount);
+}
 extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 {
 	return m_DLStorage.Session_DLStroage_Delete(lpszClientAddr);
@@ -107,6 +111,10 @@ extern "C" BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgB
 extern "C" BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr)
 {
 	return m_UPStorage.Session_UPStroage_Exist(lpszClientAddr);
+}
+extern "C" BOOL Session_UPStorage_GetAll(SESSION_STORAGEINFO * **pppSt_StorageInfo, int* pInt_ListCount)
+{
+	return m_UPStorage.Session_UPStorage_GetAll(pppSt_StorageInfo, pInt_ListCount);
 }
 extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 {

@@ -29,6 +29,7 @@ public:
     BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
     BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen);
     BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr);
+    BOOL Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
     BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr);
 private:
     shared_mutex st_Locker;

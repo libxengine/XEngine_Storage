@@ -31,6 +31,7 @@ public:
     BOOL Session_DLStroage_GetInfo(int nPool, LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
     BOOL Session_DLStroage_GetCount(int nPool, list<string>* pStl_ListClient);
     BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError = TRUE, SESSION_STORAGEDYNAMICRATE* pSt_StorageRate = NULL);
+    BOOL Session_DLStorage_GetAll(int nPool, SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
     BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr);
 private:
     int m_nTryTime;
