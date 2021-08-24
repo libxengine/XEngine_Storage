@@ -76,9 +76,9 @@ extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOO
 {
 	return m_DLStorage.Session_DLStorage_SetSeek(lpszClientAddr, nSeek, bError, pSt_StorageRate);
 }
-extern "C" BOOL Session_DLStorage_GetAll(int nPool, SESSION_STORAGEINFO * **pppSt_StorageInfo, int* pInt_ListCount)
+extern "C" BOOL Session_DLStorage_GetAll(SESSION_STORAGEINFO * **pppSt_StorageInfo, int* pInt_ListCount)
 {
-	return m_DLStorage.Session_DLStorage_GetAll(nPool, pppSt_StorageInfo, pInt_ListCount);
+	return m_DLStorage.Session_DLStorage_GetAll(pppSt_StorageInfo, pInt_ListCount);
 }
 extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 {

@@ -31,6 +31,7 @@ typedef struct
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
+	int nPoolIndex;                                                       //任务池索引
 	FILE* pSt_File;
 }SESSION_STORAGEINFO;
 //////////////////////////////////////////////////////////////////////////
@@ -259,18 +260,13 @@ extern "C" BOOL Session_DLStroage_GetCount(int nPool, list<string>*pStl_ListClie
 extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError = TRUE, SESSION_STORAGEDYNAMICRATE * pSt_StorageRate = NULL);
 /********************************************************************
 函数名称：Session_DLStorage_GetAll
-函数功能：获取指定下载池的任务列表
- 参数.一：nPool
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入要获取的任务池ID
- 参数.二：pppSt_StorageInfo
+函数功能：获取下载池的任务列表
+ 参数.一：pppSt_StorageInfo
   In/Out：Out
   类型：三级指针
   可空：N
   意思：输出获取到的下载信息列表
- 参数.三：pInt_ListCount
+ 参数.二：pInt_ListCount
   In/Out：Out
   类型：整数型指针
   可空：N
@@ -280,7 +276,7 @@ extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOO
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStorage_GetAll(int nPool, SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
+extern "C" BOOL Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
 /********************************************************************
 函数名称：Session_DLStroage_Delete
 函数功能：删除一个队列
