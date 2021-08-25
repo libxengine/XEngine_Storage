@@ -13,6 +13,8 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 	memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
+	st_HDRParam.bIsClose = TRUE;
+	st_HDRParam.nHttpCode = 200;
 	//文件存储成功的事件上传
 	if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_ADD, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_ADD)))
 	{
@@ -63,8 +65,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			}
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求添加文件到数据库成功,文件名:%s/%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
 		}
-		st_HDRParam.bIsClose = TRUE;
-		st_HDRParam.nHttpCode = 200;
 		RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_DBFile, nListCount);
@@ -160,8 +160,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				}
 			}
 		}
-		st_HDRParam.bIsClose = TRUE;
-		st_HDRParam.nHttpCode = 200;
 		RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_DBFile, nListCount);
@@ -205,8 +203,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			{
 				XStorage_SQLite_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
 			}
-			st_HDRParam.bIsClose = TRUE;
-			st_HDRParam.nHttpCode = 200;
 
 			XStorageProtocol_Core_REPQueryFile(tszMsgBuffer, &nMsgLen, &ppSt_ListFile, nListCount, st_ServiceCfg.st_XStorage.tszFileDir, tszTimeStart, tszTimeEnd);
 			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszMsgBuffer, nMsgLen);
@@ -214,6 +210,23 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求查询文件列表成功,列表个数:%d"), lpszClientAddr, nListCount);
 		}
+	}
+	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_INFO, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_INFO)))
+	{
+		int nDLCount = 0;
+		int nUPCount = 0;
+		SESSION_STORAGEINFO** ppSt_DLInfo;
+		SESSION_STORAGEINFO** ppSt_UPInfo;
+
+		Session_DLStorage_GetAll(&ppSt_DLInfo, &nDLCount);
+		Session_UPStorage_GetAll(&ppSt_UPInfo, &nUPCount);
+
+		XStorageProtocol_Core_REPInfo(tszRVBuffer, &nRVLen, &ppSt_DLInfo, &ppSt_UPInfo, nDLCount, nUPCount);
+		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_DLInfo, nDLCount);
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_UPInfo, nUPCount);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求获取上传下载信息成功,下载个数:%d,上传个数:%d"), lpszClientAddr, nDLCount, nUPCount);
 	}
 	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_DIR, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_DIR)))
 	{
@@ -225,9 +238,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 
 		memset(tszUserDir, '\0', MAX_PATH);
 		memset(tszRealDir, '\0', sizeof(tszRealDir));
-
-		st_HDRParam.bIsClose = TRUE;
-		st_HDRParam.nHttpCode = 200;
 
 		XStorageProtocol_Core_REQDirOperator(lpszMsgBuffer, tszUserDir, &nOPCode);
 		_stprintf(tszRealDir, _T("%s/%s"), st_ServiceCfg.st_XStorage.tszFileDir, tszUserDir);
