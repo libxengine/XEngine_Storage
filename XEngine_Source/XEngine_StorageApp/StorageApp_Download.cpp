@@ -56,7 +56,7 @@ XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
 		for (; stl_ListIterator != stl_ListClient.end(); stl_ListIterator++)
 		{
 			int nMsgLen = 4096;
-			if (!Session_DLStroage_GetList(nThreadPos, stl_ListIterator->c_str(), tszMsgBuffer, &nMsgLen))
+			if (!Session_DLStroage_GetBuffer(nThreadPos, stl_ListIterator->c_str(), tszMsgBuffer, &nMsgLen))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,获取用户对应文件内容失败,错误：%lX"), stl_ListIterator->c_str(), Session_GetLastError());
 				continue;

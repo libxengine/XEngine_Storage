@@ -14,6 +14,7 @@ EXPORTS
 	XStorageProtocol_Core_REQQueryFile
 	XStorageProtocol_Core_REPQueryFile
 	XStorageProtocol_Core_ReportFileParse
+	XStorageProtocol_Core_REPInfo
 	XStorageProtocol_Core_REQDirOperator
 	XStorageProtocol_Core_REPDirOperator
 	XStorageProtocol_Core_REQUPEvent
