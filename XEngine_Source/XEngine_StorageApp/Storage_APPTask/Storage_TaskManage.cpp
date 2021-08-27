@@ -211,7 +211,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求查询文件列表成功,列表个数:%d"), lpszClientAddr, nListCount);
 		}
 	}
-	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_INFO, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_INFO)))
+	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_TASK, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_TASK)))
 	{
 		int nDLCount = 0;
 		int nUPCount = 0;
