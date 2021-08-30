@@ -341,11 +341,17 @@ BOOL CSession_UPStroage::Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_S
 {
 	Session_IsErrorOccur = FALSE;
 
-	if ((NULL == pppSt_StorageInfo) || (NULL == pInt_ListCount))
+	if (NULL == pInt_ListCount)
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
 		return FALSE;
+	}
+
+	if (NULL == pppSt_StorageInfo)
+	{
+		*pInt_ListCount = stl_MapStroage.size();
+		return TRUE;
 	}
 
 	st_Locker.lock_shared();
