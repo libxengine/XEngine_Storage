@@ -56,7 +56,7 @@
   "XLimit": {
     "nDLTry": 100,
     "nDLError": 10,
-    "nMaxUPLoad": 0,
+    "nMaxUPLoad": 1024000,
     "nMaxDNLoad": 10240000
   },
   "XP2xp": {
@@ -68,6 +68,7 @@
   },
   "XVer": {
     "StorageVersion": [
+      "2.3.0.1001 Build20210903",
       "2.2.0.1001 Build20210820",
       "2.1.0.1001 Build20210805",
       "2.0.0.1001 Build20210723",
