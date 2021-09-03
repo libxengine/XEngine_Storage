@@ -49,9 +49,7 @@ vcpkg integrate install
 you can not use vcpkg and config jsoncpp development for youself   
 
 ##### XEngine
-XEngine can be download with mine repository,whe you downloaded xengine,you have to add value to you user environment  
-- XEngine_Include header file path
-- XEngine_Library library file path
+download xengine through git.read xengine project readme file to configure your env  
 
 #### Linux
 Linux use Makefile to complie  
@@ -66,7 +64,7 @@ sudo dnf install jsoncpp-devel
 
 ##### XEngine Install
 you can install xengine env to your system by shell   
-like this:sudo XEngine_RunEnv.sh -i 3  
+like this:sudo XEngine_LINEnv.sh -i 3  
 ##### complie
 execute command in XEngine_Source path  
 make complie  
@@ -99,7 +97,8 @@ P2P distributed download is the same as the hyper-threaded download of other dow
 - XEngine_SQLFile   database sql file
 
 ## now task
-expand management interface  
+P2P WAN file search and download support  
+file send use system event
 
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  

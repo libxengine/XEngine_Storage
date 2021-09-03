@@ -48,9 +48,7 @@ vcpkg 需要2021.05.11以上版本
 vcpkg 主要为了方便安装jsoncpp,如果你想自己配置jsoncpp的环境,可以不使用vcpkg...  
 
 ##### XEngine环境
-XEngine可以直接下载,下载完毕后添加用户环境变量,需要下面两个  
-- XEngine_Include 头文件目录地址
-- XEngine_Library 库文件目录地址
+XEngine通过GIT下载,参考XEngine项目的readme配置环境  
 
 #### Linux
 Linux使用Makefile编译  
@@ -63,7 +61,7 @@ Centos8.x
 sudo dnf install jsoncpp-devel  
 
 ##### XEngine环境
-XEngine可以通过脚本文件安装sudo XEngine_RunEnv.sh -i 3
+XEngine可以通过脚本文件安装sudo XEngine_LINEnv.sh -i 3
 ##### 编译命令
 在XEngine_Source目录下执行命令  
 make 编译  
@@ -97,7 +95,8 @@ P2P分布式下载已经支持,不过目前只能在局域网中,暂时不支持
 P2P分布式下载与其他下载工具的超线程下载一样,原理是使用HTTP RANGE字段实现.各位可以通过libcurl等库实现此功能.  
 
 ## 当前任务
-扩展管理接口  
+P2P广域网文件查找与下载支持  
+文件发送使用系统事件
 
 ## 其他问题  
 你可以参考docment目录下的文档.里面包含了API协议和服务说明.
