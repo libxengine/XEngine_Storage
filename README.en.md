@@ -98,7 +98,8 @@ P2P distributed download is the same as the hyper-threaded download of other dow
 
 ## now task
 P2P WAN file search and download support  
-file send use system event
+file send use system event  
+Download speed limit optimization  
 
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  
@@ -109,6 +110,10 @@ You can refer to the document under the docment directory. It contains API proto
 2. Create new Feat_xxx branch
 3. Submit the code
 4. New Pull Request
+
+## Clean up statement
+the software will not generate any files to other directories in your system.  
+the software can achieve complete cleanup by directly delete the directory.  
 
 ## Follow us
 If you think this software is helpful to you, please give us a START
