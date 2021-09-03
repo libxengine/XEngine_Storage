@@ -55,6 +55,8 @@ typedef std::string tstring;
 #endif
 
 #include "../XStorage_Protocol.h"
+#include "../StorageModule_Session/Session_Define.h"
+#include "../StorageModule_Session/Session_Error.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Error.h"
 #include "../XEngine_StorageComponents/XStorage_Protocol/XStorageProtocol_Define.h"
@@ -63,8 +65,6 @@ typedef std::string tstring;
 #include "../XEngine_P2XPComponents/XEngine_P2XPPeer/P2XPPeer_Error.h"
 #include "../XEngine_P2XPComponents/XEngine_P2XPProtocol/P2XPProtocol_Define.h"
 #include "../XEngine_P2XPComponents/XEngine_P2XPProtocol/P2XPProtocol_Error.h"
-#include "../StorageModule_Session/Session_Define.h"
-#include "../StorageModule_Session/Session_Error.h"
 #include "../StorageModule_Config/Config_Define.h"
 #include "../StorageModule_Config/Config_Error.h"
 #include "../StorageModule_APIHelp/APIHelp_Define.h"
@@ -84,6 +84,7 @@ extern XLOG xhLog;
 
 extern XNETHANDLE xhHBDownload;
 extern XNETHANDLE xhHBUPLoader;
+extern XNETHANDLE xhHBCenter;
 extern XNETHANDLE xhHBP2xp;
 
 extern XNETHANDLE xhNetDownload;

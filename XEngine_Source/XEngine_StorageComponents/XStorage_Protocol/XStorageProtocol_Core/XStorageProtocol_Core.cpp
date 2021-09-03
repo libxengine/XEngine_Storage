@@ -301,6 +301,98 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_ReportFileParse(LPCTSTR lpszM
     return TRUE;
 }
 /********************************************************************
+函数名称：XStorageProtocol_Core_REPInfo
+函数功能：返回信息获取请求打包函数
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出打好包的缓冲区内容
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pppSt_DLInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：下载信息列表
+ 参数.四：pppSt_UPInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：上传信息列表
+ 参数.五：nDLCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：下载列表个数
+ 参数.六：nUPCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：上传列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPInfo(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, int nDLCount, int nUPCount)
+{
+	XStorage_IsErrorOccur = FALSE;
+
+	if ((NULL == pppSt_DLInfo) || (NULL == pppSt_UPInfo))
+	{
+		XStorage_IsErrorOccur = TRUE;
+		XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_PROTOCOL_PARAMENT;
+		return FALSE;
+	}
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonDLArray;
+    Json::Value st_JsonUPArray;
+
+	for (int i = 0; i < nDLCount; i++)
+	{
+		Json::Value st_JsonObject;
+		st_JsonObject["tszClientAddr"] = (*pppSt_DLInfo)[i]->tszClientAddr;
+        st_JsonObject["tszFilePath"] = (*pppSt_DLInfo)[i]->tszFileDir;
+        st_JsonObject["ullCount"] = (*pppSt_DLInfo)[i]->ullCount;
+        st_JsonObject["ullRWCount"] = (*pppSt_DLInfo)[i]->ullRWCount;
+        st_JsonObject["ullRWLen"] = (*pppSt_DLInfo)[i]->ullRWLen;
+        st_JsonObject["ullPosStart"] = (*pppSt_DLInfo)[i]->ullPosStart;
+        st_JsonObject["ullPosEnd"] = (*pppSt_DLInfo)[i]->ullPosEnd;
+        st_JsonObject["nPoolIndex"] = (*pppSt_DLInfo)[i]->nPoolIndex;
+
+        st_JsonDLArray.append(st_JsonObject);
+	}
+	for (int i = 0; i < nUPCount; i++)
+	{
+		Json::Value st_JsonObject;
+		st_JsonObject["tszClientAddr"] = (*pppSt_DLInfo)[i]->tszClientAddr;
+		st_JsonObject["tszFilePath"] = (*pppSt_DLInfo)[i]->tszFileDir;
+		st_JsonObject["ullCount"] = (*pppSt_DLInfo)[i]->ullCount;
+		st_JsonObject["ullRWCount"] = (*pppSt_DLInfo)[i]->ullRWCount;
+		st_JsonObject["ullRWLen"] = (*pppSt_DLInfo)[i]->ullRWLen;
+		st_JsonObject["ullPosStart"] = (*pppSt_DLInfo)[i]->ullPosStart;
+		st_JsonObject["ullPosEnd"] = (*pppSt_DLInfo)[i]->ullPosEnd;
+
+        st_JsonUPArray.append(st_JsonObject);
+	}
+	st_JsonRoot["DLCount"] = st_JsonDLArray.size();
+    st_JsonRoot["UPCount"] = st_JsonUPArray.size();
+
+	st_JsonRoot["DLList"] = st_JsonDLArray;
+    st_JsonRoot["UPList"] = st_JsonUPArray;
+
+	st_JsonRoot["Code"] = 0;
+	st_JsonRoot["Msg"] = _T("ok");
+	//打包输出信息
+	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
+	return TRUE;
+}
+/********************************************************************
 函数名称：XStorageProtocol_Core_REQDirOperator
 函数功能：文件夹操作协议
  参数.一：lpszMsgBuffer

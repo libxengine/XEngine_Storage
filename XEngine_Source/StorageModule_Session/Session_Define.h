@@ -31,6 +31,7 @@ typedef struct
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
+	int nPoolIndex;                                                       //任务池索引
 	FILE* pSt_File;
 }SESSION_STORAGEINFO;
 //////////////////////////////////////////////////////////////////////////
@@ -158,8 +159,8 @@ extern "C" BOOL Session_DLStroage_Destory();
 *********************************************************************/
 extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0);
 /********************************************************************
-函数名称：Session_DLStroage_GetList
-函数功能：获得下载器中的列表索引信息
+函数名称：Session_DLStroage_GetBuffer
+函数功能：获得下载器中指定缓冲区
  参数.一：nPool
   In/Out：In
   类型：整数型
@@ -184,7 +185,7 @@ extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetList(int nPool, LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" BOOL Session_DLStroage_GetBuffer(int nPool, LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：Session_DLStroage_GetInfo
 函数功能：获取下载信息
@@ -257,6 +258,25 @@ extern "C" BOOL Session_DLStroage_GetCount(int nPool, list<string>*pStl_ListClie
 备注：
 *********************************************************************/
 extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError = TRUE, SESSION_STORAGEDYNAMICRATE * pSt_StorageRate = NULL);
+/********************************************************************
+函数名称：Session_DLStorage_GetAll
+函数功能：获取下载池的任务列表
+ 参数.一：pppSt_StorageInfo
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出获取到的下载信息列表
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出获取到的列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
 /********************************************************************
 函数名称：Session_DLStroage_Delete
 函数功能：删除一个队列
@@ -404,6 +424,25 @@ extern "C" BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgB
 备注：
 *********************************************************************/
 extern "C" BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr);
+/********************************************************************
+函数名称：Session_UPStorage_GetAll
+函数功能：获取所有上传信息
+ 参数.一：pppSt_StorageInfo
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出获取到的上传信息列表
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出获取到的列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
 /********************************************************************
 函数名称：Session_UPStroage_Delete
 函数功能：删除上传会话

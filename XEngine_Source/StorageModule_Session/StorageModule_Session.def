@@ -10,10 +10,11 @@ EXPORTS
 	Session_DLStroage_Init
 	Session_DLStroage_Destory
 	Session_DLStroage_Insert
-	Session_DLStroage_GetList
+	Session_DLStroage_GetBuffer
 	Session_DLStroage_GetInfo
 	Session_DLStroage_GetCount
 	Session_DLStorage_SetSeek
+	Session_DLStorage_GetAll
 	Session_DLStroage_Delete
 
 	Session_UPStroage_Init
@@ -23,4 +24,5 @@ EXPORTS
 	Session_UPStroage_GetInfo
 	Session_UPStroage_Write
 	Session_UPStroage_Exist
+	Session_UPStorage_GetAll
 	Session_UPStroage_Delete

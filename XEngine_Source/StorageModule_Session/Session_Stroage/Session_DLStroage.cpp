@@ -231,14 +231,15 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	}
 	stl_MapIterator = stl_MapStroage.find(nListPos);
 	stl_MapIterator->second.st_Locker->lock();
+	st_Client.nPoolIndex = nListPos;
 	stl_MapIterator->second.pStl_ListStorage->push_back(st_Client);
 	stl_MapIterator->second.st_Locker->unlock();
 	st_Locker.unlock();
 	return TRUE;
 }
 /********************************************************************
-函数名称：Session_DLStroage_GetList
-函数功能：获得下载器中的列表索引信息
+函数名称：Session_DLStroage_GetBuffer
+函数功能：获得下载器中指定缓冲区
  参数.一：nPool
   In/Out：In
   类型：整数型
@@ -263,7 +264,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_GetList(int nPool, LPCTSTR lpszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+BOOL CSession_DLStroage::Session_DLStroage_GetBuffer(int nPool, LPCTSTR lpszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -525,6 +526,68 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 		}
 	}
 	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_DLStorage_GetAll
+函数功能：获取下载池的任务列表
+ 参数.一：pppSt_StorageInfo
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出获取到的下载信息列表
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出获取到的列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_DLStroage::Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if ((NULL == pppSt_StorageInfo) || (NULL == pInt_ListCount))
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+
+	int nIndex = 0;
+	int nListCount = 0;
+	st_Locker.lock_shared();
+	unordered_map<int, SESSION_STORAGELIST>::iterator stl_MapIterator = stl_MapStroage.begin();
+	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
+	{
+		nListCount += stl_MapIterator->second.pStl_ListStorage->size();
+	}
+	stl_MapIterator = stl_MapStroage.begin();
+	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
+	{
+		*pInt_ListCount = nListCount;
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_StorageInfo, nListCount, sizeof(SESSION_STORAGELIST));
+
+		stl_MapIterator->second.st_Locker->lock_shared();
+		list<SESSION_STORAGEINFO>::iterator stl_ListIterator = stl_MapIterator->second.pStl_ListStorage->begin();
+		for (; stl_ListIterator != stl_MapIterator->second.pStl_ListStorage->end(); stl_ListIterator++)
+		{
+			*(*pppSt_StorageInfo)[nIndex] = *stl_ListIterator;
+			nIndex++;
+		}
+		stl_MapIterator->second.st_Locker->unlock_shared();
+	}
+	st_Locker.unlock_shared();
+
+	if (*pInt_ListCount <= 0)
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_EMPTY;
+		return FALSE;
+	}
 	return TRUE;
 }
 /********************************************************************

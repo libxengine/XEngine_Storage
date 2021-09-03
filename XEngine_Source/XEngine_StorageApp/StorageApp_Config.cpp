@@ -41,6 +41,10 @@ BOOL StorageApp_Config_Parament(int argc,char **argv)
 		{
             st_ServiceCfg.st_Memory.bReload = TRUE;
 		}
+		else if (0 == _tcscmp("-u", argv[i]))
+		{
+			st_ServiceCfg.bReuseraddr = TRUE;
+		}
     }
 
     return TRUE;

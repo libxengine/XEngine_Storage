@@ -17,6 +17,7 @@ typedef struct tag_XEngine_ServerConfig
 {
     TCHAR tszIPAddr[128];
     BOOL bDeamon;
+    BOOL bReuseraddr;
     int nCenterPort;
     int nStorageDLPort;
     int nStorageUPPort;

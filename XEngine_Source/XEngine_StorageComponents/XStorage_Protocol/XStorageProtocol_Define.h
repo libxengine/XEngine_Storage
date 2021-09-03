@@ -340,6 +340,45 @@ extern "C" BOOL XStorageProtocol_Core_REPQueryFile(CHAR * ptszMsgBuffer, int* pI
 *********************************************************************/
 extern "C" BOOL XStorageProtocol_Core_ReportFileParse(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int* pInt_ListCount);
 /********************************************************************
+函数名称：XStorageProtocol_Core_REPInfo
+函数功能：返回信息获取请求打包函数
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出打好包的缓冲区内容
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pppSt_DLInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：下载信息列表
+ 参数.四：pppSt_UPInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：上传信息列表
+ 参数.五：nDLCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：下载列表个数
+ 参数.六：nUPCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：上传列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL XStorageProtocol_Core_REPInfo(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, int nDLCount, int nUPCount);
+/********************************************************************
 函数名称：XStorageProtocol_Core_REQDirOperator
 函数功能：文件夹操作协议
  参数.一：lpszMsgBuffer

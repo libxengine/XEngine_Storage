@@ -320,6 +320,59 @@ BOOL CSession_UPStroage::Session_UPStroage_Exist(LPCTSTR lpszClientAddr)
 	return bRet;
 }
 /********************************************************************
+函数名称：Session_UPStorage_GetAll
+函数功能：获取所有上传信息
+ 参数.一：pppSt_StorageInfo
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出获取到的上传信息列表
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出获取到的列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount)
+{
+	Session_IsErrorOccur = FALSE;
+
+	if (NULL == pInt_ListCount)
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return FALSE;
+	}
+
+	if (NULL == pppSt_StorageInfo)
+	{
+		*pInt_ListCount = stl_MapStroage.size();
+		return TRUE;
+	}
+
+	st_Locker.lock_shared();
+	*pInt_ListCount = stl_MapStroage.size();
+	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_StorageInfo, *pInt_ListCount, sizeof(SESSION_STORAGEINFO));
+	unordered_map<tstring, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.begin();
+	for (int i = 0; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++, i++)
+	{
+		*(*pppSt_StorageInfo)[i] = stl_MapIterator->second.st_StorageInfo;
+	}
+	st_Locker.unlock_shared();
+
+	if (0 == *pInt_ListCount)
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_EMPTY;
+		return FALSE;
+	}
+	return TRUE;
+}
+/********************************************************************
 函数名称：Session_UPStroage_Delete
 函数功能：删除上传会话
  参数.一：lpszClientAddr
