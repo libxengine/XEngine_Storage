@@ -37,6 +37,7 @@
   },
   "XStorage": {
     "nHashMode": 2,
+    "nSendMode": 1,
     "bRename": 0,
     "tszFileDir": "/home/ubuntu/桌面/XEngine_Storage/XEngine_Source/Debug/XEngine_File"
   },
@@ -68,6 +69,7 @@
   },
   "XVer": {
     "StorageVersion": [
+      "2.4.0.1001 Build20210917",
       "2.3.0.1001 Build20210903",
       "2.2.0.1001 Build20210820",
       "2.1.0.1001 Build20210805",

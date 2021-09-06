@@ -64,6 +64,7 @@ typedef struct tag_XEngine_ServerConfig
     struct  
 	{
         BOOL bRename;
+        int nSendMode;
         int nHashMode;
 		TCHAR tszFileDir[MAX_PATH];
     }st_XStorage;
