@@ -107,7 +107,7 @@ static int ServiceApp_Deamon(int wait)
 
 int main(int argc, char** argv)
 {
-#if (XENGINE_VERSION_KERNEL < 7) && (XENGINE_VERSION_MAIN < 19)
+#if (XENGINE_VERSION_KERNEL < 7) && (XENGINE_VERSION_MAIN < 21)
 	printf("XEngine版本过低,无法继续\n");
 #endif
 #ifdef _WINDOWS

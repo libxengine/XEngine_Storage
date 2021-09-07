@@ -37,7 +37,7 @@
   },
   "XStorage": {
     "nHashMode": 2,
-    "nSendMode": 1,
+    "nSendMode": 2,
     "bRename": 0,
     "tszFileDir": "/home/ubuntu/桌面/XEngine_Storage/XEngine_Source/Debug/XEngine_File"
   },

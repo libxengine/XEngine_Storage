@@ -429,7 +429,7 @@ BOOL CSession_DLStroage::Session_DLStroage_GetCount(int nPool, list<string>* pSt
 				//printf("nAutoNumber:%d <= m_nTryAuto:%d,nTimeNow:%lu - nTimeError:%lu nErrorCount:%d\n", stl_ListIterator->st_DynamicRate.nAutoNumber, m_nTryAuto, nTimeNow, stl_ListIterator->st_DynamicRate.nTimeError, stl_ListIterator->st_DynamicRate.nErrorCount * stl_ListIterator->st_DynamicRate.nAutoNumber);
 				stl_ListIterator->st_DynamicRate.nAutoNumber++;
 				stl_ListIterator->st_DynamicRate.nErrorCount--;
-				stl_ListIterator->st_DynamicRate.ullTimeWait -= XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME;
+				stl_ListIterator->st_DynamicRate.ullTimeWait -= (XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME * stl_ListIterator->st_DynamicRate.nTimeError);
 				if (0 == stl_ListIterator->st_DynamicRate.nErrorCount)
 				{
 					stl_ListIterator->st_DynamicRate.nTimeError = 0;
@@ -499,7 +499,7 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 					{
 						stl_ListIterator->st_DynamicRate.nErrorCount++;
 						stl_ListIterator->st_DynamicRate.nTimeError = time(NULL);
-						stl_ListIterator->st_DynamicRate.ullTimeWait += XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME;
+						stl_ListIterator->st_DynamicRate.ullTimeWait += (XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME * stl_ListIterator->st_DynamicRate.nTimeError);
 					}
 					if (NULL != pSt_StorageRate)
 					{
