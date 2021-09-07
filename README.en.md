@@ -98,7 +98,6 @@ P2P distributed download is the same as the hyper-threaded download of other dow
 
 ## now task
 P2P WAN file search and download support  
-file send use system event  
 Download speed limit optimization  
 
 ## other problems   
