@@ -44,9 +44,12 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 
 void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
+	int nTimeWait = 0;
 	int nThreadPos = 0;          //回调模式不需要发送线程池
 	int nMsgLen = 4096;
 	TCHAR tszMsgBuffer[4096];
+	list<string> stl_ListClient;
+
 	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 
 	if (Session_DLStroage_GetBuffer(nThreadPos, lpszClientAddr, tszMsgBuffer, &nMsgLen))
@@ -88,6 +91,11 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,获取用户对应文件内容失败,错误：%lX"), lpszClientAddr, Session_GetLastError());
 	}
+	//限速
+	Session_DLStroage_GetCount(nThreadPos, &stl_ListClient);
+	Algorithm_Calculation_SleepFlow(&nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, stl_ListClient.size(), 4096);
+	stl_ListClient.clear();
+	std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
 }
 
 XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
