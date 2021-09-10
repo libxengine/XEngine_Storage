@@ -362,7 +362,6 @@ BOOL CXStorageProtocol_Core::XStorageProtocol_Core_REPInfo(TCHAR* ptszMsgBuffer,
         st_JsonObject["ullRWLen"] = (*pppSt_DLInfo)[i]->ullRWLen;
         st_JsonObject["ullPosStart"] = (*pppSt_DLInfo)[i]->ullPosStart;
         st_JsonObject["ullPosEnd"] = (*pppSt_DLInfo)[i]->ullPosEnd;
-        st_JsonObject["nPoolIndex"] = (*pppSt_DLInfo)[i]->nPoolIndex;
 
         st_JsonDLArray.append(st_JsonObject);
 	}

@@ -44,7 +44,6 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 
 void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
-	int nThreadPos = 0;          //回调模式不需要发送线程池
 	int nMsgLen = 4096;
 	__int64u nTimeWait = 0;
 	TCHAR tszMsgBuffer[4096];
@@ -52,7 +51,7 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 
 	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 
-	if (Session_DLStroage_GetBuffer(nThreadPos, lpszClientAddr, tszMsgBuffer, &nMsgLen))
+	if (Session_DLStroage_GetBuffer(lpszClientAddr, tszMsgBuffer, &nMsgLen))
 	{
 		if (nMsgLen <= 0)
 		{
@@ -72,7 +71,7 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 
 				OPenSsl_Api_Digest(st_StorageInfo.tszFileDir, tszHashKey, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
 				BaseLib_OperatorString_StrToHex((char*)tszHashKey, 20, tszHashStr);
-				Session_DLStroage_GetInfo(nThreadPos, lpszClientAddr, &st_StorageInfo);
+				Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
 
 				XStorageProtocol_Proxy_PacketUPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, tszHashStr);
 				APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode);
@@ -92,7 +91,7 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,获取用户对应文件内容失败,错误：%lX"), lpszClientAddr, Session_GetLastError());
 	}
 	//限速
-	Session_DLStroage_GetCount(nThreadPos, &stl_ListClient);
+	Session_DLStroage_GetCount(&stl_ListClient);
 	Algorithm_Calculation_SleepFlow(&nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, stl_ListClient.size(), 4096);
 	stl_ListClient.clear();
 	//计算机每次休眠时间是不一定的,*2作为修正,如果想要更准确的需要使用到 Algorithm_Calculation_Create来处理
