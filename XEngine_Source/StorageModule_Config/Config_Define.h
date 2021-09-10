@@ -87,7 +87,6 @@ typedef struct tag_XEngine_ServerConfig
 	struct
 	{
         int nDLTry;
-        int nDLError;
         __int64x nMaxUPLoader;
         __int64x nMaxDNLoader;
 	}st_XLimit;

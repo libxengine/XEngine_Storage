@@ -156,7 +156,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     _tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyPass.tszDLPass, st_JsonXProxyPass["tszDLPass"].asCString());
     _tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyPass.tszUPPass, st_JsonXProxyPass["tszUPPass"].asCString());
 
-	if (st_JsonRoot["XLimit"].empty() || (4 != st_JsonRoot["XLimit"].size()))
+	if (st_JsonRoot["XLimit"].empty() || (3 != st_JsonRoot["XLimit"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
@@ -164,7 +164,6 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
 	}
 	Json::Value st_JsonXLimit = st_JsonRoot["XLimit"];
     pSt_ServerConfig->st_XLimit.nDLTry = st_JsonXLimit["nDLTry"].asUInt();
-    pSt_ServerConfig->st_XLimit.nDLError = st_JsonXLimit["nDLError"].asUInt();
 	pSt_ServerConfig->st_XLimit.nMaxDNLoader = st_JsonXLimit["nMaxDNLoad"].asInt64();
     pSt_ServerConfig->st_XLimit.nMaxUPLoader = st_JsonXLimit["nMaxUPLoad"].asInt64();
 
