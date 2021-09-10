@@ -44,9 +44,9 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 
 void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
-	int nTimeWait = 0;
 	int nThreadPos = 0;          //回调模式不需要发送线程池
 	int nMsgLen = 4096;
+	__int64u nTimeWait = 0;
 	TCHAR tszMsgBuffer[4096];
 	list<string> stl_ListClient;
 
@@ -95,65 +95,8 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 	Session_DLStroage_GetCount(nThreadPos, &stl_ListClient);
 	Algorithm_Calculation_SleepFlow(&nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, stl_ListClient.size(), 4096);
 	stl_ListClient.clear();
-	std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
-}
-
-XHTHREAD CALLBACK XEngine_Download_SendThread(LPVOID lParam)
-{
-	int nThreadPos = *(int*)lParam;
-	TCHAR tszMsgBuffer[4096];
-
-	while (bIsRun)
-	{
-		list<string> stl_ListClient;
-		memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
-
-		Session_DLStroage_GetCount(nThreadPos, &stl_ListClient);
-		list<string>::const_iterator stl_ListIterator = stl_ListClient.begin();
-		for (; stl_ListIterator != stl_ListClient.end(); stl_ListIterator++)
-		{
-			int nMsgLen = 4096;
-			if (!Session_DLStroage_GetBuffer(nThreadPos, stl_ListIterator->c_str(), tszMsgBuffer, &nMsgLen))
-			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,获取用户对应文件内容失败,错误：%lX"), stl_ListIterator->c_str(), Session_GetLastError());
-				continue;
-			}
-			if (nMsgLen <= 0)
-			{
-				if (st_ServiceCfg.st_XProxy.st_XProxyPass.bDLPass)
-				{
-					int nPLen = MAX_PATH;
-					int nHttpCode = 0;
-					UCHAR tszHashKey[MAX_PATH];
-					TCHAR tszHashStr[MAX_PATH];
-					TCHAR tszProxyStr[MAX_PATH];
-					SESSION_STORAGEINFO st_StorageInfo;
-
-					memset(tszHashKey, '\0', MAX_PATH);
-					memset(tszHashStr, '\0', MAX_PATH);
-					memset(tszProxyStr, '\0', MAX_PATH);
-					memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
-
-					OPenSsl_Api_Digest(st_StorageInfo.tszFileDir, tszHashKey, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
-					BaseLib_OperatorString_StrToHex((char*)tszHashKey, 20, tszHashStr);
-					Session_DLStroage_GetInfo(nThreadPos, stl_ListIterator->c_str(), &st_StorageInfo);
-
-					XStorageProtocol_Proxy_PacketUPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, tszHashStr);
-					APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("下载客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), stl_ListIterator->c_str(), nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass);
-				}
-				Session_DLStroage_Delete(stl_ListIterator->c_str());
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("下载客户端:%s,文件已经发送完毕,用户已经被移除发送列表"), stl_ListIterator->c_str());
-				continue;
-			}
-			XEngine_Task_SendDownload(stl_ListIterator->c_str(), tszMsgBuffer, nMsgLen);
-		}
-		int nTimeWait = 1;
-		Algorithm_Calculation_SleepFlow(&nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, stl_ListClient.size(), 4096);
-		stl_ListClient.clear();
-		std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
-	}
-	return 0;
+	//计算机每次休眠时间是不一定的,*2作为修正,如果想要更准确的需要使用到 Algorithm_Calculation_Create来处理
+	std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait * 2)); 
 }
 
 BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, TCHAR** pptszListHdr, int nHdrCount)
