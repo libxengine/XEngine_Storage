@@ -15,15 +15,6 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct
 {
-	ULONGLONG ullTimeSend;                                                 //最后发送时间
-	ULONGLONG ullTimeWait;                                                 //等待恢复时间,单位毫秒
-	time_t nTimeError;                                                //最后错误时间
-	int nErrorCount;                                                  //错误次数
-	int nAutoNumber;                                                  //恢复次数
-}SESSION_STORAGEDYNAMICRATE;
-typedef struct
-{
-	SESSION_STORAGEDYNAMICRATE st_DynamicRate;
 	TCHAR tszFileDir[MAX_PATH];                                           //文件地址
 	TCHAR tszClientAddr[128];                                             //操作的用户地址
 	__int64x ullCount;                                                    //总大小
@@ -31,6 +22,7 @@ typedef struct
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
+	int nErrorTime;                                                       //错误次数
 	FILE* pSt_File;
 }SESSION_STORAGEINFO;
 //////////////////////////////////////////////////////////////////////////
@@ -92,18 +84,13 @@ extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass);
   In/Out：In
   类型：整数型
   可空：Y
-  意思：输入重试次数
- 参数.二：nAutoSpeed
-  In/Out：In
-  类型：整数型
-  可空：Y
-  意思：输入恢复次数,超过次数不在恢复
+  意思：输入下载错误重试次数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Init(int nTryTime = 3, int nAutoSpeed = 3);
+extern "C" BOOL Session_DLStroage_Init(int nTryTime = 3);
 /********************************************************************
 函数名称：Session_DLStroage_Destory
 函数功能：销毁下载管理器
@@ -197,9 +184,9 @@ extern "C" BOOL Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAG
 /********************************************************************
 函数名称：Session_DLStroage_GetCount
 函数功能：获取队列拥有的个数
- 参数.一：pStl_ListClient
+ 参数.一：pInt_ListCount
   In/Out：Out
-  类型：STL容器指针
+  类型：整数型
   可空：N
   意思：输出要发送的队列个数
 返回值
@@ -207,7 +194,7 @@ extern "C" BOOL Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAG
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetCount(list<string>*pStl_ListClient);
+extern "C" BOOL Session_DLStroage_GetCount(int* pInt_ListCount);
 /********************************************************************
 函数名称：Session_DLStorage_SetSeek
 函数功能：移动文件指针
@@ -225,18 +212,13 @@ extern "C" BOOL Session_DLStroage_GetCount(list<string>*pStl_ListClient);
   In/Out：In
   类型：逻辑型
   可空：Y
-  意思：是否因为错误引起的
- 参数.四：pSt_StorageRate
-  In/Out：In
-  类型：数据结构指针
-  可空：Y
-  意思：输出速率错误信息
+  意思：是否有由错误引起的
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError = TRUE, SESSION_STORAGEDYNAMICRATE * pSt_StorageRate = NULL);
+extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError = TRUE);
 /********************************************************************
 函数名称：Session_DLStorage_GetAll
 函数功能：获取下载池的任务列表

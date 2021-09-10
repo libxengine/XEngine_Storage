@@ -27,23 +27,17 @@ CSession_DLStroage::~CSession_DLStroage()
   In/Out：In
   类型：整数型
   可空：Y
-  意思：输入重试次数
- 参数.二：nAutoSpeed
-  In/Out：In
-  类型：整数型
-  可空：Y
-  意思：输入恢复次数,超过次数不在恢复
+  意思：输入下载错误重试次数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_Init(int nTryTime /* = 3 */, int nAutoSpeed /* = 3 */)
+BOOL CSession_DLStroage::Session_DLStroage_Init(int nTryTime /* = 3 */)
 {
 	Session_IsErrorOccur = FALSE;
 
 	m_nTryTime = nTryTime;
-	m_nTryAuto = nAutoSpeed;
 	return TRUE;
 }
 /********************************************************************
@@ -292,57 +286,18 @@ BOOL CSession_DLStroage::Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSI
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_GetCount(list<string>* pStl_ListClient)
+BOOL CSession_DLStroage::Session_DLStroage_GetCount(int* pInt_ListCount)
 {
 	Session_IsErrorOccur = FALSE;
 
-	if (NULL == pStl_ListClient)
+	if (NULL == pInt_ListCount)
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
-
 	st_Locker.lock_shared();
-	unordered_map<tstring, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.begin();
-	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
-	{
-		//是否需要等待恢复
-		if (stl_MapIterator->second.st_DynamicRate.ullTimeWait > 0)
-		{
-			XENGINE_VALTIME st_TimeVal;
-			time_t nTimeNow = time(NULL);
-
-			memset(&st_TimeVal, '\0', sizeof(XENGINE_VALTIME));
-			BaseLib_OperatorTime_GetTimeOfday(&st_TimeVal);
-			if (((st_TimeVal.tv_value - stl_MapIterator->second.st_DynamicRate.ullTimeSend) > stl_MapIterator->second.st_DynamicRate.ullTimeWait) && ((nTimeNow - stl_MapIterator->second.st_DynamicRate.nTimeError) > 1))
-			{
-				//等待时间超过,可以加入
-				pStl_ListClient->push_back(stl_MapIterator->second.tszClientAddr);
-				stl_MapIterator->second.st_DynamicRate.ullTimeSend = st_TimeVal.tv_value;
-			}
-			//速率恢复测算
-			if ((stl_MapIterator->second.st_DynamicRate.nAutoNumber <= m_nTryAuto) && ((nTimeNow - stl_MapIterator->second.st_DynamicRate.nTimeError) > (stl_MapIterator->second.st_DynamicRate.nErrorCount * stl_MapIterator->second.st_DynamicRate.nAutoNumber)))
-			{
-				//printf("nAutoNumber:%d <= m_nTryAuto:%d,nTimeNow:%lu - nTimeError:%lu nErrorCount:%d\n", stl_MapIterator->second.st_DynamicRate.nAutoNumber, m_nTryAuto, nTimeNow, stl_MapIterator->second.st_DynamicRate.nTimeError, stl_MapIterator->second.st_DynamicRate.nErrorCount * stl_MapIterator->second.st_DynamicRate.nAutoNumber);
-				stl_MapIterator->second.st_DynamicRate.nAutoNumber++;
-				stl_MapIterator->second.st_DynamicRate.nErrorCount--;
-				stl_MapIterator->second.st_DynamicRate.ullTimeWait -= (XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME * stl_MapIterator->second.st_DynamicRate.nTimeError);
-				if (0 == stl_MapIterator->second.st_DynamicRate.nErrorCount)
-				{
-					stl_MapIterator->second.st_DynamicRate.nTimeError = 0;
-				}
-				else
-				{
-					stl_MapIterator->second.st_DynamicRate.nTimeError = nTimeNow;
-				}
-			}
-		}
-		else
-		{
-			pStl_ListClient->push_back(stl_MapIterator->second.tszClientAddr);
-		}
-	}
+	*pInt_ListCount = stl_MapStroage.size();
 	st_Locker.unlock_shared();
 	return TRUE;
 }
@@ -363,18 +318,13 @@ BOOL CSession_DLStroage::Session_DLStroage_GetCount(list<string>* pStl_ListClien
   In/Out：In
   类型：逻辑型
   可空：Y
-  意思：是否因为错误引起的
- 参数.四：pSt_StorageRate
-  In/Out：In
-  类型：数据结构指针
-  可空：Y
-  意思：输出速率错误信息
+  意思：是否有由错误引起的
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError /* = TRUE */, SESSION_STORAGEDYNAMICRATE* pSt_StorageRate /* = NULL */)
+BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError /* = TRUE */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -387,27 +337,21 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	if (bError)
+	if (stl_MapIterator->second.nErrorTime > m_nTryTime)
 	{
-		if ((time(NULL) - stl_MapIterator->second.st_DynamicRate.nTimeError) > 1)
-		{
-			stl_MapIterator->second.st_DynamicRate.nErrorCount++;
-			stl_MapIterator->second.st_DynamicRate.nTimeError = time(NULL);
-			stl_MapIterator->second.st_DynamicRate.ullTimeWait += (XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME * stl_MapIterator->second.st_DynamicRate.nTimeError);
-		}
-		if (NULL != pSt_StorageRate)
-		{
-			*pSt_StorageRate = stl_MapIterator->second.st_DynamicRate;
-		}
-	}
-	fseek(stl_MapIterator->second.pSt_File, nSeek, SEEK_CUR);
-	//如果超过次数.返回错误
-	if (stl_MapIterator->second.st_DynamicRate.nErrorCount > m_nTryTime)
-	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_ERRORTIME;
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
+	//移动文件指针
+	fseek(stl_MapIterator->second.pSt_File, nSeek, SEEK_CUR);
 	stl_MapIterator->second.ullRWLen += nSeek;
+
+	if (bError)
+	{
+		stl_MapIterator->second.nErrorTime++;
+	}
 	st_Locker.unlock_shared();
 	return TRUE;
 }

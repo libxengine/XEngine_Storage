@@ -10,7 +10,6 @@
 //    Purpose:     存储下载会话
 //    History:
 *********************************************************************/
-#define XENGINE_STOREAGE_SESSION_DOWNLOAD_SENDTIME 50
 
 class CSession_DLStroage
 {
@@ -18,18 +17,17 @@ public:
     CSession_DLStroage();
     ~CSession_DLStroage();
 public:
-    BOOL Session_DLStroage_Init(int nTryTime = 3, int nAutoSpeed = 3);
+    BOOL Session_DLStroage_Init(int nTryTime);
     BOOL Session_DLStroage_Destory();
     BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x* pInt_Count, __int64x* pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0);
     BOOL Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
     BOOL Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
-    BOOL Session_DLStroage_GetCount(list<string>* pStl_ListClient);
-    BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError = TRUE, SESSION_STORAGEDYNAMICRATE* pSt_StorageRate = NULL);
+    BOOL Session_DLStroage_GetCount(int* pInt_ListCount);
+    BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError = TRUE);
     BOOL Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
     BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr);
 private:
     int m_nTryTime;
-    int m_nTryAuto;
     shared_mutex st_Locker;
 private:
     unordered_map<tstring, SESSION_STORAGEINFO> stl_MapStroage;
