@@ -31,7 +31,6 @@ typedef struct
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
-	int nPoolIndex;                                                       //任务池索引
 	FILE* pSt_File;
 }SESSION_STORAGEINFO;
 //////////////////////////////////////////////////////////////////////////
@@ -89,17 +88,12 @@ extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass);
 /********************************************************************
 函数名称：Session_DLStroage_Init
 函数功能：初始化下载会话管理器
- 参数.一：nPoolCount
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入最大运行多少个下载同时进行
- 参数.二：nTryTime
+ 参数.一：nTryTime
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入重试次数
- 参数.三：nAutoSpeed
+ 参数.二：nAutoSpeed
   In/Out：In
   类型：整数型
   可空：Y
@@ -109,7 +103,7 @@ extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Init(int nPoolCount = 1, int nTryTime = 3, int nAutoSpeed = 3);
+extern "C" BOOL Session_DLStroage_Init(int nTryTime = 3, int nAutoSpeed = 3);
 /********************************************************************
 函数名称：Session_DLStroage_Destory
 函数功能：销毁下载管理器
@@ -161,21 +155,16 @@ extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
 /********************************************************************
 函数名称：Session_DLStroage_GetBuffer
 函数功能：获得下载器中指定缓冲区
- 参数.一：nPool
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入要操作的队列
- 参数.二：lpszClientAddr
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：输入客户端地址
- 参数.三：ptszMsgBuffer
+ 参数.二：ptszMsgBuffer
   In/Out：In
   类型：字符指针
   可空：N
- 参数.四：pInt_MsgLen
+ 参数.三：pInt_MsgLen
   In/Out：In
   类型：整数型指针
   可空：N
@@ -185,21 +174,16 @@ extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFil
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetBuffer(int nPool, LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" BOOL Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：Session_DLStroage_GetInfo
 函数功能：获取下载信息
- 参数.一：nPool
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入要操作的下载池
- 参数.二：lpszClientAddr
+ 参数.一：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：输入要操作的客户端
- 参数.三：pSt_StorageInfo
+ 参数.二：pSt_StorageInfo
   In/Out：Out
   类型：数据结构指针
   可空：N
@@ -209,16 +193,11 @@ extern "C" BOOL Session_DLStroage_GetBuffer(int nPool, LPCTSTR lpszClientAddr, T
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetInfo(int nPool, LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
+extern "C" BOOL Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
 /********************************************************************
 函数名称：Session_DLStroage_GetCount
 函数功能：获取队列拥有的个数
- 参数.一：nPool
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入要操作的队列
- 参数.二：pStl_ListClient
+ 参数.一：pStl_ListClient
   In/Out：Out
   类型：STL容器指针
   可空：N
@@ -228,7 +207,7 @@ extern "C" BOOL Session_DLStroage_GetInfo(int nPool, LPCTSTR lpszClientAddr, SES
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetCount(int nPool, list<string>*pStl_ListClient);
+extern "C" BOOL Session_DLStroage_GetCount(list<string>*pStl_ListClient);
 /********************************************************************
 函数名称：Session_DLStorage_SetSeek
 函数功能：移动文件指针
