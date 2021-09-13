@@ -18,6 +18,7 @@ XNETHANDLE xhDLPool = 0;
 XNETHANDLE xhCTPool = 0;
 XNETHANDLE xhP2XPPool = 0;
 
+XHANDLE xhLimit = NULL;
 XHANDLE xhUPHttp = NULL;
 XHANDLE xhDLHttp = NULL;
 XHANDLE xhCenterHttp = NULL;
@@ -56,6 +57,7 @@ void ServiceApp_Stop(int signo)
 		ManagePool_Thread_NQDestroy(xhCTPool);
 		ManagePool_Thread_NQDestroy(xhP2XPPool);
 
+		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
 
 		Session_User_Destory();
@@ -165,6 +167,14 @@ int main(int argc, char** argv)
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化服务器信号管理成功"));
 
+	xhLimit = Algorithm_Calculation_Create();
+	if (NULL == xhLimit)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，创建流量限速对象模式失败,错误:%lX"), Algorithm_GetLastError());
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，创建流量限速对象模式成功"));
+
 	if (!NetXApi_Address_OpenQQWry(st_ServiceCfg.st_P2xp.tszQQWryFile))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化IP地址数据库失败,错误:%lX"), NetXApi_GetLastError());
@@ -265,12 +275,12 @@ int main(int argc, char** argv)
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动用户管理服务成功"));
-	if (!Session_DLStroage_Init(st_ServiceCfg.st_XLimit.nDLTry, st_ServiceCfg.st_XLimit.nDLError))
+	if (!Session_DLStroage_Init(st_ServiceCfg.st_XLimit.nDLTry))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
 		goto XENGINE_EXITAPP;
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功"));
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载错误重试次数:%d"), st_ServiceCfg.st_XLimit.nDLTry);
 	if (!Session_UPStroage_Init())
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传会话服务失败，错误：%lX"), Session_GetLastError());
@@ -434,6 +444,7 @@ XENGINE_EXITAPP:
 		ManagePool_Thread_NQDestroy(xhCTPool);
 		ManagePool_Thread_NQDestroy(xhP2XPPool);
 
+		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
 
 		Session_User_Destory();

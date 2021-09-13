@@ -97,6 +97,7 @@ extern XNETHANDLE xhDLPool;
 extern XNETHANDLE xhCTPool;
 extern XNETHANDLE xhP2XPPool;
 
+extern XHANDLE xhLimit;
 extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;

@@ -42,8 +42,8 @@ void CALLBACK XEngine_Callback_UPLoaderRecv(LPCTSTR lpszClientAddr, SOCKET hSock
 	int nCount = 0;
 	__int64u nTimeWait = 0;
 	Session_UPStorage_GetAll(NULL, &nCount);
-	Algorithm_Calculation_SleepFlow(&nTimeWait, st_ServiceCfg.st_XLimit.nMaxUPLoader, nCount, nMsgLen);
-	std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait * 2));
+	Algorithm_Calculation_SleepFlow(xhLimit, &nTimeWait, st_ServiceCfg.st_XLimit.nMaxUPLoader, nCount, nMsgLen);
+	std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("上传客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
 }
 void CALLBACK XEngine_Callback_UPLoaderLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)

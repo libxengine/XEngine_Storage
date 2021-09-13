@@ -45,9 +45,9 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
 	int nMsgLen = 4096;
+	int nListCount = 0;
 	__int64u nTimeWait = 0;
 	TCHAR tszMsgBuffer[4096];
-	list<string> stl_ListClient;
 
 	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 
@@ -91,11 +91,9 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,获取用户对应文件内容失败,错误：%lX"), lpszClientAddr, Session_GetLastError());
 	}
 	//限速
-	Session_DLStroage_GetCount(&stl_ListClient);
-	Algorithm_Calculation_SleepFlow(&nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, stl_ListClient.size(), 4096);
-	stl_ListClient.clear();
-	//计算机每次休眠时间是不一定的,*2作为修正,如果想要更准确的需要使用到 Algorithm_Calculation_Create来处理
-	std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait * 2)); 
+	Session_DLStroage_GetCount(&nListCount);
+	Algorithm_Calculation_SleepFlow(xhLimit, &nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, nListCount, 4096);
+	std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
 }
 
 BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, TCHAR** pptszListHdr, int nHdrCount)
@@ -178,6 +176,11 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.st_Range.nPosCount = ullCount;
 		st_HDRParam.nHttpCode = 206;
 		st_HDRParam.bIsClose = TRUE;
+
+		if (0 == st_HDRParam.st_Range.nPosEnd)
+		{
+			st_HDRParam.st_Range.nPosEnd = ullCount;
+		}
 	}
 	else
 	{
@@ -208,17 +211,14 @@ BOOL XEngine_Task_SendDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 {
 	if (!XEngine_Net_SendMsg(lpszClientAddr, lpszMsgBuffer, nMsgLen, STORAGE_NETTYPE_HTTPDOWNLOAD))
 	{
-		SESSION_STORAGEDYNAMICRATE st_StorageRate;
-		memset(&st_StorageRate, '\0', sizeof(SESSION_STORAGEDYNAMICRATE));
-
-		if (Session_DLStorage_SetSeek(lpszClientAddr, -nMsgLen, TRUE, &st_StorageRate))
+		if (Session_DLStorage_SetSeek(lpszClientAddr, -nMsgLen))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("下载客户端:%s,正在发送文件数据,发送失败,移动指针:%d,错误次数:%d,等待时间:%llu 微妙,恢复次数:%d"), lpszClientAddr, -nMsgLen, st_StorageRate.nErrorCount, st_StorageRate.ullTimeWait, st_StorageRate.nAutoNumber);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("下载客户端:%s,正在发送文件数据,发送失败,移动指针:%d"), lpszClientAddr, -nMsgLen);
 		}
 		else
 		{
 			XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_CLOSE, STORAGE_NETTYPE_HTTPDOWNLOAD);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,正在发送文件数据,大小:%d,发送超过重试次数,无法继续,移除发送队列,错误次数:%d,等待时间:%llu 微妙,恢复次数:%d"), lpszClientAddr, nMsgLen, st_StorageRate.nErrorCount, st_StorageRate.ullTimeWait, st_StorageRate.nAutoNumber);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,正在发送文件数据,大小:%d,发送超过重试次数,无法继续,移除发送队列"), lpszClientAddr, nMsgLen);
 		}
 		return FALSE;
 	}
