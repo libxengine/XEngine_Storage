@@ -36,8 +36,8 @@
     "SQLPass": "123123Ruiyue"
   },
   "XStorage": {
-    "nHashMode": 2,
     "nSendMode": 2,
+    "nHashMode": 2,
     "bRename": 0,
     "tszFileDir": "/home/ubuntu/桌面/XEngine_Storage/XEngine_Source/Debug/XEngine_File"
   },
@@ -55,10 +55,9 @@
     }
   },
   "XLimit": {
-    "nDLTry": 100,
-    "nDLError": 10,
-    "nMaxUPLoad": 1024000,
-    "nMaxDNLoad": 10240000
+    "nDLTry": 10,
+    "nMaxUPLoad": 4096000,
+    "nMaxDNLoad": 4096000
   },
   "XP2xp": {
     "nMode": 2,

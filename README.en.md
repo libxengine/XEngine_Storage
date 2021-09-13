@@ -29,7 +29,7 @@ feature list:
 13. support second pass and Resumable   
 14. support nginx upload module proxy_pass  
 15. support upload and download Redirect  
-16. dynamic rate of the download
+16. support full speed and limit speed
 
 ## install
 
@@ -98,7 +98,7 @@ P2P distributed download is the same as the hyper-threaded download of other dow
 
 ## now task
 P2P WAN file search and download support  
-Download speed limit optimization  
+upload file code optimization  
 
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  
@@ -112,6 +112,7 @@ You can refer to the document under the docment directory. It contains API proto
 
 ## Clean up statement
 the software will not generate any files to other directories in your system.  
+the software will not modify any of your system configuration.  
 the software can achieve complete cleanup by directly delete the directory.  
 
 ## Follow us
