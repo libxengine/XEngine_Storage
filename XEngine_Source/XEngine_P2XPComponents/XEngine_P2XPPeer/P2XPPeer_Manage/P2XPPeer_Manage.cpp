@@ -235,7 +235,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_GetLan(LPCTSTR lpszPubAddr, LPCT
     memset(tszPrivateAddr, '\0', sizeof(tszPrivateAddr));
     memset(&st_LibAddr, '\0', sizeof(XENGINE_LIBADDR));
     //如果输入的是192.168.1.1 IP,就我们自己分割,否则认为输入的是 192.168.1
-    if (APIHelp_IPAddr_IsIPV4Addr(lpszPriAddr, &st_LibAddr))
+    if (BaseLib_OperatorIPAddr_IsIPV4Addr(lpszPriAddr, &st_LibAddr))
     {
         _stprintf_s(tszPrivateAddr, _T("%d.%d.%d"), st_LibAddr.nIPAddr1, st_LibAddr.nIPAddr2, st_LibAddr.nIPAddr3);
         unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> >::const_iterator stl_MapSubIterator = stl_MapIterator->second.find(tszPrivateAddr);
@@ -548,11 +548,11 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_AddLan(XENGINE_P2XPPEER_PROTOCOL
 
         memset(tszPrivateAddr, '\0', sizeof(tszPrivateAddr));
         memset(&st_LibAddr, '\0', sizeof(XENGINE_LIBADDR));
-        if (!APIHelp_IPAddr_IsIPV4Addr(st_ClientAddr.tszPrivateAddr, &st_LibAddr))
+        if (!BaseLib_OperatorIPAddr_IsIPV4Addr(st_ClientAddr.tszPrivateAddr, &st_LibAddr))
         {
             //没有内网地址不加入.
             PeerManage_IsErrorOccur = TRUE;
-            PeerManage_dwErrorCode = APIHelp_GetLastError();
+            PeerManage_dwErrorCode = BaseLib_GetLastError();
             return FALSE;
         }
         _stprintf_s(tszPrivateAddr, _T("%d.%d.%d"), st_LibAddr.nIPAddr1, st_LibAddr.nIPAddr2, st_LibAddr.nIPAddr3);
@@ -570,11 +570,11 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_AddLan(XENGINE_P2XPPEER_PROTOCOL
         memset(tszPrivateAddr, '\0', sizeof(tszPrivateAddr));
         memset(&st_LibAddr, '\0', sizeof(XENGINE_LIBADDR));
         //获取私有网络的路由地址
-        if (!APIHelp_IPAddr_IsIPV4Addr(st_ClientAddr.tszPrivateAddr, &st_LibAddr))
+        if (!BaseLib_OperatorIPAddr_IsIPV4Addr(st_ClientAddr.tszPrivateAddr, &st_LibAddr))
         {
             //没有内网地址不加入.
             PeerManage_IsErrorOccur = TRUE;
-            PeerManage_dwErrorCode = APIHelp_GetLastError();
+            PeerManage_dwErrorCode = BaseLib_GetLastError();
             return FALSE;
         }
         //内网地址192.168.1.2  内网出口192.168.1.1 链接地址10.0.1.0:13444
@@ -634,7 +634,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_DelLan(XENGINE_P2XPPEER_PROTOCOL
 
         memset(tszPrivateAddr, '\0', sizeof(tszPrivateAddr));
         memset(&st_LibAddr, '\0', sizeof(XENGINE_LIBADDR));
-        if (APIHelp_IPAddr_IsIPV4Addr(st_ClientAddr.tszPrivateAddr, &st_LibAddr))
+        if (BaseLib_OperatorIPAddr_IsIPV4Addr(st_ClientAddr.tszPrivateAddr, &st_LibAddr))
         {
             _stprintf_s(tszPrivateAddr, _T("%d.%d.%d"), st_LibAddr.nIPAddr1, st_LibAddr.nIPAddr2, st_LibAddr.nIPAddr3);
             //查找私有路由地址

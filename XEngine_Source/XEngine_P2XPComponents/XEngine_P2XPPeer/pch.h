@@ -28,8 +28,6 @@ using namespace std;
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 #include "../../XStorage_Protocol.h"
 #include "P2XPPeer_Define.h"
 #include "P2XPPeer_Error.h"
@@ -56,9 +54,7 @@ typedef std::string tstring;
 #ifdef _WINDOWS
 #ifdef _WIN64
 #pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib.lib")
-#pragma comment(lib,"x64/XEngine_NetHelp/NetHelp_APIHelp.lib")
 #else
 #pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib.lib")
-#pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIHelp.lib")
 #endif
 #endif
