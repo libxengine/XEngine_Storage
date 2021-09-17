@@ -93,6 +93,7 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 	//限速
 	Session_DLStroage_GetCount(&nListCount);
 	Algorithm_Calculation_SleepFlow(xhLimit, &nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, nListCount, 4096);
+	//WINDOWS下sleep_for精度可能不准
 	std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
 }
 
