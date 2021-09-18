@@ -117,26 +117,127 @@ BOOL CP2XPProtocol_Packet::P2XPProtocol_Packet_Lan(XENGINE_PROTOCOLHDR* pSt_Prot
         P2XPProtocol_dwErrorCode = ERROR_XENGINE_P2XP_PROTOCOL_PARAMENT;
         return FALSE;
     }
-    Json::Value st_JsonRoot;
-    Json::Value st_JsonArray;
-    for (int i = 0; i < nListCount; i++)
-    {
-        Json::Value st_JsonObject;
-        st_JsonObject["ClientUser"] = (*pppSt_ListClients)[i]->tszUserName;
-        st_JsonObject["ClientAddr"] = (*pppSt_ListClients)[i]->tszPrivateAddr;
-        st_JsonArray.append(st_JsonObject);
-    }
-    st_JsonRoot["nCode"] = 0;
-    st_JsonRoot["lpszMsgBuffer"] = "sucess";
-    st_JsonRoot["ClientArray"] = st_JsonArray;
-    st_JsonRoot["ClientCount"] = nListCount;
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonArray;
+	for (int i = 0; i < nListCount; i++)
+	{
+		Json::Value st_JsonObject;
+		st_JsonObject["ClientUser"] = (*pppSt_ListClients)[i]->tszUserName;
+		st_JsonObject["ClientAddr"] = (*pppSt_ListClients)[i]->tszPrivateAddr;
+		st_JsonArray.append(st_JsonObject);
+	}
+	st_JsonRoot["nCode"] = 0;
+	st_JsonRoot["lpszMsgBuffer"] = "sucess";
+	st_JsonRoot["ClientArray"] = st_JsonArray;
+	st_JsonRoot["ClientCount"] = nListCount;
 
 	pSt_ProtocolHdr->unPacketSize = st_JsonRoot.toStyledString().length();
 
 	*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + st_JsonRoot.toStyledString().length();
 	memcpy(ptszMsgBuffer, pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
 	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), st_JsonRoot.toStyledString().c_str(), pSt_ProtocolHdr->unPacketSize);
-    return TRUE;
+	return TRUE;
+}
+/********************************************************************
+函数名称：P2XPProtocol_Packet_WLan
+函数功能：响应同步局域网所有地址列表
+ 参数.一：pSt_ProtocolHdr
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要打包的协议头
+ 参数.二：pStl_ListClients
+  In/Out：In
+  类型：容器指针
+  可空：N
+  意思：客户端列表
+ 参数.三：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：导出封装好的缓冲区
+ 参数.四：pInt_MsgLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入你的缓冲区大小,输出缓冲区真实大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CP2XPProtocol_Packet::P2XPProtocol_Packet_WLan(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, list<XENGINE_P2XPPEER_PROTOCOL>* pStl_ListClients, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+{
+	P2XPProtocol_IsErrorOccur = FALSE;
+
+	if ((NULL == pStl_ListClients) || (NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		P2XPProtocol_IsErrorOccur = FALSE;
+		P2XPProtocol_dwErrorCode = ERROR_XENGINE_P2XP_PROTOCOL_PARAMENT;
+		return FALSE;
+	}
+	unordered_map<tstring, list<P2XPPROTOCOL_LANPACKET>> stl_MapClient;
+	//首先处理公网下的局域网网段列表
+	for (auto stl_ListIterator = pStl_ListClients->begin(); stl_ListIterator != pStl_ListClients->end(); stl_ListIterator++)
+	{
+		TCHAR tszClientAddr[128];
+		XENGINE_LIBADDR st_LibAddr;
+		P2XPPROTOCOL_LANPACKET st_LANPacket;
+
+		memset(tszClientAddr, '\0', sizeof(tszClientAddr));
+		memset(&st_LibAddr, '\0', sizeof(XENGINE_LIBADDR));
+		memset(&st_LANPacket, '\0', sizeof(P2XPPROTOCOL_LANPACKET));
+		//分割
+		BaseLib_OperatorIPAddr_IsIPV4Addr(stl_ListIterator->tszPrivateAddr, &st_LibAddr);
+		_stprintf(tszClientAddr, _T("%d.%d.%d"), st_LibAddr.nIPAddr1, st_LibAddr.nIPAddr2, st_LibAddr.nIPAddr3);
+		//赋值
+		_tcscpy(st_LANPacket.tszUsername, stl_ListIterator->tszUserName);
+		_tcscpy(st_LANPacket.tszClientAddr, stl_ListIterator->tszPrivateAddr);
+		//判断是否存在
+		unordered_map<tstring, list<P2XPPROTOCOL_LANPACKET>>::iterator stl_MapIterator = stl_MapClient.find(tszClientAddr);
+		if (stl_MapIterator == stl_MapClient.end())
+		{
+			list<P2XPPROTOCOL_LANPACKET> stl_ListClient;
+
+			stl_ListClient.push_back(st_LANPacket);
+			stl_MapClient.insert(make_pair(tszClientAddr, stl_ListClient));
+		}
+		else
+		{
+			stl_MapIterator->second.push_back(st_LANPacket);
+		}
+	}
+	//打包成JSON数据
+	int nCount = 0;
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonArray;
+
+	for (auto stl_MapIterator = stl_MapClient.begin(); stl_MapIterator != stl_MapClient.end(); stl_MapIterator++)
+	{
+		Json::Value st_JsonList;
+		for (auto stl_ListIterator = stl_MapIterator->second.begin(); stl_ListIterator != stl_MapIterator->second.end(); stl_ListIterator++)
+		{
+			Json::Value st_JsonObject;
+
+			nCount++;
+			st_JsonObject["ClientUser"] = stl_ListIterator->tszUsername;
+			st_JsonObject["ClientAddr"] = stl_ListIterator->tszClientAddr;
+			st_JsonList.append(st_JsonObject);
+		}
+		st_JsonArray["tszLANAddr"] = stl_MapIterator->first.c_str();
+		st_JsonArray["tszLANList"] = st_JsonList;
+	}
+	st_JsonRoot["nCode"] = 0;
+	st_JsonRoot["lpszMsgBuffer"] = "sucess";
+	st_JsonRoot["ClientArray"] = st_JsonArray;
+	st_JsonRoot["ClientCount"] = nCount;
+
+	pSt_ProtocolHdr->unPacketSize = st_JsonRoot.toStyledString().length();
+
+	*pInt_MsgLen = sizeof(XENGINE_PROTOCOLHDR) + st_JsonRoot.toStyledString().length();
+	memcpy(ptszMsgBuffer, pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR));
+	memcpy(ptszMsgBuffer + sizeof(XENGINE_PROTOCOLHDR), st_JsonRoot.toStyledString().c_str(), pSt_ProtocolHdr->unPacketSize);
+	return TRUE;
 }
 /********************************************************************
 函数名称：P2XPProtocol_Packet_User

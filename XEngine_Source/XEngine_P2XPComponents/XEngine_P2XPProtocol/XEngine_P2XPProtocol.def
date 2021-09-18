@@ -11,5 +11,6 @@ EXPORTS
 
 	P2XPProtocol_Packet_Common
 	P2XPProtocol_Packet_Lan
+	P2XPProtocol_Packet_WLan
 	P2XPProtocol_Packet_User
 	P2XPProtocol_Packet_Connect

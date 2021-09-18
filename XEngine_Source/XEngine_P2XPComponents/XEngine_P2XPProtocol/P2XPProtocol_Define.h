@@ -185,6 +185,35 @@ extern "C" BOOL P2XPProtocol_Packet_Common(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr
 *********************************************************************/
 extern "C" BOOL P2XPProtocol_Packet_Lan(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL*** pppSt_ListClients, int nListCount, TCHAR* ptszMsgBuffer, int* pInt_Len);
 /********************************************************************
+函数名称：P2XPProtocol_Packet_WLan
+函数功能：响应同步局域网所有地址列表
+ 参数.一：pSt_ProtocolHdr
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要打包的协议头
+ 参数.二：pStl_ListClients
+  In/Out：In
+  类型：容器指针
+  可空：N
+  意思：客户端列表
+ 参数.三：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：导出封装好的缓冲区
+ 参数.四：pInt_MsgLen
+  In/Out：In/Out
+  类型：整数型指针
+  可空：N
+  意思：输入你的缓冲区大小,输出缓冲区真实大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL P2XPProtocol_Packet_WLan(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, list<XENGINE_P2XPPEER_PROTOCOL>* pStl_ListClients, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+/********************************************************************
 函数名称：P2XPProtocol_Packet_User
 函数功能：响应用户查询用户信息的请求协议封包函数
  参数.一：pSt_ProtocolHdr

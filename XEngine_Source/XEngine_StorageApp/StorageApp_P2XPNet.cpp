@@ -127,7 +127,31 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			}
 			else
 			{
+				//公网下所有列表
+				int nListCount = 0;
+				TCHAR** ppszClientList;
+				list<XENGINE_P2XPPEER_PROTOCOL> stl_ListClient;
+				if (P2XPPeer_Manage_GetLList(tszPubAddr, &ppszClientList, &nListCount))
+				{
+					for (int i = 0; i < nListCount; i++)
+					{
+						int nLanCount = 0;
+						XENGINE_P2XPPEER_PROTOCOL** ppSt_ListClients;
 
+						if (P2XPPeer_Manage_GetLan(tszPubAddr, ppszClientList[i], &ppSt_ListClients, &nLanCount))
+						{
+							for (int j = 0; j < nLanCount; j++)
+							{
+								stl_ListClient.push_back(*ppSt_ListClients[j]);
+							}
+							BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListClients, nLanCount);
+						}
+					}
+					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszClientList, nListCount);
+				}
+				P2XPProtocol_Packet_WLan(pSt_ProtocolHdr, &stl_ListClient, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求同步局域网列表成功,公有地址:%s,私有地址:%s"), lpszClientAddr, tszPubAddr, tszPriAddr);
 			}
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REQCONNECT == pSt_ProtocolHdr->unOperatorCode)
@@ -191,6 +215,13 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			P2XPProtocol_Packet_User(pSt_ProtocolHdr, &st_PeerInfo.st_PeerAddr, tszSDBuffer, &nSDLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求查询用户:%s 成功"), lpszClientAddr, tszUserName);
+		}
+		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQQUERY == pSt_ProtocolHdr->unOperatorCode)
+		{
+			TCHAR tszFileHash[MAX_PATH];
+			memset(tszFileHash, '\0', MAX_PATH);
+
+			XStorageProtocol_Core_REQQueryFile(lpszMsgBuffer, NULL, NULL, NULL, tszFileHash);
 		}
 		else
 		{

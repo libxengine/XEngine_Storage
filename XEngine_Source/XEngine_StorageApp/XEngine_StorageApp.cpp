@@ -15,10 +15,10 @@ XNETHANDLE xhNetP2xp = 0;
 
 XNETHANDLE xhUPPool = 0;
 XNETHANDLE xhDLPool = 0;
-XNETHANDLE xhSDPool = 0;
 XNETHANDLE xhCTPool = 0;
 XNETHANDLE xhP2XPPool = 0;
 
+XHANDLE xhLimit = NULL;
 XHANDLE xhUPHttp = NULL;
 XHANDLE xhDLHttp = NULL;
 XHANDLE xhCenterHttp = NULL;
@@ -54,10 +54,10 @@ void ServiceApp_Stop(int signo)
 
 		ManagePool_Thread_NQDestroy(xhUPPool);
 		ManagePool_Thread_NQDestroy(xhDLPool);
-		ManagePool_Thread_NQDestroy(xhSDPool);
 		ManagePool_Thread_NQDestroy(xhCTPool);
 		ManagePool_Thread_NQDestroy(xhP2XPPool);
 
+		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
 
 		Session_User_Destory();
@@ -107,7 +107,7 @@ static int ServiceApp_Deamon(int wait)
 
 int main(int argc, char** argv)
 {
-#if (XENGINE_VERSION_KERNEL < 7) && (XENGINE_VERSION_MAIN < 19)
+#if (XENGINE_VERSION_KERNEL < 7) && (XENGINE_VERSION_MAIN < 21)
 	printf("XEngine版本过低,无法继续\n");
 #endif
 #ifdef _WINDOWS
@@ -121,7 +121,6 @@ int main(int argc, char** argv)
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListUPThread;
 	THREADPOOL_PARAMENT** ppSt_ListDLThread;
-	THREADPOOL_PARAMENT** ppSt_ListSDThread;
 	THREADPOOL_PARAMENT** ppSt_ListCTThread;
 	THREADPOOL_PARAMENT** ppSt_ListP2xpThread;
 
@@ -167,6 +166,14 @@ int main(int argc, char** argv)
 	signal(SIGTERM, ServiceApp_Stop);
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化服务器信号管理成功"));
+
+	xhLimit = Algorithm_Calculation_Create();
+	if (NULL == xhLimit)
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，创建流量限速对象模式失败,错误:%lX"), Algorithm_GetLastError());
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，创建流量限速对象模式成功"));
 
 	if (!NetXApi_Address_OpenQQWry(st_ServiceCfg.st_P2xp.tszQQWryFile))
 	{
@@ -268,12 +275,12 @@ int main(int argc, char** argv)
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动用户管理服务成功"));
-	if (!Session_DLStroage_Init(st_ServiceCfg.st_XMax.nStorageDLThread, st_ServiceCfg.st_XLimit.nDLTry, st_ServiceCfg.st_XLimit.nDLError))
+	if (!Session_DLStroage_Init(st_ServiceCfg.st_XLimit.nDLTry))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
 		goto XENGINE_EXITAPP;
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功"));
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载错误重试次数:%d"), st_ServiceCfg.st_XLimit.nDLTry);
 	if (!Session_UPStroage_Init())
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传会话服务失败，错误：%lX"), Session_GetLastError());
@@ -318,7 +325,6 @@ int main(int argc, char** argv)
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册P2XP网络服务事件成功！"));
 
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread, sizeof(THREADPOOL_PARAMENT));
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListSDThread, st_ServiceCfg.st_XMax.nStorageDLThread, sizeof(THREADPOOL_PARAMENT));
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageUPThread, sizeof(THREADPOOL_PARAMENT));
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread, sizeof(THREADPOOL_PARAMENT));
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListP2xpThread, st_ServiceCfg.st_XMax.nP2XPThread, sizeof(THREADPOOL_PARAMENT));
@@ -329,9 +335,6 @@ int main(int argc, char** argv)
 
 		ppSt_ListDLThread[i]->lParam = pInt_Pos;
 		ppSt_ListDLThread[i]->fpCall_ThreadsTask = XEngine_Download_HTTPThread;
-
-		ppSt_ListSDThread[i]->lParam = pInt_Pos;
-		ppSt_ListSDThread[i]->fpCall_ThreadsTask = XEngine_Download_SendThread;
 	}
 	if (!ManagePool_Thread_NQCreate(&xhDLPool, &ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread))
 	{
@@ -339,12 +342,6 @@ int main(int argc, char** argv)
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动HTTP下载任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
-	if (!ManagePool_Thread_NQCreate(&xhSDPool, &ppSt_ListSDThread, st_ServiceCfg.st_XMax.nStorageDLThread))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动下载任务线程池失败，错误：%d"), errno);
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载任务线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
 
 	for (int i = 0; i < st_ServiceCfg.st_XMax.nStorageUPThread; i++)
 	{
@@ -444,10 +441,10 @@ XENGINE_EXITAPP:
 
 		ManagePool_Thread_NQDestroy(xhUPPool);
 		ManagePool_Thread_NQDestroy(xhDLPool);
-		ManagePool_Thread_NQDestroy(xhSDPool);
 		ManagePool_Thread_NQDestroy(xhCTPool);
 		ManagePool_Thread_NQDestroy(xhP2XPPool);
 
+		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
 
 		Session_User_Destory();
