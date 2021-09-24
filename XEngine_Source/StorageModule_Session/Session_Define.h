@@ -255,12 +255,17 @@ extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr);
 /********************************************************************
 函数名称：Session_UPStroage_Init
 函数功能：初始化上传会话管理器
+ 参数.一：bUPResume
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用断点上传
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Init();
+extern "C" BOOL Session_UPStroage_Init(BOOL bUPResume = FALSE);
 /********************************************************************
 函数名称：Session_UPStroage_Destory
 函数功能：销毁下载管理器

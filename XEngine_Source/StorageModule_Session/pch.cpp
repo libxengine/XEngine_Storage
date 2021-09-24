@@ -84,9 +84,9 @@ extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 {
 	return m_DLStorage.Session_DLStroage_Delete(lpszClientAddr);
 }
-extern "C" BOOL Session_UPStroage_Init()
+extern "C" BOOL Session_UPStroage_Init(BOOL bUPResume)
 {
-	return m_UPStorage.Session_UPStroage_Init();
+	return m_UPStorage.Session_UPStroage_Init(bUPResume);
 }
 extern "C" BOOL Session_UPStroage_Destory()
 {

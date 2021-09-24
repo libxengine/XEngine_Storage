@@ -23,15 +23,21 @@ CSession_UPStroage::~CSession_UPStroage()
 /********************************************************************
 函数名称：Session_UPStroage_Init
 函数功能：初始化上传会话管理器
+ 参数.一：bUPResume
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用断点上传
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Init()
+BOOL CSession_UPStroage::Session_UPStroage_Init(BOOL bUPResume)
 {
 	Session_IsErrorOccur = FALSE;
 
+	m_bResume = bUPResume;
 	return TRUE;
 }
 /********************************************************************
@@ -122,7 +128,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	_tcscpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
 	_tcscpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
 	//填充下载信息
-	st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("wb"));
+	st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("ab+"));
 	if (NULL == st_Client.st_StorageInfo.pSt_File)
 	{
 		Session_IsErrorOccur = TRUE;
@@ -146,21 +152,26 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
   类型：常量字符指针
   可空：N
   意思：输入要操作的客户端
- 参数.二：pbComplete
+ 参数.二：pbUPComplete
   In/Out：Out
   类型：逻辑型指针
   可空：N
-  意思：输出是否完成
+  意思：上传是否完成
+ 参数.三：pbFileComplete
+  In/Out：Out
+  类型：逻辑型指针
+  可空：N
+  意思：文件是否完成,某些断点续传的文件可能需要此参数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL* pbComplete)
+BOOL CSession_UPStroage::Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL* pbUPComplete, BOOL* pbFileComplete)
 {
 	Session_IsErrorOccur = FALSE;
 
-	if ((NULL == lpszClientAddr) || (NULL == pbComplete))
+	if ((NULL == lpszClientAddr) || (NULL == pbUPComplete))
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
@@ -178,12 +189,13 @@ BOOL CSession_UPStroage::Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, B
 	}
 	if (stl_MapIterator->second.st_StorageInfo.ullRWLen >= stl_MapIterator->second.st_StorageInfo.ullRWCount)
 	{
-		*pbComplete = TRUE;
+		*pbUPComplete = TRUE;
 	}
 	else
 	{
-		*pbComplete = FALSE;
+		*pbUPComplete = FALSE;
 	}
+
 	st_Locker.unlock_shared();
 	return TRUE;
 }
@@ -394,6 +406,15 @@ BOOL CSession_UPStroage::Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 	if (stl_MapIterator != stl_MapStroage.end())
 	{
 		fclose(stl_MapIterator->second.st_StorageInfo.pSt_File);
+
+		struct __stat64 st_FStat;
+		memset(&st_FStat, '\0', sizeof(struct __stat64));
+		_stat64(stl_MapIterator->second.st_StorageInfo.tszFileDir, &st_FStat);
+		//大小是否足够
+		if ((stl_MapIterator->second.st_StorageInfo.ullCount != st_FStat.st_size) && !m_bResume)
+		{
+			_tremove(stl_MapIterator->second.st_StorageInfo.tszFileDir);
+		}
 		stl_MapStroage.erase(stl_MapIterator);
 	}
 	st_Locker.unlock();
