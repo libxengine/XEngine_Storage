@@ -98,11 +98,13 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	{
 		int nPosStart = 0;
 		int nPosEnd = 0;
-		XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER);
+		__int64x nPosCount = 0;
+
+		XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, &nPosCount, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER);
 		RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 
 		_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
-		if (!Session_UPStroage_Insert(lpszClientAddr, tszFileDir, nRVCount, nRVCount, nPosStart, nPosEnd))
+		if (!Session_UPStroage_Insert(lpszClientAddr, tszFileDir, nPosCount, nRVCount, nPosStart, nPosEnd))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 404;
@@ -184,10 +186,13 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			}
 			else
 			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 200;
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d,数据库没有启用,不插入数据库"), lpszClientAddr, tszFileDir, nRVCount);
 			}
 		}
-		Session_UPStroage_Delete(lpszClientAddr);
 	}
 	else
 	{

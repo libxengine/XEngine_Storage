@@ -153,7 +153,8 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	BOOL bRange = FALSE;
 	int nPosStart = 0;
 	int nPosEnd = 0;
-	if (XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPDOWNLOAD))
+	__int64x nPosCount = 0;
+	if (XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, &nPosCount, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPDOWNLOAD))
 	{
 		bRange = TRUE;
 	}

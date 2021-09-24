@@ -106,7 +106,7 @@ BOOL XEngine_APPHelp_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszMethod, LPCTS
 	}
 	return TRUE;
 }
-BOOL XEngine_APPHelp_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt_EPos, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
+BOOL XEngine_APPHelp_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt_EPos, __int64x* pInt_Count, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
 {
 	LPCTSTR lpszRange = _T("Range");
 	LPCTSTR lpszClientType;
@@ -147,9 +147,25 @@ BOOL XEngine_APPHelp_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("%s:%s,请求内容有范围信息,但是解析失败,内容:%s"), lpszClientType, lpszClientAddr, tszRangeStr);
 		return FALSE;
 	}
-	*pInt_SPos = _ttoi(tszKeyStr);
-	*pInt_EPos = _ttoi(tszValueStr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,客户端的请求设置了数据范围:%s - %s"), lpszClientType, lpszClientAddr, tszKeyStr, tszValueStr);
+	//得到 1/2 如果有的话
+	TCHAR tszRangeEnd[128];
+	TCHAR tszRangeCount[128];
+
+	memset(tszRangeEnd, '\0', sizeof(tszRangeEnd));
+	memset(tszRangeCount, '\0', sizeof(tszRangeCount));
+	if (BaseLib_OperatorString_GetWithChar(tszValueStr, tszRangeEnd, tszRangeCount, '/'))
+	{
+		*pInt_SPos = _ttoi(tszKeyStr);
+		*pInt_EPos = _ttoi(tszRangeEnd);
+		*pInt_Count = _ttoi64(tszRangeCount);
+	}
+	else
+	{
+		*pInt_SPos = _ttoi(tszKeyStr);
+		*pInt_EPos = _ttoi(tszValueStr);
+	}
+
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,客户端的请求设置了数据范围:%d - %d/%lld"), lpszClientType, lpszClientAddr, *pInt_SPos, *pInt_EPos, *pInt_Count);
 	return TRUE;
 }
 BOOL XEngine_APPHelp_VerHash(LPCTSTR lpszClientAddr ,LPCTSTR lpszFileName, LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount)
