@@ -20,9 +20,9 @@ EXPORTS
 	Session_UPStroage_Init
 	Session_UPStroage_Destory
 	Session_UPStroage_Insert
-	Session_UPStroage_GetComplete
 	Session_UPStroage_GetInfo
 	Session_UPStroage_Write
 	Session_UPStroage_Exist
 	Session_UPStorage_GetAll
 	Session_UPStroage_Delete
+	Session_UPStroage_Close
