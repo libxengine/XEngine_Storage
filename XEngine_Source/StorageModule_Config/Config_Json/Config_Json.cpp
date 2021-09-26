@@ -133,7 +133,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     }
     Json::Value st_JsonXStorage = st_JsonRoot["XStorage"];
     pSt_ServerConfig->st_XStorage.nHashMode = st_JsonXStorage["nHashMode"].asInt();
-    pSt_ServerConfig->st_XStorage.nSendMode = st_JsonXStorage["nSendMode"].asInt();
+    pSt_ServerConfig->st_XStorage.bResumable = st_JsonXStorage["bResumable"].asInt();
     pSt_ServerConfig->st_XStorage.bRename = st_JsonXStorage["bRename"].asInt();
     _tcscpy(pSt_ServerConfig->st_XStorage.tszFileDir, st_JsonXStorage["tszFileDir"].asCString());
 
