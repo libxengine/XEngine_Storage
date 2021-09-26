@@ -156,9 +156,18 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	__int64x nPosCount = 0;
 	if (XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, &nPosCount, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPDOWNLOAD))
 	{
-		bRange = TRUE;
+		//是否启用了断点续传
+		if (st_ServiceCfg.st_XStorage.bResumable)
+		{
+			bRange = TRUE;
+		}
+		else
+		{
+			bRange = FALSE;
+			nPosStart = 0;
+			nPosEnd = 0;
+		}
 	}
-
 	_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
 	if (!Session_DLStroage_Insert(lpszClientAddr, tszFileDir, &ullCount, &ullSize, nPosStart, nPosEnd))
 	{
@@ -193,18 +202,15 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize);
 	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
 	//不能在send之前调用
-	if (2 == st_ServiceCfg.st_XStorage.nSendMode)
+	if (!NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend))
 	{
-		if (!NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend))
-		{
-			st_HDRParam.bIsClose = TRUE;
-			st_HDRParam.nHttpCode = 404;
+		st_HDRParam.bIsClose = TRUE;
+		st_HDRParam.nHttpCode = 404;
 
-			RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,设置回调下载失败,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
-			return FALSE;
-		}
+		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,设置回调下载失败,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
+		return FALSE;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,请求下载文件成功,文件名:%s,总大小:%llu,发送大小:%llu,范围:%d - %d"), lpszClientAddr, tszFileDir, ullCount, ullSize, nPosStart, nPosEnd);
 	return TRUE;
