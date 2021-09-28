@@ -3,15 +3,14 @@ LIBRARY
 EXPORTS
 	XStorageDB_GetLastError
 
-	XStorageSQL_Init
-	XStorageSQL_Destory
-
-	XStorageSQL_File_FileInsert
-	XStorageSQL_File_FileDelete
-	XStorageSQL_File_FileQuery
-	XStorageSQL_File_FileQueryForTable
-	XStorageSQL_File_FileQueryForHash
-	XStorageSQL_File_FileGetCount
+	XStorage_MySql_Init
+	XStorage_MySql_Destory
+	XStorage_MySql_FileInsert
+	XStorage_MySql_FileDelete
+	XStorage_MySql_FileQuery
+	XStorage_MySql_FileQueryForTable
+	XStorage_MySql_FileQueryForHash
+	XStorage_MySql_FileGetCount
 
 	XStorage_SQLite_Init
 	XStorage_SQLite_Destory

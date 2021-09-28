@@ -63,7 +63,7 @@ void ServiceApp_Stop(int signo)
 		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
-		XStorageSQL_Destory();
+		XStorage_MySql_Destory();
 		XStorage_SQLite_Destory();
 
 		if (NULL != pSTDThread)
@@ -219,7 +219,7 @@ int main(int argc, char** argv)
 
 	if (1 == st_ServiceCfg.st_XSql.nSQLType)
 	{
-		if (!XStorageSQL_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql, st_ServiceCfg.st_XTime.nDBMonth))
+		if (!XStorage_MySql_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql, st_ServiceCfg.st_XTime.nDBMonth))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化MYSQL数据库服务失败，错误：%lX"), XStorageDB_GetLastError());
 			goto XENGINE_EXITAPP;
@@ -465,7 +465,7 @@ XENGINE_EXITAPP:
 		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
-		XStorageSQL_Destory();
+		XStorage_MySql_Destory();
 		XStorage_SQLite_Destory();
 
 		if (NULL != pSTDThread)

@@ -13,17 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\XStorageSQL_File">
-      <UniqueIdentifier>{23ba8bc1-07d0-4731-975f-61551f3e2d30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\XStorageSQL_File">
-      <UniqueIdentifier>{b46e9df3-d213-4733-9ef0-b0322a8d8d01}</UniqueIdentifier>
-    </Filter>
     <Filter Include="头文件\XStorage_SQLite">
       <UniqueIdentifier>{f92a7d20-6347-4bf9-88a9-951d86f7c916}</UniqueIdentifier>
     </Filter>
     <Filter Include="源文件\XStorage_SQLite">
       <UniqueIdentifier>{f77185f0-e584-48c9-9d37-cd3400aaf4ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\XStorage_MySql">
+      <UniqueIdentifier>{23ba8bc1-07d0-4731-975f-61551f3e2d30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\XStorage_MySql">
+      <UniqueIdentifier>{b46e9df3-d213-4733-9ef0-b0322a8d8d01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -39,11 +39,11 @@
     <ClInclude Include="SQLPacket_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="XStorageSQL_File\XStorageSQL_File.h">
-      <Filter>头文件\XStorageSQL_File</Filter>
-    </ClInclude>
     <ClInclude Include="XStorage_SQLite\XStorage_SQLite.h">
       <Filter>头文件\XStorage_SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="XStorage_MySql\XStorage_MySql.h">
+      <Filter>头文件\XStorage_MySql</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -53,11 +53,11 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="XStorageSQL_File\XStorageSQL_File.cpp">
-      <Filter>源文件\XStorageSQL_File</Filter>
-    </ClCompile>
     <ClCompile Include="XStorage_SQLite\XStorage_SQLite.cpp">
       <Filter>源文件\XStorage_SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="XStorage_MySql\XStorage_MySql.cpp">
+      <Filter>源文件\XStorage_MySql</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

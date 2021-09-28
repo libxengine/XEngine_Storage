@@ -66,7 +66,7 @@ BOOL XEngine_Task_Event(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lps
 			BOOL bRet = FALSE;
 			if (1 == st_ServiceCfg.st_XSql.nSQLType)
 			{
-				bRet = XStorageSQL_File_FileInsert(&st_DBFile);
+				bRet = XStorage_MySql_FileInsert(&st_DBFile);
 			}
 			else
 			{
