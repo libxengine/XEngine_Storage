@@ -155,7 +155,6 @@ BOOL CXStorageSQL_File::XStorageSQL_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBF
         XStorage_dwErrorCode = DataBase_GetLastError();
         return FALSE;
     }
-    XStorageSQL_Info_UPCount(pSt_DBFile->st_ProtocolFile.nFileSize);
     return TRUE;
 }
 /********************************************************************
@@ -211,7 +210,6 @@ BOOL CXStorageSQL_File::XStorageSQL_File_FileDelete(LPCTSTR lpszFile, LPCTSTR lp
             XStorage_dwErrorCode = DataBase_GetLastError();
             return FALSE;
         }
-        XStorageSQL_Info_UPCount(ppSt_ListFile[i]->st_ProtocolFile.nFileSize, FALSE);
     }
 
     return TRUE;

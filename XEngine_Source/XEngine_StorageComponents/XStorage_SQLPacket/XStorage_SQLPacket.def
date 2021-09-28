@@ -2,6 +2,7 @@ LIBRARY
 
 EXPORTS
 	XStorageDB_GetLastError
+
 	XStorageSQL_Init
 	XStorageSQL_Destory
 
@@ -11,14 +12,6 @@ EXPORTS
 	XStorageSQL_File_FileQueryForTable
 	XStorageSQL_File_FileQueryForHash
 	XStorageSQL_File_FileGetCount
-
-	XStorageSQL_Info_UserInsert
-	XStorageSQL_Info_UserDelete
-	XStorageSQL_Info_UserQuery
-	XStorageSQL_Info_UserDBFileSet
-	XStorageSQL_Info_UserQueryForToken
-	XStorageSQL_Info_UserSet
-	XStorageSQL_Info_UPCount
 
 	XStorage_SQLite_Init
 	XStorage_SQLite_Destory
