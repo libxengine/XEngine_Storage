@@ -152,7 +152,6 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,总大小:%lld,写入大小:%lld,文件不完整,需要等待断点续传完毕"), lpszClientAddr, tszFileDir, st_StorageInfo.ullCount, st_StorageInfo.ullFSize);
 			return TRUE;
 		}
-
 		int nHashLen = 0;
 		UCHAR tszHashStr[MAX_PATH];
 		XSTORAGECORE_DBFILE st_ProtocolFile;
