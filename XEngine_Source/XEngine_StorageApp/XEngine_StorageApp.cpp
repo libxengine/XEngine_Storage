@@ -63,7 +63,7 @@ void ServiceApp_Stop(int signo)
 		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
-		XStorageSQL_Destory();
+		XStorage_MySql_Destory();
 		XStorage_SQLite_Destory();
 
 		if (NULL != pSTDThread)
@@ -219,7 +219,7 @@ int main(int argc, char** argv)
 
 	if (1 == st_ServiceCfg.st_XSql.nSQLType)
 	{
-		if (!XStorageSQL_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql, st_ServiceCfg.st_XTime.nDBMonth))
+		if (!XStorage_MySql_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql, st_ServiceCfg.st_XTime.nDBMonth))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化MYSQL数据库服务失败，错误：%lX"), XStorageDB_GetLastError());
 			goto XENGINE_EXITAPP;
@@ -240,175 +240,190 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，数据库被设置为不启用"));
 	}
 
-	xhDLHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageDLThread);
-	if (NULL == xhDLHttp)
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化HTTP下载服务失败，错误：%lX"), HttpServer_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP下载服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
-	xhUPHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageUPThread);
-	if (NULL == xhDLHttp)
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化HTTP上传服务失败，错误：%lX"), HttpServer_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP上传服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageUPThread);
-	xhCenterHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nCenterThread);
-	if (NULL == xhCenterHttp)
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化HTTP业务服务失败，错误：%lX"), HttpServer_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP业务服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
-
-	if (!HelpComponents_Datas_Init(&xhP2XPPacket, st_ServiceCfg.st_XMax.nMaxQueue, 0, st_ServiceCfg.st_XMax.nP2XPThread))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化P2XP包管理器失败，错误：%lX"), Packets_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP组包器成功"));
-
 	if (!Session_User_Init(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszUserList))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动用户管理服务失败，错误：%lX"), Session_GetLastError());
 		goto XENGINE_EXITAPP;
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动用户管理服务成功"));
-	if (!Session_DLStroage_Init(st_ServiceCfg.st_XLimit.nDLTry))
+	//启动下载服务
+	if (st_ServiceCfg.nStorageDLPort > 0)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载错误重试次数:%d"), st_ServiceCfg.st_XLimit.nDLTry);
-	if (!Session_UPStroage_Init())
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传会话服务失败，错误：%lX"), Session_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传会话服务成功"));
-
-	if (!NetCore_TCPXCore_StartEx(&xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载存储网络服务失败,端口:%d，错误：%lX,%d"), st_ServiceCfg.nStorageDLPort, NetCore_GetLastError(), errno);
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nIOThread);
-	NetCore_TCPXCore_RegisterCallBackEx(xhNetDownload, XEngine_Callback_DownloadLogin, XEngine_Callback_DownloadRecv, XEngine_Callback_DownloadLeave);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册下载存储网络服务事件成功！"));
-
-	if (!NetCore_TCPXCore_StartEx(&xhNetUPLoader, st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nStorageUPPort, NetCore_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetUPLoader, st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nIOThread);
-	NetCore_TCPXCore_RegisterCallBackEx(xhNetUPLoader, XEngine_Callback_UPLoaderLogin, XEngine_Callback_UPLoaderRecv, XEngine_Callback_UPLoaderLeave);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册上传存储网络服务事件成功！"));
-
-	if (!NetCore_TCPXCore_StartEx(&xhNetCenter, st_ServiceCfg.nCenterPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动业务控制存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nCenterPort, NetCore_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动业务控制存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetCenter, st_ServiceCfg.nCenterPort, st_ServiceCfg.st_XMax.nIOThread);
-	NetCore_TCPXCore_RegisterCallBackEx(xhNetCenter, XEngine_Callback_CenterLogin, XEngine_Callback_CenterRecv, XEngine_Callback_CenterLeave);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册业务控制存储存储网络服务事件成功！"));
-
-	if (!NetCore_TCPXCore_StartEx(&xhNetP2xp, st_ServiceCfg.nP2XPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nP2XPThread, FALSE, st_ServiceCfg.bReuseraddr))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动P2XP网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nP2XPPort, NetCore_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetP2xp, st_ServiceCfg.nP2XPPort, st_ServiceCfg.st_XMax.nP2XPThread);
-	NetCore_TCPXCore_RegisterCallBackEx(xhNetP2xp, XEngine_Callback_P2xpLogin, XEngine_Callback_P2xpRecv, XEngine_Callback_P2xpLeave);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册P2XP网络服务事件成功！"));
-
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread, sizeof(THREADPOOL_PARAMENT));
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageUPThread, sizeof(THREADPOOL_PARAMENT));
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread, sizeof(THREADPOOL_PARAMENT));
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListP2xpThread, st_ServiceCfg.st_XMax.nP2XPThread, sizeof(THREADPOOL_PARAMENT));
-	for (int i = 0; i < st_ServiceCfg.st_XMax.nStorageDLThread; i++)
-	{
-		int* pInt_Pos = new int;
-		*pInt_Pos = i;
-
-		ppSt_ListDLThread[i]->lParam = pInt_Pos;
-		ppSt_ListDLThread[i]->fpCall_ThreadsTask = XEngine_Download_HTTPThread;
-	}
-	if (!ManagePool_Thread_NQCreate(&xhDLPool, &ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP下载处理线程池失败，错误：%d"), errno);
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动HTTP下载任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
-
-	for (int i = 0; i < st_ServiceCfg.st_XMax.nStorageUPThread; i++)
-	{
-		int* pInt_Pos = new int;
-		*pInt_Pos = i;
-
-		ppSt_ListUPThread[i]->lParam = pInt_Pos;
-		ppSt_ListUPThread[i]->fpCall_ThreadsTask = XEngine_UPLoader_HTTPThread;
-	}
-	if (!ManagePool_Thread_NQCreate(&xhUPPool, &ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageDLThread))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP上传处理线程池失败，错误：%d"), errno);
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动HTTP上传任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
-
-	for (int i = 0; i < st_ServiceCfg.st_XMax.nCenterThread; i++)
-	{
-		int* pInt_Pos = new int;
-		*pInt_Pos = i;
-
-		ppSt_ListCTThread[i]->lParam = pInt_Pos;
-		ppSt_ListCTThread[i]->fpCall_ThreadsTask = XEngine_Center_HTTPThread;
-	}
-	if (!ManagePool_Thread_NQCreate(&xhCTPool, &ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP业务处理线程池失败，错误：%d"), errno);
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动HTTP业务任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
-
-	for (int i = 0; i < st_ServiceCfg.st_XMax.nP2XPThread; i++)
-	{
-		int* pInt_Pos = new int;
-		*pInt_Pos = i;
-
-		ppSt_ListP2xpThread[i]->lParam = pInt_Pos;
-		ppSt_ListP2xpThread[i]->fpCall_ThreadsTask = XEngine_P2XP_TCPThread;
-	}
-	if (!ManagePool_Thread_NQCreate(&xhP2XPPool, &ppSt_ListP2xpThread, st_ServiceCfg.st_XMax.nP2XPThread))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2XP处理线程池失败，错误：%d"), errno);
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nP2XPThread);
-
-	if (st_ServiceCfg.st_P2xp.nMode > 0)
-	{
-		if (!NetCore_BroadCast_RecvInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
+		xhDLHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageDLThread);
+		if (NULL == xhDLHttp)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化HTTP下载服务失败，错误：%lX"), HttpServer_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务成功,端口:%d"), st_ServiceCfg.st_P2xp.nRVPort);
-		pSTDThread = make_shared<std::thread>(XEngine_Task_P2PThread);
-		if (!pSTDThread->joinable())
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP下载服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
+
+		if (!Session_DLStroage_Init(st_ServiceCfg.st_XLimit.nDLTry))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务线程失败，错误：%d"), errno);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务线程成功"));
-	}
-	else
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，P2P存储服务配置为不启动"));
-	}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载错误重试次数:%d"), st_ServiceCfg.st_XLimit.nDLTry);
 
+		if (!NetCore_TCPXCore_StartEx(&xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载存储网络服务失败,端口:%d，错误：%lX,%d"), st_ServiceCfg.nStorageDLPort, NetCore_GetLastError(), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nIOThread);
+		NetCore_TCPXCore_RegisterCallBackEx(xhNetDownload, XEngine_Callback_DownloadLogin, XEngine_Callback_DownloadRecv, XEngine_Callback_DownloadLeave);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册下载存储网络服务事件成功！"));
+
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread, sizeof(THREADPOOL_PARAMENT));
+		for (int i = 0; i < st_ServiceCfg.st_XMax.nStorageDLThread; i++)
+		{
+			int* pInt_Pos = new int;
+			*pInt_Pos = i;
+
+			ppSt_ListDLThread[i]->lParam = pInt_Pos;
+			ppSt_ListDLThread[i]->fpCall_ThreadsTask = XEngine_Download_HTTPThread;
+		}
+		if (!ManagePool_Thread_NQCreate(&xhDLPool, &ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP下载处理线程池失败，错误：%d"), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动HTTP下载任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
+	}
+	//启动上传服务
+	if (st_ServiceCfg.nStorageUPPort > 0)
+	{
+		xhUPHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageUPThread);
+		if (NULL == xhDLHttp)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化HTTP上传服务失败，错误：%lX"), HttpServer_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP上传服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageUPThread);
+
+		if (!Session_UPStroage_Init(st_ServiceCfg.st_XStorage.bResumable))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传会话服务失败，错误：%lX"), Session_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传会话服务成功"));
+
+		if (!NetCore_TCPXCore_StartEx(&xhNetUPLoader, st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nStorageUPPort, NetCore_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetUPLoader, st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nIOThread);
+		NetCore_TCPXCore_RegisterCallBackEx(xhNetUPLoader, XEngine_Callback_UPLoaderLogin, XEngine_Callback_UPLoaderRecv, XEngine_Callback_UPLoaderLeave);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册上传存储网络服务事件成功！"));
+
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageUPThread, sizeof(THREADPOOL_PARAMENT));
+		for (int i = 0; i < st_ServiceCfg.st_XMax.nStorageUPThread; i++)
+		{
+			int* pInt_Pos = new int;
+			*pInt_Pos = i;
+
+			ppSt_ListUPThread[i]->lParam = pInt_Pos;
+			ppSt_ListUPThread[i]->fpCall_ThreadsTask = XEngine_UPLoader_HTTPThread;
+		}
+		if (!ManagePool_Thread_NQCreate(&xhUPPool, &ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageDLThread))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP上传处理线程池失败，错误：%d"), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动HTTP上传任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
+	}
+	//启动接口服务
+	if (st_ServiceCfg.nCenterPort > 0)
+	{
+		xhCenterHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nCenterThread);
+		if (NULL == xhCenterHttp)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化HTTP业务服务失败，错误：%lX"), HttpServer_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP业务服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
+
+		if (!NetCore_TCPXCore_StartEx(&xhNetCenter, st_ServiceCfg.nCenterPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动业务控制存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nCenterPort, NetCore_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动业务控制存储网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetCenter, st_ServiceCfg.nCenterPort, st_ServiceCfg.st_XMax.nIOThread);
+		NetCore_TCPXCore_RegisterCallBackEx(xhNetCenter, XEngine_Callback_CenterLogin, XEngine_Callback_CenterRecv, XEngine_Callback_CenterLeave);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册业务控制存储存储网络服务事件成功！"));
+
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread, sizeof(THREADPOOL_PARAMENT));
+		for (int i = 0; i < st_ServiceCfg.st_XMax.nCenterThread; i++)
+		{
+			int* pInt_Pos = new int;
+			*pInt_Pos = i;
+
+			ppSt_ListCTThread[i]->lParam = pInt_Pos;
+			ppSt_ListCTThread[i]->fpCall_ThreadsTask = XEngine_Center_HTTPThread;
+		}
+		if (!ManagePool_Thread_NQCreate(&xhCTPool, &ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP业务处理线程池失败，错误：%d"), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动HTTP业务任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
+	}
+	//启动P2P服务
+	if (st_ServiceCfg.nP2XPPort > 0)
+	{
+		if (!HelpComponents_Datas_Init(&xhP2XPPacket, st_ServiceCfg.st_XMax.nMaxQueue, 0, st_ServiceCfg.st_XMax.nP2XPThread))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化P2XP包管理器失败，错误：%lX"), Packets_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP组包器成功"));
+
+		if (!NetCore_TCPXCore_StartEx(&xhNetP2xp, st_ServiceCfg.nP2XPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nP2XPThread, FALSE, st_ServiceCfg.bReuseraddr))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动P2XP网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nP2XPPort, NetCore_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetP2xp, st_ServiceCfg.nP2XPPort, st_ServiceCfg.st_XMax.nP2XPThread);
+		NetCore_TCPXCore_RegisterCallBackEx(xhNetP2xp, XEngine_Callback_P2xpLogin, XEngine_Callback_P2xpRecv, XEngine_Callback_P2xpLeave);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册P2XP网络服务事件成功！"));
+
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListP2xpThread, st_ServiceCfg.st_XMax.nP2XPThread, sizeof(THREADPOOL_PARAMENT));
+		for (int i = 0; i < st_ServiceCfg.st_XMax.nP2XPThread; i++)
+		{
+			int* pInt_Pos = new int;
+			*pInt_Pos = i;
+
+			ppSt_ListP2xpThread[i]->lParam = pInt_Pos;
+			ppSt_ListP2xpThread[i]->fpCall_ThreadsTask = XEngine_P2XP_TCPThread;
+		}
+		if (!ManagePool_Thread_NQCreate(&xhP2XPPool, &ppSt_ListP2xpThread, st_ServiceCfg.st_XMax.nP2XPThread))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2XP处理线程池失败，错误：%d"), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nP2XPThread);
+
+		if (st_ServiceCfg.st_P2xp.nMode > 0)
+		{
+			if (!NetCore_BroadCast_RecvInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
+				goto XENGINE_EXITAPP;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务成功,端口:%d"), st_ServiceCfg.st_P2xp.nRVPort);
+			pSTDThread = make_shared<std::thread>(XEngine_Task_P2PThread);
+			if (!pSTDThread->joinable())
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务线程失败，错误：%d"), errno);
+				goto XENGINE_EXITAPP;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务线程成功"));
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，P2P存储服务配置为不启动"));
+		}
+	}
 	m_StrVersion = st_ServiceCfg.st_XVer.pStl_ListStorage->front();
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), m_StrVersion.c_str());
 
@@ -450,7 +465,7 @@ XENGINE_EXITAPP:
 		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
-		XStorageSQL_Destory();
+		XStorage_MySql_Destory();
 		XStorage_SQLite_Destory();
 
 		if (NULL != pSTDThread)

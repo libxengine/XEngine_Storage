@@ -84,9 +84,9 @@ extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 {
 	return m_DLStorage.Session_DLStroage_Delete(lpszClientAddr);
 }
-extern "C" BOOL Session_UPStroage_Init()
+extern "C" BOOL Session_UPStroage_Init(BOOL bUPResume)
 {
-	return m_UPStorage.Session_UPStroage_Init();
+	return m_UPStorage.Session_UPStroage_Init(bUPResume);
 }
 extern "C" BOOL Session_UPStroage_Destory()
 {
@@ -95,10 +95,6 @@ extern "C" BOOL Session_UPStroage_Destory()
 extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart, int nPostEnd)
 {
 	return m_UPStorage.Session_UPStroage_Insert(lpszClientAddr, lpszFileDir, nFileSize, nLeftCount, nPosStart, nPostEnd);
-}
-extern "C" BOOL Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL * pbComplete)
-{
-	return m_UPStorage.Session_UPStroage_GetComplete(lpszClientAddr, pbComplete);
 }
 extern "C" BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO * pSt_StorageInfo)
 {
@@ -119,4 +115,8 @@ extern "C" BOOL Session_UPStorage_GetAll(SESSION_STORAGEINFO * **pppSt_StorageIn
 extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 {
 	return m_UPStorage.Session_UPStroage_Delete(lpszClientAddr);
+}
+extern "C" BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr)
+{
+	return m_UPStorage.Session_UPStroage_Close(lpszClientAddr);
 }

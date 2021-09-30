@@ -56,7 +56,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			{
 				if (1 == st_ServiceCfg.st_XSql.nSQLType)
 				{
-					XStorageSQL_File_FileInsert(ppSt_DBFile[i]);
+					XStorage_MySql_FileInsert(ppSt_DBFile[i]);
 				}
 				else
 				{
@@ -85,7 +85,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 					XSTORAGECORE_DBFILE** ppSt_DBQuery;
 					if (1 == st_ServiceCfg.st_XSql.nSQLType)
 					{
-						XStorageSQL_File_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, NULL, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
+						XStorage_MySql_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, NULL, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
 						//删除数据库与文件
 						for (int i = 0; i < nQueryCount; i++)
 						{
@@ -93,7 +93,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 							memset(tszFilePath, '\0', sizeof(tszFilePath));
 
 							_stprintf(tszFilePath, _T("%s/%s"), ppSt_DBQuery[i]->st_ProtocolFile.tszFilePath, ppSt_DBQuery[i]->st_ProtocolFile.tszFileName);
-							XStorageSQL_File_FileDelete(NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
+							XStorage_MySql_FileDelete(NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
 						}
 					}
 					else
@@ -128,7 +128,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 					_stprintf(tszFileDir, _T("%s/%s"), ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
 					if (1 == st_ServiceCfg.st_XSql.nSQLType)
 					{
-						XStorageSQL_File_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, tszFileDir);
+						XStorage_MySql_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, tszFileDir);
 						//删除数据库与文件
 						for (int i = 0; i < nQueryCount; i++)
 						{
@@ -136,7 +136,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 							memset(tszFilePath, '\0', sizeof(tszFilePath));
 
 							_stprintf(tszFilePath, _T("%s/%s"), ppSt_DBQuery[i]->st_ProtocolFile.tszFilePath, ppSt_DBQuery[i]->st_ProtocolFile.tszFileName);
-							XStorageSQL_File_FileDelete(NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
+							XStorage_MySql_FileDelete(NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
 						}
 					}
 					else
@@ -197,7 +197,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		{
 			if (1 == st_ServiceCfg.st_XSql.nSQLType)
 			{
-				XStorageSQL_File_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
+				XStorage_MySql_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
 			}
 			else
 			{

@@ -36,10 +36,10 @@
     "SQLPass": "123123Ruiyue"
   },
   "XStorage": {
-    "nSendMode": 2,
+    "bResumable": 1,
     "nHashMode": 2,
     "bRename": 0,
-    "tszFileDir": "/home/ubuntu/桌面/XEngine_Storage/XEngine_Source/Debug/XEngine_File"
+    "tszFileDir": "./XEngine_File"
   },
   "XProxy": {
     "XProxyAuth": {
@@ -68,7 +68,8 @@
   },
   "XVer": {
     "StorageVersion": [
-      "2.4.0.1001 Build20210917",
+      "2.5.0.1001 Build20210930",
+      "2.4.0.1001 Build20210918",
       "2.3.0.1001 Build20210903",
       "2.2.0.1001 Build20210820",
       "2.1.0.1001 Build20210805",

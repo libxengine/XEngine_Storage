@@ -94,15 +94,30 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	int nRVMode = 0;
 	int nRVCount = 0;
 	int nHDSize = 0;
+	_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
+
 	if (!Session_UPStroage_Exist(lpszClientAddr))
 	{
 		int nPosStart = 0;
 		int nPosEnd = 0;
-		XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER);
-		RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
+		__int64x nPosCount = 0;
 
-		_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
-		if (!Session_UPStroage_Insert(lpszClientAddr, tszFileDir, nRVCount, nRVCount, nPosStart, nPosEnd))
+		if (XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, &nPosCount, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER))
+		{
+			//是否启用了断点续传
+			if (!st_ServiceCfg.st_XStorage.bResumable)
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 416;
+
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求断点续传上传文件失败,服务端关闭了此功能,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
+				return FALSE;
+			}
+		}
+		RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
+		if (!Session_UPStroage_Insert(lpszClientAddr, tszFileDir, nPosCount, nRVCount, nPosStart, nPosEnd))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 404;
@@ -122,6 +137,21 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 	if (nHDSize >= nRVCount)
 	{
+		SESSION_STORAGEINFO st_StorageInfo;
+		memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
+
+		Session_UPStroage_Close(lpszClientAddr);
+		Session_UPStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
+		//大小是否足够
+		if (st_StorageInfo.ullCount != st_StorageInfo.ullFSize)
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 200;
+			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,总大小:%lld,写入大小:%lld,文件不完整,需要等待断点续传完毕"), lpszClientAddr, tszFileDir, st_StorageInfo.ullCount, st_StorageInfo.ullFSize);
+			return TRUE;
+		}
 		int nHashLen = 0;
 		UCHAR tszHashStr[MAX_PATH];
 		XSTORAGECORE_DBFILE st_ProtocolFile;
@@ -144,7 +174,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 				BOOL bRet = FALSE;
 				if (1 == st_ServiceCfg.st_XSql.nSQLType)
 				{
-					bRet = XStorageSQL_File_FileInsert(&st_ProtocolFile);
+					bRet = XStorage_MySql_FileInsert(&st_ProtocolFile);
 				}
 				else
 				{
@@ -184,10 +214,13 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			}
 			else
 			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 200;
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d,数据库没有启用,不插入数据库"), lpszClientAddr, tszFileDir, nRVCount);
 			}
 		}
-		Session_UPStroage_Delete(lpszClientAddr);
 	}
 	else
 	{

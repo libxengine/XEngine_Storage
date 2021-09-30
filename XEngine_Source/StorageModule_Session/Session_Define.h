@@ -20,6 +20,7 @@ typedef struct
 	__int64x ullCount;                                                    //总大小
 	__int64x ullRWCount;                                                  //读取(写入)总大小
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
+	__int64x ullFSize;                                                    //文件真实大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
 	int nErrorTime;                                                       //错误次数
@@ -255,12 +256,17 @@ extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr);
 /********************************************************************
 函数名称：Session_UPStroage_Init
 函数功能：初始化上传会话管理器
+ 参数.一：bUPResume
+  In/Out：In
+  类型：逻辑型
+  可空：Y
+  意思：是否启用断点上传
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Init();
+extern "C" BOOL Session_UPStroage_Init(BOOL bUPResume = FALSE);
 /********************************************************************
 函数名称：Session_UPStroage_Destory
 函数功能：销毁下载管理器
@@ -309,25 +315,6 @@ extern "C" BOOL Session_UPStroage_Destory();
 备注：
 *********************************************************************/
 extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart = 0, int nPostEnd = 0);
-/********************************************************************
-函数名称：Session_UPStroage_GetComplete
-函数功能：接受的数据是否完毕
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要操作的客户端
- 参数.二：pbComplete
-  In/Out：Out
-  类型：逻辑型指针
-  可空：N
-  意思：输出是否完成
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Session_UPStroage_GetComplete(LPCTSTR lpszClientAddr, BOOL* pbComplete);
 /********************************************************************
 函数名称：Session_UPStroage_GetInfo
 函数功能：获取上传客户端信息
@@ -418,3 +405,17 @@ extern "C" BOOL Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInf
 备注：
 *********************************************************************/
 extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr);
+/********************************************************************
+函数名称：Session_UPStroage_Close
+函数功能：关闭读写文件句柄
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要关闭的客户端会话
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr);

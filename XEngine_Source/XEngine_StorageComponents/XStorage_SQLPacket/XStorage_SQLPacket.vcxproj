@@ -170,8 +170,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="SQLPacket_Define.h" />
     <ClInclude Include="SQLPacket_Error.h" />
-    <ClInclude Include="XStorageSQL_File\XStorageSQL_File.h" />
-    <ClInclude Include="XStorageSQL_Info\XStorageSQL_Info.h" />
+    <ClInclude Include="XStorage_MySql\XStorage_MySql.h" />
     <ClInclude Include="XStorage_SQLite\XStorage_SQLite.h" />
   </ItemGroup>
   <ItemGroup>
@@ -182,8 +181,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="XStorageSQL_File\XStorageSQL_File.cpp" />
-    <ClCompile Include="XStorageSQL_Info\XStorageSQL_Info.cpp" />
+    <ClCompile Include="XStorage_MySql\XStorage_MySql.cpp" />
     <ClCompile Include="XStorage_SQLite\XStorage_SQLite.cpp" />
   </ItemGroup>
   <ItemGroup>

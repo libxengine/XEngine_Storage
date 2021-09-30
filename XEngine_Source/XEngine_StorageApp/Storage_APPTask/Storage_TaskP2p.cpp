@@ -31,7 +31,7 @@ XHTHREAD XEngine_Task_P2PThread()
 					XSTORAGECORE_DBFILE** pppSt_ListFile;
 					if (1 == st_ServiceCfg.st_XSql.nSQLType)
 					{
-						XStorageSQL_File_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
+						XStorage_MySql_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
 					}
 					else
 					{
@@ -76,7 +76,7 @@ BOOL XEngine_Task_P2PGet(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPON
 		XSTORAGECORE_DBFILE** pppSt_ListFile;
 		if (1 == st_ServiceCfg.st_XSql.nSQLType)
 		{
-			XStorageSQL_File_FileQuery(&pppSt_ListFile, &nListCount, NULL, NULL, NULL, lpszFileHash);
+			XStorage_MySql_FileQuery(&pppSt_ListFile, &nListCount, NULL, NULL, NULL, lpszFileHash);
 		}
 		else
 		{

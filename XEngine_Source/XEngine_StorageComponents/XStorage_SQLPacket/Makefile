@@ -7,7 +7,7 @@ LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XE
 LIB = -lXEngine_BaseLib -lHelpComponents_DataBase
 LIBEX = -static-libgcc -lrt -ldl 
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = XStorageSQL_File.o XStorageSQL_Info.o XStorage_SQLite.o pch.o
+LIBINCLUDE = XStorage_MySql.o XStorage_SQLite.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -26,10 +26,8 @@ endif
 all:$(LIBINCLUDE)
 	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libXStorage_SQLPacket.so -shared $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
-XStorageSQL_File.o:./XStorageSQL_File/XStorageSQL_File.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./XStorageSQL_File/XStorageSQL_File.cpp  
-XStorageSQL_Info.o:./XStorageSQL_Info/XStorageSQL_Info.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./XStorageSQL_Info/XStorageSQL_Info.cpp 
+XStorage_MySql.o:./XStorage_MySql/XStorage_MySql.cpp                                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./XStorage_MySql/XStorage_MySql.cpp  
 XStorage_SQLite.o:./XStorage_SQLite/XStorage_SQLite.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./XStorage_SQLite/XStorage_SQLite.cpp 
 	
