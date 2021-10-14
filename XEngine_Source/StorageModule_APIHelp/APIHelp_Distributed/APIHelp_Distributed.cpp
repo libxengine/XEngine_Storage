@@ -74,7 +74,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_IsMode(list<int>* pStl_ListMode, 
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<tstring>* pStl_ListAddr, TCHAR* ptszAddr)
+BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr)
 {
 	APIHelp_IsErrorOccur = FALSE;
 
@@ -86,7 +86,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<tstring>* pStl_Li
 	{
 		xhToken--;
 	}
-	list<tstring>::const_iterator stl_ListIterator = pStl_ListAddr->begin();
+	list<string>::const_iterator stl_ListIterator = pStl_ListAddr->begin();
 	for (XNETHANDLE i = 0; stl_ListIterator != pStl_ListAddr->end(); stl_ListIterator++, i++)
 	{
 		if (xhToken == i)

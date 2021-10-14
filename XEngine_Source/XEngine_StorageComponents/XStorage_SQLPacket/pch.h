@@ -37,6 +37,7 @@ using namespace std;
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
+#include "../../XStorage_Protocol.h"
 #include "SQLPacket_Define.h"
 #include "SQLPacket_Error.h"
 /********************************************************************

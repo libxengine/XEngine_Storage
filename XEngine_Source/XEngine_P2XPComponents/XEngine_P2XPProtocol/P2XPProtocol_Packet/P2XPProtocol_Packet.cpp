@@ -176,7 +176,7 @@ BOOL CP2XPProtocol_Packet::P2XPProtocol_Packet_WLan(XENGINE_PROTOCOLHDR* pSt_Pro
 		P2XPProtocol_dwErrorCode = ERROR_XENGINE_P2XP_PROTOCOL_PARAMENT;
 		return FALSE;
 	}
-	unordered_map<tstring, list<P2XPPROTOCOL_LANPACKET>> stl_MapClient;
+	unordered_map<string, list<P2XPPROTOCOL_LANPACKET>> stl_MapClient;
 	//首先处理公网下的局域网网段列表
 	for (auto stl_ListIterator = pStl_ListClients->begin(); stl_ListIterator != pStl_ListClients->end(); stl_ListIterator++)
 	{
@@ -194,7 +194,7 @@ BOOL CP2XPProtocol_Packet::P2XPProtocol_Packet_WLan(XENGINE_PROTOCOLHDR* pSt_Pro
 		_tcscpy(st_LANPacket.tszUsername, stl_ListIterator->tszUserName);
 		_tcscpy(st_LANPacket.tszClientAddr, stl_ListIterator->tszPrivateAddr);
 		//判断是否存在
-		unordered_map<tstring, list<P2XPPROTOCOL_LANPACKET>>::iterator stl_MapIterator = stl_MapClient.find(tszClientAddr);
+		unordered_map<string, list<P2XPPROTOCOL_LANPACKET>>::iterator stl_MapIterator = stl_MapClient.find(tszClientAddr);
 		if (stl_MapIterator == stl_MapClient.end())
 		{
 			list<P2XPPROTOCOL_LANPACKET> stl_ListClient;

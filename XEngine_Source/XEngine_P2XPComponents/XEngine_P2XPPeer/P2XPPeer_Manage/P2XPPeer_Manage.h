@@ -33,6 +33,6 @@ protected:
 private:
     shared_mutex st_rwLocker;                      //节点读写保护区
 private:
-    unordered_map<tstring,LPNETENGINE_P2XP_PEERINFO> stl_MapPeerAddr;                //链接地址管理
-    unordered_map<tstring, unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> > > stl_MapClients;
+    unordered_map<string,LPNETENGINE_P2XP_PEERINFO> stl_MapPeerAddr;                //链接地址管理
+    unordered_map<string, unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> > > stl_MapClients;
 };

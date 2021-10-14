@@ -115,7 +115,7 @@ void CALLBACK XEngine_Callback_HBP2xp(LPCTSTR lpszClientAddr, SOCKET hSocket, in
 BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClientType)
 {
 	LPCTSTR lpszLeaveMsg;
-	tstring m_StrClient;
+	string m_StrClient;
 
 	if (STORAGE_NETTYPE_HTTPUPLOADER == nClientType)
 	{

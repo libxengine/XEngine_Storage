@@ -38,7 +38,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_Add(XENGINE_P2XP_PEERINFO st_Pee
     PeerManage_IsErrorOccur = FALSE;
 
     st_rwLocker.lock();
-    unordered_map<tstring, LPNETENGINE_P2XP_PEERINFO>::const_iterator stl_MapIterator = stl_MapPeerAddr.find(st_PeerInfo.st_PeerAddr.tszConnectAddr);
+    unordered_map<string, LPNETENGINE_P2XP_PEERINFO>::const_iterator stl_MapIterator = stl_MapPeerAddr.find(st_PeerInfo.st_PeerAddr.tszConnectAddr);
     if (stl_MapIterator != stl_MapPeerAddr.end())
     {
         PeerManage_IsErrorOccur = TRUE;
@@ -107,7 +107,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_Get(LPCTSTR lpszAddr,XENGINE_P2X
     }
     //查找元素
     st_rwLocker.lock_shared();
-    unordered_map<tstring,LPNETENGINE_P2XP_PEERINFO>::const_iterator stl_MapIterator = stl_MapPeerAddr.find(lpszAddr);
+    unordered_map<string,LPNETENGINE_P2XP_PEERINFO>::const_iterator stl_MapIterator = stl_MapPeerAddr.find(lpszAddr);
     if (stl_MapIterator == stl_MapPeerAddr.end())
     {
         PeerManage_IsErrorOccur = TRUE;
@@ -154,7 +154,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_GetUser(LPCTSTR lpszUser, XENGIN
     //查找元素
     st_rwLocker.lock_shared();
     BOOL bIsFound = FALSE;
-    unordered_map<tstring, LPNETENGINE_P2XP_PEERINFO>::const_iterator stl_MapIterator = stl_MapPeerAddr.begin();
+    unordered_map<string, LPNETENGINE_P2XP_PEERINFO>::const_iterator stl_MapIterator = stl_MapPeerAddr.begin();
     for (;stl_MapIterator != stl_MapPeerAddr.end();stl_MapIterator++)
     {
         if (0 == _tcsncmp(lpszUser,stl_MapIterator->second->st_PeerAddr.tszUserName,_tcslen(lpszUser)))
@@ -221,7 +221,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_GetLan(LPCTSTR lpszPubAddr, LPCT
     }
     //查找公网IP地址
     st_rwLocker.lock_shared();
-    unordered_map<tstring, unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> > >::const_iterator stl_MapIterator = stl_MapClients.find(lpszPubAddr);
+    unordered_map<string, unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> > >::const_iterator stl_MapIterator = stl_MapClients.find(lpszPubAddr);
     if (stl_MapIterator == stl_MapClients.end())
     {
         PeerManage_IsErrorOccur = TRUE;
@@ -238,7 +238,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_GetLan(LPCTSTR lpszPubAddr, LPCT
     if (BaseLib_OperatorIPAddr_IsIPV4Addr(lpszPriAddr, &st_LibAddr))
     {
         _stprintf_s(tszPrivateAddr, _T("%d.%d.%d"), st_LibAddr.nIPAddr1, st_LibAddr.nIPAddr2, st_LibAddr.nIPAddr3);
-        unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> >::const_iterator stl_MapSubIterator = stl_MapIterator->second.find(tszPrivateAddr);
+        unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> >::const_iterator stl_MapSubIterator = stl_MapIterator->second.find(tszPrivateAddr);
         if (stl_MapSubIterator == stl_MapIterator->second.end())
         {
             PeerManage_IsErrorOccur = TRUE;
@@ -263,7 +263,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_GetLan(LPCTSTR lpszPubAddr, LPCT
     }
     else
     {
-        unordered_map < tstring, list<XENGINE_P2XPPEER_PROTOCOL> >::const_iterator stl_MapSubIterator = stl_MapIterator->second.find(lpszPriAddr);
+        unordered_map < string, list<XENGINE_P2XPPEER_PROTOCOL> >::const_iterator stl_MapSubIterator = stl_MapIterator->second.find(lpszPriAddr);
         if (stl_MapSubIterator == stl_MapIterator->second.end())
         {
             PeerManage_IsErrorOccur = TRUE;
@@ -323,7 +323,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_GetLList(LPCTSTR lpszPubAddr, TC
         return FALSE;
     }
     st_rwLocker.lock_shared();
-    unordered_map<tstring, unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> > >::const_iterator stl_MapIterator = stl_MapClients.find(lpszPubAddr);
+    unordered_map<string, unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> > >::const_iterator stl_MapIterator = stl_MapClients.find(lpszPubAddr);
     if (stl_MapIterator == stl_MapClients.end())
     {
         PeerManage_IsErrorOccur = TRUE;
@@ -332,7 +332,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_GetLList(LPCTSTR lpszPubAddr, TC
         return FALSE;
     }
     BaseLib_OperatorMemory_Malloc((XPPPMEM)pppszP2XPClient, stl_MapIterator->second.size(), 128);
-    unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> >::const_iterator stl_MapListIterator = stl_MapIterator->second.begin();
+    unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> >::const_iterator stl_MapListIterator = stl_MapIterator->second.begin();
     for (int i = 0; stl_MapListIterator != stl_MapIterator->second.end(); stl_MapListIterator++, i++)
     {
         _tcscpy((*pppszP2XPClient)[i], stl_MapListIterator->first.c_str());
@@ -378,7 +378,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_GetWList(TCHAR*** pppszP2XPClien
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppszP2XPClient, stl_MapClients.size(), 128);
 
 	st_rwLocker.lock_shared();
-	unordered_map<tstring, unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> > >::const_iterator stl_MapIterator = stl_MapClients.begin();
+	unordered_map<string, unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> > >::const_iterator stl_MapIterator = stl_MapClients.begin();
     for (int i = 0; stl_MapIterator != stl_MapClients.end(); stl_MapIterator++, i++)
     {
         _tcscpy((*pppszP2XPClient)[i], stl_MapIterator->first.c_str());
@@ -417,7 +417,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_Set(LPCTSTR lpszAddr,XENGINE_P2X
     }
     st_rwLocker.lock_shared();
     //看下有没这个客户存在
-    unordered_map<tstring,LPNETENGINE_P2XP_PEERINFO>::const_iterator stl_MapIterator = stl_MapPeerAddr.find(lpszAddr);
+    unordered_map<string,LPNETENGINE_P2XP_PEERINFO>::const_iterator stl_MapIterator = stl_MapPeerAddr.find(lpszAddr);
     if (stl_MapIterator == stl_MapPeerAddr.end())
     {
         PeerManage_IsErrorOccur = TRUE;
@@ -453,7 +453,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_Delete(LPCTSTR lpszClientAddr)
         return FALSE;
     }
     st_rwLocker.lock();
-    unordered_map<tstring,LPNETENGINE_P2XP_PEERINFO>::iterator stl_MapIterator = stl_MapPeerAddr.find(lpszClientAddr);
+    unordered_map<string,LPNETENGINE_P2XP_PEERINFO>::iterator stl_MapIterator = stl_MapPeerAddr.find(lpszClientAddr);
     if (stl_MapIterator == stl_MapPeerAddr.end())
     {
         PeerManage_IsErrorOccur = TRUE;
@@ -483,7 +483,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_DelAll()
     PeerManage_IsErrorOccur = FALSE;
 
     st_rwLocker.lock();
-    unordered_map<tstring, LPNETENGINE_P2XP_PEERINFO>::iterator stl_MapIterator = stl_MapPeerAddr.begin();
+    unordered_map<string, LPNETENGINE_P2XP_PEERINFO>::iterator stl_MapIterator = stl_MapPeerAddr.begin();
     for (;stl_MapIterator != stl_MapPeerAddr.end();stl_MapIterator++)
     {
         delete stl_MapIterator->second;
@@ -536,7 +536,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_AddLan(XENGINE_P2XPPEER_PROTOCOL
 {
     PeerManage_IsErrorOccur = FALSE;
 
-    unordered_map<tstring, unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> > >::iterator stl_MapIteratorAddr = stl_MapClients.find(st_ClientAddr.tszPublicAddr);
+    unordered_map<string, unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> > >::iterator stl_MapIteratorAddr = stl_MapClients.find(st_ClientAddr.tszPublicAddr);
     if (stl_MapIteratorAddr == stl_MapClients.end())
     {
         //没有找到,一个一个加入,首先加入私有同步网络
@@ -557,7 +557,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_AddLan(XENGINE_P2XPPEER_PROTOCOL
         }
         _stprintf_s(tszPrivateAddr, _T("%d.%d.%d"), st_LibAddr.nIPAddr1, st_LibAddr.nIPAddr2, st_LibAddr.nIPAddr3);
         //然后加入到
-        unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> > stl_MapSecond;
+        unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> > stl_MapSecond;
         stl_MapSecond.insert(make_pair(tszPrivateAddr, stl_ListSecond));
         stl_MapClients.insert(make_pair(st_ClientAddr.tszPublicAddr, stl_MapSecond));
     }
@@ -579,7 +579,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_AddLan(XENGINE_P2XPPEER_PROTOCOL
         }
         //内网地址192.168.1.2  内网出口192.168.1.1 链接地址10.0.1.0:13444
         _stprintf_s(tszPrivateAddr, _T("%d.%d.%d"), st_LibAddr.nIPAddr1, st_LibAddr.nIPAddr2, st_LibAddr.nIPAddr3);
-        unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> >::iterator stl_MapIteartorPrivate = stl_MapIteratorAddr->second.find(tszPrivateAddr);
+        unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> >::iterator stl_MapIteartorPrivate = stl_MapIteratorAddr->second.find(tszPrivateAddr);
         if (stl_MapIteartorPrivate == stl_MapIteratorAddr->second.end())
         {
             list<XENGINE_P2XPPEER_PROTOCOL> stl_ListClient;
@@ -626,7 +626,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_DelLan(XENGINE_P2XPPEER_PROTOCOL
 {
     PeerManage_IsErrorOccur = FALSE;
     //查找公网地址
-    unordered_map<tstring, unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> > >::iterator stl_MapPubIteartor = stl_MapClients.find(st_ClientAddr.tszPublicAddr);
+    unordered_map<string, unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> > >::iterator stl_MapPubIteartor = stl_MapClients.find(st_ClientAddr.tszPublicAddr);
     if (stl_MapPubIteartor != stl_MapClients.end())
     {
         XENGINE_LIBADDR st_LibAddr;
@@ -638,7 +638,7 @@ BOOL CNetEngine_P2XPPeerManage::P2XPPeer_Manage_DelLan(XENGINE_P2XPPEER_PROTOCOL
         {
             _stprintf_s(tszPrivateAddr, _T("%d.%d.%d"), st_LibAddr.nIPAddr1, st_LibAddr.nIPAddr2, st_LibAddr.nIPAddr3);
             //查找私有路由地址
-            unordered_map<tstring, list<XENGINE_P2XPPEER_PROTOCOL> >::iterator stl_MapSubIterator = stl_MapPubIteartor->second.find(tszPrivateAddr);
+            unordered_map<string, list<XENGINE_P2XPPEER_PROTOCOL> >::iterator stl_MapSubIterator = stl_MapPubIteartor->second.find(tszPrivateAddr);
             if (stl_MapSubIterator != stl_MapPubIteartor->second.end())
             {
                 //查找局域网自身的IP地址是否存在

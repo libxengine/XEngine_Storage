@@ -47,13 +47,6 @@ using namespace std;
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
-
-#ifdef _UNICODE
-typedef std::wstring tstring;
-#else
-typedef std::string tstring;
-#endif
-
 #include "../XStorage_Protocol.h"
 #include "../StorageModule_Session/Session_Define.h"
 #include "../StorageModule_Session/Session_Error.h"
@@ -101,7 +94,7 @@ extern XHANDLE xhLimit;
 extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
-extern XNETHANDLE xhP2XPPacket;
+extern XHANDLE xhP2XPPacket;
 
 extern SOCKET hBroadSocket;
 extern shared_ptr<std::thread> pSTDThread;

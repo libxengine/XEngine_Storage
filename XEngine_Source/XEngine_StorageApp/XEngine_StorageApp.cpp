@@ -22,7 +22,7 @@ XHANDLE xhLimit = NULL;
 XHANDLE xhUPHttp = NULL;
 XHANDLE xhDLHttp = NULL;
 XHANDLE xhCenterHttp = NULL;
-XNETHANDLE xhP2XPPacket = 0;
+XHANDLE xhP2XPPacket = 0;
 
 SOCKET hBroadSocket = 0;
 shared_ptr<std::thread> pSTDThread = NULL;
@@ -115,7 +115,7 @@ int main(int argc, char** argv)
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
 	bIsRun = TRUE;
-	tstring m_StrVersion;
+	string m_StrVersion;
 	LPCTSTR lpszHTTPMime = _T("./XEngine_Config/HttpMime.types");
 	LPCTSTR lpszHTTPCode = _T("./XEngine_Config/HttpCode.types");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
@@ -371,7 +371,8 @@ int main(int argc, char** argv)
 	//启动P2P服务
 	if (st_ServiceCfg.nP2XPPort > 0)
 	{
-		if (!HelpComponents_Datas_Init(&xhP2XPPacket, st_ServiceCfg.st_XMax.nMaxQueue, 0, st_ServiceCfg.st_XMax.nP2XPThread))
+		xhP2XPPacket = HelpComponents_Datas_Init(st_ServiceCfg.st_XMax.nMaxQueue, 0, st_ServiceCfg.st_XMax.nP2XPThread);
+		if (NULL == xhP2XPPacket)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，初始化P2XP包管理器失败，错误：%lX"), Packets_GetLastError());
 			goto XENGINE_EXITAPP;

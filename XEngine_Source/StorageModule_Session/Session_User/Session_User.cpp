@@ -118,7 +118,7 @@ BOOL CSession_User::Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass)
 	Session_IsErrorOccur = FALSE;
 
 	st_Locker.lock_shared();
-	unordered_map<tstring, SESSION_USERINFO>::const_iterator stl_MapIterator = stl_MapUser.find(lpszUser);
+	unordered_map<string, SESSION_USERINFO>::const_iterator stl_MapIterator = stl_MapUser.find(lpszUser);
 	if (stl_MapIterator == stl_MapUser.end())
 	{
 		Session_IsErrorOccur = TRUE;

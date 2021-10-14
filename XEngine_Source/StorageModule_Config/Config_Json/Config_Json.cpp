@@ -188,7 +188,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
 	}
 	Json::Value st_JsonXVer = st_JsonRoot["XVer"];
 
-    pSt_ServerConfig->st_XVer.pStl_ListStorage = new list<tstring>;
+    pSt_ServerConfig->st_XVer.pStl_ListStorage = new list<string>;
     for (unsigned int i = 0; i < st_JsonXVer["StorageVersion"].size(); i++)
     {
         pSt_ServerConfig->st_XVer.pStl_ListStorage->push_back(st_JsonXVer["StorageVersion"][i].asCString());
@@ -261,17 +261,17 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListUseMode->push_back(st_JsonLoadBalance["nUseMode"][i].asInt());
 	}
-	pSt_ServerConfig->st_LoadBalance.pStl_ListCenter = new list<tstring>;
+	pSt_ServerConfig->st_LoadBalance.pStl_ListCenter = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["CenterAddr"].size(); i++)
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListCenter->push_back(st_JsonLoadBalance["CenterAddr"][i].asCString());
 	}
-	pSt_ServerConfig->st_LoadBalance.pStl_ListDownload = new list<tstring>;
+	pSt_ServerConfig->st_LoadBalance.pStl_ListDownload = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["DownloadAddr"].size(); i++)
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListDownload->push_back(st_JsonLoadBalance["DownloadAddr"][i].asCString());
 	}
-	pSt_ServerConfig->st_LoadBalance.pStl_ListUPLoader = new list<tstring>;
+	pSt_ServerConfig->st_LoadBalance.pStl_ListUPLoader = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["UPLoaderAddr"].size(); i++)
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListUPLoader->push_back(st_JsonLoadBalance["UPLoaderAddr"][i].asCString());

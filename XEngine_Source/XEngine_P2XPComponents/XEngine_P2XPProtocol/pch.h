@@ -55,12 +55,6 @@ using namespace std;
 extern BOOL P2XPProtocol_IsErrorOccur;
 extern DWORD P2XPProtocol_dwErrorCode;
 
-#ifdef _UNICODE
-typedef std::wstring tstring;
-#else
-typedef std::string tstring;
-#endif
-
 #ifdef _WINDOWS
 #ifdef _WIN64
 #pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib.lib")

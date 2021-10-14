@@ -108,7 +108,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	}
 	//禁止一个客户端启动多个下载会话
 	st_Locker.lock_shared();
-	unordered_map<tstring, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator != stl_MapStroage.end())
 	{
 		Session_IsErrorOccur = TRUE;
@@ -207,7 +207,7 @@ BOOL CSession_DLStroage::Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCH
 	}
 
 	st_Locker.lock_shared();
-	unordered_map<tstring, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator == stl_MapStroage.end())
 	{
 		Session_IsErrorOccur = TRUE;
@@ -261,7 +261,7 @@ BOOL CSession_DLStroage::Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSI
 	}
 
 	st_Locker.lock_shared();
-	unordered_map<tstring, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator == stl_MapStroage.end())
 	{
 		Session_IsErrorOccur = TRUE;
@@ -329,7 +329,7 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 	Session_IsErrorOccur = FALSE;
 
 	st_Locker.lock_shared();
-	unordered_map<tstring, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator == stl_MapStroage.end())
 	{
 		Session_IsErrorOccur = TRUE;
@@ -388,7 +388,7 @@ BOOL CSession_DLStroage::Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_S
 	*pInt_ListCount = stl_MapStroage.size();
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_StorageInfo, *pInt_ListCount, sizeof(SESSION_STORAGEINFO));
 
-	unordered_map<tstring, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.begin();
+	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.begin();
 	for (int i = 0; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++, i++)
 	{
 		*(*pppSt_StorageInfo)[i] = stl_MapIterator->second;
@@ -421,7 +421,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 	Session_IsErrorOccur = FALSE;
 
 	st_Locker.lock_shared();
-	unordered_map<tstring, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator != stl_MapStroage.end())
 	{
 		fclose(stl_MapIterator->second.pSt_File);
