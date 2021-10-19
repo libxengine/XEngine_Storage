@@ -118,6 +118,30 @@ extern "C" BOOL P2XPProtocol_Parse_User(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHA
 备注：
 *********************************************************************/
 extern "C" BOOL P2XPProtocol_Parse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_P2XPIO_PROTOCOL* pSt_IOProtocol);
+/********************************************************************
+函数名称：P2XPProtocol_Parse_QueryFile
+函数功能：查询文件
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的缓冲区
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入缓冲区大小
+ 参数.三：pSt_ProtocolFile
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出解析的文件信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL P2XPProtocol_Parse_QueryFile(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_PROTOCOL_FILE* pSt_ProtocolFile);
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/

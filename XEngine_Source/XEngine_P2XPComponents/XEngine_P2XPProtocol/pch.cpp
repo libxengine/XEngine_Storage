@@ -45,6 +45,10 @@ extern "C" BOOL P2XPProtocol_Parse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, X
 {
 	return m_P2XPParse.P2XPProtocol_Parse_Connect(lpszMsgBuffer, nMsgLen, pSt_IOProtocol);
 }
+extern "C" BOOL P2XPProtocol_Parse_QueryFile(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_PROTOCOL_FILE * pSt_ProtocolFile)
+{
+	return m_P2XPParse.P2XPProtocol_Parse_QueryFile(lpszMsgBuffer, nMsgLen, pSt_ProtocolFile);
+}
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/

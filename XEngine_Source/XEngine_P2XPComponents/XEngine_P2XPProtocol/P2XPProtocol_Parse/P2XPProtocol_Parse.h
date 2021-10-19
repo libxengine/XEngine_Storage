@@ -21,6 +21,7 @@ public:
     BOOL P2XPProtocol_Parse_List(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszPubAddr, TCHAR* ptszPriAddr);
     BOOL P2XPProtocol_Parse_User(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszUserName);
     BOOL P2XPProtocol_Parse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_P2XPIO_PROTOCOL* pSt_IOProtocol);
+    BOOL P2XPProtocol_Parse_QueryFile(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_PROTOCOL_FILE* pSt_ProtocolFile);
 protected:
 private:
 };
