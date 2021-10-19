@@ -184,7 +184,7 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			//响应请求客户端
 			memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REPCONNECT;
-			P2XPProtocol_Packet_Common(pSt_ProtocolHdr,tszSDBuffer, &nSDLen);
+			P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("P2XP客户端:%s,用户名:%s,请求查询用户:%s 状态成功"), lpszClientAddr, st_P2XPIONet.tszSourceUser, st_P2XPIONet.tszDestUser);
 		}
@@ -218,10 +218,25 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 		}
 		else if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQQUERY == pSt_ProtocolHdr->unOperatorCode)
 		{
+			TCHAR tszTimeStart[MAX_PATH];
+			TCHAR tszTimeEnd[MAX_PATH];
+			TCHAR tszFileName[MAX_PATH];
 			TCHAR tszFileHash[MAX_PATH];
+
+			memset(tszTimeStart, '\0', MAX_PATH);
+			memset(tszTimeEnd, '\0', MAX_PATH);
+			memset(tszFileName, '\0', MAX_PATH);
 			memset(tszFileHash, '\0', MAX_PATH);
 
-			XStorageProtocol_Core_REQQueryFile(lpszMsgBuffer, NULL, NULL, NULL, tszFileHash);
+			if (!XStorageProtocol_Core_REQQueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash))
+			{
+				P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,查询文件失败,解析协议失败,错误码:%lX"), lpszClientAddr, P2XPPeer_GetLastError());
+				return FALSE;
+			}
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求查询用户"), lpszClientAddr);
 		}
 		else
 		{

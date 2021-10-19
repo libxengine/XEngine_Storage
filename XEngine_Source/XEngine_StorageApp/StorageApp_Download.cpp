@@ -3,8 +3,6 @@
 XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 {
 	int nThreadPos = *(int*)lParam;
-	TCHAR tszClientAddr[128];
-	TCHAR tszMsgBuffer[4096];
 	nThreadPos++;
 
 	while (bIsRun)
@@ -18,8 +16,6 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 			RFCCOMPONENTS_HTTP_PKTCLIENT** ppSt_PKTClient;
 
 			memset(&st_HTTPParam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
-			memset(tszClientAddr, '\0', sizeof(tszClientAddr));
-			memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 			//获取当前队列池中所有触发下载客户端
 			RfcComponents_HttpServer_GetPoolEx(xhDLHttp, nThreadPos, &ppSt_PKTClient, &nListCount);
 			for (int i = 0; i < nListCount; i++)
@@ -27,12 +23,14 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
 				{
 					int nHdrCount = 0;
+					CHAR* ptszMsgBuffer = NULL;
 					CHAR** ppszListHdr = NULL;
 					//获得指定下载客户端触发信息
-					if (RfcComponents_HttpServer_GetClientEx(xhDLHttp, ppSt_PKTClient[i]->tszClientAddr, tszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
+					if (RfcComponents_HttpServer_GetMemoryEx(xhDLHttp, ppSt_PKTClient[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
 					{
-						XEngine_Task_HttpDownload(ppSt_PKTClient[i]->tszClientAddr, tszClientAddr, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
+						XEngine_Task_HttpDownload(ppSt_PKTClient[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
+					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
 				}
 			}
