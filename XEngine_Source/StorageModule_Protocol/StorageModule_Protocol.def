@@ -1,0 +1,29 @@
+LIBRARY
+
+
+EXPORTS
+	Protocol_GetLastError
+
+	Protocol_P2XPParse_Login
+	Protocol_P2XPParse_List
+	Protocol_P2XPParse_User
+	Protocol_P2XPParse_Connect
+	Protocol_P2XPPacket_QueryFile
+
+	Protocol_StorageParse_ProxyNotify
+	Protocol_StorageParse_QueryFile
+	Protocol_StorageParse_ReportFile
+	Protocol_StorageParse_DirOperator
+	Protocol_StorageParse_UPEvent
+
+	Protocol_P2XPPacket_Common
+	Protocol_P2XPPacket_Lan
+	Protocol_P2XPPacket_WLan
+	Protocol_P2XPPacket_User
+	Protocol_P2XPPacket_Connect
+
+	Protocol_StoragePacket_BasicAuth
+	Protocol_StoragePacket_UPDown
+	Protocol_StoragePacket_QueryFile
+	Protocol_StoragePacket_Info
+	Protocol_StoragePacket_DirOperator

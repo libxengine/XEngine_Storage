@@ -59,7 +59,7 @@ BOOL XEngine_APPHelp_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszMethod, LPCTS
 			int nResponseCode = 0;
 			TCHAR* ptszBody = NULL;
 			
-			XStorageProtocol_Proxy_PacketBasicAuth(lpszMethod, lpszPostUrl, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
+			Protocol_StoragePacket_BasicAuth(lpszMethod, lpszPostUrl, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
 			APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &ptszBody, &nBLen);
 			if (200 == nResponseCode)
 			{

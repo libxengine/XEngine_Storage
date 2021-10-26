@@ -55,11 +55,11 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			memset(&st_ClientPeer, '\0', sizeof(XENGINE_P2XP_PEERINFO));
 
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REPLOGIN;
-			if (!P2XPProtocol_Parse_Login(lpszMsgBuffer, nMsgLen, &st_ClientPeer.st_PeerAddr))
+			if (!Protocol_P2XPParse_Login(lpszMsgBuffer, nMsgLen, &st_ClientPeer.st_PeerAddr))
 			{
-				P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
+				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,处理登录错误,解析协议失败,错误码:%lX"), lpszClientAddr, P2XPProtocol_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,处理登录错误,解析协议失败,错误码:%lX"), lpszClientAddr, Protocol_GetLastError());
 				return FALSE;
 			}
 			//获取外网IP所在位置
@@ -83,12 +83,12 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			_tcscpy(st_ClientPeer.st_PeerAddr.tszConnectAddr, lpszClientAddr);
 			if (!P2XPPeer_Manage_Add(st_ClientPeer))
 			{
-				P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 500, "协议错误");
+				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 500, "协议错误");
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,处理登录错误,设置用户信息失败,错误码:%lX"), lpszClientAddr, P2XPPeer_GetLastError());
 				return FALSE;
 			}
-			P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen);
+			Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("P2XP客户端:%s,处理用户登录请求成功,用户名:%s"), lpszClientAddr, st_ClientPeer.st_PeerAddr.tszUserName);
 		}
@@ -101,11 +101,11 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			memset(tszPriAddr, '\0', sizeof(tszPriAddr));
 
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REPLANLIST;
-			if (!P2XPProtocol_Parse_List(lpszMsgBuffer, nMsgLen, tszPubAddr, tszPriAddr))
+			if (!Protocol_P2XPParse_List(lpszMsgBuffer, nMsgLen, tszPubAddr, tszPriAddr))
 			{
-				P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
+				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,列表请求失败,协议解析错误,错误码:%lX"), lpszClientAddr, P2XPProtocol_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,列表请求失败,协议解析错误,错误码:%lX"), lpszClientAddr, Protocol_GetLastError());
 				return FALSE;
 			}
 			//请求同步列表
@@ -115,12 +115,12 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 				XENGINE_P2XPPEER_PROTOCOL** ppSt_ListClients;
 				if (!P2XPPeer_Manage_GetLan(tszPubAddr, tszPriAddr, &ppSt_ListClients, &nListCount))
 				{
-					P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 500, "内部处理错误");
+					Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 500, "内部处理错误");
 					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,列表请求失败,请求同步局域网列表失败,公有地址:%s,私有地址:%s,错误码:%lX"), lpszClientAddr, tszPubAddr, tszPriAddr, P2XPPeer_GetLastError());
 					return FALSE;
 				}
-				P2XPProtocol_Packet_Lan(pSt_ProtocolHdr, &ppSt_ListClients, nListCount, tszSDBuffer, &nSDLen);
+				Protocol_P2XPPacket_Lan(pSt_ProtocolHdr, &ppSt_ListClients, nListCount, tszSDBuffer, &nSDLen);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListClients, nListCount);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求同步局域网列表成功,公有地址:%s,私有地址:%s"), lpszClientAddr, tszPubAddr, tszPriAddr);
@@ -149,7 +149,7 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 					}
 					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszClientList, nListCount);
 				}
-				P2XPProtocol_Packet_WLan(pSt_ProtocolHdr, &stl_ListClient, tszSDBuffer, &nSDLen);
+				Protocol_P2XPPacket_WLan(pSt_ProtocolHdr, &stl_ListClient, tszSDBuffer, &nSDLen);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求同步局域网列表成功,公有地址:%s,私有地址:%s"), lpszClientAddr, tszPubAddr, tszPriAddr);
 			}
@@ -164,27 +164,27 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			memset(&st_P2XPIONet, '\0', sizeof(XENGINE_P2XPIO_PROTOCOL));
 			memset(&st_P2XPDestPeer, '\0', sizeof(XENGINE_P2XP_PEERINFO));
 
-			if (!P2XPProtocol_Parse_Connect(lpszMsgBuffer, nMsgLen, &st_P2XPIONet))
+			if (!Protocol_P2XPParse_Connect(lpszMsgBuffer, nMsgLen, &st_P2XPIONet))
 			{
-				P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
+				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,请求连接失败,协议解析错误,错误码:%lX"), lpszClientAddr, P2XPProtocol_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,请求连接失败,协议解析错误,错误码:%lX"), lpszClientAddr, Protocol_GetLastError());
 				return FALSE;
 			}
 			if (!P2XPPeer_Manage_GetUser(st_P2XPIONet.tszDestUser, &st_P2XPDestPeer))
 			{
-				P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 404, "用户不存在");
+				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 404, "用户不存在");
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,请求连接失败,用户不存在,错误码:%lX"), lpszClientAddr, P2XPPeer_GetLastError());
 				return FALSE;
 			}
 			//发送请求给目标客户端
-			P2XPProtocol_Packet_Connect(pSt_ProtocolHdr, &st_P2XPIONet, tszSDBuffer, &nSDLen);
+			Protocol_P2XPPacket_Connect(pSt_ProtocolHdr, &st_P2XPIONet, tszSDBuffer, &nSDLen);
 			XEngine_Net_SendMsg(st_P2XPDestPeer.st_PeerAddr.tszConnectAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 			//响应请求客户端
 			memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REPCONNECT;
-			P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen);
+			Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("P2XP客户端:%s,用户名:%s,请求查询用户:%s 状态成功"), lpszClientAddr, st_P2XPIONet.tszSourceUser, st_P2XPIONet.tszDestUser);
 		}
@@ -197,22 +197,22 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			memset(&st_PeerInfo, '\0', sizeof(XENGINE_P2XP_PEERINFO));
 
 			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REPUSERQUERY;
-			if (!P2XPProtocol_Parse_User(lpszMsgBuffer, nMsgLen, tszUserName))
+			if (!Protocol_P2XPParse_User(lpszMsgBuffer, nMsgLen, tszUserName))
 			{
-				P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
+				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,查询用户失败,协议解析错误,错误码:%lX"), lpszClientAddr, P2XPProtocol_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,查询用户失败,协议解析错误,错误码:%lX"), lpszClientAddr, Protocol_GetLastError());
 				return FALSE;
 
 			}
 			if (!P2XPPeer_Manage_GetUser(tszUserName, &st_PeerInfo))
 			{
-				P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 500, "获取用户失败");
+				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 500, "获取用户失败");
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,查询用户失败,获取用户失败,用户名:%s,错误码:%lX"), lpszClientAddr, tszUserName, P2XPPeer_GetLastError());
 				return FALSE;
 			}
-			P2XPProtocol_Packet_User(pSt_ProtocolHdr, &st_PeerInfo.st_PeerAddr, tszSDBuffer, &nSDLen);
+			Protocol_P2XPPacket_User(pSt_ProtocolHdr, &st_PeerInfo.st_PeerAddr, tszSDBuffer, &nSDLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求查询用户:%s 成功"), lpszClientAddr, tszUserName);
 		}
@@ -228,9 +228,9 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			memset(tszFileName, '\0', MAX_PATH);
 			memset(tszFileHash, '\0', MAX_PATH);
 
-			if (!XStorageProtocol_Core_REQQueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash))
+			if (!Protocol_StorageParse_QueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash))
 			{
-				P2XPProtocol_Packet_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
+				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,查询文件失败,解析协议失败,错误码:%lX"), lpszClientAddr, P2XPPeer_GetLastError());
 				return FALSE;

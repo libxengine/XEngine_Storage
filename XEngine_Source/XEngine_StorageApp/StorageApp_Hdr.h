@@ -52,12 +52,10 @@ using namespace std;
 #include "../StorageModule_Session/Session_Error.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Error.h"
-#include "../XEngine_StorageComponents/XStorage_Protocol/XStorageProtocol_Define.h"
-#include "../XEngine_StorageComponents/XStorage_Protocol/XStorageProtocol_Error.h"
-#include "../XEngine_P2XPComponents/XEngine_P2XPPeer/P2XPPeer_Define.h"
-#include "../XEngine_P2XPComponents/XEngine_P2XPPeer/P2XPPeer_Error.h"
-#include "../XEngine_P2XPComponents/XEngine_P2XPProtocol/P2XPProtocol_Define.h"
-#include "../XEngine_P2XPComponents/XEngine_P2XPProtocol/P2XPProtocol_Error.h"
+#include "../XEngine_StorageComponents/XStorage_P2XPPeer/P2XPPeer_Define.h"
+#include "../XEngine_StorageComponents/XStorage_P2XPPeer/P2XPPeer_Error.h"
+#include "../StorageModule_Protocol/StorageProtocol_Define.h"
+#include "../StorageModule_Protocol/StorageProtocol_Error.h"
 #include "../StorageModule_Config/Config_Define.h"
 #include "../StorageModule_Config/Config_Error.h"
 #include "../StorageModule_APIHelp/APIHelp_Define.h"
@@ -116,6 +114,17 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"Ws2_32.lib")
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
+#pragma comment(lib,"XEngine_BaseLib/XEngine_Algorithm.lib")
+#pragma comment(lib,"XEngine_Core/XEngine_Core.lib")
+#pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
+#pragma comment(lib,"XEngine_Core/XEngine_OPenSsl.lib")
+#pragma comment(lib,"XEngine_Core/XEngine_NetXApi.lib")
+#pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
+#pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets.lib")
+#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpServer.lib")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
+#pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #ifdef _WIN64
 #pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
@@ -124,47 +133,21 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../x64/Release/XStorage_Protocol.lib")
 #pragma comment(lib,"../x64/Release/XEngine_P2XPPeer.lib")
 #pragma comment(lib,"../x64/Release/XEngine_P2XPProtocol.lib")
-#pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib.lib")
-#pragma comment(lib,"x64/XEngine_BaseLib/XEngine_Algorithm.lib")
-#pragma comment(lib,"x64/XEngine_Core/XEngine_Core.lib")
-#pragma comment(lib,"x64/XEngine_Core/XEngine_ManagePool.lib")
-#pragma comment(lib,"x64/XEngine_Core/XEngine_OPenSsl.lib")
-#pragma comment(lib,"x64/XEngine_Core/XEngine_NetXApi.lib")
-#pragma comment(lib,"x64/XEngine_HelpComponents/HelpComponents_XLog.lib")
-#pragma comment(lib,"x64/XEngine_HelpComponents/HelpComponents_Packets.lib")
-#pragma comment(lib,"x64/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
-#pragma comment(lib,"x64/XEngine_NetHelp/NetHelp_APIHelp.lib")
-#pragma comment(lib,"x64/XEngine_SystemSdk/XEngine_SystemApi.lib")
 #else
 #ifdef _DEBUG
 #pragma comment(lib,"../Debug/StorageModule_Session.lib")
 #pragma comment(lib,"../Debug/StorageModule_Config.lib")
 #pragma comment(lib,"../Debug/StorageModule_APIHelp.lib")
+#pragma comment(lib,"../Debug/StorageModule_Protocol.lib")
 #pragma comment(lib,"../Debug/XStorage_SQLPacket.lib")
-#pragma comment(lib,"../Debug/XStorage_Protocol.lib")
 #pragma comment(lib,"../Debug/XEngine_P2XPPeer.lib")
-#pragma comment(lib,"../Debug/XEngine_P2XPProtocol.lib")
 #else
 #pragma comment(lib,"../Release/StorageModule_Session.lib")
 #pragma comment(lib,"../Release/StorageModule_Config.lib")
 #pragma comment(lib,"../Release/StorageModule_APIHelp.lib")
+#pragma comment(lib,"../Release/StorageModule_Protocol.lib")
 #pragma comment(lib,"../Release/XStorage_SQLPacket.lib")
-#pragma comment(lib,"../Release/XStorage_Protocol.lib")
 #pragma comment(lib,"../Release/XEngine_P2XPPeer.lib")
-#pragma comment(lib,"../Release/XEngine_P2XPProtocol.lib")
 #endif
-#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib.lib")
-#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_Algorithm.lib")
-#pragma comment(lib,"x86/XEngine_Core/XEngine_Core.lib")
-#pragma comment(lib,"x86/XEngine_Core/XEngine_ManagePool.lib")
-#pragma comment(lib,"x86/XEngine_Core/XEngine_OPenSsl.lib")
-#pragma comment(lib,"x86/XEngine_Core/XEngine_NetXApi.lib")
-#pragma comment(lib,"x86/XEngine_HelpComponents/HelpComponents_XLog.lib")
-#pragma comment(lib,"x86/XEngine_HelpComponents/HelpComponents_Packets.lib")
-#pragma comment(lib,"x86/XEngine_RfcComponents/RfcComponents_HttpServer.lib")
-#pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIHelp.lib")
-#pragma comment(lib,"x86/XEngine_SystemSdk/XEngine_SystemApi.lib")
 #endif
-
-#else
 #endif
