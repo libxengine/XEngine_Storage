@@ -129,10 +129,9 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_APIHelp.lib")
+#pragma comment(lib,"../x64/Release/StorageModule_Protocol.lib")
 #pragma comment(lib,"../x64/Release/XStorage_SQLPacket.lib")
-#pragma comment(lib,"../x64/Release/XStorage_Protocol.lib")
-#pragma comment(lib,"../x64/Release/XEngine_P2XPPeer.lib")
-#pragma comment(lib,"../x64/Release/XEngine_P2XPProtocol.lib")
+#pragma comment(lib,"../x64/Release/XStorage_P2XPPeer.lib")
 #else
 #ifdef _DEBUG
 #pragma comment(lib,"../Debug/StorageModule_Session.lib")
@@ -140,14 +139,14 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../Debug/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../Debug/StorageModule_Protocol.lib")
 #pragma comment(lib,"../Debug/XStorage_SQLPacket.lib")
-#pragma comment(lib,"../Debug/XEngine_P2XPPeer.lib")
+#pragma comment(lib,"../Debug/XStorage_P2XPPeer.lib")
 #else
 #pragma comment(lib,"../Release/StorageModule_Session.lib")
 #pragma comment(lib,"../Release/StorageModule_Config.lib")
 #pragma comment(lib,"../Release/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../Release/StorageModule_Protocol.lib")
 #pragma comment(lib,"../Release/XStorage_SQLPacket.lib")
-#pragma comment(lib,"../Release/XEngine_P2XPPeer.lib")
+#pragma comment(lib,"../Release/XStorage_P2XPPeer.lib")
 #endif
 #endif
 #endif

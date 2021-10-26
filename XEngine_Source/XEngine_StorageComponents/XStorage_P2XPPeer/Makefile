@@ -3,8 +3,8 @@ RELEASE = 0
 UNICODE = 0
 INCLUDE = -I ./
 FILECENTOS = /etc/redhat-release
-LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp
-LIB = -lXEngine_BaseLib -lNetHelp_APIHelp
+LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib
+LIB = -lXEngine_BaseLib
 LIBEX = -static-libgcc -lrt -ldl -lpthread
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
 LIBINCLUDE = P2XPPeer_Manage.o pch.o
@@ -24,7 +24,7 @@ UNICODE =
 endif
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libXEngine_P2XPPeer.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libXStorage_P2XPPeer.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
     
 P2XPPeer_Manage.o:./P2XPPeer_Manage/P2XPPeer_Manage.cpp                                 
@@ -35,8 +35,8 @@ pch.o:pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libXEngine_P2XPPeer.so 
-	cp ./libXEngine_P2XPPeer.so ../../../XEngine_Release/libXEngine_P2XPPeer.so
+InstallSo:./libXStorage_P2XPPeer.so 
+	cp ./libXStorage_P2XPPeer.so ../../../XEngine_Release/libXStorage_P2XPPeer.so
 
 
 CleanAll:CleanObj CleanMk

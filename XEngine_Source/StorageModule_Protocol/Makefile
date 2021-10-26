@@ -7,7 +7,7 @@ LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib
 LIB = -lXEngine_BaseLib -ljsoncpp
 LIBEX = -static-libgcc -lrt -ldl 
 LOADSO = -Wl,-rpath=,--disable-new-dtags
-LIBINCLUDE = XStorageProtocol_Client.o XStorageProtocol_Proxy.o XStorageProtocol_Core.o pch.o
+LIBINCLUDE = Protocol_P2XPPacket.o Protocol_StoragePacket.o Protocol_P2XPParse.o Protocol_StorageParse.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -30,22 +30,24 @@ else
 endif
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libXStorage_Protocol.so -shared $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libStorageModule_Protocol.so -shared $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
-XStorageProtocol_Client.o:./XStorageProtocol_Client/XStorageProtocol_Client.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./XStorageProtocol_Client/XStorageProtocol_Client.cpp  
-XStorageProtocol_Proxy.o:./XStorageProtocol_Proxy/XStorageProtocol_Proxy.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./XStorageProtocol_Proxy/XStorageProtocol_Proxy.cpp 
-XStorageProtocol_Core.o:./XStorageProtocol_Core/XStorageProtocol_Core.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./XStorageProtocol_Core/XStorageProtocol_Core.cpp 
-
+Protocol_P2XPPacket.o:./Protocol_Packet/Protocol_P2XPPacket.cpp                                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./Protocol_Packet/Protocol_P2XPPacket.cpp  
+Protocol_StoragePacket.o:./Protocol_Packet/Protocol_StoragePacket.cpp                                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./Protocol_Packet/Protocol_StoragePacket.cpp 
+Protocol_P2XPParse.o:./Protocol_Parse/Protocol_P2XPParse.cpp                                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./Protocol_Parse/Protocol_P2XPParse.cpp 
+Protocol_StorageParse.o:./Protocol_Parse/Protocol_StorageParse.cpp                                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE)  ./Protocol_Parse/Protocol_StorageParse.cpp 
+	
 pch.o:pch.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libXStorage_Protocol.so
-	cp ./libXStorage_Protocol.so ../../../XEngine_Release/libXStorage_Protocol.so
+InstallSo:./libStorageModule_Protocol.so
+	cp ./libStorageModule_Protocol.so ../../XEngine_Release/libStorageModule_Protocol.so
 
 
 CleanAll:CleanObj CleanMk
