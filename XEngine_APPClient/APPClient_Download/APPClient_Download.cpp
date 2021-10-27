@@ -21,6 +21,7 @@
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
+#include "../../XEngine_Source/XStorage_Protocol.h"
 using namespace std;
 
 #pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib")
@@ -31,7 +32,7 @@ using namespace std;
 
 typedef struct 
 {
-	XENGINE_PROTOCOLFILE st_ProtocolFile;
+	XENGINE_PROTOCOL_FILE st_ProtocolFile;
 	CHAR tszIPAddr[64];                                     
 }P2PFILE_INFO;
 
