@@ -23,6 +23,7 @@ public:
     BOOL P2XPPeer_Manage_GetLan(LPCTSTR lpszPubAddr, LPCTSTR lpszPriAddr, XENGINE_P2XPPEER_PROTOCOL*** pppSt_P2XPClient, int* pInt_ListCount);        //获取公网下的局域网IP地址列表
     BOOL P2XPPeer_Manage_GetLList(LPCTSTR lpszPubAddr, TCHAR*** pppszP2XPClient, int* pInt_ListCount);
     BOOL P2XPPeer_Manage_GetWList(TCHAR*** pppszP2XPClient, int* pInt_ListCount);
+    BOOL P2XPPeer_Manage_GetAllList(TCHAR*** pppszP2XPClient, int* pInt_ListCount);
     BOOL P2XPPeer_Manage_Set(LPCTSTR lpszAddr,XENGINE_P2XP_PEERINFO st_PeerInfo);                     //设置指定客户的节点信息
     BOOL P2XPPeer_Manage_Delete(LPCTSTR lpszUserName);                                                  //从列表中删除一个节点
     BOOL P2XPPeer_Manage_DelAll();                                                                      //清空节点列表

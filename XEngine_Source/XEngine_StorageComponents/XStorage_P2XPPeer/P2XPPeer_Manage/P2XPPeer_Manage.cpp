@@ -388,6 +388,52 @@ BOOL CP2XPPeer_Manage::P2XPPeer_Manage_GetWList(TCHAR*** pppszP2XPClient, int* p
 	return TRUE;
 }
 /********************************************************************
+函数名称：P2XPPeer_Manage_GetAllList
+函数功能：获取所有客户端
+ 参数.一：pppszP2XPClient
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出客户端列表
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出客户端个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CP2XPPeer_Manage::P2XPPeer_Manage_GetAllList(TCHAR*** pppszP2XPClient, int* pInt_ListCount)
+{
+	PeerManage_IsErrorOccur = FALSE;
+
+	if ((NULL == pppszP2XPClient) || (NULL == pInt_ListCount))
+	{
+		PeerManage_IsErrorOccur = TRUE;
+		PeerManage_dwErrorCode = ERROR_XENGINE_P2XP_PEER_MANAGE_GETWLIST_PARAMENT;
+		return FALSE;
+	}
+	if (stl_MapPeerAddr.size() <= 0)
+	{
+		PeerManage_IsErrorOccur = TRUE;
+		PeerManage_dwErrorCode = ERROR_XENGINE_P2XP_PEER_MANAGE_GETWLIST_NOTFOUND;
+		return FALSE;
+	}
+	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppszP2XPClient, stl_MapPeerAddr.size(), 128);
+
+	st_rwLocker.lock_shared();
+    unordered_map<string, LPNETENGINE_P2XP_PEERINFO>::const_iterator stl_MapIterator = stl_MapPeerAddr.begin();
+	for (int i = 0; stl_MapIterator != stl_MapPeerAddr.end(); stl_MapIterator++, i++)
+	{
+		_tcscpy((*pppszP2XPClient)[i], stl_MapIterator->first.c_str());
+	}
+	*pInt_ListCount = stl_MapClients.size();
+	st_rwLocker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
 函数名称：P2XPPeer_Manage_Set
 函数功能：设置指定客户的节点信息
  参数.一：lpszAddr

@@ -160,6 +160,25 @@ extern "C" BOOL P2XPPeer_Manage_GetLList(LPCSTR lpszPubAddr, CHAR*** pppszP2XPCl
 *********************************************************************/
 extern "C" BOOL P2XPPeer_Manage_GetWList(CHAR*** pppszP2XPClient, int* pInt_ListCount);
 /********************************************************************
+函数名称：P2XPPeer_Manage_GetAllList
+函数功能：获取所有客户端
+ 参数.一：pppszP2XPClient
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出客户端列表
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出客户端个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL P2XPPeer_Manage_GetAllList(TCHAR*** pppszP2XPClient, int* pInt_ListCount);
+/********************************************************************
 函数名称：P2XPPeer_Manage_Set
 函数功能：设置指定客户的节点信息
  参数.一：lpszAddr

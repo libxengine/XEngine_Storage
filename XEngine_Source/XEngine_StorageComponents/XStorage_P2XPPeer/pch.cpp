@@ -49,6 +49,10 @@ extern "C" BOOL P2XPPeer_Manage_GetWList(TCHAR * **pppszP2XPClient, int* pInt_Li
 {
 	return m_P2PPeerManage.P2XPPeer_Manage_GetWList(pppszP2XPClient, pInt_ListCount);
 }
+extern "C" BOOL P2XPPeer_Manage_GetAllList(TCHAR * **pppszP2XPClient, int* pInt_ListCount)
+{
+	return m_P2PPeerManage.P2XPPeer_Manage_GetAllList(pppszP2XPClient, pInt_ListCount);
+}
 extern "C" BOOL P2XPPeer_Manage_Set(LPCTSTR lpszAddr, XENGINE_P2XP_PEERINFO st_PeerInfo)
 {
 	return m_P2PPeerManage.P2XPPeer_Manage_Set(lpszAddr, st_PeerInfo);
