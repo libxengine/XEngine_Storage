@@ -227,7 +227,7 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			memset(tszTimeEnd, '\0', MAX_PATH);
 			memset(tszFileName, '\0', MAX_PATH);
 			memset(tszFileHash, '\0', MAX_PATH);
-
+			//用于验证协议是否正确
 			if (!Protocol_StorageParse_QueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash))
 			{
 				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
@@ -235,8 +235,27 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,查询文件失败,解析协议失败,错误码:%lX"), lpszClientAddr, P2XPPeer_GetLastError());
 				return FALSE;
 			}
+			//确认
+			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REPQUERY;
+			Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求查询用户"), lpszClientAddr);
+			//通知
+			int nListCount = 0;
+			TCHAR** pppszP2XPClient;
+			P2XPPeer_Manage_GetAllList(&pppszP2XPClient, &nListCount);
+			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQQUERY;
+			for (int i = 0; i < nListCount; i++)
+			{
+				//过滤自己
+				if (0 == _tcsncmp(lpszClientAddr, pppszP2XPClient[i], _tcslen(lpszClientAddr)))
+				{
+					continue;
+				}
+				XEngine_Net_SendMsg(pppszP2XPClient[i], (LPCTSTR)pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR), STORAGE_NETTYPE_TCPP2XP);
+				XEngine_Net_SendMsg(pppszP2XPClient[i], lpszMsgBuffer, nMsgLen, STORAGE_NETTYPE_TCPP2XP);
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求查询文件:%s,用户个数:%d"), lpszClientAddr, tszFileName, tszFileHash, nListCount--);
+			BaseLib_OperatorMemory_Free((XPPPMEM)&pppszP2XPClient, nListCount);
 		}
 		else
 		{
