@@ -47,7 +47,7 @@ BOOL XEngine_Task_Event(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lps
 			return FALSE;
 		}
 		_stprintf(tszBoundarStr, _T("--%s\r\n"), tszBoundarTmp);
-		XStorageProtocol_Core_REQUPEvent(lpszMsgBuffer, tszBoundarStr, st_DBFile.st_ProtocolFile.tszFileName, tszFileDir, st_DBFile.st_ProtocolFile.tszFileHash, &st_DBFile.st_ProtocolFile.nFileSize);
+		Protocol_StorageParse_UPEvent(lpszMsgBuffer, tszBoundarStr, st_DBFile.st_ProtocolFile.tszFileName, tszFileDir, st_DBFile.st_ProtocolFile.tszFileHash, &st_DBFile.st_ProtocolFile.nFileSize);
 
 		if (st_ServiceCfg.st_XStorage.bRename)
 		{

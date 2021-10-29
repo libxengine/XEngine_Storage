@@ -20,7 +20,7 @@ BOOL XEngine_Task_Pass(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lpsz
 		memset(tszFileHash, '\0', MAX_PATH);
 		memset(tszClientAddr, '\0', sizeof(tszClientAddr));
 
-		XStorageProtocol_Proxy_ParseNotify(lpszMsgBuffer, nMsgLen, tszClientAddr, tszFileName, tszFileHash, &nFileSize);
+		Protocol_StorageParse_ProxyNotify(lpszMsgBuffer, nMsgLen, tszClientAddr, tszFileName, tszFileHash, &nFileSize);
 
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 200;
@@ -40,7 +40,7 @@ BOOL XEngine_Task_Pass(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lpsz
 		memset(tszFileHash, '\0', MAX_PATH);
 		memset(tszClientAddr, '\0', sizeof(tszClientAddr));
 
-		XStorageProtocol_Proxy_ParseNotify(lpszMsgBuffer, nMsgLen, tszClientAddr, tszFileName, tszFileHash, &nFileSize);
+		Protocol_StorageParse_ProxyNotify(lpszMsgBuffer, nMsgLen, tszClientAddr, tszFileName, tszFileHash, &nFileSize);
 
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 200;

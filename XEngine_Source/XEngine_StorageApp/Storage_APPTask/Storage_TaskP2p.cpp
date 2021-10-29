@@ -22,7 +22,7 @@ XHTHREAD XEngine_Task_P2PThread()
 		if (NetCore_BroadCast_Recv(hBroadSocket, tszMsgBuffer, &nMsgLen, tszIPAddr))
 		{
 			//收到文件查询请求
-			if (XStorageProtocol_Core_REQQueryFile(tszMsgBuffer, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash))
+			if (Protocol_StorageParse_QueryFile(tszMsgBuffer, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash))
 			{
 				//查询文件是否存在数据库,不存在不关心
 				if (0 != st_ServiceCfg.st_XSql.nSQLType)
@@ -40,7 +40,7 @@ XHTHREAD XEngine_Task_P2PThread()
 					if (nListCount > 0)
 					{
 						_stprintf(pppSt_ListFile[0]->tszTableName, _T("%s:%d"), st_ServiceCfg.tszIPAddr, st_ServiceCfg.nStorageDLPort);
-						XStorageProtocol_Core_REPQueryFile(tszMsgBuffer, &nMsgLen, &pppSt_ListFile, nListCount, st_ServiceCfg.st_XStorage.tszFileDir, tszTimeStart, tszTimeEnd);
+						Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &pppSt_ListFile, nListCount, st_ServiceCfg.st_XStorage.tszFileDir, tszTimeStart, tszTimeEnd);
 						BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
 
 						SOCKET hSDSocket;
@@ -88,7 +88,7 @@ BOOL XEngine_Task_P2PGet(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPON
 			st_HDRParam.nHttpCode = 200;
 
 			_stprintf(pppSt_ListFile[0]->tszTableName, _T("127.0.0.1:%d"), st_ServiceCfg.nStorageDLPort);
-			XStorageProtocol_Core_REPQueryFile(tszRVBuffer, &nRVLen, &pppSt_ListFile, nListCount, st_ServiceCfg.st_XStorage.tszFileDir);
+			Protocol_StoragePacket_QueryFile(tszRVBuffer, &nRVLen, &pppSt_ListFile, nListCount, st_ServiceCfg.st_XStorage.tszFileDir);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
 
 			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam, tszRVBuffer, nRVLen);
@@ -125,7 +125,7 @@ BOOL XEngine_Task_P2PGet(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPON
 		SOCKET hRVSocket;
 		list<APIHELP_LBFILEINFO> stl_ListFile;
 
-		XStorageProtocol_Client_REQQueryFile(tszSDBuffer, &nSDLen, NULL, lpszFileHash);
+		Protocol_P2XPPacket_QueryFile(tszSDBuffer, &nSDLen, NULL, lpszFileHash);
 		NetCore_BroadCast_SendInit(&hSDSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr);
 		NetCore_BroadCast_RecvInit(&hRVSocket, st_ServiceCfg.st_P2xp.nSDPort);
 
@@ -175,7 +175,7 @@ BOOL XEngine_Task_P2PGet(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPON
 			int nListCount = 0;
 			XSTORAGECORE_DBFILE** ppSt_ListPacket;
 			APIHelp_Distributed_FileList(&stl_ListFile, &ppSt_ListPacket, &nListCount);
-			XStorageProtocol_Core_REPQueryFile(tszRVBuffer, &nRVLen, &ppSt_ListPacket, nListCount, st_ServiceCfg.st_XStorage.tszFileDir);
+			Protocol_StoragePacket_QueryFile(tszRVBuffer, &nRVLen, &ppSt_ListPacket, nListCount, st_ServiceCfg.st_XStorage.tszFileDir);
 			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListPacket, nListCount);
 		}

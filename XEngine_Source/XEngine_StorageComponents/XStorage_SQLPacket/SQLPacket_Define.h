@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct tag_XStorageCore_DBFILE
 {
-    XENGINE_PROTOCOLFILE st_ProtocolFile;
+    XENGINE_PROTOCOL_FILE st_ProtocolFile;
     CHAR tszTableName[64];                                                //日期表名称,插入:表示自定义插入日期表,获取:表示导出这个文件所属日期表
 }XSTORAGECORE_DBFILE, *LPXSTORAGECORE_DBFILE;
 typedef struct tag_XStorageCore_UserInfo

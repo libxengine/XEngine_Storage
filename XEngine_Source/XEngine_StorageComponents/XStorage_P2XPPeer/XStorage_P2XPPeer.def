@@ -1,0 +1,16 @@
+LIBRARY
+
+EXPORTS
+	P2XPPeer_GetLastError
+
+	P2XPPeer_Manage_Add
+	P2XPPeer_Manage_Get
+	P2XPPeer_Manage_GetUser
+	P2XPPeer_Manage_GetLan
+	P2XPPeer_Manage_GetLList
+	P2XPPeer_Manage_GetWList
+	P2XPPeer_Manage_GetAllList
+	P2XPPeer_Manage_Set
+	P2XPPeer_Manage_Delete
+	P2XPPeer_Manage_DelAll
+	P2XPPeer_Manage_GetCount

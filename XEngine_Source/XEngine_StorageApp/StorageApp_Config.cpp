@@ -25,7 +25,7 @@ BOOL StorageApp_Config_Parament(int argc,char **argv)
         }
         if ((0 == _tcscmp("-v",argv[i])) || (0 == _tcscmp("-V",argv[i])))
         {
-            tstring m_StrVersion = st_ServiceCfg.st_XVer.pStl_ListStorage->front();
+            string m_StrVersion = st_ServiceCfg.st_XVer.pStl_ListStorage->front();
             printf("Version：%s\n", m_StrVersion.c_str());
             return FALSE;
         }

@@ -100,7 +100,7 @@ typedef struct tag_XEngine_ServerConfig
     }st_P2xp;
     struct
     {
-        list<tstring> *pStl_ListStorage;
+        list<string> *pStl_ListStorage;
     }st_XVer;
 }XENGINE_SERVERCONFIG;
 typedef struct
@@ -114,9 +114,9 @@ typedef struct
 	struct
 	{
         list<int>* pStl_ListUseMode;
-        list<tstring>* pStl_ListCenter;
-		list<tstring>* pStl_ListDownload;
-		list<tstring>* pStl_ListUPLoader;
+        list<string>* pStl_ListCenter;
+		list<string>* pStl_ListDownload;
+		list<string>* pStl_ListUPLoader;
 	}st_LoadBalance;
 }XENGINE_LBCONFIG;
 //////////////////////////////////////////////////////////////////////////

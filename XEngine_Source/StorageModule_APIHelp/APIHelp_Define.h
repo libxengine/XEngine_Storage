@@ -59,7 +59,7 @@ extern "C" BOOL APIHelp_Distributed_IsMode(list<int>*pStl_ListMode, int nMode);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_RandomAddr(list<tstring>* pStl_ListAddr, TCHAR* ptszAddr);
+extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr);
 /********************************************************************
 函数名称：APIHelp_Distributed_FileList
 函数功能：解析所有解析到的内容并且打包成指定结构

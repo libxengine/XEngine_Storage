@@ -33,7 +33,7 @@ extern "C" BOOL APIHelp_Distributed_IsMode(list<int>*pStl_ListMode, int nMode)
 {
 	return m_APIDistributed.APIHelp_Distributed_IsMode(pStl_ListMode, nMode);
 }
-extern "C" BOOL APIHelp_Distributed_RandomAddr(list<tstring>*pStl_ListAddr, TCHAR * ptszAddr)
+extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>*pStl_ListAddr, TCHAR * ptszAddr)
 {
 	return m_APIDistributed.APIHelp_Distributed_RandomAddr(pStl_ListAddr, ptszAddr);
 }

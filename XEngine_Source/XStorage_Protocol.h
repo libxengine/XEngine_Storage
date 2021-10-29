@@ -16,6 +16,8 @@
 //存储服务
 #define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQQUERY 0x4001     //查询请求
 #define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REPQUERY 0x4002     //查询回复
+#define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQREPORT 0x4003    //报告查询结果
+#define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REPREPORT 0x4004    //确认查询结果
 //P2XP协议
 #define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REQLANLIST 0x6001      //同步列表协议,同步本地局域网IP中的客户端
 #define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REPLANLIST 0x6002      //同步列表回复确认协议
@@ -26,6 +28,16 @@
 //////////////////////////////////////////////////////////////////////////
 //                         协议结构体
 //////////////////////////////////////////////////////////////////////////
+//文件传输头文件,可用于P2XP文件传输和组包管理模块文件传输
+typedef struct tag_XEngine_Protocol_File
+{
+	CHAR tszFilePath[MAX_PATH];                                           //文件路径
+	CHAR tszFileName[MAX_PATH];                                           //文件名称,文件传输的时候才需要,其他时候不需要
+	CHAR tszFileHash[MAX_PATH];                                           //文件HASH值,MD5或者HASH1 256等...不能超过260字节大小
+	CHAR tszFileUser[128];                                                //文件所属用户
+	CHAR tszFileTime[64];                                                 //文件创建时间，如果这个参数不填,那么服务器将会设置为接受到的文件时间
+	__int64x nFileSize;                                                   //文件大小
+}XENGINE_PROTOCOL_FILE, * LPXENGINE_PROTOCOL_FILE;
 //连接信息
 typedef struct tag_XEngine_P2XPPeer_Protocol
 {
