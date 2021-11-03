@@ -180,6 +180,20 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     pSt_ServerConfig->st_P2xp.nSDPort = st_JsonP2xp["nSDPort"].asInt();
     _tcscpy(pSt_ServerConfig->st_P2xp.tszQQWryFile, st_JsonP2xp["tszQQWryFile"].asCString());
 
+	if (st_JsonRoot["XCert"].empty() || (6 != st_JsonRoot["XCert"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_P2XP;
+		return FALSE;
+	}
+	Json::Value st_JsonCert = st_JsonRoot["XCert"];
+	pSt_ServerConfig->st_XCert.bDLEnable = st_JsonCert["bDLEnable"].asInt();
+    pSt_ServerConfig->st_XCert.bUPEnable = st_JsonCert["bUPEnable"].asInt();
+    pSt_ServerConfig->st_XCert.bCHEnable = st_JsonCert["bCHEnable"].asInt();
+    pSt_ServerConfig->st_XCert.nSslType = st_JsonCert["nSslType"].asInt();
+	_tcscpy(pSt_ServerConfig->st_XCert.tszCertChain, st_JsonP2xp["tszCertChain"].asCString());
+    _tcscpy(pSt_ServerConfig->st_XCert.tszCertKey, st_JsonP2xp["tszCertKey"].asCString());
+
 	if (st_JsonRoot["XVer"].empty() || (1 != st_JsonRoot["XVer"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
