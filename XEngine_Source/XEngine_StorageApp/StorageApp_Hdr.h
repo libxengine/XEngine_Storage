@@ -88,6 +88,9 @@ extern XNETHANDLE xhDLPool;
 extern XNETHANDLE xhCTPool;
 extern XNETHANDLE xhP2XPPool;
 
+extern XHANDLE xhDLSsl;
+extern XHANDLE xhUPSsl;
+extern XHANDLE xhCHSsl;
 extern XHANDLE xhLimit;
 extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;

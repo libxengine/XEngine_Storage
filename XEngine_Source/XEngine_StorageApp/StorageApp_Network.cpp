@@ -2,6 +2,10 @@
 
 BOOL CALLBACK XEngine_Callback_DownloadLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
+	if (st_ServiceCfg.st_XCert.bDLEnable)
+	{
+		OPenSsl_Server_AcceptEx(xhDLSsl, hSocket, lpszClientAddr);
+	}
 	RfcComponents_HttpServer_CreateClientEx(xhDLHttp, lpszClientAddr, 0);
 	SocketOpt_HeartBeat_InsertAddrEx(xhHBDownload, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端：%s，进入了服务器"), lpszClientAddr);
@@ -9,10 +13,25 @@ BOOL CALLBACK XEngine_Callback_DownloadLogin(LPCTSTR lpszClientAddr, SOCKET hSoc
 }
 void CALLBACK XEngine_Callback_DownloadRecv(LPCTSTR lpszClientAddr, SOCKET hSocket, LPCTSTR lpszRecvMsg, int nMsgLen, LPVOID lParam)
 {
-	if (!RfcComponents_HttpServer_InserQueueEx(xhDLHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+	if (st_ServiceCfg.st_XCert.bDLEnable)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
-		return;
+		int nSLen = 0;
+		TCHAR* ptszMsgBuffer = NULL;
+		OPenSsl_Server_RecvMemoryEx(xhDLSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
+		if (!RfcComponents_HttpServer_InserQueueEx(xhDLHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
+			return;
+		}
+		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	}
+	else
+	{
+		if (!RfcComponents_HttpServer_InserQueueEx(xhDLHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
+			return;
+		}
 	}
 	SocketOpt_HeartBeat_ActiveAddrEx(xhHBDownload, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("下载客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
@@ -24,6 +43,10 @@ void CALLBACK XEngine_Callback_DownloadLeave(LPCTSTR lpszClientAddr, SOCKET hSoc
 //////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK XEngine_Callback_UPLoaderLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
+	if (st_ServiceCfg.st_XCert.bUPEnable)
+	{
+		OPenSsl_Server_AcceptEx(xhUPSsl, hSocket, lpszClientAddr);
+	}
 	RfcComponents_HttpServer_CreateClientEx(xhUPHttp, lpszClientAddr, 0);
 	RfcComponents_HttpServer_SetRecvModeEx(xhUPHttp, lpszClientAddr, 1);   //设置为文件接受模式
 	SocketOpt_HeartBeat_InsertAddrEx(xhHBUPLoader, lpszClientAddr);
@@ -32,10 +55,25 @@ BOOL CALLBACK XEngine_Callback_UPLoaderLogin(LPCTSTR lpszClientAddr, SOCKET hSoc
 }
 void CALLBACK XEngine_Callback_UPLoaderRecv(LPCTSTR lpszClientAddr, SOCKET hSocket, LPCTSTR lpszRecvMsg, int nMsgLen, LPVOID lParam)
 {
-	if (!RfcComponents_HttpServer_InserQueueEx(xhUPHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+	if (st_ServiceCfg.st_XCert.bUPEnable)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
-		return;
+		int nSLen = 0;
+		TCHAR* ptszMsgBuffer = NULL;
+		OPenSsl_Server_RecvMemoryEx(xhUPSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
+		if (!RfcComponents_HttpServer_InserQueueEx(xhUPHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
+			return;
+		}
+		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	}
+	else
+	{
+		if (!RfcComponents_HttpServer_InserQueueEx(xhUPHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
+			return;
+		}
 	}
 	SocketOpt_HeartBeat_ActiveAddrEx(xhHBUPLoader, lpszClientAddr);
 
@@ -53,6 +91,10 @@ void CALLBACK XEngine_Callback_UPLoaderLeave(LPCTSTR lpszClientAddr, SOCKET hSoc
 //////////////////////////////////////////////////////////////////////////
 BOOL CALLBACK XEngine_Callback_CenterLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
 {
+	if (st_ServiceCfg.st_XCert.bCHEnable)
+	{
+		OPenSsl_Server_AcceptEx(xhCHSsl, hSocket, lpszClientAddr);
+	}
 	RfcComponents_HttpServer_CreateClientEx(xhCenterHttp, lpszClientAddr, 0);
 	SocketOpt_HeartBeat_InsertAddrEx(xhHBCenter, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端：%s，进入了服务器"), lpszClientAddr);
@@ -60,10 +102,25 @@ BOOL CALLBACK XEngine_Callback_CenterLogin(LPCTSTR lpszClientAddr, SOCKET hSocke
 }
 void CALLBACK XEngine_Callback_CenterRecv(LPCTSTR lpszClientAddr, SOCKET hSocket, LPCTSTR lpszRecvMsg, int nMsgLen, LPVOID lParam)
 {
-	if (!RfcComponents_HttpServer_InserQueueEx(xhCenterHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+	if (st_ServiceCfg.st_XCert.bCHEnable)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
-		return;
+		int nSLen = 0;
+		TCHAR* ptszMsgBuffer = NULL;
+		OPenSsl_Server_RecvMemoryEx(xhCHSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
+		if (!RfcComponents_HttpServer_InserQueueEx(xhCenterHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
+			return;
+		}
+		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	}
+	else
+	{
+		if (!RfcComponents_HttpServer_InserQueueEx(xhCenterHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
+			return;
+		}
 	}
 	SocketOpt_HeartBeat_ActiveAddrEx(xhHBCenter, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("业务客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
@@ -170,6 +227,9 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClient
 	RfcComponents_HttpServer_CloseClinetEx(xhUPHttp, lpszClientAddr);
 	RfcComponents_HttpServer_CloseClinetEx(xhDLHttp, lpszClientAddr);
 	RfcComponents_HttpServer_CloseClinetEx(xhCenterHttp, lpszClientAddr);
+	OPenSsl_Server_CloseClientEx(xhDLSsl, lpszClientAddr);
+	OPenSsl_Server_CloseClientEx(xhUPSsl, lpszClientAddr);
+	OPenSsl_Server_CloseClientEx(xhCHSsl, lpszClientAddr);
 	HelpComponents_Datas_DeleteEx(xhP2XPPacket, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s：%s，与服务器断开，原因：%s"), m_StrClient.c_str(), lpszClientAddr, lpszLeaveMsg);
 	return TRUE;
@@ -181,7 +241,19 @@ BOOL XEngine_Net_SendMsg(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsg
 
 	if (STORAGE_NETTYPE_HTTPDOWNLOAD == nType)
 	{
-		bRet = NetCore_TCPXCore_SendEx(xhNetDownload, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 10);
+		if (st_ServiceCfg.st_XCert.bDLEnable)
+		{
+			int nSLen = 0;
+			TCHAR *ptszMsgBuffer = NULL;
+
+			OPenSsl_Server_SendMemoryEx(xhDLSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
+			bRet = NetCore_TCPXCore_SendEx(xhNetDownload, lpszClientAddr, ptszMsgBuffer, nSLen);
+			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+		}
+		else
+		{
+			bRet = NetCore_TCPXCore_SendEx(xhNetDownload, lpszClientAddr, lpszMsgBuffer, nMsgLen, 0, 10);
+		}
 		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBDownload, lpszClientAddr);
@@ -189,7 +261,19 @@ BOOL XEngine_Net_SendMsg(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsg
 	}
 	else if(STORAGE_NETTYPE_HTTPUPLOADER == nType)
 	{
-		bRet = NetCore_TCPXCore_SendEx(xhNetUPLoader, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		if (st_ServiceCfg.st_XCert.bUPEnable)
+		{
+			int nSLen = 0;
+			TCHAR* ptszMsgBuffer = NULL;
+
+			OPenSsl_Server_SendMemoryEx(xhUPSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
+			bRet = NetCore_TCPXCore_SendEx(xhNetUPLoader, lpszClientAddr, ptszMsgBuffer, nSLen);
+			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+		}
+		else
+		{
+			bRet = NetCore_TCPXCore_SendEx(xhNetUPLoader, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		}
 		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBUPLoader, lpszClientAddr);
@@ -197,7 +281,19 @@ BOOL XEngine_Net_SendMsg(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsg
 	}
 	else if (STORAGE_NETTYPE_HTTPCENTER == nType)
 	{
-		bRet = NetCore_TCPXCore_SendEx(xhNetCenter, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		if (st_ServiceCfg.st_XCert.bCHEnable)
+		{
+			int nSLen = 0;
+			TCHAR* ptszMsgBuffer = NULL;
+
+			OPenSsl_Server_SendMemoryEx(xhCHSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
+			bRet = NetCore_TCPXCore_SendEx(xhNetCenter, lpszClientAddr, ptszMsgBuffer, nSLen);
+			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+		}
+		else
+		{
+			bRet = NetCore_TCPXCore_SendEx(xhNetCenter, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		}
 		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBCenter, lpszClientAddr);
