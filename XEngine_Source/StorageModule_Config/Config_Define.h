@@ -63,7 +63,6 @@ typedef struct tag_XEngine_ServerConfig
     }st_XSql;
     struct  
 	{
-        BOOL bRename;
         BOOL bResumable;
         int nHashMode;
 		TCHAR tszFileDir[MAX_PATH];
