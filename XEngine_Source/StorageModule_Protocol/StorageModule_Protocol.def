@@ -14,7 +14,6 @@ EXPORTS
 	Protocol_StorageParse_QueryFile
 	Protocol_StorageParse_ReportFile
 	Protocol_StorageParse_DirOperator
-	Protocol_StorageParse_UPEvent
 
 	Protocol_P2XPPacket_Common
 	Protocol_P2XPPacket_Lan

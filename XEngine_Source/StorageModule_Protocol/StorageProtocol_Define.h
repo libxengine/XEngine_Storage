@@ -244,45 +244,6 @@ extern "C" BOOL Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuffer, int nMsg
 备注：
 *********************************************************************/
 extern "C" BOOL Protocol_StorageParse_DirOperator(LPCSTR lpszMsgBuffer, CHAR * ptszUserDir, int* pInt_Operator);
-/********************************************************************
-函数名称：Protocol_StorageParse_UPEvent
-函数功能：NGINX代理上传事件处理函数
- 参数.一：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要处理的缓冲区
- 参数.二：lpszBoundary
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入边界字符串
- 参数.三：ptszFileName
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出文件名
- 参数.四：ptszFilePath
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出文件路径
- 参数.五：ptszFileHash
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出文件HASH
- 参数.六：pInt_FileSize
-  In/Out：Out
-  类型：整数型指针
-  可空：N
-  意思：输出文件大小
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_StorageParse_UPEvent(LPCTSTR lpszMsgBuffer, LPCTSTR lpszBoundary, TCHAR * ptszFileName, TCHAR * ptszFilePath, TCHAR * ptszFileHash, __int64x * pInt_FileSize);
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
