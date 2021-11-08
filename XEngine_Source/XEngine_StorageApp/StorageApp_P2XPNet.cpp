@@ -10,18 +10,18 @@ XHTHREAD CALLBACK XEngine_P2XP_TCPThread(LPVOID lParam)
 		//等待指定线程事件触发
 		if (HelpComponents_Datas_WaitEventEx(xhP2XPPacket, nThreadPos))
 		{
-			int nMsgLen = 4096;
 			int nListCount = 0;
 			TCHAR tszMsgBuffer[4096];
 			XENGINE_PROTOCOLHDR st_ProtocolHdr;
 			HELPCOMPONENT_PACKET_CLIENT** ppSst_ListAddr;
 
-			memset(&st_ProtocolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
-			memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
-
 			HelpComponents_Datas_GetPoolEx(xhP2XPPacket, nThreadPos, &ppSst_ListAddr, &nListCount);
 			for (int i = 0; i < nListCount; i++)
 			{
+				int nMsgLen = 4096;
+				memset(&st_ProtocolHdr, '\0', sizeof(XENGINE_PROTOCOLHDR));
+				memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+
 				for (int j = 0; j < ppSst_ListAddr[i]->nPktCount; j++)
 				{
 					if (!HelpComponents_Datas_GetEx(xhP2XPPacket, ppSst_ListAddr[i]->tszClientAddr, tszMsgBuffer, &nMsgLen, &st_ProtocolHdr))
