@@ -67,6 +67,7 @@ BOOL CXStorage_MySql::XStorage_MySql_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConn
         return FALSE;
     }
     bIsRun = TRUE;
+   
     pSTDThread = make_shared<std::thread>(XStorage_MySql_Thread, this);
     if (!pSTDThread->joinable())
     {
@@ -93,10 +94,15 @@ BOOL CXStorage_MySql::XStorage_MySql_Destory()
         return TRUE;
     }
     bIsRun = FALSE;
-    pSTDThread->join();
 
+    if (NULL != pSTDThread)
+    {
+        if (pSTDThread->joinable())
+        {
+            pSTDThread->join();
+        }
+    }
     DataBase_MySQL_Close(xhDBSQL);
-
     return TRUE;
 }
 /********************************************************************
@@ -821,15 +827,6 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
 
                     for (int i = 0; i < nListCount; i++)
                     {
-                        //更新文件个数和大小
-                        memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
-                        _stprintf_s(tszSQLQuery, _T("UPDATE `XStorage_Count` SET FileCount = FileCount - 1,FileSize = FileSize - %lld"), ppSt_ListFile[i]->st_ProtocolFile.nFileSize);
-                        if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery))
-                        {
-                            XStorage_IsErrorOccur = TRUE;
-                            XStorage_dwErrorCode = DataBase_GetLastError();
-                            return FALSE;
-                        }
                         //删除文件
                         TCHAR tszFilePath[2048];
                         memset(tszFilePath, '\0', sizeof(tszFilePath));
@@ -857,20 +854,17 @@ XHTHREAD CXStorage_MySql::XStorage_MySql_Thread(LPVOID lParam)
     CXStorage_MySql *pClass_This = (CXStorage_MySql *)lParam;
     time_t nTimeStart = time(NULL);
     time_t nTimeEnd = 0;
-    BOOL bFirst = TRUE;
     int nTime = 60 * 60 * 12;
 
-    while (pClass_This->bIsRun)
-    {
-		if (((nTimeEnd - nTimeStart) > nTime) || bFirst)
+	while (pClass_This->bIsRun)
+	{
+		if ((nTimeEnd - nTimeStart) > nTime)
 		{
 			pClass_This->XStorage_MySql_TimeDel();
 			pClass_This->XStorage_MySql_CreateTable();
-            bFirst = FALSE;
 		}
-        nTimeEnd = time(NULL);
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
+		nTimeEnd = time(NULL);
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
     return 0;
 }
-
