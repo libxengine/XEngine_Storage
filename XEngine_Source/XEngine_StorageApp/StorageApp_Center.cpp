@@ -105,10 +105,6 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		{
 			XEngine_Task_Pass(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
 		}
-		else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_EVENT, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_EVENT)))
-		{
-			XEngine_Task_Event(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
-		}
 		else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_TASK_MANAGE, tszAPIMethod, _tcslen(XENGINE_STORAGE_APP_TASK_MANAGE)))
 		{
 			XEngine_Task_Manage(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);

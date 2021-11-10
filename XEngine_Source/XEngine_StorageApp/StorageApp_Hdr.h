@@ -88,6 +88,9 @@ extern XNETHANDLE xhDLPool;
 extern XNETHANDLE xhCTPool;
 extern XNETHANDLE xhP2XPPool;
 
+extern XHANDLE xhDLSsl;
+extern XHANDLE xhUPSsl;
+extern XHANDLE xhCHSsl;
 extern XHANDLE xhLimit;
 extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
@@ -106,7 +109,6 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "StorageApp_UPLoader.h"
 #include "StorageApp_Center.h"
 #include "StorageApp_P2XPNet.h"
-#include "Storage_APPTask/Storage_TaskEvent.h"
 #include "Storage_APPTask/Storage_TaskPass.h"
 #include "Storage_APPTask/Storage_TaskP2p.h"
 #include "Storage_APPTask/Storage_TaskManage.h"

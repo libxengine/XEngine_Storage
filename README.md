@@ -15,7 +15,7 @@ c c++ file storage service
 软件特性:  
 1. 支持HTTP协议上传和下载(采用PUT和GET)  
 2. 支持HTTP API接口事件通知与管理  
-3. 支持HTTP加密与证书(规划中)  
+3. 支持HTTP加密与证书  
 4. 采用数据库(MYSQL和SQLITE)记录信息  
 5. 支持分布式  
 6. 支持HTTP验证  
@@ -26,15 +26,14 @@ c c++ file storage service
 11. BT(规划中)  
 12. 数据分发  
 13. 支持秒传和断点续传  
-14. 支持NGINX UPLOAD MODULE上传代理  
-15. 支持上传和下载重定向  
-16. 支持全速模式和限速模式
+14. 支持上传和下载重定向  
+15. 支持全速模式和限速模式
 
 ## 安装教程
 
 #### 版本需求
 支持WINDOWS 7SP1和LINUX(UBUNT20.04,CENTOS8)以上系统  
-XEngine版本需要V7.18或者以上版本  
+XEngine版本需要V7.24或者以上版本  
 vcpkg 需要2021.05.11以上版本  
 
 #### Windows

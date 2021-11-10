@@ -125,7 +125,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLPass, st_JsonXSql["SQLPass"].asCString());
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLFile, st_JsonXSql["SQLFile"].asCString());
 
-    if (st_JsonRoot["XStorage"].empty() || (4 != st_JsonRoot["XStorage"].size()))
+    if (st_JsonRoot["XStorage"].empty() || (3 != st_JsonRoot["XStorage"].size()))
     {
         Config_IsErrorOccur = TRUE;
         Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
@@ -134,7 +134,6 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     Json::Value st_JsonXStorage = st_JsonRoot["XStorage"];
     pSt_ServerConfig->st_XStorage.nHashMode = st_JsonXStorage["nHashMode"].asInt();
     pSt_ServerConfig->st_XStorage.bResumable = st_JsonXStorage["bResumable"].asInt();
-    pSt_ServerConfig->st_XStorage.bRename = st_JsonXStorage["bRename"].asInt();
     _tcscpy(pSt_ServerConfig->st_XStorage.tszFileDir, st_JsonXStorage["tszFileDir"].asCString());
 
 	if (st_JsonRoot["XProxy"].empty() || (2 != st_JsonRoot["XProxy"].size()))
@@ -179,6 +178,26 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile,XENGINE_SERVERCONFIG 
     pSt_ServerConfig->st_P2xp.nRVPort = st_JsonP2xp["nRVPort"].asInt();
     pSt_ServerConfig->st_P2xp.nSDPort = st_JsonP2xp["nSDPort"].asInt();
     _tcscpy(pSt_ServerConfig->st_P2xp.tszQQWryFile, st_JsonP2xp["tszQQWryFile"].asCString());
+
+	if (st_JsonRoot["XCert"].empty() || (6 != st_JsonRoot["XCert"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_CERT;
+		return FALSE;
+	}
+	Json::Value st_JsonCert = st_JsonRoot["XCert"];
+	pSt_ServerConfig->st_XCert.bDLEnable = st_JsonCert["bDLEnable"].asInt();
+    pSt_ServerConfig->st_XCert.bUPEnable = st_JsonCert["bUPEnable"].asInt();
+    pSt_ServerConfig->st_XCert.bCHEnable = st_JsonCert["bCHEnable"].asInt();
+    pSt_ServerConfig->st_XCert.nSslType = st_JsonCert["nSslType"].asInt();
+    if (!st_JsonP2xp["tszCertChain"].isNull())
+    {
+        _tcscpy(pSt_ServerConfig->st_XCert.tszCertChain, st_JsonP2xp["tszCertChain"].asCString());
+    }
+	if (!st_JsonP2xp["tszCertKey"].isNull())
+	{
+        _tcscpy(pSt_ServerConfig->st_XCert.tszCertKey, st_JsonP2xp["tszCertKey"].asCString());
+	}
 
 	if (st_JsonRoot["XVer"].empty() || (1 != st_JsonRoot["XVer"].size()))
 	{

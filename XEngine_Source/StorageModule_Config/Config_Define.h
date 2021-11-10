@@ -63,7 +63,6 @@ typedef struct tag_XEngine_ServerConfig
     }st_XSql;
     struct  
 	{
-        BOOL bRename;
         BOOL bResumable;
         int nHashMode;
 		TCHAR tszFileDir[MAX_PATH];
@@ -98,6 +97,15 @@ typedef struct tag_XEngine_ServerConfig
         int nRVPort;
         TCHAR tszQQWryFile[MAX_PATH];
     }st_P2xp;
+    struct  
+    {
+        TCHAR tszCertChain[MAX_PATH];
+        TCHAR tszCertKey[MAX_PATH];
+        int nSslType;
+        BOOL bDLEnable;
+        BOOL bUPEnable;
+        BOOL bCHEnable;
+    }st_XCert;
     struct
     {
         list<string> *pStl_ListStorage;

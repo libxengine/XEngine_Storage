@@ -16,7 +16,7 @@ The purpose of development and implementation based on libXEngine is a cross-pla
 feature list:  
 1. support file http upload and download(use put and get method)  
 2. support http api notify of event and management api interface  
-3. support http encrypt and cert data transimission(planning)  
+3. support http encrypt and cert data transimission  
 4. support database(mysql and sqlite) record infomation.  
 5. support load banace  
 6. supprot http auth  
@@ -27,15 +27,14 @@ feature list:
 11. bt(planning)  
 12. data distributed  
 13. support second pass and Resumable   
-14. support nginx upload module proxy_pass  
-15. support upload and download Redirect  
-16. support full speed and limit speed
+14. support upload and download Redirect  
+15. support full speed and limit speed
 
 ## install
 
 #### Requirements  
 support system above windows 7sp1 and linux(ubuntu20.04,centos8)  
-XEngine need V7.18 or above  
+XEngine need V7.24 or above  
 vcpkg need 2021.05.11 or above  
 
 #### Windows

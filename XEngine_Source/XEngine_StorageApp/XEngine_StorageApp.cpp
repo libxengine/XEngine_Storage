@@ -18,6 +18,9 @@ XNETHANDLE xhDLPool = 0;
 XNETHANDLE xhCTPool = 0;
 XNETHANDLE xhP2XPPool = 0;
 
+XHANDLE xhDLSsl = NULL;
+XHANDLE xhUPSsl = NULL;
+XHANDLE xhCHSsl = NULL;
 XHANDLE xhLimit = NULL;
 XHANDLE xhUPHttp = NULL;
 XHANDLE xhDLHttp = NULL;
@@ -41,6 +44,10 @@ void ServiceApp_Stop(int signo)
 		RfcComponents_HttpServer_DestroyEx(xhDLHttp);
 		RfcComponents_HttpServer_DestroyEx(xhCenterHttp);
 		HelpComponents_Datas_Destory(xhP2XPPacket);
+
+		OPenSsl_Server_StopEx(xhDLSsl);
+		OPenSsl_Server_StopEx(xhUPSsl);
+		OPenSsl_Server_StopEx(xhCHSsl);
 
 		NetCore_TCPXCore_DestroyEx(xhNetDownload);
 		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
@@ -107,7 +114,7 @@ static int ServiceApp_Deamon(int wait)
 
 int main(int argc, char** argv)
 {
-#if (XENGINE_VERSION_KERNEL < 7) && (XENGINE_VERSION_MAIN < 21)
+#if (XENGINE_VERSION_KERNEL < 7) && (XENGINE_VERSION_MAIN < 24)
 	printf("XEngine版本过低,无法继续\n");
 #endif
 #ifdef _WINDOWS
@@ -264,6 +271,21 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载错误重试次数:%d"), st_ServiceCfg.st_XLimit.nDLTry);
 
+		if (st_ServiceCfg.st_XCert.bDLEnable)
+		{
+			xhDLSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, FALSE, FALSE, (ENUM_XENGINE_OPENSSL_PROTOCOL)st_ServiceCfg.st_XCert.nSslType);
+			if (NULL == xhDLSsl)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载SSL服务失败，错误：%lX"), Session_GetLastError());
+				goto XENGINE_EXITAPP;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务器中，启动下载SSL服务成功,证书链:%s,证书Key:%s,验证模式:%d"), st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertKey, st_ServiceCfg.st_XCert.nSslType);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务器中，检测到没有启用下载SSL服务"));
+		}
+
 		if (!NetCore_TCPXCore_StartEx(&xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动下载存储网络服务失败,端口:%d，错误：%lX,%d"), st_ServiceCfg.nStorageDLPort, NetCore_GetLastError(), errno);
@@ -307,6 +329,21 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传会话服务成功"));
 
+		if (st_ServiceCfg.st_XCert.bUPEnable)
+		{
+			xhUPSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, FALSE, FALSE, (ENUM_XENGINE_OPENSSL_PROTOCOL)st_ServiceCfg.st_XCert.nSslType);
+			if (NULL == xhUPSsl)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传SSL服务失败，错误：%lX"), Session_GetLastError());
+				goto XENGINE_EXITAPP;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务器中，启动上传SSL服务成功,证书链:%s,证书Key:%s,验证模式:%d"), st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertKey, st_ServiceCfg.st_XCert.nSslType);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务器中，检测到没有启用上传SSL服务"));
+		}
+
 		if (!NetCore_TCPXCore_StartEx(&xhNetUPLoader, st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动上传存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nStorageUPPort, NetCore_GetLastError());
@@ -342,6 +379,21 @@ int main(int argc, char** argv)
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP业务服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
+
+		if (st_ServiceCfg.st_XCert.bCHEnable)
+		{
+			xhCHSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, FALSE, FALSE, (ENUM_XENGINE_OPENSSL_PROTOCOL)st_ServiceCfg.st_XCert.nSslType);
+			if (NULL == xhCHSsl)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务器中，启动业务SSL服务失败，错误：%lX"), Session_GetLastError());
+				goto XENGINE_EXITAPP;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务器中，启动业务SSL服务成功,证书链:%s,证书Key:%s,验证模式:%d"), st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertKey, st_ServiceCfg.st_XCert.nSslType);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务器中，检测到没有启用业务SSL服务"));
+		}
 
 		if (!NetCore_TCPXCore_StartEx(&xhNetCenter, st_ServiceCfg.nCenterPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
 		{
@@ -444,6 +496,10 @@ XENGINE_EXITAPP:
 		RfcComponents_HttpServer_DestroyEx(xhDLHttp);
 		RfcComponents_HttpServer_DestroyEx(xhCenterHttp);
 		HelpComponents_Datas_Destory(xhP2XPPacket);
+
+		OPenSsl_Server_StopEx(xhDLSsl);
+		OPenSsl_Server_StopEx(xhUPSsl);
+		OPenSsl_Server_StopEx(xhCHSsl);
 
 		NetCore_TCPXCore_DestroyEx(xhNetDownload);
 		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);

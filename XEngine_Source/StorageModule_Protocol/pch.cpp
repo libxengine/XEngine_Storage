@@ -66,10 +66,6 @@ extern "C" BOOL Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBuffer, TCHAR *
 {
 	return m_StorageParse.Protocol_StorageParse_DirOperator(lpszMsgBuffer, ptszUserDir, pInt_Operator);
 }
-extern "C" BOOL Protocol_StorageParse_UPEvent(LPCTSTR lpszMsgBuffer, LPCTSTR lpszBoundary, TCHAR * ptszFileName, TCHAR * ptszFilePath, TCHAR * ptszFileHash, __int64x * pInt_FileSize)
-{
-	return m_StorageParse.Protocol_StorageParse_UPEvent(lpszMsgBuffer, lpszBoundary, ptszFileName, ptszFilePath, ptszFileHash, pInt_FileSize);
-}
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/

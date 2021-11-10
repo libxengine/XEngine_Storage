@@ -67,6 +67,7 @@ BOOL CXStorage_MySql::XStorage_MySql_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConn
         return FALSE;
     }
     bIsRun = TRUE;
+   
     pSTDThread = make_shared<std::thread>(XStorage_MySql_Thread, this);
     if (!pSTDThread->joinable())
     {
@@ -93,10 +94,15 @@ BOOL CXStorage_MySql::XStorage_MySql_Destory()
         return TRUE;
     }
     bIsRun = FALSE;
-    pSTDThread->join();
 
+    if (NULL != pSTDThread)
+    {
+        if (pSTDThread->joinable())
+        {
+            pSTDThread->join();
+        }
+    }
     DataBase_MySQL_Close(xhDBSQL);
-
     return TRUE;
 }
 /********************************************************************
@@ -264,8 +270,8 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
     }
     //查询
     XHDATA xhTable = 0;
-    DWORD64 nllLine = 0;
-    DWORD64 nllRow = 0;
+    __int64u nllLine = 0;
+    __int64u nllRow = 0;
     TCHAR tszSQLStatement[1024];
     memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
     //检查是否时间范围检索
@@ -292,15 +298,15 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
 	}
 	list<XSTORAGECORE_DBFILE> stl_ListFile;
     //轮训
-    for (DWORD64 i = 0; i < nllLine; i++)
+    for (__int64u i = 0; i < nllLine; i++)
     {
         TCHAR **pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
         if (NULL == pptszResult[0])
         {
             continue;
         }
-        DWORD64 dwLineResult = 0;
-        DWORD64 dwFieldResult = 0;
+        __int64u dwLineResult = 0;
+        __int64u dwFieldResult = 0;
         XNETHANDLE xhResult;
 
         memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
@@ -338,7 +344,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
         if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
         {
             //循环获取所有查找到的文件
-            for (DWORD64 j = 0; j < dwLineResult; j++)
+            for (__int64u j = 0; j < dwLineResult; j++)
             {
                 TCHAR **pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhResult);
 
@@ -430,8 +436,8 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQueryForTable(XSTORAGECORE_DBFILE*** pp
     }
     //查询
     XHDATA xhTable = 0;
-    DWORD64 nllLine = 0;
-    DWORD64 nllRow = 0;
+    __int64u nllLine = 0;
+    __int64u nllRow = 0;
 
     TCHAR tszSQLStatement[1024];
     memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
@@ -446,7 +452,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQueryForTable(XSTORAGECORE_DBFILE*** pp
 	}
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ListFile, (int)nllLine, sizeof(XSTORAGECORE_DBFILE));
 	//循环获取所有查找到的文件
-	for (DWORD64 i = 0; i < nllLine; i++)
+	for (__int64u i = 0; i < nllLine; i++)
 	{
 		TCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
 
@@ -525,8 +531,8 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE* pSt_F
     }
     //查询
     XHDATA xhTable = 0;
-    DWORD64 nllLine = 0;
-    DWORD64 nllRow = 0;
+    __int64u nllLine = 0;
+    __int64u nllRow = 0;
     BOOL bFound = FALSE;
     TCHAR tszSQLStatement[1024];
     memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
@@ -546,15 +552,15 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE* pSt_F
         return FALSE;
     }
     //轮训
-    for (DWORD64 i = 0; i < nllLine; i++)
+    for (__int64u i = 0; i < nllLine; i++)
     {
         TCHAR** pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
         if (NULL == pptszResult[0])
         {
             continue;
         }
-        DWORD64 dwLineResult = 0;
-        DWORD64 dwFieldResult = 0;
+        __int64u dwLineResult = 0;
+        __int64u dwFieldResult = 0;
         XNETHANDLE xhResult;
 
         memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
@@ -571,7 +577,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE* pSt_F
         if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
         {
             //循环获取所有查找到的文件
-            for (DWORD64 j = 0; j < dwLineResult; j++)
+            for (__int64u j = 0; j < dwLineResult; j++)
             {
                 TCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhResult);
 
@@ -644,8 +650,8 @@ BOOL CXStorage_MySql::XStorage_MySql_FileGetCount(__int64x *pInt_Count, __int64x
         XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_GETCOUNT_PARAMENT;
         return FALSE;
     }
-	DWORD64 nllRow = 0;
-	DWORD64 nllColumn = 0;
+	__int64u nllRow = 0;
+	__int64u nllColumn = 0;
     TCHAR tszSQLStatement[1024];    //SQL语句
     memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
 
@@ -792,8 +798,8 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
 {
     XStorage_IsErrorOccur = FALSE;
 
-    DWORD64 dwLine = 0;
-    DWORD64 dwField = 0;
+    __int64u dwLine = 0;
+    __int64u dwField = 0;
     XNETHANDLE xhTableResult;
     TCHAR tszSQLQuery[2048];
 
@@ -801,7 +807,7 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
     _stprintf_s(tszSQLQuery, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='XEngine_Storage' AND TABLE_TYPE='BASE TABLE'"));
     if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTableResult, tszSQLQuery, &dwLine, &dwField))
     {
-        for (DWORD64 i = 0; i < dwLine; i++)
+        for (__int64u i = 0; i < dwLine; i++)
         {
             TCHAR** pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhTableResult);
             if (NULL == pptszResult[0])
@@ -821,15 +827,6 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
 
                     for (int i = 0; i < nListCount; i++)
                     {
-                        //更新文件个数和大小
-                        memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
-                        _stprintf_s(tszSQLQuery, _T("UPDATE `XStorage_Count` SET FileCount = FileCount - 1,FileSize = FileSize - %lld"), ppSt_ListFile[i]->st_ProtocolFile.nFileSize);
-                        if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery))
-                        {
-                            XStorage_IsErrorOccur = TRUE;
-                            XStorage_dwErrorCode = DataBase_GetLastError();
-                            return FALSE;
-                        }
                         //删除文件
                         TCHAR tszFilePath[2048];
                         memset(tszFilePath, '\0', sizeof(tszFilePath));
@@ -857,20 +854,17 @@ XHTHREAD CXStorage_MySql::XStorage_MySql_Thread(LPVOID lParam)
     CXStorage_MySql *pClass_This = (CXStorage_MySql *)lParam;
     time_t nTimeStart = time(NULL);
     time_t nTimeEnd = 0;
-    BOOL bFirst = TRUE;
     int nTime = 60 * 60 * 12;
 
-    while (pClass_This->bIsRun)
-    {
-		if (((nTimeEnd - nTimeStart) > nTime) || bFirst)
+	while (pClass_This->bIsRun)
+	{
+		if ((nTimeEnd - nTimeStart) > nTime)
 		{
 			pClass_This->XStorage_MySql_TimeDel();
 			pClass_This->XStorage_MySql_CreateTable();
-            bFirst = FALSE;
 		}
-        nTimeEnd = time(NULL);
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
+		nTimeEnd = time(NULL);
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
     return 0;
 }
-

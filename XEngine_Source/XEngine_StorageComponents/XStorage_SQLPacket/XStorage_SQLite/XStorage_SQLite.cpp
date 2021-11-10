@@ -92,8 +92,16 @@ BOOL CXStorage_SQLite::XStorage_SQLite_Destory()
         return TRUE;
     }
     bIsRun = FALSE;
-    pSTDThread->join();
-    delete pSTDThread;
+
+    if (NULL != pSTDThread)
+    {
+        if (pSTDThread->joinable())
+        {
+            pSTDThread->join();
+            delete pSTDThread;
+            pSTDThread = NULL;
+        }
+    }
 	DataBase_SQLite_Close(xhSQL);
 	return TRUE;
 }
@@ -639,20 +647,17 @@ XHTHREAD CXStorage_SQLite::XStorage_SQLite_Thread(LPVOID lParam)
     CXStorage_SQLite* pClass_This = (CXStorage_SQLite*)lParam;
     time_t nTimeStart = time(NULL);
     time_t nTimeEnd = 0;
-    BOOL bFirst = TRUE;
     int nTime = 60 * 60 * 12;
 
     while (pClass_This->bIsRun)
     {
-        if (((nTimeEnd - nTimeStart) > nTime) || bFirst)
+        if ((nTimeEnd - nTimeStart) > nTime)
         {
             pClass_This->XStorage_SQLite_TimeDel();
             pClass_This->XStorage_SQLite_CreateTable();
-            bFirst = FALSE;
         }
         nTimeEnd = time(NULL);
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     return 0;
 }
-
