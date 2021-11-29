@@ -136,6 +136,8 @@ BOOL XEngine_Task_P2PGet(LPCTSTR lpszFileHash, LPCTSTR lpszClientAddr, RFCCOMPON
 
 			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszMsgBuffer, &nMsgLen, &st_HDRParam);
 			XEngine_Net_SendMsg(lpszClientAddr, tszMsgBuffer, nMsgLen, STORAGE_NETTYPE_HTTPCENTER);
+			NetCore_BroadCast_Close(hSDSocket);
+			NetCore_BroadCast_Close(hRVSocket);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("广播端:%s,发送广播请求失败,错误:%lX"), lpszClientAddr, NetCore_GetLastError());
 			return FALSE;
 		}

@@ -30,7 +30,7 @@ XHTHREAD CALLBACK XEngine_Center_HTTPThread(LPVOID lParam)
 					{
 						XEngine_Task_HttpCenter(ppSt_PKTClient[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
-					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&st_HTTPParam);
+					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
 				}
 			}
@@ -127,7 +127,7 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		//用于心跳
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 200;
-		LPCTSTR lpszHdrBuffer = _T("Allow: POST OPTIONS\r\n");
+		LPCTSTR lpszHdrBuffer = _T("Allow: POST GET OPTIONS\r\n");
 		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求OPTIONS心跳方法成功"), lpszClientAddr);
