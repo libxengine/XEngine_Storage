@@ -177,60 +177,95 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClient
 	if (STORAGE_NETTYPE_HTTPUPLOADER == nClientType)
 	{
 		m_StrClient = _T("上传客户端");
+		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
+		{
+			lpszLeaveMsg = _T("心跳超时");
+			NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
+		}
+		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
+		{
+			lpszLeaveMsg = _T("被动断开");
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
+		}
+		else
+		{
+			lpszLeaveMsg = _T("主动关闭");
+			NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
+		}
+		Session_UPStroage_Delete(lpszClientAddr);
+		RfcComponents_HttpServer_CloseClinetEx(xhUPHttp, lpszClientAddr);
+		OPenSsl_Server_CloseClientEx(xhUPSsl, lpszClientAddr);
 	}
 	else if (STORAGE_NETTYPE_HTTPDOWNLOAD == nClientType)
 	{
 		m_StrClient = _T("下载客户端");
+		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
+		{
+			lpszLeaveMsg = _T("心跳超时");
+			NetCore_TCPXCore_CloseForClientEx(xhNetDownload, lpszClientAddr);
+		}
+		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
+		{
+			lpszLeaveMsg = _T("被动断开");
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBDownload, lpszClientAddr);
+		}
+		else
+		{
+			lpszLeaveMsg = _T("主动关闭");
+			NetCore_TCPXCore_CloseForClientEx(xhNetDownload, lpszClientAddr);
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBDownload, lpszClientAddr);
+		}
+		Session_DLStroage_Delete(lpszClientAddr);
+		RfcComponents_HttpServer_CloseClinetEx(xhDLHttp, lpszClientAddr);
+		OPenSsl_Server_CloseClientEx(xhDLSsl, lpszClientAddr);
 	}
 	else if (STORAGE_NETTYPE_HTTPCENTER == nClientType)
 	{
 		m_StrClient = _T("业务客户端");
+		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
+		{
+			lpszLeaveMsg = _T("心跳超时");
+			NetCore_TCPXCore_CloseForClientEx(xhNetCenter, lpszClientAddr);
+		}
+		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
+		{
+			lpszLeaveMsg = _T("被动断开");
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBCenter, lpszClientAddr);
+		}
+		else
+		{
+			lpszLeaveMsg = _T("主动关闭");
+
+			NetCore_TCPXCore_CloseForClientEx(xhNetCenter, lpszClientAddr);
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBCenter, lpszClientAddr);
+		}
+		RfcComponents_HttpServer_CloseClinetEx(xhCenterHttp, lpszClientAddr);
+		OPenSsl_Server_CloseClientEx(xhCHSsl, lpszClientAddr);
 	}
 	else
 	{
 		m_StrClient = _T("P2XP客户端");
+		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
+		{
+			lpszLeaveMsg = _T("心跳超时");
+			NetCore_TCPXCore_CloseForClientEx(xhNetP2xp, lpszClientAddr);
+		}
+		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
+		{
+			lpszLeaveMsg = _T("被动断开");
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBP2xp, lpszClientAddr);
+		}
+		else
+		{
+			lpszLeaveMsg = _T("主动关闭");
+
+			NetCore_TCPXCore_CloseForClientEx(xhNetP2xp, lpszClientAddr);
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBP2xp, lpszClientAddr);
+		}
+		HelpComponents_Datas_DeleteEx(xhP2XPPacket, lpszClientAddr);
 		P2XPPeer_Manage_Delete(lpszClientAddr);
 	}
-	
-	if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
-	{
-		lpszLeaveMsg = _T("心跳超时");
-		NetCore_TCPXCore_CloseForClientEx(xhNetDownload, lpszClientAddr);
-		NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
-		NetCore_TCPXCore_CloseForClientEx(xhNetCenter, lpszClientAddr);
-		NetCore_TCPXCore_CloseForClientEx(xhNetP2xp, lpszClientAddr);
-	}
-	else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
-	{
-		lpszLeaveMsg = _T("被动断开");
-		SocketOpt_HeartBeat_DeleteAddrEx(xhHBDownload, lpszClientAddr);
-		SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
-		SocketOpt_HeartBeat_DeleteAddrEx(xhHBCenter, lpszClientAddr);
-		SocketOpt_HeartBeat_DeleteAddrEx(xhHBP2xp, lpszClientAddr);
-	}
-	else 
-	{
-		lpszLeaveMsg = _T("主动关闭");
-		NetCore_TCPXCore_CloseForClientEx(xhNetDownload, lpszClientAddr);
-		NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
-		NetCore_TCPXCore_CloseForClientEx(xhNetCenter, lpszClientAddr);
-		NetCore_TCPXCore_CloseForClientEx(xhNetP2xp, lpszClientAddr);
-
-		SocketOpt_HeartBeat_DeleteAddrEx(xhHBDownload, lpszClientAddr);
-		SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
-		SocketOpt_HeartBeat_DeleteAddrEx(xhHBCenter, lpszClientAddr);
-		SocketOpt_HeartBeat_DeleteAddrEx(xhHBP2xp, lpszClientAddr);
-	}
-
-	Session_UPStroage_Delete(lpszClientAddr);
-	Session_DLStroage_Delete(lpszClientAddr);
-	RfcComponents_HttpServer_CloseClinetEx(xhUPHttp, lpszClientAddr);
-	RfcComponents_HttpServer_CloseClinetEx(xhDLHttp, lpszClientAddr);
-	RfcComponents_HttpServer_CloseClinetEx(xhCenterHttp, lpszClientAddr);
-	OPenSsl_Server_CloseClientEx(xhDLSsl, lpszClientAddr);
-	OPenSsl_Server_CloseClientEx(xhUPSsl, lpszClientAddr);
-	OPenSsl_Server_CloseClientEx(xhCHSsl, lpszClientAddr);
-	HelpComponents_Datas_DeleteEx(xhP2XPPacket, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s：%s，与服务器断开，原因：%s"), m_StrClient.c_str(), lpszClientAddr, lpszLeaveMsg);
 	return TRUE;
 }
