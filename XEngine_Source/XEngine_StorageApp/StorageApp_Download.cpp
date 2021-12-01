@@ -196,7 +196,7 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.nHttpCode = 200;
 		st_HDRParam.bIsClose = TRUE;
 	}
-	_tcscpy(st_HDRParam.tszMimeType, _T("bin"));
+	BaseLib_OperatorString_GetFileAndPath(tszFileDir, NULL, NULL, NULL, st_HDRParam.tszMimeType);
 	RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize);
 	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
 	//不能在send之前调用
