@@ -57,6 +57,7 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 			{
 				int nPLen = MAX_PATH;
 				int nHttpCode = 0;
+				int nHashLen = 0;
 				UCHAR tszHashKey[MAX_PATH];
 				TCHAR tszHashStr[MAX_PATH];
 				TCHAR tszProxyStr[MAX_PATH];
@@ -67,8 +68,8 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 				memset(tszProxyStr, '\0', MAX_PATH);
 				memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
-				OPenSsl_Api_Digest(st_StorageInfo.tszFileDir, tszHashKey, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
-				BaseLib_OperatorString_StrToHex((char*)tszHashKey, 20, tszHashStr);
+				OPenSsl_Api_Digest(st_StorageInfo.tszFileDir, tszHashKey, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
+				BaseLib_OperatorString_StrToHex((char*)tszHashKey, nHashLen, tszHashStr);
 				Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
 
 				Protocol_StoragePacket_UPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, tszHashStr);
@@ -196,8 +197,21 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.nHttpCode = 200;
 		st_HDRParam.bIsClose = TRUE;
 	}
+	int nHashLen = 0;
+	UCHAR tszHashKey[MAX_PATH];
+	TCHAR tszHashStr[MAX_PATH];
+	TCHAR tszFieldStr[MAX_PATH];
+	memset(tszHashKey, '\0', MAX_PATH);
+	memset(tszHashStr, '\0', MAX_PATH);
+	memset(tszFieldStr, '\0', MAX_PATH);
+
+	OPenSsl_Api_Digest(tszFileDir, tszHashKey, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
+	BaseLib_OperatorString_StrToHex((char*)tszHashKey, nHashLen, tszHashStr);
 	BaseLib_OperatorString_GetFileAndPath(tszFileDir, NULL, NULL, NULL, st_HDRParam.tszMimeType);
-	RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize);
+
+	_stprintf(tszFieldStr, _T("FileHash: %s\r\n"),tszHashStr);
+
+	RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize, tszFieldStr);
 	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
 	//不能在send之前调用
 	if (!NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend))
