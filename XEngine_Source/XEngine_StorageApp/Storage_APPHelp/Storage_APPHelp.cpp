@@ -142,7 +142,7 @@ BOOL XEngine_APPHelp_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt
 	{
 		nBPos = 6;
 	}
-	if (!BaseLib_OperatorString_GetWithChar(tszRangeStr + nBPos, tszKeyStr, tszValueStr, '-'))
+	if (!BaseLib_OperatorString_GetKeyValue(tszRangeStr + nBPos, "-", tszKeyStr, tszValueStr))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("%s:%s,请求内容有范围信息,但是解析失败,内容:%s"), lpszClientType, lpszClientAddr, tszRangeStr);
 		return FALSE;
@@ -153,7 +153,7 @@ BOOL XEngine_APPHelp_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt
 
 	memset(tszRangeEnd, '\0', sizeof(tszRangeEnd));
 	memset(tszRangeCount, '\0', sizeof(tszRangeCount));
-	if (BaseLib_OperatorString_GetWithChar(tszValueStr, tszRangeEnd, tszRangeCount, '/'))
+	if (BaseLib_OperatorString_GetKeyValue(tszValueStr, "/", tszRangeEnd, tszRangeCount))
 	{
 		*pInt_SPos = _ttoi(tszKeyStr);
 		*pInt_EPos = _ttoi(tszRangeEnd);
