@@ -11,20 +11,20 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 		if (RfcComponents_HttpServer_EventWaitEx(xhDLHttp, nThreadPos))
 		{
 			int nListCount = 0;
-			int nMsgLen = 0;
-			RFCCOMPONENTS_HTTP_REQPARAM st_HTTPParam;
 			RFCCOMPONENTS_HTTP_PKTCLIENT** ppSt_PKTClient;
-
-			memset(&st_HTTPParam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
 			//获取当前队列池中所有触发下载客户端
 			RfcComponents_HttpServer_GetPoolEx(xhDLHttp, nThreadPos, &ppSt_PKTClient, &nListCount);
 			for (int i = 0; i < nListCount; i++)
 			{
 				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
 				{
+					int nMsgLen = 0;
 					int nHdrCount = 0;
 					CHAR* ptszMsgBuffer = NULL;
 					CHAR** ppszListHdr = NULL;
+					RFCCOMPONENTS_HTTP_REQPARAM st_HTTPParam;
+
+					memset(&st_HTTPParam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
 					//获得指定下载客户端触发信息
 					if (RfcComponents_HttpServer_GetMemoryEx(xhDLHttp, ppSt_PKTClient[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
 					{
