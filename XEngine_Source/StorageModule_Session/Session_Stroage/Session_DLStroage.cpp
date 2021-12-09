@@ -91,12 +91,17 @@ BOOL CSession_DLStroage::Session_DLStroage_Destory()
   类型：整数型
   可空：Y
   意思：输入结束位置
+ 参数.七：lpszFileHash
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：文件的HASH值
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x* pInt_Count, __int64x* pInt_LeftCount, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
+BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x* pInt_Count, __int64x* pInt_LeftCount, int nPosStart /* = 0 */, int nPostEnd /* = 0 */, LPCTSTR lpszFileHash /* = NULL */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -134,6 +139,10 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	st_Client.ullCount = st_FStat.st_size;
 	_tcscpy(st_Client.tszFileDir, lpszFileDir);
 	_tcscpy(st_Client.tszClientAddr, lpszClientAddr);
+	if (NULL != lpszFileHash)
+	{
+		_tcscpy(st_Client.tszFileHash, lpszFileHash);
+	}
 	//填充下载信息
 	st_Client.pSt_File = _tfopen(lpszFileDir, _T("rb"));
 	if (NULL == st_Client.pSt_File)

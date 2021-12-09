@@ -56,9 +56,9 @@ extern "C" BOOL Session_DLStroage_Destory()
 {
 	return m_DLStorage.Session_DLStroage_Destory();
 }
-extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart, int nPostEnd)
+extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart, int nPostEnd, LPCTSTR lpszFileHash)
 {
-	return m_DLStorage.Session_DLStroage_Insert(lpszClientAddr, lpszFileDir, pInt_Count, pInt_LeftCount, nPosStart, nPostEnd);
+	return m_DLStorage.Session_DLStroage_Insert(lpszClientAddr, lpszFileDir, pInt_Count, pInt_LeftCount, nPosStart, nPostEnd, lpszFileHash);
 }
 extern "C" BOOL Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
