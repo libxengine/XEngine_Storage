@@ -174,6 +174,13 @@ int main(int argc, char** argv)
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化服务器信号管理成功"));
 
+	if (!APIHelp_HttpRequest_SetGlobalTime(1))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，设置PASS代理超时失败,错误:%lX"), APIHelp_GetLastError());
+		goto XENGINE_EXITAPP;
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，设置PASS代理超时成功"));
+
 	xhLimit = Algorithm_Calculation_Create();
 	if (NULL == xhLimit)
 	{
