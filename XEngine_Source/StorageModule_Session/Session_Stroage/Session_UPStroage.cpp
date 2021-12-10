@@ -128,23 +128,26 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	_tcscpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
 	_tcscpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
 	//填充下载信息
-	if (m_bResume)
+	if ((m_bResume) && ((0 != nPosStart) || (0 != nPostEnd)))
 	{
 		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("ab+"));
+		if (NULL == st_Client.st_StorageInfo.pSt_File)
+		{
+			Session_IsErrorOccur = TRUE;
+			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
+			return FALSE;
+		}
+		fseek(st_Client.st_StorageInfo.pSt_File, nPosStart, SEEK_SET);
 	}
 	else
 	{
 		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("wb"));
-	}
-	if (NULL == st_Client.st_StorageInfo.pSt_File)
-	{
-		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
-		return FALSE;
-	}
-	if (nPosStart > 0)
-	{
-		fseek(st_Client.st_StorageInfo.pSt_File, nPosStart, SEEK_SET);
+		if (NULL == st_Client.st_StorageInfo.pSt_File)
+		{
+			Session_IsErrorOccur = TRUE;
+			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
+			return FALSE;
+		}
 	}
 	st_Locker.lock();
 	stl_MapStroage.insert(make_pair(lpszClientAddr, st_Client));
