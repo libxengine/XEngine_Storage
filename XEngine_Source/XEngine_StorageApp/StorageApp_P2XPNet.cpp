@@ -49,12 +49,12 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 
 	if (ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_P2XP == pSt_ProtocolHdr->unOperatorType)
 	{
-		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REQLOGIN == pSt_ProtocolHdr->unOperatorCode)
+		if (XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REQLOGIN == pSt_ProtocolHdr->unOperatorCode)
 		{
 			XENGINE_P2XP_PEERINFO st_ClientPeer;
 			memset(&st_ClientPeer, '\0', sizeof(XENGINE_P2XP_PEERINFO));
 
-			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REPLOGIN;
+			pSt_ProtocolHdr->unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REPLOGIN;
 			if (!Protocol_P2XPParse_Login(lpszMsgBuffer, nMsgLen, &st_ClientPeer.st_PeerAddr))
 			{
 				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
