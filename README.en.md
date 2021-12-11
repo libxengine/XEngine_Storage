@@ -102,6 +102,10 @@ upload file code optimization
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  
 
+## Test Service
+Address:app.xyry.org or 159.75.200.173  
+Port:HTTP Center Port 5100,Download 5101,UPLoad 5102,P2P 5103  
+
 ## Participate in contribution
 
 1. Fork this code

@@ -11,20 +11,20 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(LPVOID lParam)
 		if (RfcComponents_HttpServer_EventWaitEx(xhDLHttp, nThreadPos))
 		{
 			int nListCount = 0;
-			int nMsgLen = 0;
-			RFCCOMPONENTS_HTTP_REQPARAM st_HTTPParam;
 			RFCCOMPONENTS_HTTP_PKTCLIENT** ppSt_PKTClient;
-
-			memset(&st_HTTPParam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
 			//获取当前队列池中所有触发下载客户端
 			RfcComponents_HttpServer_GetPoolEx(xhDLHttp, nThreadPos, &ppSt_PKTClient, &nListCount);
 			for (int i = 0; i < nListCount; i++)
 			{
 				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
 				{
+					int nMsgLen = 0;
 					int nHdrCount = 0;
 					CHAR* ptszMsgBuffer = NULL;
 					CHAR** ppszListHdr = NULL;
+					RFCCOMPONENTS_HTTP_REQPARAM st_HTTPParam;
+
+					memset(&st_HTTPParam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
 					//获得指定下载客户端触发信息
 					if (RfcComponents_HttpServer_GetMemoryEx(xhDLHttp, ppSt_PKTClient[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
 					{
@@ -57,27 +57,27 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 			{
 				int nPLen = MAX_PATH;
 				int nHttpCode = 0;
-				UCHAR tszHashKey[MAX_PATH];
-				TCHAR tszHashStr[MAX_PATH];
 				TCHAR tszProxyStr[MAX_PATH];
 				SESSION_STORAGEINFO st_StorageInfo;
 
-				memset(tszHashKey, '\0', MAX_PATH);
-				memset(tszHashStr, '\0', MAX_PATH);
 				memset(tszProxyStr, '\0', MAX_PATH);
 				memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
-				OPenSsl_Api_Digest(st_StorageInfo.tszFileDir, tszHashKey, NULL, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
-				BaseLib_OperatorString_StrToHex((char*)tszHashKey, 20, tszHashStr);
 				Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
 
-				Protocol_StoragePacket_UPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, tszHashStr);
-				APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("下载客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass);
+				Protocol_StoragePacket_UPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, st_StorageInfo.tszFileHash);
+				if (APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode))
+				{
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass);
+				}
+				else
+				{
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,请求完成通知失败,可能对方服务没有开启,文件:%s,地址:%s"), lpszClientAddr, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass);
+				}
 			}
 			NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr);
 			Session_DLStroage_Delete(lpszClientAddr);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("下载客户端:%s,文件已经发送完毕,用户已经被移除发送列表"), lpszClientAddr);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,文件已经发送完毕,用户已经被移除发送列表"), lpszClientAddr);
 		}
 		else
 		{
@@ -167,7 +167,20 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		}
 	}
 	_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
-	if (!Session_DLStroage_Insert(lpszClientAddr, tszFileDir, &ullCount, &ullSize, nPosStart, nPosEnd))
+
+	int nHashLen = 0;
+	UCHAR tszHashKey[MAX_PATH];
+	TCHAR tszFieldStr[MAX_PATH];
+	TCHAR tszHashStr[128];
+	memset(tszHashKey, '\0', MAX_PATH);
+	memset(tszFieldStr, '\0', MAX_PATH);
+	memset(tszHashStr, '\0', sizeof(tszHashStr));
+	//得到文件HASH
+	OPenSsl_Api_Digest(tszFileDir, tszHashKey, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
+	BaseLib_OperatorString_StrToHex((char*)tszHashKey, nHashLen, tszHashStr);
+	BaseLib_OperatorString_GetFileAndPath(tszFileDir, NULL, NULL, NULL, st_HDRParam.tszMimeType);
+	//插入数据
+	if (!Session_DLStroage_Insert(lpszClientAddr, tszFileDir, &ullCount, &ullSize, nPosStart, nPosEnd, tszHashStr))
 	{
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 404;
@@ -177,7 +190,7 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,插入用户请求失败,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
 		return FALSE;
 	}
-
+	//是否续传
 	if (bRange)
 	{
 		st_HDRParam.st_Range.nPosStart = nPosStart;
@@ -196,8 +209,8 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.nHttpCode = 200;
 		st_HDRParam.bIsClose = TRUE;
 	}
-	_tcscpy(st_HDRParam.tszMimeType, _T("bin"));
-	RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize);
+	_stprintf(tszFieldStr, _T("FileHash: %s\r\n"), tszHashStr);
+	RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize, tszFieldStr);
 	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
 	//不能在send之前调用
 	if (!NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend))

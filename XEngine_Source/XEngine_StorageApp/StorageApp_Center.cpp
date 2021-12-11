@@ -11,26 +11,26 @@ XHTHREAD CALLBACK XEngine_Center_HTTPThread(LPVOID lParam)
 		if (RfcComponents_HttpServer_EventWaitEx(xhCenterHttp, nThreadPos))
 		{
 			int nListCount = 0;
-			RFCCOMPONENTS_HTTP_REQPARAM st_HTTPParam;
 			RFCCOMPONENTS_HTTP_PKTCLIENT** ppSt_PKTClient;
-
-			memset(&st_HTTPParam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
 			//获取当前队列池中所有触发上传客户端
 			RfcComponents_HttpServer_GetPoolEx(xhCenterHttp, nThreadPos, &ppSt_PKTClient, &nListCount);
 			for (int i = 0; i < nListCount; i++)
 			{
 				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
 				{
-					int nMsgLen = 10240;
+					int nMsgLen = 0;
 					int nHdrCount = 0;
 					CHAR* ptszMsgBuffer = NULL;
 					CHAR** ppszListHdr = NULL;
+					RFCCOMPONENTS_HTTP_REQPARAM st_HTTPParam;
+
+					memset(&st_HTTPParam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
 					//获得指定上传客户端触发信息
 					if (RfcComponents_HttpServer_GetMemoryEx(xhCenterHttp, ppSt_PKTClient[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
 					{
 						XEngine_Task_HttpCenter(ppSt_PKTClient[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
-					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&st_HTTPParam);
+					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
 				}
 			}
@@ -127,7 +127,7 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		//用于心跳
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 200;
-		LPCTSTR lpszHdrBuffer = _T("Allow: POST OPTIONS\r\n");
+		LPCTSTR lpszHdrBuffer = _T("Allow: POST GET OPTIONS\r\n");
 		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求OPTIONS心跳方法成功"), lpszClientAddr);

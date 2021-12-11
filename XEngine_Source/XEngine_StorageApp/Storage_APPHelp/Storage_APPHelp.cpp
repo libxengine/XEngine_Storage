@@ -108,15 +108,16 @@ BOOL XEngine_APPHelp_ProxyAuth(LPCTSTR lpszClientAddr, LPCTSTR lpszMethod, LPCTS
 }
 BOOL XEngine_APPHelp_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt_EPos, __int64x* pInt_Count, TCHAR** pptszListHdr, int nHdrCount, int nSDType)
 {
-	LPCTSTR lpszRange = _T("Range");
+	LPCTSTR lpszRangeStr = _T("Range");
+	LPCTSTR lpszLengthStr = _T("Content-Length");
 	LPCTSTR lpszClientType;
 	TCHAR tszKeyStr[128];
 	TCHAR tszValueStr[128];
-	TCHAR tszRangeStr[128];
+	TCHAR tszFieldStr[128];
 
 	memset(tszKeyStr, '\0', sizeof(tszKeyStr));
 	memset(tszValueStr, '\0', sizeof(tszValueStr));
-	memset(tszRangeStr, '\0', sizeof(tszRangeStr));
+	memset(tszFieldStr, '\0', sizeof(tszFieldStr));
 
 	if (STORAGE_NETTYPE_HTTPDOWNLOAD == nSDType)
 	{
@@ -131,61 +132,73 @@ BOOL XEngine_APPHelp_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt
 		lpszClientType = _T("业务客户端");
 	}
 	//是否有范围
-	if (!RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszRange, tszRangeStr))
+	if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszRangeStr, tszFieldStr))
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,请求内容没有范围信息"), lpszClientType, lpszClientAddr);
-		return FALSE;
-	}
-	//是否没有找到
-	int nBPos = 0;  //某些时候有个BYTE   
-	if (NULL != _tcsstr(tszRangeStr,_T("bytes=")))
-	{
-		nBPos = 6;
-	}
-	if (!BaseLib_OperatorString_GetWithChar(tszRangeStr + nBPos, tszKeyStr, tszValueStr, '-'))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("%s:%s,请求内容有范围信息,但是解析失败,内容:%s"), lpszClientType, lpszClientAddr, tszRangeStr);
-		return FALSE;
-	}
-	//得到 1/2 如果有的话
-	TCHAR tszRangeEnd[128];
-	TCHAR tszRangeCount[128];
-
-	memset(tszRangeEnd, '\0', sizeof(tszRangeEnd));
-	memset(tszRangeCount, '\0', sizeof(tszRangeCount));
-	if (BaseLib_OperatorString_GetWithChar(tszValueStr, tszRangeEnd, tszRangeCount, '/'))
-	{
-		*pInt_SPos = _ttoi(tszKeyStr);
-		*pInt_EPos = _ttoi(tszRangeEnd);
-		*pInt_Count = _ttoi64(tszRangeCount);
-	}
-	else
-	{
-		*pInt_SPos = _ttoi(tszKeyStr);
-		*pInt_EPos = _ttoi(tszValueStr);
-	}
-
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,客户端的请求设置了数据范围:%d - %d/%lld"), lpszClientType, lpszClientAddr, *pInt_SPos, *pInt_EPos, *pInt_Count);
-	return TRUE;
-}
-BOOL XEngine_APPHelp_VerHash(LPCTSTR lpszClientAddr ,LPCTSTR lpszFileName, LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount)
-{
-	LPCTSTR lpszKeyStr = _T("FileHash");
-	TCHAR tszValueStr[MAX_PATH];
-	memset(tszValueStr, '\0', MAX_PATH);
-
-	if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszKeyStr, tszValueStr))
-	{
-		if (0 != _tcsnicmp(lpszFileHash, tszValueStr, _tcslen(lpszFileHash)))
+		//是否没有找到
+		int nBPos = 0;  //某些时候有个BYTE   
+		if (NULL != _tcsstr(tszFieldStr, _T("bytes=")))
 		{
-			_tremove(lpszFileName);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,上传的文件信息HASH校验失败,无法继续,文件:%s 已被删除,原始HASH:%s,计算HASH:%s"), lpszClientAddr, lpszFileName, tszValueStr, lpszFileHash);
+			nBPos = 6;
+		}
+		if (!BaseLib_OperatorString_GetKeyValue(tszFieldStr + nBPos, "-", tszKeyStr, tszValueStr))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("%s:%s,请求内容有范围信息,但是解析失败,内容:%s"), lpszClientType, lpszClientAddr, tszFieldStr);
 			return FALSE;
 		}
+		//得到 1/2 如果有的话
+		TCHAR tszRangeEnd[128];
+		TCHAR tszRangeCount[128];
+
+		memset(tszRangeEnd, '\0', sizeof(tszRangeEnd));
+		memset(tszRangeCount, '\0', sizeof(tszRangeCount));
+		if (BaseLib_OperatorString_GetKeyValue(tszValueStr, "/", tszRangeEnd, tszRangeCount))
+		{
+			*pInt_SPos = _ttoi(tszKeyStr);
+			*pInt_EPos = _ttoi(tszRangeEnd);
+			*pInt_Count = _ttoi64(tszRangeCount);
+		}
+		else
+		{
+			*pInt_SPos = _ttoi(tszKeyStr);
+			*pInt_EPos = _ttoi(tszValueStr);
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,客户端的请求设置了数据范围:%d - %d/%lld"), lpszClientType, lpszClientAddr, *pInt_SPos, *pInt_EPos, *pInt_Count);
 	}
 	else
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,上传的信息没有附带HASH值,无法验证文件的正确性"), lpszClientAddr);
+		RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszLengthStr, tszFieldStr);
+		*pInt_Count = _ttoi64(tszFieldStr);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,请求内容是新的数据,大小:%lld"), lpszClientType, lpszClientAddr, *pInt_Count);
+	}
+	return TRUE;
+}
+BOOL XEngine_APPHelp_VerHash(LPCTSTR lpszClientAddr, LPCTSTR lpszFileName, LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount)
+{
+	if (st_ServiceCfg.st_XStorage.bUPHash)
+	{
+		LPCTSTR lpszKeyStr = _T("FileHash");
+		TCHAR tszValueStr[MAX_PATH];
+		memset(tszValueStr, '\0', MAX_PATH);
+
+		if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszKeyStr, tszValueStr))
+		{
+			if (0 == _tcsnicmp(lpszFileHash, tszValueStr, _tcslen(lpszFileHash)))
+			{
+				_tremove(lpszFileName);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,上传的文件信息HASH效验成功,文件:%s 原始HASH:%s,计算HASH:%s"), lpszClientAddr, lpszFileName, tszValueStr, lpszFileHash);
+			}
+			else
+			{
+				_tremove(lpszFileName);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,上传的文件信息HASH校验失败,无法继续,文件:%s 已被删除,原始HASH:%s,计算HASH:%s"), lpszClientAddr, lpszFileName, tszValueStr, lpszFileHash);
+				return FALSE;
+			}
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,上传的信息没有附带HASH值,无法验证文件的正确性"), lpszClientAddr);
+			return FALSE;
+		}
 	}
 	return TRUE;
 }

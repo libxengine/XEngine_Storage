@@ -11,20 +11,20 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(LPVOID lParam)
 		if (RfcComponents_HttpServer_EventWaitEx(xhUPHttp, nThreadPos))
 		{
 			int nListCount = 0;
-			RFCCOMPONENTS_HTTP_REQPARAM st_HTTPParam;
 			RFCCOMPONENTS_HTTP_PKTCLIENT** ppSt_PKTClient;
-
-			memset(&st_HTTPParam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
 			//获取当前队列池中所有触发上传客户端
 			RfcComponents_HttpServer_GetPoolEx(xhUPHttp, nThreadPos, &ppSt_PKTClient, &nListCount);
 			for (int i = 0; i < nListCount; i++)
 			{
 				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
 				{
-					int nMsgLen = 10240;
+					int nMsgLen = 0;
 					int nHdrCount = 0;
 					CHAR* ptszMsgBuffer = NULL;
 					CHAR** ppszListHdr = NULL;
+					RFCCOMPONENTS_HTTP_REQPARAM st_HTTPParam;
+
+					memset(&st_HTTPParam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
 					//获得指定上传客户端触发信息
 					if (RfcComponents_HttpServer_GetMemoryEx(xhUPHttp, ppSt_PKTClient[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
 					{
@@ -101,19 +101,23 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		int nPosStart = 0;
 		int nPosEnd = 0;
 		__int64x nPosCount = 0;
-
+		//得到长度大小
 		if (XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, &nPosCount, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER))
 		{
-			//是否启用了断点续传
-			if (!st_ServiceCfg.st_XStorage.bResumable)
+			//是新的还是断点续传的
+			if ((0 != nPosStart) || (0 != nPosEnd))
 			{
-				st_HDRParam.bIsClose = TRUE;
-				st_HDRParam.nHttpCode = 416;
+				//是否启用了断点续传
+				if (!st_ServiceCfg.st_XStorage.bResumable)
+				{
+					st_HDRParam.bIsClose = TRUE;
+					st_HDRParam.nHttpCode = 416;
 
-				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求断点续传上传文件失败,服务端关闭了此功能,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
-				return FALSE;
+					RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求断点续传上传文件失败,服务端关闭了此功能,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
+					return FALSE;
+				}
 			}
 		}
 		RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
@@ -166,59 +170,71 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 
 		OPenSsl_Api_Digest(tszFileDir, tszHashStr, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
 		BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
-		//验证HASH值
-		if (XEngine_APPHelp_VerHash(lpszClientAddr, tszFileDir, st_ProtocolFile.st_ProtocolFile.tszFileHash, pptszListHdr, nHdrCount))
+		//处理结果
+		if (!XEngine_APPHelp_VerHash(lpszClientAddr, tszFileDir, st_ProtocolFile.st_ProtocolFile.tszFileHash, pptszListHdr, nHdrCount))
 		{
-			if (0 != st_ServiceCfg.st_XSql.nSQLType)
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 403;
+			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+			return FALSE;
+		}
+		BOOL bRet = TRUE;
+		if (0 != st_ServiceCfg.st_XSql.nSQLType)
+		{
+			if (1 == st_ServiceCfg.st_XSql.nSQLType)
 			{
-				BOOL bRet = FALSE;
-				if (1 == st_ServiceCfg.st_XSql.nSQLType)
-				{
-					bRet = XStorage_MySql_FileInsert(&st_ProtocolFile);
-				}
-				else
-				{
-					bRet = XStorage_SQLite_FileInsert(&st_ProtocolFile);
-				}
-				if (bRet)
-				{
-					if (st_ServiceCfg.st_XProxy.st_XProxyPass.bUPPass)
-					{
-						int nPLen = MAX_PATH;
-						int nHttpCode = 0;
-						TCHAR tszProxyStr[MAX_PATH];
-						SESSION_STORAGEINFO st_StorageInfo;
-
-						memset(tszProxyStr, '\0', MAX_PATH);
-						memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
-
-						Session_UPStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
-						Protocol_StoragePacket_UPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
-						APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass, tszProxyStr, &nHttpCode);
-						XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_NOTICE, _T("上传客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass);
-					}
-					st_HDRParam.bIsClose = TRUE;
-					st_HDRParam.nHttpCode = 200;
-					RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d"), lpszClientAddr, tszFileDir, nRVCount);
-				}
-				else
-				{
-					st_HDRParam.bIsClose = TRUE;
-					st_HDRParam.nHttpCode = 403;
-					RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, XStorageDB_GetLastError());
-				}
+				bRet = XStorage_MySql_FileInsert(&st_ProtocolFile);
 			}
 			else
+			{
+				bRet = XStorage_SQLite_FileInsert(&st_ProtocolFile);
+			}
+			if (bRet)
 			{
 				st_HDRParam.bIsClose = TRUE;
 				st_HDRParam.nHttpCode = 200;
 				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d,数据库没有启用,不插入数据库"), lpszClientAddr, tszFileDir, nRVCount);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d"), lpszClientAddr, tszFileDir, nRVCount);
+			}
+			else
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 403;
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, XStorageDB_GetLastError());
+			}
+		}
+		else
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 200;
+			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d,数据库没有启用,不插入数据库"), lpszClientAddr, tszFileDir, nRVCount);
+		}
+		//PASS代理
+		if (st_ServiceCfg.st_XProxy.st_XProxyPass.bUPPass && bRet)
+		{
+			int nPLen = MAX_PATH;
+			int nHttpCode = 0;
+			TCHAR tszProxyStr[MAX_PATH];
+			SESSION_STORAGEINFO st_StorageInfo;
+
+			memset(tszProxyStr, '\0', MAX_PATH);
+			memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
+
+			Session_UPStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
+			Protocol_StoragePacket_UPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+			if (APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass, tszProxyStr, &nHttpCode))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass);
+			}
+			else
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求完成通知失败,可能服务器不正确:文件:%s,地址:%s"), lpszClientAddr, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass);
 			}
 		}
 	}

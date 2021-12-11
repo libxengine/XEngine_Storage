@@ -37,8 +37,9 @@
   },
   "XStorage":{
       "bResumable":1,
+      "bUPHash":0,
       "nHashMode":2,
-      "tszFileDir":"/home/ubuntu/桌面/XEngine_Storage/XEngine_Source/Debug/XEngine_File"
+      "tszFileDir":"./XEngine_File"
   },
   "XProxy":{
       "XProxyAuth":{
@@ -75,7 +76,8 @@
   },
   "XVer":{
       "StorageVersion":[
-          "3.1.0.1001 Build20211110",
+          "3.2.0.1001 Build20211210",
+          "3.1.0.1001 Build20211109",
           "3.0.0.1001 Build20211029",
           "2.5.0.1001 Build20210930",
           "2.4.0.1001 Build20210918",

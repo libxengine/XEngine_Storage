@@ -127,6 +127,13 @@ BOOL CSession_User::Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass)
 		return FALSE;
 	}
 	
+	if (_tcslen(lpszPass) != _tcslen(stl_MapIterator->second.tszUserPass))
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PASSWORD;
+		st_Locker.unlock_shared();
+		return FALSE;
+	}
 	if (0 != _tcsncmp(lpszPass, stl_MapIterator->second.tszUserPass, _tcslen(lpszPass)))
 	{
 		Session_IsErrorOccur = TRUE;

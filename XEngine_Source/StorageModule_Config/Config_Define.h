@@ -64,6 +64,7 @@ typedef struct tag_XEngine_ServerConfig
     struct  
 	{
         BOOL bResumable;
+        BOOL bUPHash;
         int nHashMode;
 		TCHAR tszFileDir[MAX_PATH];
     }st_XStorage;
@@ -134,5 +135,41 @@ extern "C" DWORD Config_GetLastError(int *pInt_ErrorCode = NULL);
 /************************************************************************/
 /*                        文件配置读取                                  */
 /************************************************************************/
+/********************************************************************
+函数名称：Config_Json_File
+函数功能：读取基本配置文件
+ 参数.一：lpszConfigFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入配置文件
+ 参数.二：pSt_ServerConfig
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出读取到的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
 extern "C" BOOL Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG * pSt_ServerConfig);
+/********************************************************************
+函数名称：Config_Json_LoadBalance
+函数功能：读取负载均衡配置文件
+ 参数.一：lpszConfigFile
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入配置文件
+ 参数.二：pSt_ServerConfig
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出读取到的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
 extern "C" BOOL Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCONFIG * pSt_ServerConfig);
