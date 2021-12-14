@@ -30,6 +30,10 @@
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
+#include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
+#include "../StorageModule_Config/Config_Define.h"
 #include "Config_Define.h"
 #include "Config_Error.h"
 /********************************************************************

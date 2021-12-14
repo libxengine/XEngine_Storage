@@ -153,7 +153,6 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XStorage.nHashMode = st_JsonXStorage["nHashMode"].asInt();
 	pSt_ServerConfig->st_XStorage.bUPHash = st_JsonXStorage["bUPHash"].asInt();
 	pSt_ServerConfig->st_XStorage.bResumable = st_JsonXStorage["bResumable"].asInt();
-	_tcscpy(pSt_ServerConfig->st_XStorage.tszFileDir, st_JsonXStorage["tszFileDir"].asCString());
 
 	if (st_JsonRoot["XProxy"].empty() || (2 != st_JsonRoot["XProxy"].size()))
 	{
@@ -317,20 +316,38 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListUseMode->push_back(st_JsonLoadBalance["nUseMode"][i].asInt());
 	}
+
 	pSt_ServerConfig->st_LoadBalance.pStl_ListCenter = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["CenterAddr"].size(); i++)
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListCenter->push_back(st_JsonLoadBalance["CenterAddr"][i].asCString());
 	}
+
 	pSt_ServerConfig->st_LoadBalance.pStl_ListDownload = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["DownloadAddr"].size(); i++)
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListDownload->push_back(st_JsonLoadBalance["DownloadAddr"][i].asCString());
 	}
+
 	pSt_ServerConfig->st_LoadBalance.pStl_ListUPLoader = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["UPLoaderAddr"].size(); i++)
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListUPLoader->push_back(st_JsonLoadBalance["UPLoaderAddr"][i].asCString());
+	}
+
+	Json::Value st_JsonBucket = st_JsonLoadBalance["StorageAddr"];
+	pSt_ServerConfig->st_LoadBalance.pStl_ListBucket = new list<XENGINE_STORAGEBUCKET>;
+	for (unsigned int i = 0; i < st_JsonBucket.size(); i++)
+	{
+		XENGINE_STORAGEBUCKET st_Bucket;
+		memset(&st_Bucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
+
+		st_Bucket.bEnable = st_JsonBucket[i]["bEnable"].asInt();
+		st_Bucket.nLevel = st_JsonBucket[i]["nLevel"].asInt();
+		_tcscpy(st_Bucket.tszBuckSize, st_JsonBucket[i]["Size"].asCString());
+		_tcscpy(st_Bucket.tszFilePath, st_JsonBucket[i]["XEngine_File"].asCString());
+
+		pSt_ServerConfig->st_LoadBalance.pStl_ListBucket->push_back(st_Bucket);
 	}
 	return TRUE;
 }

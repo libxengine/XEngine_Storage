@@ -66,7 +66,6 @@ typedef struct tag_XEngine_ServerConfig
         BOOL bResumable;
         BOOL bUPHash;
         int nHashMode;
-		TCHAR tszFileDir[MAX_PATH];
     }st_XStorage;
     struct  
     {
@@ -112,6 +111,15 @@ typedef struct tag_XEngine_ServerConfig
         list<string> *pStl_ListStorage;
     }st_XVer;
 }XENGINE_SERVERCONFIG;
+
+
+typedef struct  
+{
+    TCHAR tszFilePath[MAX_PATH];
+    TCHAR tszBuckSize[64];
+    int nLevel;
+    BOOL bEnable;
+}XENGINE_STORAGEBUCKET;
 typedef struct
 {
 	TCHAR tszIPAddr[128];
@@ -126,6 +134,7 @@ typedef struct
         list<string>* pStl_ListCenter;
 		list<string>* pStl_ListDownload;
 		list<string>* pStl_ListUPLoader;
+        list<XENGINE_STORAGEBUCKET>* pStl_ListBucket;
 	}st_LoadBalance;
 }XENGINE_LBCONFIG;
 //////////////////////////////////////////////////////////////////////////
