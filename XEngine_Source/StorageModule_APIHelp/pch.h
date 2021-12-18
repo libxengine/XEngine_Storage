@@ -32,7 +32,11 @@ using namespace std;
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
+#include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 #include "../XStorage_Protocol.h"
+#include "../StorageModule_Config/Config_Define.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
 #include "APIHelp_Define.h"
 #include "APIHelp_Error.h"
@@ -51,9 +55,6 @@ extern BOOL APIHelp_IsErrorOccur;
 extern DWORD APIHelp_dwErrorCode;
 
 #ifdef _WINDOWS
-#ifdef _WIN64
-#pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib")
-#else
-#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib")
-#endif
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
+#pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #endif

@@ -84,3 +84,46 @@ extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHA
 备注：
 *********************************************************************/
 extern "C" BOOL APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>* pStl_ListParse, XSTORAGECORE_DBFILE*** pppSt_ListPacket, int* pInt_ListCount);
+/********************************************************************
+函数名称：APIHelp_Distributed_DLStorage
+函数功能：通过URLKEY得到一个对应下载地址
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的URL
+ 参数.二：pStl_ListBucket
+  In/Out：In
+  类型：容器指针
+  可空：N
+  意思：输入要解析的列表
+ 参数.三：pSt_StorageBucket
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出获取到的可用存储
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket);
+/********************************************************************
+函数名称：APIHelp_Distributed_UPStorage
+函数功能：通过分布式存储列表获得一个存储地址
+ 参数.一：pStl_ListBucket
+  In/Out：In
+  类型：容器指针
+  可空：N
+  意思：输入要解析的列表
+ 参数.二：pSt_StorageBucket
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出获取到的可用存储
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket);

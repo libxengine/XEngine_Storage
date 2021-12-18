@@ -6,3 +6,5 @@ EXPORTS
 	APIHelp_Distributed_IsMode
 	APIHelp_Distributed_RandomAddr
 	APIHelp_Distributed_FileList
+	APIHelp_Distributed_DLStorage
+	APIHelp_Distributed_UPStorage
