@@ -178,8 +178,9 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
 	TCHAR tszKeyStr[128];
 	memset(tszKeyStr, '\0', sizeof(tszKeyStr));
 	//»ñµÃkey
+	int i = 0;
 	int nLen = _tcslen(lpszMsgBuffer);
-	for (int i = 0; i < nLen; i++)
+	for (; i < nLen; i++)
 	{
 		if ('/' == lpszMsgBuffer[i])
 		{
@@ -211,6 +212,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
 		return FALSE;
 	}
+	_tcscpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + i);
 	return TRUE;
 }
 /********************************************************************
