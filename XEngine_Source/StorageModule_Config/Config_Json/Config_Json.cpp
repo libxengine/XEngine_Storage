@@ -346,6 +346,7 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 		st_Bucket.nLevel = st_JsonBucket[i]["nLevel"].asInt();
 		_tcscpy(st_Bucket.tszBuckSize, st_JsonBucket[i]["Size"].asCString());
 		_tcscpy(st_Bucket.tszFilePath, st_JsonBucket[i]["XEngine_File"].asCString());
+		_tcscpy(st_Bucket.tszBuckKey, st_JsonBucket[i]["XEngine_Key"].asCString());
 
 		pSt_ServerConfig->st_LoadBalance.pStl_ListBucket->push_back(st_Bucket);
 	}

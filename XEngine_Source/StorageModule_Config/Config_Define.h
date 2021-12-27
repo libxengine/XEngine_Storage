@@ -116,6 +116,8 @@ typedef struct tag_XEngine_ServerConfig
 typedef struct  
 {
     TCHAR tszFilePath[MAX_PATH];
+    TCHAR tszFileName[MAX_PATH];
+    TCHAR tszBuckKey[128];
     TCHAR tszBuckSize[64];
     int nLevel;
     BOOL bEnable;
