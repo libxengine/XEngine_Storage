@@ -166,7 +166,15 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			nPosEnd = 0;
 		}
 	}
-	_stprintf(tszFileDir, _T("%s%s"), st_ServiceCfg.st_XStorage.tszFileDir, pSt_HTTPParam->tszHttpUri);
+	XENGINE_STORAGEBUCKET st_StorageBucket;
+	memset(&st_StorageBucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
+
+	if (!APIHelp_Distributed_DLStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,请求文件失败,可能BUCKET:% 不正确,错误：%lX"), lpszClientAddr, pSt_HTTPParam->tszHttpUri, APIHelp_GetLastError());
+		return FALSE;
+	}
+	_stprintf(tszFileDir, _T("%s%s"), st_StorageBucket.tszFilePath, st_StorageBucket.tszFileName);
 
 	int nHashLen = 0;
 	UCHAR tszHashKey[MAX_PATH];
