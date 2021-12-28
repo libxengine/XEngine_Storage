@@ -209,7 +209,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				XStorage_SQLite_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
 			}
 
-			Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &ppSt_ListFile, nListCount, st_ServiceCfg.st_XStorage.tszFileDir, tszTimeStart, tszTimeEnd);
+			Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &ppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
 			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszMsgBuffer, nMsgLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
@@ -239,13 +239,15 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		int nListCount = 0;
 		CHAR** ppszListDir = NULL;
 		TCHAR tszUserDir[MAX_PATH];
+		TCHAR tszBuckKey[MAX_PATH];
 		TCHAR tszRealDir[1024];
 
 		memset(tszUserDir, '\0', MAX_PATH);
+		memset(tszBuckKey, '\0', MAX_PATH);
 		memset(tszRealDir, '\0', sizeof(tszRealDir));
 
-		Protocol_StorageParse_DirOperator(lpszMsgBuffer, tszUserDir, &nOPCode);
-		_stprintf(tszRealDir, _T("%s/%s"), st_ServiceCfg.st_XStorage.tszFileDir, tszUserDir);
+		Protocol_StorageParse_DirOperator(lpszMsgBuffer, tszUserDir, tszBuckKey, &nOPCode);
+		_stprintf(tszRealDir, _T("%s/%s"), tszBuckKey, tszUserDir);
 		if (0 == nOPCode)
 		{
 			if (!SystemApi_File_EnumFile(tszRealDir, &ppszListDir, &nListCount, NULL, NULL, TRUE, 2))
