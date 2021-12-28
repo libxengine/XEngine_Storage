@@ -45,17 +45,12 @@ CProtocol_StoragePacket::~CProtocol_StoragePacket()
   类型：整数型
   可空：N
   意思：输入文件列表个数
- 参数.五：lpszRootDir
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：某些时候可能需要跳过字符串
- 参数.六：lpszTimeStart
+ 参数.五：lpszTimeStart
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入查询请求的开始时间
- 参数.七：lpszTimeEnd
+ 参数.六：lpszTimeEnd
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -65,7 +60,7 @@ CProtocol_StoragePacket::~CProtocol_StoragePacket()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszRootDir, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
+BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
 {
     Protocol_IsErrorOccur = FALSE;
 
@@ -82,21 +77,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuf
     {
         Json::Value st_JsonObject;
 
-        if (NULL == lpszRootDir)
-        {
-            st_JsonObject["tszFilePath"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath;
-        }
-        else
-        {
-			if (NULL == _tcsstr((*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath, lpszRootDir))
-			{
-				st_JsonObject["tszFilePath"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath;
-			}
-			else
-			{
-				st_JsonObject["tszFilePath"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath + _tcslen(lpszRootDir);
-			}
-        }
+        st_JsonObject["tszFilePath"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath;
         st_JsonObject["tszFileName"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileName;
         st_JsonObject["tszFileUser"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileUser;
         st_JsonObject["tszFileHash"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileHash;

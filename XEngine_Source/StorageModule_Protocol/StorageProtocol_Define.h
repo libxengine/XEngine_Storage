@@ -233,7 +233,12 @@ extern "C" BOOL Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuffer, int nMsg
   类型：字符指针
   可空：N
   意思：导出获取到的文件夹
- 参数.三：pInt_Operator
+ 参数.三：ptszBuckKey
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：导出桶的KEY
+ 参数.四：pInt_Operator
   In/Out：Out
   类型：整数型指针
   可空：N
@@ -243,7 +248,7 @@ extern "C" BOOL Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuffer, int nMsg
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_DirOperator(LPCSTR lpszMsgBuffer, CHAR * ptszUserDir, int* pInt_Operator);
+extern "C" BOOL Protocol_StorageParse_DirOperator(LPCSTR lpszMsgBuffer, CHAR * ptszUserDir, TCHAR * ptszBuckKey, int* pInt_Operator);
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
@@ -537,17 +542,12 @@ extern "C" BOOL Protocol_StoragePacket_UPDown(LPCTSTR lpszFileName, LPCTSTR lpsz
   类型：整数型
   可空：N
   意思：输入文件列表个数
- 参数.五：lpszRootDir
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：某些时候可能需要跳过字符串
- 参数.六：lpszTimeStart
+ 参数.五：lpszTimeStart
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入查询请求的开始时间
- 参数.七：lpszTimeEnd
+ 参数.六：lpszTimeEnd
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -557,7 +557,7 @@ extern "C" BOOL Protocol_StoragePacket_UPDown(LPCTSTR lpszFileName, LPCTSTR lpsz
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_QueryFile(CHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCTSTR lpszRootDir, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL);
+extern "C" BOOL Protocol_StoragePacket_QueryFile(CHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL);
 /********************************************************************
 函数名称：Protocol_StoragePacket_Info
 函数功能：返回信息获取请求打包函数

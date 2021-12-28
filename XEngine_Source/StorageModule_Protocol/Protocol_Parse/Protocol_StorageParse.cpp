@@ -209,7 +209,12 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuf
   类型：字符指针
   可空：N
   意思：导出获取到的文件夹
- 参数.三：pInt_Operator
+ 参数.三：ptszBuckKey
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：导出桶的KEY
+ 参数.四：pInt_Operator
   In/Out：Out
   类型：整数型指针
   可空：N
@@ -219,7 +224,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuf
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBuffer, TCHAR* ptszUserDir, int* pInt_Operator)
+BOOL CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBuffer, TCHAR* ptszUserDir, TCHAR* ptszBuckKey, int* pInt_Operator)
 {
     Protocol_IsErrorOccur = FALSE;
 
@@ -246,6 +251,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBu
 
     *pInt_Operator = st_JsonRoot["nOPerator"].asInt();
     _tcscpy(ptszUserDir, st_JsonRoot["lpszUserDir"].asCString());
+    _tcscpy(ptszBuckKey, st_JsonRoot["lpszBuckKey"].asCString());
     return TRUE;
 }
 /********************************************************************

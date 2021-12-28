@@ -19,6 +19,6 @@ public:
 public:
     BOOL Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR *ptszTimeStart, TCHAR *ptszTimeEnd, TCHAR *ptszFileName = NULL, TCHAR * ptszFileHash = NULL);
     BOOL Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int* pInt_ListCount);
-	BOOL Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBuffer, TCHAR* ptszUserDir, int* pInt_Operator);
+	BOOL Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBuffer, TCHAR* ptszUserDir, TCHAR* ptszBuckKey, int* pInt_Operator);
     BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszClientAddr, TCHAR* ptszFileName, TCHAR* ptszFileHash, __int64x* pInt_FileSize);
 };
