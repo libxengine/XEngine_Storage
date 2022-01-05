@@ -178,14 +178,14 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
 	TCHAR tszKeyStr[128];
 	memset(tszKeyStr, '\0', sizeof(tszKeyStr));
 	//获得key
-	int i = 0;
+	int i = 1;
 	int nLen = _tcslen(lpszMsgBuffer);
 	for (; i < nLen; i++)
 	{
 		if ('/' == lpszMsgBuffer[i])
 		{
 			bFound = TRUE;
-			memcpy(tszKeyStr, lpszMsgBuffer, i);
+			memcpy(tszKeyStr, lpszMsgBuffer + 1, i - 1);
 			break;
 		}
 	}
@@ -260,7 +260,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 				for (int j = 0; j < nListCount; j++)
 				{
 					struct __stat64 st_FStat;
-					_stat64(stl_ListIterator->tszFilePath, &st_FStat);
+					_stat64(ppListFile[j], &st_FStat);
 					nDirCount += st_FStat.st_size;
 				}
 				BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
@@ -365,7 +365,7 @@ __int64u CAPIHelp_Distributed::APIHelp_Distributed_GetSize(LPCTSTR lpszMsgBuffer
 	memset(tszSizeStr, '\0', sizeof(tszSizeStr));
 	memset(tszUnitStr, '\0', sizeof(tszUnitStr));
 	//分别得到数字和单位
-	memcpy(tszSizeStr, lpszMsgBuffer - 2, _tcslen(lpszMsgBuffer) - 2);
+	memcpy(tszSizeStr, lpszMsgBuffer, _tcslen(lpszMsgBuffer) - 2);
 	BaseLib_OperatorString_GetLastString(lpszMsgBuffer, 2, tszUnitStr);
 
 	__int64u nllSize = _ttoi64(tszSizeStr);
