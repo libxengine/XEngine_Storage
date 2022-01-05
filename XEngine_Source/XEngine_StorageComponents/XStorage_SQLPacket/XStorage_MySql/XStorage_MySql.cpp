@@ -154,7 +154,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
         _stprintf_s(tszTableName, _T("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
     }
     //插入语句
-    _stprintf_s(tszSQLStatement, _T("INSERT INTO `%s` (FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s',%lld,now())"), tszTableName, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize);
+    _stprintf_s(tszSQLStatement, _T("INSERT INTO `%s` (PathKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,now())"), tszTableName, pSt_DBFile->tszPathKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize);
     if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
     {
         XStorage_IsErrorOccur = TRUE;
@@ -353,29 +353,33 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
 
                 _tcscpy(st_DBFile.tszTableName, pptszResult[0]);
 
-                if (NULL != pptszFileResult[1])
-                {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[1]);
-                }
+				if (NULL != pptszFileResult[1])
+				{
+					_tcscpy(st_DBFile.tszPathKey, pptszFileResult[1]);
+				}
                 if (NULL != pptszFileResult[2])
                 {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileName, pptszFileResult[2]);
+                    _tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[2]);
                 }
-				if (NULL != pptszFileResult[3])
-				{
-					_tcscpy(st_DBFile.st_ProtocolFile.tszFileHash, pptszFileResult[3]);
-				}
-                if (NULL != pptszFileResult[4])
+                if (NULL != pptszFileResult[3])
                 {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[4]);
+                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileName, pptszFileResult[3]);
                 }
+				if (NULL != pptszFileResult[4])
+				{
+					_tcscpy(st_DBFile.st_ProtocolFile.tszFileHash, pptszFileResult[4]);
+				}
                 if (NULL != pptszFileResult[5])
                 {
-                    st_DBFile.st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[5]);
+                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[5]);
                 }
                 if (NULL != pptszFileResult[6])
                 {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileTime, pptszFileResult[6]);
+                    st_DBFile.st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[6]);
+                }
+                if (NULL != pptszFileResult[7])
+                {
+                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileTime, pptszFileResult[7]);
                 }
                 stl_ListFile.push_back(st_DBFile);
             }
@@ -457,29 +461,34 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQueryForTable(XSTORAGECORE_DBFILE*** pp
 		TCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
 
 		_tcscpy((*pppSt_ListFile)[i]->tszTableName, lpszTableName);
+
 		if (NULL != pptszFileResult[1])
 		{
-			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFilePath, pptszFileResult[1]);
+			_tcscpy((*pppSt_ListFile)[i]->tszPathKey, pptszFileResult[1]);
 		}
 		if (NULL != pptszFileResult[2])
 		{
-			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileName, pptszFileResult[2]);
+			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFilePath, pptszFileResult[2]);
 		}
 		if (NULL != pptszFileResult[3])
 		{
-			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileHash, pptszFileResult[3]);
+			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileName, pptszFileResult[3]);
 		}
 		if (NULL != pptszFileResult[4])
 		{
-			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileUser, pptszFileResult[4]);
+			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileHash, pptszFileResult[4]);
 		}
 		if (NULL != pptszFileResult[5])
 		{
-            (*pppSt_ListFile)[i]->st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[5]);
+			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileUser, pptszFileResult[5]);
 		}
 		if (NULL != pptszFileResult[6])
 		{
-			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileTime, pptszFileResult[6]);
+            (*pppSt_ListFile)[i]->st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[6]);
+		}
+		if (NULL != pptszFileResult[7])
+		{
+			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileTime, pptszFileResult[7]);
 		}
 	}
     DataBase_MySQL_FreeResult(xhDBSQL, xhTable);
@@ -582,29 +591,34 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE* pSt_F
                 TCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhResult);
 
                 _tcscpy(pSt_FileInfo->tszTableName, pptszResult[0]);
-                if (NULL != pptszFileResult[1])
-                {
-                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFilePath, pptszFileResult[1]);
-                }
+
+				if (NULL != pptszFileResult[1])
+				{
+					_tcscpy(pSt_FileInfo->tszPathKey, pptszFileResult[1]);
+				}
                 if (NULL != pptszFileResult[2])
                 {
-                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileName, pptszFileResult[2]);
+                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFilePath, pptszFileResult[2]);
                 }
                 if (NULL != pptszFileResult[3])
                 {
-                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileUser, pptszFileResult[3]);
+                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileName, pptszFileResult[3]);
                 }
                 if (NULL != pptszFileResult[4])
                 {
-                    pSt_FileInfo->st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[4]);
+                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileUser, pptszFileResult[4]);
                 }
                 if (NULL != pptszFileResult[5])
                 {
-                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileHash, pptszFileResult[5]);
+                    pSt_FileInfo->st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[5]);
                 }
                 if (NULL != pptszFileResult[6])
                 {
-                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileTime, pptszFileResult[6]);
+                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileHash, pptszFileResult[6]);
+                }
+                if (NULL != pptszFileResult[7])
+                {
+                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileTime, pptszFileResult[7]);
                 }
                 bFound = TRUE;
                 break;
@@ -620,72 +634,6 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE* pSt_F
         XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYMD5_NOTFOUND;
         return FALSE;
     }
-    return TRUE;
-}
-/********************************************************************
-函数名称：XStorage_MySql_FileGetCount
-函数功能：获取数据库中文件总个数和总大小
- 参数.一：pInt_Count
-  In/Out：Out
-  类型：64位整数型指针
-  可空：N
-  意思：导出获取到的文件个数
- 参数.二：pInt_Size
-  In/Out：Out
-  类型：64位整数型指针
-  可空：N
-  意思：导出获取到的文件大小,单位字节(BYTE)
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_FileGetCount(__int64x *pInt_Count, __int64x *pInt_Size)
-{
-    XStorage_IsErrorOccur = FALSE;
-
-    if ((NULL == pInt_Count) || (NULL == pInt_Size))
-    {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_GETCOUNT_PARAMENT;
-        return FALSE;
-    }
-	__int64u nllRow = 0;
-	__int64u nllColumn = 0;
-    TCHAR tszSQLStatement[1024];    //SQL语句
-    memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-
-    _stprintf_s(tszSQLStatement, _T("SELECT * FROM `XStorage_Count`"));
-    //查询
-    XHDATA xhResult = 0;
-    if (!DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &nllRow, &nllColumn))
-    {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = DataBase_GetLastError();
-        return FALSE;
-    }
-    if (nllRow <= 0)
-    {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_GETCOUNT_BROKE;
-        return FALSE;
-    }
-    //获取记录集
-    TCHAR **pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhResult);
-    if (NULL == pptszResult[0])
-    {
-        return FALSE;
-    }
-    if (NULL != pptszResult[1])
-    {
-        *pInt_Count = _ttoi64(pptszResult[1]);
-    }
-    if (NULL != pptszResult[2])
-    {
-        *pInt_Size = _ttoi64(pptszResult[2]);
-    }
-    DataBase_MySQL_FreeResult(xhDBSQL, xhResult);
-
     return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -727,6 +675,7 @@ BOOL CXStorage_MySql::XStorage_MySql_CreateTable()
 
 		_stprintf_s(tszSQLQuery, _T("CREATE TABLE IF NOT EXISTS `%s` ("
 			"`ID` int NOT NULL AUTO_INCREMENT COMMENT 'ID序号',"
+            "`PathKey` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '路径KEY',"
 			"`FilePath` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件路径',"
 			"`FileName` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件名称',"
 			"`FileHash` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件HASH',"

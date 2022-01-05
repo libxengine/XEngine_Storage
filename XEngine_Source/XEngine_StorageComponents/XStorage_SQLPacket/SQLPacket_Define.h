@@ -16,7 +16,8 @@
 typedef struct tag_XStorageCore_DBFILE
 {
     XENGINE_PROTOCOL_FILE st_ProtocolFile;
-    CHAR tszTableName[64];                                                //日期表名称,插入:表示自定义插入日期表,获取:表示导出这个文件所属日期表
+    CHAR tszPathKey[MAX_PATH];                                             //路径的关键字
+    CHAR tszTableName[64];                                                 //日期表名称,插入:表示自定义插入日期表,获取:表示导出这个文件所属日期表
 }XSTORAGECORE_DBFILE, *LPXSTORAGECORE_DBFILE;
 typedef struct tag_XStorageCore_UserInfo
 {
@@ -165,25 +166,6 @@ extern "C" BOOL XStorage_MySql_FileQueryForTable(XSTORAGECORE_DBFILE * **pppSt_L
 备注：
 *********************************************************************/
 extern "C" BOOL XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE* pSt_FileInfo, LPCSTR lpszFileMD5, LPCSTR lpszUser = NULL, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL);
-/********************************************************************
-函数名称：XStorage_MySql_FileGetCount
-函数功能：获取数据库中文件总个数和总大小
- 参数.一：pInt_Count
-  In/Out：Out
-  类型：64位整数型指针
-  可空：N
-  意思：导出获取到的文件个数
- 参数.二：pInt_Size
-  In/Out：Out
-  类型：64位整数型指针
-  可空：N
-  意思：导出获取到的文件大小,单位字节(BYTE)
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL XStorage_MySql_FileGetCount(__int64x *pInt_Count, __int64x *pInt_Size);
 /************************************************************************/
 /*                         SQLITE数据库函数                             */
 /************************************************************************/
