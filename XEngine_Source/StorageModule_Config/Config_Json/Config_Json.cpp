@@ -143,7 +143,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLPass, st_JsonXSql["SQLPass"].asCString());
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLFile, st_JsonXSql["SQLFile"].asCString());
 
-	if (st_JsonRoot["XStorage"].empty() || (4 != st_JsonRoot["XStorage"].size()))
+	if (st_JsonRoot["XStorage"].empty() || (3 != st_JsonRoot["XStorage"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
@@ -291,7 +291,6 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARSE;
 		return FALSE;
 	}
-	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDistributed = st_JsonRoot["bDistributed"].asInt();
 
 	if (st_JsonRoot["LBConfig"].empty() || (1 != st_JsonRoot["LBConfig"].size()))
@@ -303,7 +302,7 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 	Json::Value st_JsonLBConfig = st_JsonRoot["LBConfig"];
 	pSt_ServerConfig->st_LBConfig.nServerMode = st_JsonLBConfig["nUseMode"].asInt();
 
-	if (st_JsonRoot["LoadBalance"].empty() || (4 != st_JsonRoot["LoadBalance"].size()))
+	if (st_JsonRoot["LoadBalance"].empty() || (5 != st_JsonRoot["LoadBalance"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LAODBALANCE;
@@ -345,8 +344,8 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 		st_Bucket.bEnable = st_JsonBucket[i]["bEnable"].asInt();
 		st_Bucket.nLevel = st_JsonBucket[i]["nLevel"].asInt();
 		_tcscpy(st_Bucket.tszBuckSize, st_JsonBucket[i]["Size"].asCString());
-		_tcscpy(st_Bucket.tszFilePath, st_JsonBucket[i]["XEngine_File"].asCString());
 		_tcscpy(st_Bucket.tszBuckKey, st_JsonBucket[i]["XEngine_Key"].asCString());
+		_tcscpy(st_Bucket.tszFilePath, st_JsonBucket[i]["XEngine_Path"].asCString());
 
 		pSt_ServerConfig->st_LoadBalance.pStl_ListBucket->push_back(st_Bucket);
 	}

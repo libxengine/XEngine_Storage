@@ -112,7 +112,6 @@ typedef struct tag_XEngine_ServerConfig
     }st_XVer;
 }XENGINE_SERVERCONFIG;
 
-
 typedef struct  
 {
     TCHAR tszFilePath[MAX_PATH];
@@ -124,7 +123,6 @@ typedef struct
 }XENGINE_STORAGEBUCKET;
 typedef struct
 {
-	TCHAR tszIPAddr[128];
 	BOOL bDistributed;
     struct  
     {
