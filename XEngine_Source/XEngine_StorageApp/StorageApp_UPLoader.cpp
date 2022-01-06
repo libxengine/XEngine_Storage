@@ -102,7 +102,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求上传文件失败,可能BUCKET:% 不正确,错误：%lX"), lpszClientAddr, pSt_HTTPParam->tszHttpUri, APIHelp_GetLastError());
 		return FALSE;
 	}
-	_stprintf(tszFileDir, _T("%s%s"), st_StorageBucket.tszFilePath, st_StorageBucket.tszFileName);
+	_stprintf(tszFileDir, _T("%s%s"), st_StorageBucket.tszFilePath, pSt_HTTPParam->tszHttpUri);
 
 	if (!Session_UPStroage_Exist(lpszClientAddr))
 	{
@@ -142,8 +142,12 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	}
 	if (nMsgLen <= 0)
 	{
+		st_HDRParam.bIsClose = TRUE;
+		st_HDRParam.nHttpCode = 411;
+		RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,用户数据大小为0?"), lpszClientAddr);
-		return TRUE;
+		return FALSE;
 	}
 	Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer, nMsgLen);
 	RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
@@ -189,6 +193,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		BOOL bRet = TRUE;
 		if (0 != st_ServiceCfg.st_XSql.nSQLType)
 		{
+			_tcscpy(st_ProtocolFile.tszPathKey, st_StorageBucket.tszBuckKey);
 			if (1 == st_ServiceCfg.st_XSql.nSQLType)
 			{
 				bRet = XStorage_MySql_FileInsert(&st_ProtocolFile);
