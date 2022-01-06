@@ -166,7 +166,14 @@ BOOL XEngine_APPHelp_RangeFile(LPCTSTR lpszClientAddr, int* pInt_SPos, int* pInt
 	}
 	else
 	{
-		RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszLengthStr, tszFieldStr);
+		if (STORAGE_NETTYPE_HTTPDOWNLOAD == nSDType)
+		{
+			return FALSE;
+		}
+		if (!RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszLengthStr, tszFieldStr))
+		{
+			return FALSE;
+		}
 		*pInt_Count = _ttoi64(tszFieldStr);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s:%s,请求内容是新的数据,大小:%lld"), lpszClientType, lpszClientAddr, *pInt_Count);
 	}

@@ -50,21 +50,21 @@ extern "C" BOOL Protocol_P2XPParse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, X
 	return m_P2XPParse.Protocol_P2XPParse_Connect(lpszMsgBuffer, nMsgLen, pSt_IOProtocol);
 }
 //////////////////////////////////////////////////////////////////////////
-extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszClientAddr, TCHAR * ptszFileName, TCHAR * ptszFileHash, __int64x * pInt_FileSize)
+extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszClientAddr, TCHAR * ptszPathKey, TCHAR * ptszFileName, TCHAR * ptszFileHash, __int64x * pInt_FileSize)
 {
-	return m_StorageParse.Protocol_StorageParse_ProxyNotify(lpszMsgBuffer, nMsgLen, ptszClientAddr, ptszFileName, ptszFileHash, pInt_FileSize);
+	return m_StorageParse.Protocol_StorageParse_ProxyNotify(lpszMsgBuffer, nMsgLen, ptszClientAddr, ptszPathKey, ptszFileName, ptszFileHash, pInt_FileSize);
 }
-extern "C" BOOL Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR * ptszTimeStart, TCHAR * ptszTimeEnd, TCHAR * ptszFileName, TCHAR * ptszFileHash)
+extern "C" BOOL Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR * ptszTimeStart, TCHAR * ptszTimeEnd, CHAR * ptszPathKey, TCHAR * ptszFileName, TCHAR * ptszFileHash)
 {
-	return m_StorageParse.Protocol_StorageParse_QueryFile(lpszMsgBuffer, ptszTimeStart, ptszTimeEnd, ptszFileName, ptszFileHash);
+	return m_StorageParse.Protocol_StorageParse_QueryFile(lpszMsgBuffer, ptszTimeStart, ptszTimeEnd, ptszPathKey, ptszFileName, ptszFileHash);
 }
 extern "C" BOOL Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int* pInt_ListCount)
 {
 	return m_StorageParse.Protocol_StorageParse_ReportFile(lpszMsgBuffer, nMsgLen, pppSt_DBFile, pInt_ListCount);
 }
-extern "C" BOOL Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBuffer, TCHAR * ptszUserDir, int* pInt_Operator)
+extern "C" BOOL Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBuffer, TCHAR * ptszUserDir, TCHAR * ptszBuckKey, int* pInt_Operator)
 {
-	return m_StorageParse.Protocol_StorageParse_DirOperator(lpszMsgBuffer, ptszUserDir, pInt_Operator);
+	return m_StorageParse.Protocol_StorageParse_DirOperator(lpszMsgBuffer, ptszUserDir, ptszBuckKey, pInt_Operator);
 }
 /************************************************************************/
 /*                        打包协议导出                                  */
@@ -102,9 +102,9 @@ extern "C" BOOL Protocol_StoragePacket_UPDown(LPCTSTR lpszFileName, LPCTSTR lpsz
 {
 	return m_StoragePacket.Protocol_StoragePacket_UPDown(lpszFileName, lpszClientAddr, nFileSize, ptszMsgBuffer, pInt_MsgLen, lpszFileHash);
 }
-extern "C" BOOL Protocol_StoragePacket_QueryFile(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCTSTR lpszRootDir, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
+extern "C" BOOL Protocol_StoragePacket_QueryFile(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
 {
-	return m_StoragePacket.Protocol_StoragePacket_QueryFile(ptszMsgBuffer, pInt_MsgLen, pppSt_DBFile, nListCount, lpszRootDir, lpszTimeStart, lpszTimeEnd);
+	return m_StoragePacket.Protocol_StoragePacket_QueryFile(ptszMsgBuffer, pInt_MsgLen, pppSt_DBFile, nListCount, lpszTimeStart, lpszTimeEnd);
 }
 extern "C" BOOL Protocol_StoragePacket_Info(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO * **pppSt_DLInfo, SESSION_STORAGEINFO * **pppSt_UPInfo, int nDLCount, int nUPCount)
 {

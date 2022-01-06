@@ -10,7 +10,6 @@ EXPORTS
 	XStorage_MySql_FileQuery
 	XStorage_MySql_FileQueryForTable
 	XStorage_MySql_FileQueryForHash
-	XStorage_MySql_FileGetCount
 
 	XStorage_SQLite_Init
 	XStorage_SQLite_Destory

@@ -21,10 +21,9 @@ public:
     BOOL XStorage_MySql_Destory();
     BOOL XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage);
     BOOL XStorage_MySql_FileDelete(LPCTSTR lpszFile = NULL, LPCTSTR lpszHash = NULL);
-    BOOL XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL, LPCTSTR lpszFile = NULL, LPCTSTR lpszHash = NULL);
+    BOOL XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFile = NULL, LPCTSTR lpszHash = NULL);
     BOOL XStorage_MySql_FileQueryForTable(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTableName);
     BOOL XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE* pSt_FileInfo, LPCTSTR lpszFileHash, LPCTSTR lpszUser = NULL, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL);
-    BOOL XStorage_MySql_FileGetCount(__int64x *pInt_Count, __int64x *pInt_Size);
 protected:
     BOOL XStorage_MySql_CreateTable();
     BOOL XStorage_MySql_TimeMonth(LPCTSTR lpszStartTime, int* pInt_Month);

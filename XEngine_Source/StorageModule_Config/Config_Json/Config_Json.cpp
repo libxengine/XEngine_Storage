@@ -143,7 +143,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLPass, st_JsonXSql["SQLPass"].asCString());
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLFile, st_JsonXSql["SQLFile"].asCString());
 
-	if (st_JsonRoot["XStorage"].empty() || (4 != st_JsonRoot["XStorage"].size()))
+	if (st_JsonRoot["XStorage"].empty() || (3 != st_JsonRoot["XStorage"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
@@ -153,7 +153,6 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XStorage.nHashMode = st_JsonXStorage["nHashMode"].asInt();
 	pSt_ServerConfig->st_XStorage.bUPHash = st_JsonXStorage["bUPHash"].asInt();
 	pSt_ServerConfig->st_XStorage.bResumable = st_JsonXStorage["bResumable"].asInt();
-	_tcscpy(pSt_ServerConfig->st_XStorage.tszFileDir, st_JsonXStorage["tszFileDir"].asCString());
 
 	if (st_JsonRoot["XProxy"].empty() || (2 != st_JsonRoot["XProxy"].size()))
 	{
@@ -292,7 +291,6 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARSE;
 		return FALSE;
 	}
-	_tcscpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDistributed = st_JsonRoot["bDistributed"].asInt();
 
 	if (st_JsonRoot["LBConfig"].empty() || (1 != st_JsonRoot["LBConfig"].size()))
@@ -304,7 +302,7 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 	Json::Value st_JsonLBConfig = st_JsonRoot["LBConfig"];
 	pSt_ServerConfig->st_LBConfig.nServerMode = st_JsonLBConfig["nUseMode"].asInt();
 
-	if (st_JsonRoot["LoadBalance"].empty() || (4 != st_JsonRoot["LoadBalance"].size()))
+	if (st_JsonRoot["LoadBalance"].empty() || (5 != st_JsonRoot["LoadBalance"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LAODBALANCE;
@@ -317,20 +315,39 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListUseMode->push_back(st_JsonLoadBalance["nUseMode"][i].asInt());
 	}
+
 	pSt_ServerConfig->st_LoadBalance.pStl_ListCenter = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["CenterAddr"].size(); i++)
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListCenter->push_back(st_JsonLoadBalance["CenterAddr"][i].asCString());
 	}
+
 	pSt_ServerConfig->st_LoadBalance.pStl_ListDownload = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["DownloadAddr"].size(); i++)
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListDownload->push_back(st_JsonLoadBalance["DownloadAddr"][i].asCString());
 	}
+
 	pSt_ServerConfig->st_LoadBalance.pStl_ListUPLoader = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["UPLoaderAddr"].size(); i++)
 	{
 		pSt_ServerConfig->st_LoadBalance.pStl_ListUPLoader->push_back(st_JsonLoadBalance["UPLoaderAddr"][i].asCString());
+	}
+
+	Json::Value st_JsonBucket = st_JsonLoadBalance["StorageAddr"];
+	pSt_ServerConfig->st_LoadBalance.pStl_ListBucket = new list<XENGINE_STORAGEBUCKET>;
+	for (unsigned int i = 0; i < st_JsonBucket.size(); i++)
+	{
+		XENGINE_STORAGEBUCKET st_Bucket;
+		memset(&st_Bucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
+
+		st_Bucket.bEnable = st_JsonBucket[i]["bEnable"].asInt();
+		st_Bucket.nLevel = st_JsonBucket[i]["nLevel"].asInt();
+		_tcscpy(st_Bucket.tszBuckSize, st_JsonBucket[i]["Size"].asCString());
+		_tcscpy(st_Bucket.tszBuckKey, st_JsonBucket[i]["XEngine_Key"].asCString());
+		_tcscpy(st_Bucket.tszFilePath, st_JsonBucket[i]["XEngine_Path"].asCString());
+
+		pSt_ServerConfig->st_LoadBalance.pStl_ListBucket->push_back(st_Bucket);
 	}
 	return TRUE;
 }

@@ -38,8 +38,7 @@
   "XStorage":{
       "bResumable":1,
       "bUPHash":0,
-      "nHashMode":2,
-      "tszFileDir":"./XEngine_File"
+      "nHashMode":2
   },
   "XProxy":{
       "XProxyAuth":{
@@ -76,7 +75,8 @@
   },
   "XVer":{
       "StorageVersion":[
-          "3.2.0.1001 Build20211210",
+          "3.3.0.1001 Build20220106",
+          "3.2.0.1001 Build20211211",
           "3.1.0.1001 Build20211109",
           "3.0.0.1001 Build20211029",
           "2.5.0.1001 Build20210930",

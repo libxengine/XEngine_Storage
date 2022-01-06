@@ -12,3 +12,4 @@
 *********************************************************************/
 #define ERROR_STORAGE_MODULE_APIHELP_PARAMENT 0x0030001  
 #define ERROR_STORAGE_MODULE_APIHELP_PARSE 0x0030002
+#define ERROR_STORAGE_MODULE_APIHELP_NOTFOUND 0x0030003

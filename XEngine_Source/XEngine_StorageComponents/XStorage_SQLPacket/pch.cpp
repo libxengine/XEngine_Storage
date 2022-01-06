@@ -59,10 +59,6 @@ extern "C" BOOL XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE * pSt_FileIn
 {
 	return m_MySql.XStorage_MySql_FileQueryForHash(pSt_FileInfo, lpszFileMD5, lpszUser, lpszTimeStart, lpszTimeEnd);
 }
-extern "C" BOOL XStorage_MySql_FileGetCount(__int64x * pInt_Count, __int64x * pInt_Size)
-{
-	return m_MySql.XStorage_MySql_FileGetCount(pInt_Count, pInt_Size);
-}
 /************************************************************************/
 /*                         SQLITE数据库函数                             */
 /************************************************************************/
