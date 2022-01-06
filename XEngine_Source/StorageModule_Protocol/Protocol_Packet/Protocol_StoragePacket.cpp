@@ -77,6 +77,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuf
     {
         Json::Value st_JsonObject;
 
+        st_JsonObject["tszPathKey"] = (*pppSt_DBFile)[i]->tszPathKey;
         st_JsonObject["tszFilePath"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFilePath;
         st_JsonObject["tszFileName"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileName;
         st_JsonObject["tszFileUser"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileUser;

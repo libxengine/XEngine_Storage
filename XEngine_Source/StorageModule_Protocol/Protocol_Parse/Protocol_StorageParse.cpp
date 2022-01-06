@@ -40,22 +40,27 @@ CProtocol_StorageParse::~CProtocol_StorageParse()
   类型：字符指针
   可空：N
   意思：查询结束时间
- 参数.四：ptszFileName
+ 参数.四：ptszPathKey
   In/Out：Out
   类型：字符指针
-  可空：N
+  可空：Y
+  意思：输出文件所属BUCKET
+ 参数.五：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：Y
   意思：查询的文件名
- 参数.五：ptszFileHash
+ 参数.六：ptszFileHash
   In/Out：Out
   类型：字符指针
-  可空：N
+  可空：Y
   意思：查询的文件HASH
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR *ptszTimeStart, TCHAR *ptszTimeEnd, TCHAR *ptszFileName /* = NULL */, TCHAR * ptszFileHash /* = NULL */)
+BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR* ptszTimeStart, TCHAR* ptszTimeEnd, TCHAR* ptszPathKey /* = NULL */, TCHAR* ptszFileName /* = NULL */, TCHAR* ptszFileHash /* = NULL */)
 {
     Protocol_IsErrorOccur = FALSE;
 
@@ -108,6 +113,13 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuff
             _tcscpy(ptszFileHash, st_JsonRoot["lpszFileHash"].asCString());
         }
     }
+	if (NULL != ptszPathKey)
+	{
+		if (!st_JsonRoot["tszPathKey"].isNull())
+		{
+			_tcscpy(ptszPathKey, st_JsonRoot["tszPathKey"].asCString());
+		}
+	}
     return TRUE;
 }
 /********************************************************************
@@ -172,6 +184,10 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuf
             (*pppSt_DBFile)[i]->st_ProtocolFile.nFileSize = st_JsonArray[i]["nFileSize"].asInt64();
         }
 
+		if (!st_JsonArray[i]["tszPathKey"].isNull())
+		{
+			_tcscpy((*pppSt_DBFile)[i]->tszPathKey, st_JsonArray[i]["tszPathKey"].asCString());
+		}
         if (!st_JsonArray[i]["tszFileName"].isNull())
         {
             _tcscpy((*pppSt_DBFile)[i]->st_ProtocolFile.tszFileName, st_JsonArray[i]["tszFileName"].asCString());
@@ -272,17 +288,22 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBu
   类型：字符指针
   可空：N
   意思：输出文件客户端地址
- 参数.四：ptszFileName
+ 参数.四：ptszPathKey
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出路径的KEY
+ 参数.五：ptszFileName
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出文件名称
- 参数.五：ptszFileHash
+ 参数.六：ptszFileHash
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出文件HASH
- 参数.六：pInt_FileSize
+ 参数.七：pInt_FileSize
   In/Out：Out
   类型：整数型
   可空：N
@@ -292,7 +313,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBu
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StorageParse::Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszClientAddr, TCHAR* ptszFileName, TCHAR* ptszFileHash, __int64x* pInt_FileSize)
+BOOL CProtocol_StorageParse::Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszClientAddr, TCHAR* ptszPathKey, TCHAR* ptszFileName, TCHAR* ptszFileHash, __int64x* pInt_FileSize)
 {
     Protocol_IsErrorOccur = FALSE;
 
@@ -320,6 +341,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBu
     _tcscpy(ptszClientAddr, st_JsonRoot["lpszClientAddr"].asCString());
     _tcscpy(ptszFileName, st_JsonRoot["lpszFileName"].asCString());
     _tcscpy(ptszFileHash, st_JsonRoot["lpszFileHash"].asCString());
+    _tcscpy(ptszPathKey, st_JsonRoot["lpszPathKey"].asCString());
     *pInt_FileSize = st_JsonRoot["nFileSize"].asInt64();
 
     return TRUE;

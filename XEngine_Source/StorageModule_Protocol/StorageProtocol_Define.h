@@ -136,17 +136,22 @@ extern "C" BOOL Protocol_P2XPParse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, X
   类型：字符指针
   可空：N
   意思：输出文件客户端地址
- 参数.四：ptszFileName
+ 参数.四：ptszPathKey
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出路径的KEY
+ 参数.五：ptszFileName
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出文件名称
- 参数.五：ptszFileHash
+ 参数.六：ptszFileHash
   In/Out：Out
   类型：字符指针
   可空：N
   意思：输出文件HASH
- 参数.六：pInt_FileSize
+ 参数.七：pInt_FileSize
   In/Out：Out
   类型：整数型
   可空：N
@@ -156,7 +161,7 @@ extern "C" BOOL Protocol_P2XPParse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, X
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszClientAddr, TCHAR * ptszFileName, TCHAR * ptszFileHash, __int64x * pInt_FileSize);
+extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszClientAddr, TCHAR * ptszPathKey, TCHAR * ptszFileName, TCHAR * ptszFileHash, __int64x * pInt_FileSize);
 /********************************************************************
 函数名称：Protocol_StorageParse_QueryFile
 函数功能：文件查询请求解析函数
@@ -190,7 +195,7 @@ extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMs
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_QueryFile(LPCSTR lpszMsgBuffer, CHAR * ptszTimeStart, CHAR * ptszTimeEnd, CHAR * ptszFileName = NULL, CHAR * ptszFileHash = NULL);
+extern "C" BOOL Protocol_StorageParse_QueryFile(LPCSTR lpszMsgBuffer, CHAR * ptszTimeStart, CHAR * ptszTimeEnd, CHAR * ptszPathKey = NULL, CHAR * ptszFileName = NULL, CHAR * ptszFileHash = NULL);
 /********************************************************************
 函数名称：Protocol_StorageParse_ReportFile
 函数功能：解析文件报告协议
