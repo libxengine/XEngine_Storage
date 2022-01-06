@@ -25,6 +25,12 @@
     <Filter Include="源文件\XStorage_MySql">
       <UniqueIdentifier>{b46e9df3-d213-4733-9ef0-b0322a8d8d01}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\XStorage_SQLHelp">
+      <UniqueIdentifier>{fff86ef0-4cc8-4c11-9077-faf81aa740d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\XStorage_SQLHelp">
+      <UniqueIdentifier>{91e0d007-228d-4b26-a540-9b364ceb87e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -45,6 +51,9 @@
     <ClInclude Include="XStorage_MySql\XStorage_MySql.h">
       <Filter>头文件\XStorage_MySql</Filter>
     </ClInclude>
+    <ClInclude Include="XStorage_SQLHelp\XStorage_SQLHelp.h">
+      <Filter>头文件\XStorage_SQLHelp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -58,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="XStorage_MySql\XStorage_MySql.cpp">
       <Filter>源文件\XStorage_MySql</Filter>
+    </ClCompile>
+    <ClCompile Include="XStorage_SQLHelp\XStorage_SQLHelp.cpp">
+      <Filter>源文件\XStorage_SQLHelp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

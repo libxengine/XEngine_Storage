@@ -154,7 +154,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileInsert(XSTORAGECORE_DBFILE* pSt_DBFil
         _stprintf_s(tszTableName, _T("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
     }
     //插入语句
-    _stprintf_s(tszSQLStatement, _T("INSERT INTO `%s` (PathKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,DATETIME('now', 'localtime'))"), tszTableName, pSt_DBFile->tszPathKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize);
+    _stprintf_s(tszSQLStatement, _T("INSERT INTO `%s` (BuckKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,DATETIME('now', 'localtime'))"), tszTableName, pSt_DBFile->tszBuckKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize);
     if (!DataBase_SQLite_Exec(xhSQL, tszSQLStatement))
     {
         XStorage_IsErrorOccur = TRUE;
@@ -351,7 +351,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
 				_tcscpy(st_DBFile.tszTableName, pptszResult[i]);
                 nFiled++;
 
-				_tcscpy(st_DBFile.tszPathKey, pptszFileResult[nFiled]);
+				_tcscpy(st_DBFile.tszBuckKey, pptszFileResult[nFiled]);
 				nFiled++;
 
                 _tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[nFiled]);
@@ -452,7 +452,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQueryForTable(XSTORAGECORE_DBFILE*** 
         nFiled++;
         _tcscpy((*pppSt_ListFile)[i]->tszTableName, lpszTableName);
 
-        _tcscpy((*pppSt_ListFile)[i]->tszPathKey, pptszResulte[nFiled]);
+        _tcscpy((*pppSt_ListFile)[i]->tszBuckKey, pptszResulte[nFiled]);
         nFiled++;
 
 		_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFilePath, pptszResulte[nFiled]);
@@ -516,7 +516,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_CreateTable()
 		_stprintf_s(tszSQLQuery, _T("PRAGMA foreign_keys = false;"
 			"CREATE TABLE IF NOT EXISTS \"%s\" ("
 			"  \"ID\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-            "  \"PathKey\" TEXT NOT NULL,"
+            "  \"BuckKey\" TEXT,"
 			"  \"FilePath\" TEXT NOT NULL,"
 			"  \"FileName\" TEXT NOT NULL,"
 			"  \"FileHash\" TEXT,"

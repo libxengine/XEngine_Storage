@@ -115,9 +115,9 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuff
     }
 	if (NULL != ptszPathKey)
 	{
-		if (!st_JsonRoot["tszPathKey"].isNull())
+		if (!st_JsonRoot["lpszBuckKey"].isNull())
 		{
-			_tcscpy(ptszPathKey, st_JsonRoot["tszPathKey"].asCString());
+			_tcscpy(ptszPathKey, st_JsonRoot["lpszBuckKey"].asCString());
 		}
 	}
     return TRUE;
@@ -184,10 +184,6 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuf
             (*pppSt_DBFile)[i]->st_ProtocolFile.nFileSize = st_JsonArray[i]["nFileSize"].asInt64();
         }
 
-		if (!st_JsonArray[i]["tszPathKey"].isNull())
-		{
-			_tcscpy((*pppSt_DBFile)[i]->tszPathKey, st_JsonArray[i]["tszPathKey"].asCString());
-		}
         if (!st_JsonArray[i]["tszFileName"].isNull())
         {
             _tcscpy((*pppSt_DBFile)[i]->st_ProtocolFile.tszFileName, st_JsonArray[i]["tszFileName"].asCString());

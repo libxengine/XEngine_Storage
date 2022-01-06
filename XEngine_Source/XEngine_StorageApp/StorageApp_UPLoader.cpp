@@ -193,7 +193,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		BOOL bRet = TRUE;
 		if (0 != st_ServiceCfg.st_XSql.nSQLType)
 		{
-			_tcscpy(st_ProtocolFile.tszPathKey, st_StorageBucket.tszBuckKey);
+			_tcscpy(st_ProtocolFile.tszBuckKey, st_StorageBucket.tszBuckKey);
 			if (1 == st_ServiceCfg.st_XSql.nSQLType)
 			{
 				bRet = XStorage_MySql_FileInsert(&st_ProtocolFile);

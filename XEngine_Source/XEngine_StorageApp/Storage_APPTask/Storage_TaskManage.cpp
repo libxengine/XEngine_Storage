@@ -175,19 +175,21 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		int nMsgLen = 10240;
 		TCHAR tszFileName[MAX_PATH];
 		TCHAR tszFileHash[MAX_PATH];
+		TCHAR tszBucketKey[128];
 		TCHAR tszTimeStart[128];
 		TCHAR tszTimeEnd[128];
 		TCHAR tszMsgBuffer[10240];
 
 		memset(tszFileName, '\0', MAX_PATH);
 		memset(tszFileHash, '\0', MAX_PATH);
+		memset(tszBucketKey, '\0', sizeof(tszBucketKey));
 		memset(tszTimeStart, '\0', sizeof(tszTimeStart));
 		memset(tszTimeEnd, '\0', sizeof(tszTimeEnd));
 		memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 
 		int nListCount = 0;
 		XSTORAGECORE_DBFILE** ppSt_ListFile;
-		Protocol_StorageParse_QueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszFileHash);
+		Protocol_StorageParse_QueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
 
 		if (0 == st_ServiceCfg.st_XSql.nSQLType)
 		{

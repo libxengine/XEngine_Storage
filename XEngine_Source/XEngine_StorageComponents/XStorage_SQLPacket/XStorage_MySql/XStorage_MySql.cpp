@@ -154,7 +154,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
         _stprintf_s(tszTableName, _T("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
     }
     //插入语句
-    _stprintf_s(tszSQLStatement, _T("INSERT INTO `%s` (PathKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,now())"), tszTableName, pSt_DBFile->tszPathKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize);
+    _stprintf_s(tszSQLStatement, _T("INSERT INTO `%s` (BuckKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,now())"), tszTableName, pSt_DBFile->tszBuckKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize);
     if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
     {
         XStorage_IsErrorOccur = TRUE;
@@ -258,7 +258,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszFile, LPCTSTR lpszHa
   意思：是否成功
 备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszHash不能全为空
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */)
+BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */)
 {
     XStorage_IsErrorOccur = FALSE;
 
@@ -308,7 +308,6 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
         __int64u dwLineResult = 0;
         __int64u dwFieldResult = 0;
         XNETHANDLE xhResult;
-
         memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
         //判断查询方式
         if (NULL != lpszFile)
@@ -355,7 +354,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
 
 				if (NULL != pptszFileResult[1])
 				{
-					_tcscpy(st_DBFile.tszPathKey, pptszFileResult[1]);
+					_tcscpy(st_DBFile.tszBuckKey, pptszFileResult[1]);
 				}
                 if (NULL != pptszFileResult[2])
                 {
@@ -464,7 +463,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQueryForTable(XSTORAGECORE_DBFILE*** pp
 
 		if (NULL != pptszFileResult[1])
 		{
-			_tcscpy((*pppSt_ListFile)[i]->tszPathKey, pptszFileResult[1]);
+			_tcscpy((*pppSt_ListFile)[i]->tszBuckKey, pptszFileResult[1]);
 		}
 		if (NULL != pptszFileResult[2])
 		{
@@ -594,7 +593,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE* pSt_F
 
 				if (NULL != pptszFileResult[1])
 				{
-					_tcscpy(pSt_FileInfo->tszPathKey, pptszFileResult[1]);
+					_tcscpy(pSt_FileInfo->tszBuckKey, pptszFileResult[1]);
 				}
                 if (NULL != pptszFileResult[2])
                 {
@@ -675,7 +674,7 @@ BOOL CXStorage_MySql::XStorage_MySql_CreateTable()
 
 		_stprintf_s(tszSQLQuery, _T("CREATE TABLE IF NOT EXISTS `%s` ("
 			"`ID` int NOT NULL AUTO_INCREMENT COMMENT 'ID序号',"
-            "`PathKey` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '路径KEY',"
+            "`BuckKey` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '路径KEY',"
 			"`FilePath` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件路径',"
 			"`FileName` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件名称',"
 			"`FileHash` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件HASH',"
