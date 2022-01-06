@@ -18,6 +18,9 @@
 #else
 #include <jsoncpp/json/json.h>
 #endif
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #endif
 #endif //PCH_H
 #include <string.h>
