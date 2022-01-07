@@ -323,32 +323,37 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMetho
 /********************************************************************
 函数名称：Protocol_StoragePacket_UPDown
 函数功能：上传下载完成代理通知协议
- 参数.一：lpszFileName
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：文件的地址
- 参数.二：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：用户客户端地址
- 参数.三：nFileSize
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：文件大小
- 参数.四：ptszMsgBuffer
+ 参数.一：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：数据包
- 参数.五：pInt_MsgLen
+ 参数.二：pInt_MsgLen
   In/Out：Out
   类型：整数型
   可空：N
   意思：导出数据包大小
- 参数.六：lpszFileHash
+ 参数.三：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入文件所属BUCKET
+ 参数.四：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：文件的地址
+ 参数.五：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：用户客户端地址
+ 参数.六：nFileSize
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：文件大小
+ 参数.七：lpszFileHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -358,7 +363,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMetho
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileHash)
+BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, LPCTSTR lpszFileHash /* = NULL */)
 {
     Protocol_IsErrorOccur = FALSE;
 
@@ -370,6 +375,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(LPCTSTR lpszFileName
     }
     Json::Value st_JsonRoot;
 
+    st_JsonRoot["lpszBuckKey"] = lpszBuckKey;
     st_JsonRoot["lpszFileName"] = lpszFileName;
     st_JsonRoot["lpszClientAddr"] = lpszClientAddr;
     st_JsonRoot["nFileSize"] = nFileSize;

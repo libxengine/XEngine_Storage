@@ -50,13 +50,13 @@ extern "C" BOOL Protocol_P2XPParse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, X
 	return m_P2XPParse.Protocol_P2XPParse_Connect(lpszMsgBuffer, nMsgLen, pSt_IOProtocol);
 }
 //////////////////////////////////////////////////////////////////////////
-extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszClientAddr, TCHAR * ptszPathKey, TCHAR * ptszFileName, TCHAR * ptszFileHash, __int64x * pInt_FileSize)
+extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszClientAddr, TCHAR * ptszBuckKey, TCHAR * ptszFileName, TCHAR * ptszFileHash, __int64x * pInt_FileSize)
 {
-	return m_StorageParse.Protocol_StorageParse_ProxyNotify(lpszMsgBuffer, nMsgLen, ptszClientAddr, ptszPathKey, ptszFileName, ptszFileHash, pInt_FileSize);
+	return m_StorageParse.Protocol_StorageParse_ProxyNotify(lpszMsgBuffer, nMsgLen, ptszClientAddr, ptszBuckKey, ptszFileName, ptszFileHash, pInt_FileSize);
 }
-extern "C" BOOL Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR * ptszTimeStart, TCHAR * ptszTimeEnd, CHAR * ptszPathKey, TCHAR * ptszFileName, TCHAR * ptszFileHash)
+extern "C" BOOL Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR * ptszTimeStart, TCHAR * ptszTimeEnd, CHAR * ptszBuckKey, TCHAR * ptszFileName, TCHAR * ptszFileHash)
 {
-	return m_StorageParse.Protocol_StorageParse_QueryFile(lpszMsgBuffer, ptszTimeStart, ptszTimeEnd, ptszPathKey, ptszFileName, ptszFileHash);
+	return m_StorageParse.Protocol_StorageParse_QueryFile(lpszMsgBuffer, ptszTimeStart, ptszTimeEnd, ptszBuckKey, ptszFileName, ptszFileHash);
 }
 extern "C" BOOL Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int* pInt_ListCount)
 {
@@ -98,9 +98,9 @@ extern "C" BOOL Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMethod, LPCTSTR lps
 {
 	return m_StoragePacket.Protocol_StoragePacket_BasicAuth(lpszMethod, lpszPostUrl, lpszClientAddr, lpszUser, lpszPass, ptszMsgBuffer, pInt_MsgLen);
 }
-extern "C" BOOL Protocol_StoragePacket_UPDown(LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileHash)
+extern "C" BOOL Protocol_StoragePacket_UPDown(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, LPCTSTR lpszFileHash)
 {
-	return m_StoragePacket.Protocol_StoragePacket_UPDown(lpszFileName, lpszClientAddr, nFileSize, ptszMsgBuffer, pInt_MsgLen, lpszFileHash);
+	return m_StoragePacket.Protocol_StoragePacket_UPDown(ptszMsgBuffer, pInt_MsgLen, lpszBuckKey, lpszFileName, lpszClientAddr, nFileSize, lpszFileHash);
 }
 extern "C" BOOL Protocol_StoragePacket_QueryFile(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
 {
