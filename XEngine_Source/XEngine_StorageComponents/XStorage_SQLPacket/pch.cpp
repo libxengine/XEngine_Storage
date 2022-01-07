@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "XStorage_MySql/XStorage_MySql.h"
 #include "XStorage_SQLite/XStorage_SQLite.h"
+#include "XStorage_SQLHelp/XStorage_SQLHelp.h"
 /********************************************************************
 //    Created:     2021/06/10  11:10:16
 //    File Name:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageComponents\XStorage_SQLPacket\pch.cpp
@@ -17,6 +18,7 @@ DWORD XStorage_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CXStorage_MySql m_MySql;
 CXStorage_SQLite m_SQLite;
+CXStorage_SQLHelp m_SQLHelp;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -43,21 +45,13 @@ extern "C" BOOL XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE * pSt_DBManage)
 {
 	return m_MySql.XStorage_MySql_FileInsert(pSt_DBManage);
 }
-extern "C" BOOL XStorage_MySql_FileDelete(LPCTSTR lpszFile, LPCTSTR lpszHash)
+extern "C" BOOL XStorage_MySql_FileDelete(LPCTSTR lpszBuckKey, LPCTSTR lpszFile, LPCTSTR lpszHash)
 {
-	return m_MySql.XStorage_MySql_FileDelete(lpszFile, lpszHash);
+	return m_MySql.XStorage_MySql_FileDelete(lpszBuckKey, lpszFile, lpszHash);
 }
-extern "C" BOOL XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszFile, LPCTSTR lpszHash)
+extern "C" BOOL XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszBuckKey, LPCTSTR lpszFile, LPCTSTR lpszHash, LPCTSTR lpszTableName)
 {
-	return m_MySql.XStorage_MySql_FileQuery(pppSt_ListFile, pInt_ListCount, lpszTimeStart, lpszTimeEnd, lpszFile, lpszHash);
-}
-extern "C" BOOL XStorage_MySql_FileQueryForTable(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTableName)
-{
-	return m_MySql.XStorage_MySql_FileQueryForTable(pppSt_ListFile, pInt_ListCount, lpszTableName);
-}
-extern "C" BOOL XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE * pSt_FileInfo, LPCTSTR lpszFileMD5, LPCTSTR lpszUser, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
-{
-	return m_MySql.XStorage_MySql_FileQueryForHash(pSt_FileInfo, lpszFileMD5, lpszUser, lpszTimeStart, lpszTimeEnd);
+	return m_MySql.XStorage_MySql_FileQuery(pppSt_ListFile, pInt_ListCount, lpszTimeStart, lpszTimeEnd, lpszBuckKey, lpszFile, lpszHash, lpszTableName);
 }
 /************************************************************************/
 /*                         SQLITE数据库函数                             */
@@ -74,15 +68,26 @@ extern "C" BOOL XStorage_SQLite_FileInsert(XSTORAGECORE_DBFILE * pSt_DBManage)
 {
 	return m_SQLite.XStorage_SQLite_FileInsert(pSt_DBManage);
 }
-extern "C" BOOL XStorage_SQLite_FileDelete(LPCTSTR lpszFile, LPCTSTR lpszHash)
+extern "C" BOOL XStorage_SQLite_FileDelete(LPCTSTR lpszBuckKey, LPCTSTR lpszFile, LPCTSTR lpszHash)
 {
-	return m_SQLite.XStorage_SQLite_FileDelete(lpszFile, lpszHash);
+	return m_SQLite.XStorage_SQLite_FileDelete(lpszBuckKey, lpszFile, lpszHash);
 }
-extern "C" BOOL XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszFile, LPCTSTR lpszHash)
+extern "C" BOOL XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszBuckKey, LPCTSTR lpszFile, LPCTSTR lpszHash, LPCTSTR lpszTableName)
 {
-	return m_SQLite.XStorage_SQLite_FileQuery(pppSt_ListFile, pInt_ListCount, lpszTimeStart, lpszTimeEnd, lpszFile, lpszHash);
+	return m_SQLite.XStorage_SQLite_FileQuery(pppSt_ListFile, pInt_ListCount, lpszTimeStart, lpszTimeEnd, lpszBuckKey, lpszFile, lpszHash, lpszTableName);
 }
-extern "C" BOOL XStorage_SQLite_FileQueryForTable(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTableName)
+/************************************************************************/
+/*                         SQL帮助函数集                                */
+/************************************************************************/
+extern "C" BOOL XStorage_SQLHelp_Insert(TCHAR * ptszSQLBuffer, XSTORAGECORE_DBFILE * pSt_DBFile)
 {
-	return m_SQLite.XStorage_SQLite_FileQueryForTable(pppSt_ListFile, pInt_ListCount, lpszTableName);
+	return m_SQLHelp.XStorage_SQLHelp_Insert(ptszSQLBuffer, pSt_DBFile);
+}
+extern "C" BOOL XStorage_SQLHelp_Delete(TCHAR * ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszFileHash)
+{
+	return m_SQLHelp.XStorage_SQLHelp_Delete(ptszSQLBuffer, lpszTableName, lpszBuckKey, lpszFileName, lpszFileHash);
+}
+extern "C" BOOL XStorage_SQLHelp_Query(TCHAR * ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey, LPCTSTR lpszFilePath, LPCTSTR lpszFileName, LPCTSTR lpszFileHash, LPCTSTR lpszFileUser, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
+{
+	return m_SQLHelp.XStorage_SQLHelp_Query(ptszSQLBuffer, lpszTableName, lpszBuckKey, lpszFilePath, lpszFileName, lpszFileHash, lpszFileUser, lpszTimeStart, lpszTimeEnd);
 }

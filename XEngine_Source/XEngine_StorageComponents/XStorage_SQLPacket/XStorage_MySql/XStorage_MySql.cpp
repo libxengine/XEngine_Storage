@@ -137,24 +137,9 @@ BOOL CXStorage_MySql::XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
     }
     BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
     TCHAR tszSQLStatement[2048];
-    TCHAR tszTableName[64];
-    XENGINE_LIBTIMER st_LibTimer;
-
     memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-    memset(tszTableName, '\0', sizeof(tszTableName));
-    memset(&st_LibTimer, '\0', sizeof(XENGINE_LIBTIMER));
-    //获得插入日期表
-    BaseLib_OperatorTime_GetSysTime(&st_LibTimer);
-    if (_tcslen(pSt_DBFile->tszTableName) > 0)
-    {
-        _tcscpy(tszTableName, pSt_DBFile->tszTableName);
-    }
-    else
-    {
-        _stprintf_s(tszTableName, _T("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
-    }
-    //插入语句
-    _stprintf_s(tszSQLStatement, _T("INSERT INTO `%s` (BuckKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,now())"), tszTableName, pSt_DBFile->tszBuckKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize);
+
+    XStorage_SQLHelp_Insert(tszSQLStatement, pSt_DBFile);
     if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
     {
         XStorage_IsErrorOccur = TRUE;
@@ -166,12 +151,17 @@ BOOL CXStorage_MySql::XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
 /********************************************************************
 函数名称：XStorage_MySql_FileDelete
 函数功能：删除一个数据库文件信息
- 参数.一：lpszFile
+ 参数.一：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：所属BUCK名称
+ 参数.二：lpszFile
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要删除的文件全路径
- 参数.二：lpszHash
+ 参数.三：lpszHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -181,7 +171,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
   意思：是否成功
 备注：参数不能全为空,不会删除文件
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszFile, LPCTSTR lpszHash)
+BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */)
 {
     XStorage_IsErrorOccur = FALSE;
 
@@ -191,7 +181,6 @@ BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszFile, LPCTSTR lpszHa
         XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_DELETEFILE_PARAMENT;
         return FALSE;
     }
-    TCHAR tszSQLStatement[1024];
     int nListCount = 0;
     XSTORAGECORE_DBFILE **ppSt_ListFile;
     if (!XStorage_MySql_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, lpszFile, lpszHash))
@@ -201,15 +190,10 @@ BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszFile, LPCTSTR lpszHa
     //轮训查找删除
     for (int i = 0; i < nListCount; i++)
     {
-        memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-        if (NULL == lpszHash)
-        {
-            _stprintf_s(tszSQLStatement, _T("DELETE FROM `%s` WHERE FileName = '%s'"), ppSt_ListFile[i]->tszTableName, ppSt_ListFile[i]->st_ProtocolFile.tszFileName);
-        }
-        else
-        {
-            _stprintf_s(tszSQLStatement, _T("DELETE FROM `%s` WHERE FileHash = '%s'"), ppSt_ListFile[i]->tszTableName, ppSt_ListFile[i]->st_ProtocolFile.tszFileHash);
-        }
+		TCHAR tszSQLStatement[1024];
+		memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
+		XStorage_SQLHelp_Delete(tszSQLStatement, ppSt_ListFile[i]->tszTableName, lpszBuckKey, lpszFile, lpszHash);
+
         if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
         {
             XStorage_IsErrorOccur = TRUE;
@@ -243,22 +227,32 @@ BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszFile, LPCTSTR lpszHa
   类型：常量字符指针
   可空：Y
   意思：查找结束时间,20190730
- 参数.五：lpszFile
+ 参数.五：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：查询的BUCK名
+ 参数.六：lpszFile
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要查询的名称
- 参数.六：lpszHash
+ 参数.七：lpszHash
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要查询的文件HASH
+ 参数.八：lpszTableName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要查询的表明,为NULL所有
 返回值
   类型：逻辑型
   意思：是否成功
 备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszHash不能全为空
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */)
+BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */, LPCTSTR lpszTableName /* = NULL */)
 {
     XStorage_IsErrorOccur = FALSE;
 
@@ -272,121 +266,147 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
     XHDATA xhTable = 0;
     __int64u nllLine = 0;
     __int64u nllRow = 0;
+    list<XSTORAGECORE_DBFILE> stl_ListFile;
+
     TCHAR tszSQLStatement[1024];
     memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-    //检查是否时间范围检索
-    if ((NULL != lpszTimeStart) && (NULL != lpszTimeEnd))
-    {
-        if (_tcslen(lpszTimeStart) > 0 && _tcslen(lpszTimeEnd) > 0)
-        {
-            _stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XEngine_Storage' AND TABLE_NAME BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
-        }
-        else
-        {
-            _stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XEngine_Storage'"));
-        }
-    }
-    else
-    {
-        _stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XEngine_Storage'"));
-    }
-    if (!DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
-    {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = DataBase_GetLastError();
-        return FALSE;
-	}
-	list<XSTORAGECORE_DBFILE> stl_ListFile;
-    //轮训
-    for (__int64u i = 0; i < nllLine; i++)
-    {
-        TCHAR **pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
-        if (NULL == pptszResult[0])
-        {
-            continue;
-        }
-        __int64u dwLineResult = 0;
-        __int64u dwFieldResult = 0;
-        XNETHANDLE xhResult;
-        memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-        //判断查询方式
-        if (NULL != lpszFile)
-        {
-            if (_tcslen(lpszFile) > 0)
-            {
-                TCHAR tszFilePath[MAX_PATH];
-                TCHAR tszFileName[MAX_PATH];
 
-                memset(tszFilePath, '\0', MAX_PATH);
-                memset(tszFileName, '\0', MAX_PATH);
-
-                BaseLib_OperatorString_GetFileAndPath(lpszFile, tszFilePath, tszFileName);
-                _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s` WHERE FilePath = '%s' AND FileName = '%s'"), pptszResult[0], tszFilePath, tszFileName);
-            }
-            else
-            {
-                _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s`"), pptszResult[0]);
-            }
-        }
-        if (NULL != lpszHash)
-        {
-			if (_tcslen(lpszHash) > 0)
+    if (NULL == lpszTableName)
+    {
+		//检查是否时间范围检索
+		if ((NULL != lpszTimeStart) && (NULL != lpszTimeEnd))
+		{
+			if (_tcslen(lpszTimeStart) > 0 && _tcslen(lpszTimeEnd) > 0)
 			{
-				_stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s` WHERE FileHash = '%s'"), pptszResult[0], lpszHash);
+				_stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XEngine_Storage' AND TABLE_NAME BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
 			}
 			else
 			{
-				_stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s`"), pptszResult[0]);
+				_stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XEngine_Storage'"));
 			}
-        }
-        //查询文件
-        if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
-        {
-            //循环获取所有查找到的文件
-            for (__int64u j = 0; j < dwLineResult; j++)
-            {
-                TCHAR **pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhResult);
+		}
+		else
+		{
+			_stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XEngine_Storage'"));
+		}
+		if (!DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
+		{
+			XStorage_IsErrorOccur = TRUE;
+			XStorage_dwErrorCode = DataBase_GetLastError();
+			return FALSE;
+		}
+		//轮训
+		for (__int64u i = 0; i < nllLine; i++)
+		{
+			TCHAR** pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
+			if (NULL == pptszResult[0])
+			{
+				continue;
+			}
+			__int64u dwLineResult = 0;
+			__int64u dwFieldResult = 0;
+			XNETHANDLE xhResult;
+			memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
 
-                XSTORAGECORE_DBFILE st_DBFile;
-                memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
+			XStorage_SQLHelp_Query(tszSQLStatement, pptszResult[0], lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
+			//查询文件
+			if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
+			{
+				//循环获取所有查找到的文件
+				for (__int64u j = 0; j < dwLineResult; j++)
+				{
+					TCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhResult);
 
-                _tcscpy(st_DBFile.tszTableName, pptszResult[0]);
+					XSTORAGECORE_DBFILE st_DBFile;
+					memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
+
+					_tcscpy(st_DBFile.tszTableName, pptszResult[0]);
+
+					if (NULL != pptszFileResult[1])
+					{
+						_tcscpy(st_DBFile.tszBuckKey, pptszFileResult[1]);
+					}
+					if (NULL != pptszFileResult[2])
+					{
+						_tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[2]);
+					}
+					if (NULL != pptszFileResult[3])
+					{
+						_tcscpy(st_DBFile.st_ProtocolFile.tszFileName, pptszFileResult[3]);
+					}
+					if (NULL != pptszFileResult[4])
+					{
+						_tcscpy(st_DBFile.st_ProtocolFile.tszFileHash, pptszFileResult[4]);
+					}
+					if (NULL != pptszFileResult[5])
+					{
+						_tcscpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[5]);
+					}
+					if (NULL != pptszFileResult[6])
+					{
+						st_DBFile.st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[6]);
+					}
+					if (NULL != pptszFileResult[7])
+					{
+						_tcscpy(st_DBFile.st_ProtocolFile.tszFileTime, pptszFileResult[7]);
+					}
+					stl_ListFile.push_back(st_DBFile);
+				}
+				DataBase_MySQL_FreeResult(xhDBSQL, xhResult);
+			}
+		}
+		DataBase_MySQL_FreeResult(xhDBSQL, xhTable);
+    }
+    else
+    {
+		XStorage_SQLHelp_Query(tszSQLStatement, lpszTableName, lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
+		//查询文件
+		if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
+		{
+			//循环获取所有查找到的文件
+			for (__int64u i = 0; i < nllLine; i++)
+			{
+				TCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
+
+				XSTORAGECORE_DBFILE st_DBFile;
+				memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
+
+				_tcscpy(st_DBFile.tszTableName, lpszTableName);
 
 				if (NULL != pptszFileResult[1])
 				{
 					_tcscpy(st_DBFile.tszBuckKey, pptszFileResult[1]);
 				}
-                if (NULL != pptszFileResult[2])
-                {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[2]);
-                }
-                if (NULL != pptszFileResult[3])
-                {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileName, pptszFileResult[3]);
-                }
+				if (NULL != pptszFileResult[2])
+				{
+					_tcscpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[2]);
+				}
+				if (NULL != pptszFileResult[3])
+				{
+					_tcscpy(st_DBFile.st_ProtocolFile.tszFileName, pptszFileResult[3]);
+				}
 				if (NULL != pptszFileResult[4])
 				{
 					_tcscpy(st_DBFile.st_ProtocolFile.tszFileHash, pptszFileResult[4]);
 				}
-                if (NULL != pptszFileResult[5])
-                {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[5]);
-                }
-                if (NULL != pptszFileResult[6])
-                {
-                    st_DBFile.st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[6]);
-                }
-                if (NULL != pptszFileResult[7])
-                {
-                    _tcscpy(st_DBFile.st_ProtocolFile.tszFileTime, pptszFileResult[7]);
-                }
-                stl_ListFile.push_back(st_DBFile);
-            }
-            DataBase_MySQL_FreeResult(xhDBSQL, xhResult);
-        }
+				if (NULL != pptszFileResult[5])
+				{
+					_tcscpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[5]);
+				}
+				if (NULL != pptszFileResult[6])
+				{
+					st_DBFile.st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[6]);
+				}
+				if (NULL != pptszFileResult[7])
+				{
+					_tcscpy(st_DBFile.st_ProtocolFile.tszFileTime, pptszFileResult[7]);
+				}
+				stl_ListFile.push_back(st_DBFile);
+			}
+			DataBase_MySQL_FreeResult(xhDBSQL, xhTable);
+		}
     }
-    DataBase_MySQL_FreeResult(xhDBSQL, xhTable);
-
+    //是否为空
     if (stl_ListFile.empty())
     {
         XStorage_IsErrorOccur = TRUE;
@@ -402,237 +422,6 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
     }
     *pInt_ListCount = stl_ListFile.size();
     stl_ListFile.clear();
-    return TRUE;
-}
-/********************************************************************
-函数名称：XStorage_MySql_FileQueryForTable
-函数功能：通过指定表名称查询所有文件
- 参数.一：pppSt_ListFile
-  In/Out：Out
-  类型：三级指针
-  可空：N
-  意思：输出查询到的文件信息
- 参数.二：pInt_ListCount
-  In/Out：Out
-  类型：三级指针
-  可空：N
-  意思：导出获取到的列表个数
- 参数.三：lpszTableName
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要查询的表名称
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：参数一需要调用基础库的内存释放函数进行释放内存
-*********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_FileQueryForTable(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTableName)
-{
-    XStorage_IsErrorOccur = FALSE;
-
-    if ((NULL == pppSt_ListFile) || (NULL == pInt_ListCount) || (NULL == lpszTableName))
-    {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILETABLE_PARAMENT;
-        return FALSE;
-    }
-    //查询
-    XHDATA xhTable = 0;
-    __int64u nllLine = 0;
-    __int64u nllRow = 0;
-
-    TCHAR tszSQLStatement[1024];
-    memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-    //检查是否时间范围检索
-    _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s`"), lpszTableName);
-    DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow);
-    if (nllLine <= 0)
-	{
-		XStorage_IsErrorOccur = TRUE;
-		XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILETABLE_EMPTY;
-		return FALSE;
-	}
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ListFile, (int)nllLine, sizeof(XSTORAGECORE_DBFILE));
-	//循环获取所有查找到的文件
-	for (__int64u i = 0; i < nllLine; i++)
-	{
-		TCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
-
-		_tcscpy((*pppSt_ListFile)[i]->tszTableName, lpszTableName);
-
-		if (NULL != pptszFileResult[1])
-		{
-			_tcscpy((*pppSt_ListFile)[i]->tszBuckKey, pptszFileResult[1]);
-		}
-		if (NULL != pptszFileResult[2])
-		{
-			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFilePath, pptszFileResult[2]);
-		}
-		if (NULL != pptszFileResult[3])
-		{
-			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileName, pptszFileResult[3]);
-		}
-		if (NULL != pptszFileResult[4])
-		{
-			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileHash, pptszFileResult[4]);
-		}
-		if (NULL != pptszFileResult[5])
-		{
-			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileUser, pptszFileResult[5]);
-		}
-		if (NULL != pptszFileResult[6])
-		{
-            (*pppSt_ListFile)[i]->st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[6]);
-		}
-		if (NULL != pptszFileResult[7])
-		{
-			_tcscpy((*pppSt_ListFile)[i]->st_ProtocolFile.tszFileTime, pptszFileResult[7]);
-		}
-	}
-    DataBase_MySQL_FreeResult(xhDBSQL, xhTable);
-    *pInt_ListCount = (int)nllLine;
-    return TRUE;
-}
-/********************************************************************
-函数名称：XStorage_MySql_FileQueryForHash
-函数功能：通过MD5查询文件信息
- 参数.一：pSt_FileInfo
-  In/Out：Out
-  类型：数据结构指针
-  可空：N
-  意思：输出查询到的文件信息
- 参数.二：lpszFileHash
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要查询的文件MD5
- 参数.三：lpszUser
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入文件所属用户
- 参数.四：lpszTimeStart
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：输入开始时间
- 参数.五：lpszTimeEnd
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：输入结束时间
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE* pSt_FileInfo, LPCTSTR lpszFileHash, LPCTSTR lpszUser, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
-{
-    XStorage_IsErrorOccur = FALSE;
-
-    if ((NULL == pSt_FileInfo) || (NULL == lpszFileHash))
-    {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYMD5_PARAMENT;
-        return FALSE;
-    }
-    //查询
-    XHDATA xhTable = 0;
-    __int64u nllLine = 0;
-    __int64u nllRow = 0;
-    BOOL bFound = FALSE;
-    TCHAR tszSQLStatement[1024];
-    memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-    //检查是否时间范围检索
-    if ((NULL != lpszTimeStart) && (NULL != lpszTimeEnd))
-    {
-        _stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XStorage_Storage' AND TABLE_NAME BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
-    }
-    else
-    {
-        _stprintf_s(tszSQLStatement, _T("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XStorage_Storage'"));
-    }
-    if (!DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
-    {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = DataBase_GetLastError();
-        return FALSE;
-    }
-    //轮训
-    for (__int64u i = 0; i < nllLine; i++)
-    {
-        TCHAR** pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
-        if (NULL == pptszResult[0])
-        {
-            continue;
-        }
-        __int64u dwLineResult = 0;
-        __int64u dwFieldResult = 0;
-        XNETHANDLE xhResult;
-
-        memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-        //判断查询方式
-        if (NULL == lpszUser)
-        {
-            _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s` WHERE FileHash = '%s'"), pptszResult[0], lpszFileHash);
-        }
-        else
-        {
-            _stprintf_s(tszSQLStatement, _T("SELECT * FROM `%s` WHERE FileHash = '%s' AND FileUser = '%s'"), pptszResult[0], lpszFileHash, lpszUser);
-        }
-        //查询文件
-        if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
-        {
-            //循环获取所有查找到的文件
-            for (__int64u j = 0; j < dwLineResult; j++)
-            {
-                TCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhResult);
-
-                _tcscpy(pSt_FileInfo->tszTableName, pptszResult[0]);
-
-				if (NULL != pptszFileResult[1])
-				{
-					_tcscpy(pSt_FileInfo->tszBuckKey, pptszFileResult[1]);
-				}
-                if (NULL != pptszFileResult[2])
-                {
-                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFilePath, pptszFileResult[2]);
-                }
-                if (NULL != pptszFileResult[3])
-                {
-                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileName, pptszFileResult[3]);
-                }
-                if (NULL != pptszFileResult[4])
-                {
-                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileUser, pptszFileResult[4]);
-                }
-                if (NULL != pptszFileResult[5])
-                {
-                    pSt_FileInfo->st_ProtocolFile.nFileSize = _ttoi64(pptszFileResult[5]);
-                }
-                if (NULL != pptszFileResult[6])
-                {
-                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileHash, pptszFileResult[6]);
-                }
-                if (NULL != pptszFileResult[7])
-                {
-                    _tcscpy(pSt_FileInfo->st_ProtocolFile.tszFileTime, pptszFileResult[7]);
-                }
-                bFound = TRUE;
-                break;
-            }
-            DataBase_MySQL_FreeResult(xhDBSQL, xhResult);
-        }
-    }
-    DataBase_MySQL_FreeResult(xhDBSQL, xhTable);
-
-    if (!bFound)
-    {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYMD5_NOTFOUND;
-        return FALSE;
-    }
     return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -771,8 +560,7 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
                     //删除文件
                     int nListCount = 0;
                     XSTORAGECORE_DBFILE **ppSt_ListFile;
-                    XStorage_MySql_FileQueryForTable(&ppSt_ListFile, &nListCount, pptszResult[0]);
-
+                    XStorage_MySql_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, pptszResult[0]);
                     for (int i = 0; i < nListCount; i++)
                     {
                         //删除文件
