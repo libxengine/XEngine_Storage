@@ -161,12 +161,16 @@ BOOL CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64
 		}
 		bFound = TRUE;
 	}
-	if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszLengthStr, tszFieldStr))
-	{
-		*pInt_Count = _ttoi64(tszFieldStr);
-		bFound = TRUE;
-	}
 
+	if (0 == *pInt_Count)
+	{
+		if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszLengthStr, tszFieldStr))
+		{
+			*pInt_Count = _ttoi64(tszFieldStr);
+			bFound = TRUE;
+		}
+	}
+	
 	if (!bFound)
 	{
 		APIHelp_IsErrorOccur = TRUE;
