@@ -220,15 +220,17 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 		{
 			TCHAR tszTimeStart[MAX_PATH];
 			TCHAR tszTimeEnd[MAX_PATH];
+			TCHAR tszBuckKey[MAX_PATH];
 			TCHAR tszFileName[MAX_PATH];
 			TCHAR tszFileHash[MAX_PATH];
 
 			memset(tszTimeStart, '\0', MAX_PATH);
 			memset(tszTimeEnd, '\0', MAX_PATH);
+			memset(tszBuckKey, '\0', MAX_PATH);
 			memset(tszFileName, '\0', MAX_PATH);
 			memset(tszFileHash, '\0', MAX_PATH);
 			//用于验证协议是否正确
-			if (!Protocol_StorageParse_QueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash))
+			if (!Protocol_StorageParse_QueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszBuckKey, tszFileName, tszFileHash))
 			{
 				Protocol_P2XPPacket_Common(pSt_ProtocolHdr, tszSDBuffer, &nSDLen, 400, "协议错误");
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
@@ -254,7 +256,7 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 				XEngine_Net_SendMsg(pppszP2XPClient[i], (LPCTSTR)pSt_ProtocolHdr, sizeof(XENGINE_PROTOCOLHDR), STORAGE_NETTYPE_TCPP2XP);
 				XEngine_Net_SendMsg(pppszP2XPClient[i], lpszMsgBuffer, nMsgLen, STORAGE_NETTYPE_TCPP2XP);
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求查询文件:%s,用户个数:%d"), lpszClientAddr, tszFileName, tszFileHash, nListCount--);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求查询Buck:%s 中的文件名:%s,HASH:%s,用户个数:%d"), lpszClientAddr, tszBuckKey, tszFileName, tszFileHash, nListCount);
 			BaseLib_OperatorMemory_Free((XPPPMEM)&pppszP2XPClient, nListCount);
 		}
 		else

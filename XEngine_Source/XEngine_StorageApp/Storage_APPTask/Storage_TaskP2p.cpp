@@ -6,6 +6,7 @@ XHTHREAD XEngine_Task_P2PThread()
 	TCHAR tszIPAddr[128];
 	TCHAR tszTimeStart[64];
 	TCHAR tszTimeEnd[64];
+	TCHAR tszBuckKey[MAX_PATH];
 	TCHAR tszFileName[MAX_PATH];
 	TCHAR tszFileHash[MAX_PATH];
 
@@ -16,13 +17,14 @@ XHTHREAD XEngine_Task_P2PThread()
 		memset(tszIPAddr, '\0', sizeof(tszIPAddr));
 		memset(tszTimeStart, '\0', sizeof(tszTimeStart));
 		memset(tszTimeEnd, '\0', sizeof(tszTimeEnd));
+		memset(tszBuckKey, '\0', MAX_PATH);
 		memset(tszFileName, '\0', MAX_PATH);
 		memset(tszFileHash, '\0', MAX_PATH);
 
 		if (NetCore_BroadCast_Recv(hBroadSocket, tszMsgBuffer, &nMsgLen, tszIPAddr))
 		{
 			//收到文件查询请求
-			if (Protocol_StorageParse_QueryFile(tszMsgBuffer, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash))
+			if (Protocol_StorageParse_QueryFile(tszMsgBuffer, tszTimeStart, tszTimeEnd, tszBuckKey, tszFileName, tszFileHash))
 			{
 				//查询文件是否存在数据库,不存在不关心
 				if (0 != st_ServiceCfg.st_XSql.nSQLType)
@@ -31,11 +33,11 @@ XHTHREAD XEngine_Task_P2PThread()
 					XSTORAGECORE_DBFILE** pppSt_ListFile;
 					if (1 == st_ServiceCfg.st_XSql.nSQLType)
 					{
-						XStorage_MySql_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
+						XStorage_MySql_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBuckKey, tszFileName, tszFileHash);
 					}
 					else
 					{
-						XStorage_SQLite_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszFileName, tszFileHash);
+						XStorage_SQLite_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBuckKey, tszFileName, tszFileHash);
 					}
 					if (nListCount > 0)
 					{
