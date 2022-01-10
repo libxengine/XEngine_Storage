@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "APIHelp_Distributed/APIHelp_Distributed.h"
+#include "APIHelp_Api/APIHelp_Api.h"
 /********************************************************************
 //    Created:     2021/07/08  16:40:04
 //    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_APIHelp\pch.cpp
@@ -15,6 +16,7 @@ BOOL APIHelp_IsErrorOccur = FALSE;
 DWORD APIHelp_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CAPIHelp_Distributed m_APIDistributed;
+CAPIHelp_Api m_APIHelp;
 //////////////////////////////////////////////////////////////////////////
 //                       导出函数
 //////////////////////////////////////////////////////////////////////////
@@ -48,4 +50,19 @@ extern "C" BOOL APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGIN
 extern "C" BOOL APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>*pStl_ListBucket, XENGINE_STORAGEBUCKET * pSt_StorageBucket)
 {
 	return m_APIDistributed.APIHelp_Distributed_UPStorage(pStl_ListBucket, pSt_StorageBucket);
+}
+/************************************************************************/
+/*                       帮助函数                                       */
+/************************************************************************/
+extern "C" BOOL APIHelp_Api_ProxyAuth(TCHAR * ptszUser, TCHAR * ptszPass, TCHAR * *pptszListHdr, int nHdrCount)
+{
+	return m_APIHelp.APIHelp_Api_ProxyAuth(ptszUser, ptszPass, pptszListHdr, nHdrCount);
+}
+extern "C" BOOL APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64x * pInt_Count, TCHAR * *pptszListHdr, int nHdrCount)
+{
+	return m_APIHelp.APIHelp_Api_RangeFile(pInt_SPos, pInt_EPos, pInt_Count, pptszListHdr, nHdrCount);
+}
+extern "C" BOOL APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR * *pptszListHdr, int nHdrCount)
+{
+	return m_APIHelp.APIHelp_Api_VerHash(lpszFileHash, pptszListHdr, nHdrCount);
 }

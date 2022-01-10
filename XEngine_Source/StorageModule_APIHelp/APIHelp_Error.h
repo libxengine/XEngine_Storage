@@ -10,6 +10,12 @@
 //    Purpose:     导出错误
 //    History:
 *********************************************************************/
-#define ERROR_STORAGE_MODULE_APIHELP_PARAMENT 0x0030001  
-#define ERROR_STORAGE_MODULE_APIHELP_PARSE 0x0030002
-#define ERROR_STORAGE_MODULE_APIHELP_NOTFOUND 0x0030003
+#define ERROR_STORAGE_MODULE_APIHELP_PARAMENT 0x0030001               //参数错误
+#define ERROR_STORAGE_MODULE_APIHELP_PARSE 0x0030002                  //解析失败
+#define ERROR_STORAGE_MODULE_APIHELP_NOTFOUND 0x0030003               //没有找到
+#define ERROR_STORAGE_MODULE_APIHELP_NOTAUTH 0x0030010                //没有验证信息
+#define ERROR_STORAGE_MODULE_APIHELP_NOTSUPPORT 0x0030011             //不支持
+#define ERROR_STORAGE_MODULE_APIHELP_NOTLENGTH 0x0030012              //没有长度信息
+#define ERROR_STORAGE_MODULE_APIHELP_PARSELEN 0x0030013               //解析长度失败
+#define ERROR_STORAGE_MODULE_APIHELP_NOTHASH 0x0030014                //没有HASH值
+#define ERROR_STORAGE_MODULE_APIHELP_NOTMATCH 0x0030015               //HASH不匹配

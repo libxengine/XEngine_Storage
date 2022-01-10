@@ -12,6 +12,7 @@
 #include "framework.h"
 #include <tchar.h>
 #include <json/json.h>
+#include <WinSock2.h>
 #else
 #ifdef _CENTOS
 #include <json/json.h>
@@ -33,11 +34,15 @@ using namespace std;
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
+#include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
+#include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
+#include <XEngine_Include/XEngine_RfcComponents/HttpServer_Define.h>
+#include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
 #include "../XStorage_Protocol.h"
 #include "../StorageModule_Config/Config_Define.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
@@ -59,5 +64,7 @@ extern DWORD APIHelp_dwErrorCode;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
+#pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
+#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpServer")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #endif

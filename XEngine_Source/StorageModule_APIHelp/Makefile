@@ -6,7 +6,7 @@ LOADBIN =
 LIB = 
 LIBEX = -static-libgcc -lrt -ldl -lpthread
 LOADSO = -Wl,-rpath=
-LIBINCLUDE = APIHelp_Distributed.o pch.o
+LIBINCLUDE = APIHelp_Distributed.o APIHelp_Api.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -28,7 +28,9 @@ all:$(LIBINCLUDE)
 
 APIHelp_Distributed.o:./APIHelp_Distributed/APIHelp_Distributed.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./APIHelp_Distributed/APIHelp_Distributed.cpp 
-						              
+APIHelp_Api.o:./APIHelp_Api/APIHelp_Api.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./APIHelp_Api/APIHelp_Api.cpp
+
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./pch.cpp
 

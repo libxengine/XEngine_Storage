@@ -19,6 +19,12 @@
     <Filter Include="源文件\APIHelp_Distributed">
       <UniqueIdentifier>{5b2628b8-77c6-475d-b982-4b4b8815b907}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\APIHelp_Api">
+      <UniqueIdentifier>{91f72057-f0a5-49ff-88f2-fb003f358183}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\APIHelp_Api">
+      <UniqueIdentifier>{70c91174-907f-422b-8db6-f8ee8298447c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -36,6 +42,9 @@
     <ClInclude Include="APIHelp_Error.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="APIHelp_Api\APIHelp_Api.h">
+      <Filter>头文件\APIHelp_Api</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -46,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="APIHelp_Distributed\APIHelp_Distributed.cpp">
       <Filter>源文件\APIHelp_Distributed</Filter>
+    </ClCompile>
+    <ClCompile Include="APIHelp_Api\APIHelp_Api.cpp">
+      <Filter>源文件\APIHelp_Api</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
