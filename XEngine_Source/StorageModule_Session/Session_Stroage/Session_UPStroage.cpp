@@ -125,7 +125,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 
 	SESSION_STORAGEUPLOADER st_Client;
 	memset(&st_Client, '\0', sizeof(SESSION_STORAGEUPLOADER));
-
+	//填充下载信息
 	st_Client.st_StorageInfo.ullPosStart = nPosStart;
 	st_Client.st_StorageInfo.ullPosEnd = nPostEnd;
 	st_Client.st_StorageInfo.ullRWCount = nLeftCount;
@@ -133,10 +133,10 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	_tcscpy(st_Client.st_StorageInfo.tszBuckKey, lpszBuckKey);
 	_tcscpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
 	_tcscpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
-	//填充下载信息
-	if ((m_bResume) && ((0 != nPosStart) || (0 != nPostEnd)))
+	//文件是否存在
+	if ((m_bResume) && ((0 != nPosStart) || (0 != nPostEnd)) && (0 == _taccess(lpszFileDir, 0)))
 	{
-		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("ab+"));
+		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("rb+"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
 			Session_IsErrorOccur = TRUE;
@@ -257,7 +257,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR
 			break;
 		}
 	}
-	stl_MapIterator->second.st_StorageInfo.ullRWLen += nMsgLen;
+	stl_MapIterator->second.st_StorageInfo.ullRWLen += nWLen;
 	st_Locker.unlock_shared();
 	return TRUE;
 }

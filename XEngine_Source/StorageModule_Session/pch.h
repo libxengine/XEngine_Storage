@@ -20,6 +20,7 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
+#include <io.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <list>
