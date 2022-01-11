@@ -592,6 +592,9 @@ XHTHREAD CXStorage_MySql::XStorage_MySql_Thread(LPVOID lParam)
     time_t nTimeEnd = 0;
     int nTime = 60 * 60 * 12;
 
+	pClass_This->XStorage_MySql_TimeDel();
+	pClass_This->XStorage_MySql_CreateTable();
+
 	while (pClass_This->bIsRun)
 	{
 		if ((nTimeEnd - nTimeStart) > nTime)

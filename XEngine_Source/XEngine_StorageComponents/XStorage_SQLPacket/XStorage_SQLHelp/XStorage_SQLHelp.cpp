@@ -59,7 +59,7 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Insert(TCHAR* ptszSQLBuffer, XSTORAGECO
 		_stprintf(tszTableName, _T("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
 	}
 
-	_stprintf(ptszSQLBuffer, _T("INSERT INTO `%s` (BuckKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,%04d-%02d-%02d %02d:%02d:%02d)"), tszTableName, pSt_DBFile->tszBuckKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize, st_LibTimer.wYear, st_LibTimer.wMonth, st_LibTimer.wDay, st_LibTimer.wHour, st_LibTimer.wMinute, st_LibTimer.wSecond);
+	_stprintf(ptszSQLBuffer, _T("INSERT INTO `%s` (BuckKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,'%04d-%02d-%02d %02d:%02d:%02d')"), tszTableName, pSt_DBFile->tszBuckKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize, st_LibTimer.wYear, st_LibTimer.wMonth, st_LibTimer.wDay, st_LibTimer.wHour, st_LibTimer.wMinute, st_LibTimer.wSecond);
 	return TRUE;
 }
 /********************************************************************
@@ -193,7 +193,7 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lp
 			}
 			else
 			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
+				_tcscat(ptszSQLBuffer, _T(" WHERE "));
 			}
 			memset(tszSQLQuery, '\0', MAX_PATH);
 			_stprintf(tszSQLQuery, _T("BuckKey = '%s'"), lpszBuckKey);

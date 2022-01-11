@@ -304,7 +304,7 @@ BOOL CXStorage_SQLite::XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
 			int nLineResult = 0;
 			int nFieldResult = 0;
 			memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-			XStorage_SQLHelp_Query(tszSQLStatement, pptszResult[0], lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
+			XStorage_SQLHelp_Query(tszSQLStatement, pptszResult[i], lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
 			//查询文件
 			TCHAR** pptszFileResult;
 			if (DataBase_SQLite_GetTable(xhSQL, tszSQLStatement, &pptszFileResult, &nLineResult, &nFieldResult))
@@ -583,6 +583,9 @@ XHTHREAD CXStorage_SQLite::XStorage_SQLite_Thread(LPVOID lParam)
     time_t nTimeStart = time(NULL);
     time_t nTimeEnd = 0;
     int nTime = 60 * 60 * 12;
+
+	pClass_This->XStorage_SQLite_TimeDel();
+	pClass_This->XStorage_SQLite_CreateTable();
 
     while (pClass_This->bIsRun)
     {
