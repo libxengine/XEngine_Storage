@@ -21,7 +21,55 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,处理用户重载配置文件成功"), lpszClientAddr);
 	}
-	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_ADD, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_ADD)))
+	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_QUERY, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_QUERY)))
+	{
+		//查询文件列表
+		int nMsgLen = 10240;
+		TCHAR tszFileName[MAX_PATH];
+		TCHAR tszFileHash[MAX_PATH];
+		TCHAR tszBucketKey[128];
+		TCHAR tszTimeStart[128];
+		TCHAR tszTimeEnd[128];
+		TCHAR tszMsgBuffer[10240];
+
+		memset(tszFileName, '\0', MAX_PATH);
+		memset(tszFileHash, '\0', MAX_PATH);
+		memset(tszBucketKey, '\0', sizeof(tszBucketKey));
+		memset(tszTimeStart, '\0', sizeof(tszTimeStart));
+		memset(tszTimeEnd, '\0', sizeof(tszTimeEnd));
+		memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+
+		int nListCount = 0;
+		XSTORAGECORE_DBFILE** ppSt_ListFile;
+		Protocol_StorageParse_QueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
+		if (0 == st_ServiceCfg.st_XSql.nSQLType)
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 406;
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端:%s,请求查询文件列表失败,服务器没有启用这个功能"), lpszClientAddr);
+		}
+		else
+		{
+			if (1 == st_ServiceCfg.st_XSql.nSQLType)
+			{
+				XStorage_MySql_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
+			}
+			else
+			{
+				XStorage_SQLite_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
+			}
+
+			Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &ppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszMsgBuffer, nMsgLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求查询文件列表成功,列表个数:%d"), lpszClientAddr, nListCount);
+		}
+	}
+	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_INSERT, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_INSERT)))
 	{
 		int nListCount = 0;
 		XSTORAGECORE_DBFILE** ppSt_DBFile;
@@ -29,44 +77,39 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		Protocol_StorageParse_ReportFile(lpszMsgBuffer, nMsgLen, &ppSt_DBFile, &nListCount);
 		for (int i = 0; i < nListCount; i++)
 		{
-			if (0 == ppSt_DBFile[i]->st_ProtocolFile.nFileSize)
+			TCHAR tszFileDir[1024];
+			memset(tszFileDir, '\0', sizeof(tszFileDir));
+			//判断下文件是否存在就行了
+			if (_tcslen(ppSt_DBFile[i]->tszBuckKey) > 0)
 			{
-				int nHashLen = 0;
-				UCHAR tszHashStr[MAX_PATH];
-				TCHAR tszFileDir[1024];
-				struct __stat64 st_FStat;
-
-				memset(tszHashStr, '\0', MAX_PATH);
-				memset(tszFileDir, '\0', sizeof(tszFileDir));
-
-				_stprintf(tszFileDir, _T("%s/%s"), ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
-
-				int nRet = _stat64(tszFileDir, &st_FStat);
-				if (0 != nRet)
-				{
-					st_HDRParam.bIsClose = TRUE;
-					st_HDRParam.nHttpCode = 404;
-					RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求添加文件到数据库失败,文件不存在,文件;%s"), lpszClientAddr, tszFileDir);
-					return FALSE;
-				}
-				//获取大小
-				ppSt_DBFile[i]->st_ProtocolFile.nFileSize = st_FStat.st_size;
-				//计算HASH
-				OPenSsl_Api_Digest(tszFileDir, tszHashStr, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
-				BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
+				APIHelp_Distributed_GetPathKey(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, ppSt_DBFile[i]->tszBuckKey, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath);
 			}
-			if (0 != st_ServiceCfg.st_XSql.nSQLType)
+			_stprintf(tszFileDir, _T("%s/%s"), ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
+			if (0 != _taccess(tszFileDir, 0))
 			{
-				if (1 == st_ServiceCfg.st_XSql.nSQLType)
-				{
-					XStorage_MySql_FileInsert(ppSt_DBFile[i]);
-				}
-				else
-				{
-					XStorage_SQLite_FileInsert(ppSt_DBFile[i]);
-				}
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 404;
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求添加文件到数据库失败,文件不存在,文件;%s"), lpszClientAddr, tszFileDir);
+				return FALSE;
+			}
+			if (0 == st_ServiceCfg.st_XSql.nSQLType)
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 501;
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求添加文件到数据库失败,服务器没有启用数据库,不支持此功能,文件;%s"), lpszClientAddr, tszFileDir);
+				return FALSE;
+			}
+			if (1 == st_ServiceCfg.st_XSql.nSQLType)
+			{
+				XStorage_MySql_FileInsert(ppSt_DBFile[i]);
+			}
+			else
+			{
+				XStorage_SQLite_FileInsert(ppSt_DBFile[i]);
 			}
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求添加文件到数据库成功,文件名:%s/%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
 		}
@@ -74,7 +117,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_DBFile, nListCount);
 	}
-	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_DEL, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_DEL)))
+	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_DELETE, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_DELETE)))
 	{
 		int nListCount = 0;
 		XSTORAGECORE_DBFILE** ppSt_DBFile;
@@ -169,54 +212,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_DBFile, nListCount);
 	}
-	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_QUERYFILE, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_QUERYFILE)))
-	{
-		//查询文件列表
-		int nMsgLen = 10240;
-		TCHAR tszFileName[MAX_PATH];
-		TCHAR tszFileHash[MAX_PATH];
-		TCHAR tszBucketKey[128];
-		TCHAR tszTimeStart[128];
-		TCHAR tszTimeEnd[128];
-		TCHAR tszMsgBuffer[10240];
-
-		memset(tszFileName, '\0', MAX_PATH);
-		memset(tszFileHash, '\0', MAX_PATH);
-		memset(tszBucketKey, '\0', sizeof(tszBucketKey));
-		memset(tszTimeStart, '\0', sizeof(tszTimeStart));
-		memset(tszTimeEnd, '\0', sizeof(tszTimeEnd));
-		memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
-
-		int nListCount = 0;
-		XSTORAGECORE_DBFILE** ppSt_ListFile;
-		Protocol_StorageParse_QueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
-		if (0 == st_ServiceCfg.st_XSql.nSQLType)
-		{
-			st_HDRParam.bIsClose = TRUE;
-			st_HDRParam.nHttpCode = 406;
-
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端:%s,请求查询文件列表失败,服务器没有启用这个功能"), lpszClientAddr);
-		}
-		else
-		{
-			if (1 == st_ServiceCfg.st_XSql.nSQLType)
-			{
-				XStorage_MySql_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
-			}
-			else
-			{
-				XStorage_SQLite_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
-			}
-
-			Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &ppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszMsgBuffer, nMsgLen);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求查询文件列表成功,列表个数:%d"), lpszClientAddr, nListCount);
-		}
-	}
 	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_TASK, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_TASK)))
 	{
 		int nDLCount = 0;
@@ -299,100 +294,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求删除文件夹:%s,成功"), lpszClientAddr, tszRealDir);
 		}
-	}
-	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_LAN, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_LAN)))
-	{
-		TCHAR tszPubAddr[128];
-		TCHAR tszPriAddr[128];
-
-		memset(tszPubAddr, '\0', sizeof(tszPubAddr));
-		memset(tszPriAddr, '\0', sizeof(tszPriAddr));
-
-		if (!Protocol_P2XPParse_List(lpszMsgBuffer, nMsgLen, tszPubAddr, tszPriAddr))
-		{
-			Protocol_P2XPPacket_Common(NULL, tszRVBuffer, &nRVLen, 400, "协议错误");
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,列表请求失败,协议解析错误,错误码:%lX"), lpszClientAddr, Protocol_GetLastError());
-			return FALSE;
-		}
-		//请求同步列表
-		if (_tcslen(tszPriAddr) > 0)
-		{
-			int nListCount = 0;
-			XENGINE_P2XPPEER_PROTOCOL** ppSt_ListClients;
-			if (!P2XPPeer_Manage_GetLan(tszPubAddr, tszPriAddr, &ppSt_ListClients, &nListCount))
-			{
-				Protocol_P2XPPacket_Common(NULL, tszRVBuffer, &nRVLen, 500, "协议错误");
-				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,列表请求失败,请求同步局域网列表失败,公有地址:%s,私有地址:%s,错误码:%lX"), lpszClientAddr, tszPubAddr, tszPriAddr, P2XPPeer_GetLastError());
-				return FALSE;
-			}
-			Protocol_P2XPPacket_Lan(NULL, &ppSt_ListClients, nListCount, tszRVBuffer, &nRVLen);
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListClients, nListCount);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求同步局域网列表成功,公有地址:%s,私有地址:%s"), lpszClientAddr, tszPubAddr, tszPriAddr);
-		}
-		else
-		{
-			//公网下所有列表
-			int nListCount = 0;
-			TCHAR** ppszClientList;
-			list<XENGINE_P2XPPEER_PROTOCOL> stl_ListClient;
-			if (P2XPPeer_Manage_GetLList(tszPubAddr, &ppszClientList, &nListCount))
-			{
-				for (int i = 0; i < nListCount; i++)
-				{
-					int nLanCount = 0;
-					XENGINE_P2XPPEER_PROTOCOL** ppSt_ListClients;
-
-					if (P2XPPeer_Manage_GetLan(tszPubAddr, ppszClientList[i], &ppSt_ListClients, &nLanCount))
-					{
-						for (int j = 0; j < nLanCount; j++)
-						{
-							stl_ListClient.push_back(*ppSt_ListClients[j]);
-						}
-						BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListClients, nLanCount);
-					}
-				}
-				BaseLib_OperatorMemory_Free((XPPPMEM)&ppszClientList, nListCount);
-			}
-			Protocol_P2XPPacket_WLan(NULL, &stl_ListClient, tszRVBuffer, &nRVLen);
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求同步局域网列表成功,公有地址:%s,私有地址:%s"), lpszClientAddr, tszPubAddr, tszPriAddr);
-		}
-	}
-	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_QUERY, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_QUERY)))
-	{
-		TCHAR tszUserName[128];
-		XENGINE_P2XP_PEERINFO st_PeerInfo;
-
-		memset(tszUserName, '\0', sizeof(tszUserName));
-		memset(&st_PeerInfo, '\0', sizeof(XENGINE_P2XP_PEERINFO));
-		if (!Protocol_P2XPParse_User(lpszMsgBuffer, nMsgLen, tszUserName))
-		{
-			Protocol_P2XPPacket_Common(NULL, tszRVBuffer, &nRVLen, 400, "协议错误");
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,查询用户失败,协议解析错误,错误码:%lX"), lpszClientAddr, Protocol_GetLastError());
-			return FALSE;
-
-		}
-		if (!P2XPPeer_Manage_GetUser(tszUserName, &st_PeerInfo))
-		{
-			Protocol_P2XPPacket_Common(NULL, tszRVBuffer, &nRVLen, 500, "协议错误");
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,查询用户失败,获取用户失败,用户名:%s,错误码:%lX"), lpszClientAddr, tszUserName, P2XPPeer_GetLastError());
-			return FALSE;
-		}
-		Protocol_P2XPPacket_User(NULL, &st_PeerInfo.st_PeerAddr, tszRVBuffer, &nRVLen);
-		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求查询用户:%s 成功"), lpszClientAddr, tszUserName);
 	}
 	return TRUE;
 }
