@@ -8,6 +8,7 @@ EXPORTS
 	APIHelp_Distributed_FileList
 	APIHelp_Distributed_DLStorage
 	APIHelp_Distributed_UPStorage
+	APIHelp_Distributed_GetPathKey
 
 	APIHelp_Api_ProxyAuth
 	APIHelp_Api_RangeFile

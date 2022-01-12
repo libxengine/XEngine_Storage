@@ -51,6 +51,10 @@ extern "C" BOOL APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>*pStl_L
 {
 	return m_APIDistributed.APIHelp_Distributed_UPStorage(pStl_ListBucket, pSt_StorageBucket);
 }
+extern "C" BOOL APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>*pStl_ListBucket, LPCTSTR lpszBuckKey, TCHAR * ptszFilePath)
+{
+	return m_APIDistributed.APIHelp_Distributed_GetPathKey(pStl_ListBucket, lpszBuckKey, ptszFilePath);
+}
 /************************************************************************/
 /*                       帮助函数                                       */
 /************************************************************************/

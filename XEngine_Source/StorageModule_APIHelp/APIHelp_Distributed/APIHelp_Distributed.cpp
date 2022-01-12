@@ -283,6 +283,57 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 	}
 	return TRUE;
 }
+/********************************************************************
+函数名称：APIHelp_Distributed_GetPathKey
+函数功能：通过BUCKET名称查找对应路径
+ 参数.一：pStl_ListBucket
+  In/Out：In
+  类型：STL容器指针
+  可空：N
+  意思：输入要操作的BUCKET容器
+ 参数.二：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要匹配的BUCKET名称
+ 参数.三：ptszFilePath
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出找到的路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CAPIHelp_Distributed::APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCTSTR lpszBuckKey, TCHAR* ptszFilePath)
+{
+	APIHelp_IsErrorOccur = FALSE;
+
+	if ((NULL == pStl_ListBucket) || (NULL == lpszBuckKey) || (NULL == ptszFilePath))
+	{
+		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
+		return FALSE;
+	}
+	BOOL bFound = FALSE;
+	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
+	{
+		if (0 == _tcsncmp(lpszBuckKey, stl_ListIterator->tszBuckKey, _tcslen(lpszBuckKey)))
+		{
+			_tcscpy(ptszFilePath, stl_ListIterator->tszFilePath);
+			bFound = TRUE;
+			break;
+		}
+	}
+	if (!bFound)
+	{
+		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
+		return FALSE;
+	}
+	return TRUE;
+}
 //////////////////////////////////////////////////////////////////////////
 //                               保护函数
 //////////////////////////////////////////////////////////////////////////
