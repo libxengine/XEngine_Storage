@@ -64,7 +64,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuff
 {
     Protocol_IsErrorOccur = FALSE;
 
-    if ((NULL == lpszMsgBuffer) || (NULL == ptszTimeStart) || (NULL == ptszTimeEnd))
+    if (NULL == lpszMsgBuffer)
     {
         Protocol_IsErrorOccur = TRUE;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
@@ -266,8 +266,11 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBu
     pSt_JsonReader = NULL;
 
     *pInt_Operator = st_JsonRoot["nOPerator"].asInt();
-    _tcscpy(ptszUserDir, st_JsonRoot["lpszUserDir"].asCString());
     _tcscpy(ptszBuckKey, st_JsonRoot["lpszBuckKey"].asCString());
+    if (!st_JsonRoot["lpszUserDir"].isNull())
+    {
+        _tcscpy(ptszUserDir, st_JsonRoot["lpszUserDir"].asCString());
+    }
     return TRUE;
 }
 /********************************************************************
