@@ -56,7 +56,6 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
 	LPCTSTR lpszMethodPost = _T("POST");
-	LPCTSTR lpszMethodGet = _T("GET");
 	LPCTSTR lpszMethodOption = _T("OPTIONS");
 
 	if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
@@ -158,10 +157,6 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		{
 			XEngine_Task_Manage(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
 		}
-	}
-	else if (0 == _tcsnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodGet)))
-	{
-		XEngine_Task_P2PGet(pSt_HTTPParam->tszHttpUri + 1, lpszClientAddr, pSt_HTTPParam);
 	}
 	else if (0 == _tcsnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodOption)))
 	{

@@ -315,5 +315,155 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_UPInfo, nUPCount);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求获取上传下载信息成功,下载个数:%d,上传个数:%d"), lpszClientAddr, nDLCount, nUPCount);
 	}
+	else if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_P2P, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_P2P)))
+	{
+		TCHAR tszBuckKey[MAX_PATH];
+		TCHAR tszFileName[MAX_PATH];
+		TCHAR tszFileHash[MAX_PATH];
+
+		memset(tszBuckKey, '\0', MAX_PATH);
+		memset(tszFileName, '\0', MAX_PATH);
+		memset(tszFileHash, '\0', MAX_PATH);
+
+		Protocol_StorageParse_QueryFile(lpszMsgBuffer, NULL, NULL, tszBuckKey, tszFileName, tszFileHash);
+
+		if ((_tcslen(tszFileHash) <= 0) && (_tcslen(tszFileName) <= 0))
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 400;
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求文件查询失败,参数不正确,无法继续"), lpszClientAddr);
+			return TRUE;
+		}
+		//是否启用数据库
+		if (0 == st_ServiceCfg.st_XSql.nSQLType)
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 501;
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求文件查询失败,服务器没有启用数据库,无法继续"), lpszClientAddr);
+			return TRUE;
+		}
+		//首先判断本机存在不
+		int nListCount = 0;
+		XSTORAGECORE_DBFILE** pppSt_ListFile;
+		if (1 == st_ServiceCfg.st_XSql.nSQLType)
+		{
+			XStorage_MySql_FileQuery(&pppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, tszFileHash);
+		}
+		else
+		{
+			XStorage_SQLite_FileQuery(&pppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, tszFileHash);
+		}
+		if (nListCount > 0)
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 200;
+
+			for (int i = 0; i < nListCount; i++)
+			{
+				_stprintf(pppSt_ListFile[i]->tszTableName, _T("127.0.0.1:%d"), st_ServiceCfg.nStorageDLPort);
+			}
+			Protocol_StoragePacket_QueryFile(tszRVBuffer, &nRVLen, &pppSt_ListFile, nListCount);
+			BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求文件查询,发现本地拥有此文件.直接返回"), lpszClientAddr);
+			return TRUE;
+		}
+		//根据使用模式来操作
+		if (0 == st_ServiceCfg.st_P2xp.nMode)
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 405;
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,暂时不支持的请求"), lpszClientAddr);
+			return FALSE;
+		}
+		else if (1 == st_ServiceCfg.st_P2xp.nMode)
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 405;
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,暂时不支持的请求"), lpszClientAddr);
+			return FALSE;
+		}
+		else
+		{
+			//开始广播请求文件
+			SOCKET hSDSocket;
+			SOCKET hRVSocket;
+			list<APIHELP_LBFILEINFO> stl_ListFile;
+
+			Protocol_P2XPPacket_QueryFile(tszSDBuffer, &nSDLen, NULL, tszFileHash);
+			NetCore_BroadCast_SendInit(&hSDSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr);
+			NetCore_BroadCast_RecvInit(&hRVSocket, st_ServiceCfg.st_P2xp.nSDPort);
+
+			if (!NetCore_BroadCast_Send(hSDSocket, tszSDBuffer, nSDLen))
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 500;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				NetCore_BroadCast_Close(hSDSocket);
+				NetCore_BroadCast_Close(hRVSocket);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,发送广播请求失败,错误:%lX"), lpszClientAddr, NetCore_GetLastError());
+				return FALSE;
+			}
+			NetCore_BroadCast_Close(hSDSocket);
+
+			time_t nTimeStart = time(NULL);
+			while (1)
+			{
+				APIHELP_LBFILEINFO st_FileInfo;
+				memset(&st_FileInfo, '\0', sizeof(APIHELP_LBFILEINFO));
+
+				st_FileInfo.nMsgLen = sizeof(st_FileInfo.tszMsgBuffer);
+				if (NetCore_BroadCast_Recv(hRVSocket, st_FileInfo.tszMsgBuffer, &st_FileInfo.nMsgLen))
+				{
+					stl_ListFile.push_back(st_FileInfo);
+				}
+				time_t nTimeEnd = time(NULL);
+				if ((nTimeEnd - nTimeStart) > st_ServiceCfg.st_P2xp.nTime)
+				{
+					//大于ntime秒,退出
+					break;
+				}
+			}
+			NetCore_BroadCast_Close(hRVSocket);
+
+			if (stl_ListFile.empty())
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 404;
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			}
+			else
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 200;
+
+				int nListCount = 0;
+				XSTORAGECORE_DBFILE** ppSt_ListPacket;
+				APIHelp_Distributed_FileList(&stl_ListFile, &ppSt_ListPacket, &nListCount);
+				Protocol_StoragePacket_QueryFile(tszRVBuffer, &nRVLen, &ppSt_ListPacket, nListCount);
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListPacket, nListCount);
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求局域网文件列表成功,文件分布服务器个数:%d"), lpszClientAddr, stl_ListFile.size());
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			stl_ListFile.clear();
+		}
+	}
 	return TRUE;
 }
