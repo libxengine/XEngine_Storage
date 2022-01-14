@@ -126,11 +126,13 @@ typedef struct
 	BOOL bDistributed;
     struct  
     {
-        int nServerMode;
+        int nCenterMode;
+        int nUPLoadMode;
+        int nDownldMode;
+        int nStorageMode;
     }st_LBConfig;
 	struct
 	{
-        list<int>* pStl_ListUseMode;
         list<string>* pStl_ListCenter;
 		list<string>* pStl_ListDownload;
 		list<string>* pStl_ListUPLoader;
