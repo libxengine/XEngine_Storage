@@ -293,17 +293,29 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 	}
 	pSt_ServerConfig->bDistributed = st_JsonRoot["bDistributed"].asInt();
 
-	if (st_JsonRoot["LBConfig"].empty() || (4 != st_JsonRoot["LBConfig"].size()))
+	if (st_JsonRoot["LBDistributed"].empty() || (4 != st_JsonRoot["LBDistributed"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
-		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LBCONFIG;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LBDISTRIBUTED;
 		return FALSE;
 	}
-	Json::Value st_JsonLBConfig = st_JsonRoot["LBConfig"];
-	pSt_ServerConfig->st_LBConfig.nCenterMode = st_JsonLBConfig["nCenterMode"].asInt();
-	pSt_ServerConfig->st_LBConfig.nUPLoadMode = st_JsonLBConfig["nUPLoadMode"].asInt();
-	pSt_ServerConfig->st_LBConfig.nDownldMode = st_JsonLBConfig["nDownldMode"].asInt();
-	pSt_ServerConfig->st_LBConfig.nStorageMode = st_JsonLBConfig["nStorageMode"].asInt();
+	Json::Value st_JsonLBDistributed = st_JsonRoot["LBDistributed"];
+	pSt_ServerConfig->st_LBDistributed.nCenterMode = st_JsonLBDistributed["nCenterMode"].asInt();
+	pSt_ServerConfig->st_LBDistributed.nUPLoadMode = st_JsonLBDistributed["nUPLoadMode"].asInt();
+	pSt_ServerConfig->st_LBDistributed.nDownldMode = st_JsonLBDistributed["nDownldMode"].asInt();
+	pSt_ServerConfig->st_LBDistributed.nStorageMode = st_JsonLBDistributed["nStorageMode"].asInt();
+
+	if (st_JsonRoot["LBLocation"].empty() || (4 != st_JsonRoot["LBLocation"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LBLOCATION;
+		return FALSE;
+	}
+	Json::Value st_JsonLBLocation = st_JsonRoot["LBLocation"];
+	pSt_ServerConfig->st_LBLocation.nCenterMode = st_JsonLBLocation["nCenterMode"].asInt();
+	pSt_ServerConfig->st_LBLocation.nUPLoadMode = st_JsonLBLocation["nUPLoadMode"].asInt();
+	pSt_ServerConfig->st_LBLocation.nDownldMode = st_JsonLBLocation["nDownldMode"].asInt();
+	pSt_ServerConfig->st_LBLocation.nStorageMode = st_JsonLBLocation["nStorageMode"].asInt();
 
 	if (st_JsonRoot["LoadBalance"].empty() || (4 != st_JsonRoot["LoadBalance"].size()))
 	{

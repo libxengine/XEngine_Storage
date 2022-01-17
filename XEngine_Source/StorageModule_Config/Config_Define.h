@@ -130,7 +130,14 @@ typedef struct
         int nUPLoadMode;
         int nDownldMode;
         int nStorageMode;
-    }st_LBConfig;
+    }st_LBDistributed;
+	struct
+	{
+		int nCenterMode;
+		int nUPLoadMode;
+		int nDownldMode;
+		int nStorageMode;
+	}st_LBLocation;
 	struct
 	{
         list<string>* pStl_ListCenter;
