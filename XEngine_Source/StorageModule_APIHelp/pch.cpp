@@ -31,13 +31,9 @@ extern "C" DWORD StorageHelp_GetLastError(int* pInt_SysError)
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-extern "C" BOOL APIHelp_Distributed_IsMode(list<int>*pStl_ListMode, int nMode)
+extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>*pStl_ListAddr, TCHAR * ptszAddr, int nMode)
 {
-	return m_APIDistributed.APIHelp_Distributed_IsMode(pStl_ListMode, nMode);
-}
-extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>*pStl_ListAddr, TCHAR * ptszAddr)
-{
-	return m_APIDistributed.APIHelp_Distributed_RandomAddr(pStl_ListAddr, ptszAddr);
+	return m_APIDistributed.APIHelp_Distributed_RandomAddr(pStl_ListAddr, ptszAddr, nMode);
 }
 extern "C" BOOL APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>*pStl_ListParse, XSTORAGECORE_DBFILE * **pppSt_ListPacket, int* pInt_ListCount)
 {

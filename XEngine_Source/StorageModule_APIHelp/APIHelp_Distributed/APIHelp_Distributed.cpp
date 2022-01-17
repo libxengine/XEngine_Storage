@@ -23,40 +23,6 @@ CAPIHelp_Distributed::~CAPIHelp_Distributed()
 //                               公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-函数名称：APIHelp_Distributed_IsMode
-函数功能：判断负载模式是否为指定模式
- 参数.一：pStl_ListMode
-  In/Out：In
-  类型：STL容器指针
-  可空：N
-  意思：输入支持的模式列表
- 参数.二：nMode
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入要判断的模式
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_IsMode(list<int>* pStl_ListMode, int nMode)
-{
-	APIHelp_IsErrorOccur = FALSE;
-
-	BOOL bFound = FALSE;
-	list<int>::const_iterator stl_ListIterator = pStl_ListMode->begin();
-	for (; stl_ListIterator != pStl_ListMode->end(); stl_ListIterator++)
-	{
-		if (nMode == *stl_ListIterator)
-		{
-			bFound = TRUE;
-			break;
-		}
-	}
-	return bFound;
-}
-/********************************************************************
 函数名称：APIHelp_Distributed_RandomAddr
 函数功能：随机选择一个负载的重定向服务器地址
  参数.一：pStl_ListAddr
@@ -69,32 +35,57 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_IsMode(list<int>* pStl_ListMode, 
   类型：字符指针
   可空：N
   意思：输出获取到的负载地址
+ 参数.三：nMode
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：负载模式
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr)
+BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr, int nMode)
 {
 	APIHelp_IsErrorOccur = FALSE;
 
-	BOOL bFound = FALSE;
-	XNETHANDLE xhToken = 0;
-
-	BaseLib_OperatorHandle_Create(&xhToken, 0, pStl_ListAddr->size(), FALSE);
-	if (xhToken == pStl_ListAddr->size())
+	if (!pStl_ListAddr->empty())
 	{
-		xhToken--;
+		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
+		return FALSE;
 	}
-	list<string>::const_iterator stl_ListIterator = pStl_ListAddr->begin();
-	for (XNETHANDLE i = 0; stl_ListIterator != pStl_ListAddr->end(); stl_ListIterator++, i++)
+
+	BOOL bFound = FALSE;
+	if (0 == nMode)
 	{
-		if (xhToken == i)
+		XNETHANDLE xhToken = 0;
+		BaseLib_OperatorHandle_Create(&xhToken, 0, pStl_ListAddr->size(), FALSE);
+		if (xhToken == pStl_ListAddr->size())
 		{
-			bFound = TRUE;
-			_tcscpy(ptszAddr, stl_ListIterator->c_str());
-			break;
+			xhToken--;
 		}
+		list<string>::const_iterator stl_ListIterator = pStl_ListAddr->begin();
+		for (XNETHANDLE i = 0; stl_ListIterator != pStl_ListAddr->end(); stl_ListIterator++, i++)
+		{
+			if (xhToken == i)
+			{
+				bFound = TRUE;
+				_tcscpy(ptszAddr, stl_ListIterator->c_str());
+				break;
+			}
+		}
+	}
+	else if (1 == nMode)
+	{
+		bFound = TRUE;
+		_tcscpy(ptszAddr, pStl_ListAddr->front().c_str());
+	}
+	else if (2 == nMode)
+	{
+
+		bFound = TRUE;
+		_tcscpy(ptszAddr, pStl_ListAddr->back().c_str());
 	}
 	return bFound;
 }

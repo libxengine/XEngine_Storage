@@ -23,25 +23,6 @@ extern "C" DWORD StorageHelp_GetLastError(int* pInt_SysError = NULL);
 /*                       分布式函数                                     */
 /************************************************************************/
 /********************************************************************
-函数名称：APIHelp_Distributed_IsMode
-函数功能：判断负载模式是否为指定模式
- 参数.一：pStl_ListMode
-  In/Out：In
-  类型：STL容器指针
-  可空：N
-  意思：输入支持的模式列表
- 参数.二：nMode
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入要判断的模式
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL APIHelp_Distributed_IsMode(list<int>*pStl_ListMode, int nMode);
-/********************************************************************
 函数名称：APIHelp_Distributed_RandomAddr
 函数功能：随机选择一个负载的重定向服务器地址
  参数.一：pStl_ListAddr
@@ -54,12 +35,17 @@ extern "C" BOOL APIHelp_Distributed_IsMode(list<int>*pStl_ListMode, int nMode);
   类型：字符指针
   可空：N
   意思：输出获取到的负载地址
+ 参数.三：nMode
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：负载模式
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr);
+extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr, int nMode);
 /********************************************************************
 函数名称：APIHelp_Distributed_FileList
 函数功能：解析所有解析到的内容并且打包成指定结构

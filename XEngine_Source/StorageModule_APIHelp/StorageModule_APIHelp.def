@@ -3,7 +3,6 @@ LIBRARY
 EXPORTS
 	StorageHelp_GetLastError
 
-	APIHelp_Distributed_IsMode
 	APIHelp_Distributed_RandomAddr
 	APIHelp_Distributed_FileList
 	APIHelp_Distributed_DLStorage
