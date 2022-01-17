@@ -120,7 +120,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.bAuth = TRUE;
 	}
 	//使用重定向?
-	if (APIHelp_Distributed_IsMode(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUseMode, STORAGE_NETTYPE_HTTPUPLOADER))
+	if (st_LoadbalanceCfg.st_LBConfig.nUPLoadMode > 0)
 	{
 		TCHAR tszHdrBuffer[1024];
 		TCHAR tszStorageAddr[128];
@@ -131,7 +131,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 302;
 
-		APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUPLoader, tszStorageAddr);
+		APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUPLoader, tszStorageAddr, st_LoadbalanceCfg.st_LBConfig.nUPLoadMode);
 		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), tszStorageAddr, pSt_HTTPParam->tszHttpUri);
 
 		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
