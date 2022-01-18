@@ -57,7 +57,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 	}
 
 	BOOL bFound = FALSE;
-	if (0 == nMode)
+	if (1 == nMode)
 	{
 		XNETHANDLE xhToken = 0;
 		BaseLib_OperatorHandle_Create(&xhToken, 0, pStl_ListAddr->size(), FALSE);
@@ -76,18 +76,25 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 			}
 		}
 	}
-	else if (1 == nMode)
+	else if (2 == nMode)
 	{
 		bFound = TRUE;
 		_tcscpy(ptszAddr, pStl_ListAddr->front().c_str());
 	}
-	else if (2 == nMode)
+	else if (3 == nMode)
 	{
 
 		bFound = TRUE;
 		_tcscpy(ptszAddr, pStl_ListAddr->back().c_str());
 	}
-	return bFound;
+
+	if (!bFound)
+	{
+		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
+		return FALSE;
+	}
+	return TRUE;
 }
 /********************************************************************
 函数名称：APIHelp_Distributed_FileList
@@ -224,7 +231,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket)
+BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode)
 {
 	APIHelp_IsErrorOccur = FALSE;
 
@@ -234,15 +241,28 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
 		return FALSE;
 	}
-	BOOL bFound = FALSE;
-	int nLastLevel = 9999;
+	int nLastLevel = 99999;
+	list<XENGINE_STORAGEBUCKET> stl_BuckSelect;
+	//先得到最小级别
+	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
+	{
+		//只处理启用的
+		if (stl_ListIterator->bEnable)
+		{
+			if (stl_ListIterator->nLevel < nLastLevel)
+			{
+				nLastLevel = stl_ListIterator->nLevel; //得到最小级别
+			}
+		}
+	}
+	//在来获得这个级别的列表
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
 		//只处理启用的
 		if (stl_ListIterator->bEnable)
 		{
 			//处理优先级
-			if (stl_ListIterator->nLevel < nLastLevel)
+			if (stl_ListIterator->nLevel == nLastLevel)
 			{
 				int nListCount = 0;
 				__int64u nDirCount = 0;   //当前目录大小
@@ -260,18 +280,44 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 				{
 					continue;
 				}
-				bFound = TRUE;
-				nLastLevel = stl_ListIterator->nLevel;
-				*pSt_StorageBucket = *stl_ListIterator;
+				stl_BuckSelect.push_back(*stl_ListIterator);
 			}
 		}
 	}
-	if (!bFound)
+	//通过指定模式获得一个key
+	if (!stl_BuckSelect.empty())
 	{
 		APIHelp_IsErrorOccur = TRUE;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
 		return FALSE;
 	}
+	if (1 == nMode)
+	{
+		XNETHANDLE xhToken = 0;
+		BaseLib_OperatorHandle_Create(&xhToken, 0, stl_BuckSelect.size(), FALSE);
+		if (xhToken == stl_BuckSelect.size())
+		{
+			xhToken--;
+		}
+		list<XENGINE_STORAGEBUCKET>::const_iterator stl_ListIterator = stl_BuckSelect.begin();
+		for (XNETHANDLE i = 0; stl_ListIterator != stl_BuckSelect.end(); stl_ListIterator++, i++)
+		{
+			if (xhToken == i)
+			{
+				*pSt_StorageBucket = *stl_ListIterator;
+				break;
+			}
+		}
+	}
+	else if (2 == nMode)
+	{
+		*pSt_StorageBucket = stl_BuckSelect.front();
+	}
+	else if (3 == nMode)
+	{
+		*pSt_StorageBucket = stl_BuckSelect.back();
+	}
+
 	return TRUE;
 }
 /********************************************************************

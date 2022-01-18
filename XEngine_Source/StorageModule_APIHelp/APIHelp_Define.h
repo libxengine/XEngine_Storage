@@ -107,12 +107,17 @@ extern "C" BOOL APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGIN
   类型：数据结构指针
   可空：N
   意思：输出获取到的可用存储
+ 参数.三：nMode
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入选择模式
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket);
+extern "C" BOOL APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode);
 /********************************************************************
 函数名称：APIHelp_Distributed_GetPathKey
 函数功能：通过BUCKET名称查找对应路径
