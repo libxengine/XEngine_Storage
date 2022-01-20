@@ -216,22 +216,32 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
 /********************************************************************
 函数名称：APIHelp_Distributed_UPStorage
 函数功能：通过分布式存储列表获得一个存储地址
- 参数.一：pStl_ListBucket
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的URL
+ 参数.二：pStl_ListBucket
   In/Out：In
   类型：容器指针
   可空：N
   意思：输入要解析的列表
- 参数.二：pSt_StorageBucket
+ 参数.三：pSt_StorageBucket
   In/Out：Out
   类型：数据结构指针
   可空：N
   意思：输出获取到的可用存储
+ 参数.四：nMode
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入LB的模式
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode)
+BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode)
 {
 	APIHelp_IsErrorOccur = FALSE;
 
@@ -241,81 +251,91 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
 		return FALSE;
 	}
-	int nLastLevel = 99999;
-	list<XENGINE_STORAGEBUCKET> stl_BuckSelect;
-	//先得到最小级别
-	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
+	if (4 == nMode)
 	{
-		//只处理启用的
-		if (stl_ListIterator->bEnable)
+		if (!APIHelp_Distributed_DLStorage(lpszMsgBuffer, pStl_ListBucket, pSt_StorageBucket))
 		{
-			if (stl_ListIterator->nLevel < nLastLevel)
-			{
-				nLastLevel = stl_ListIterator->nLevel; //得到最小级别
-			}
+			return FALSE;
 		}
 	}
-	//在来获得这个级别的列表
-	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
+	else
 	{
-		//只处理启用的
-		if (stl_ListIterator->bEnable)
+		int nLastLevel = 99999;
+		list<XENGINE_STORAGEBUCKET> stl_BuckSelect;
+		//先得到最小级别
+		for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 		{
-			//处理优先级
-			if (stl_ListIterator->nLevel == nLastLevel)
+			//只处理启用的
+			if (stl_ListIterator->bEnable)
 			{
-				int nListCount = 0;
-				__int64u nDirCount = 0;   //当前目录大小
-				CHAR** ppListFile;
-				SystemApi_File_EnumFile(stl_ListIterator->tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
-				for (int j = 0; j < nListCount; j++)
+				if (stl_ListIterator->nLevel < nLastLevel)
 				{
-					struct __stat64 st_FStat;
-					_stat64(ppListFile[j], &st_FStat);
-					nDirCount += st_FStat.st_size;
+					nLastLevel = stl_ListIterator->nLevel; //得到最小级别
 				}
-				BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
-				//如果当前目录大小大于设定的大小.那么忽略
-				if (nDirCount >= APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize))
-				{
-					continue;
-				}
-				stl_BuckSelect.push_back(*stl_ListIterator);
 			}
 		}
-	}
-	//通过指定模式获得一个key
-	if (!stl_BuckSelect.empty())
-	{
-		APIHelp_IsErrorOccur = TRUE;
-		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
-		return FALSE;
-	}
-	if (1 == nMode)
-	{
-		XNETHANDLE xhToken = 0;
-		BaseLib_OperatorHandle_Create(&xhToken, 0, stl_BuckSelect.size(), FALSE);
-		if (xhToken == stl_BuckSelect.size())
+		//在来获得这个级别的列表
+		for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 		{
-			xhToken--;
-		}
-		list<XENGINE_STORAGEBUCKET>::const_iterator stl_ListIterator = stl_BuckSelect.begin();
-		for (XNETHANDLE i = 0; stl_ListIterator != stl_BuckSelect.end(); stl_ListIterator++, i++)
-		{
-			if (xhToken == i)
+			//只处理启用的
+			if (stl_ListIterator->bEnable)
 			{
-				*pSt_StorageBucket = *stl_ListIterator;
-				break;
+				//处理优先级
+				if (stl_ListIterator->nLevel == nLastLevel)
+				{
+					int nListCount = 0;
+					__int64u nDirCount = 0;   //当前目录大小
+					CHAR** ppListFile;
+					SystemApi_File_EnumFile(stl_ListIterator->tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
+					for (int j = 0; j < nListCount; j++)
+					{
+						struct __stat64 st_FStat;
+						_stat64(ppListFile[j], &st_FStat);
+						nDirCount += st_FStat.st_size;
+					}
+					BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
+					//如果当前目录大小大于设定的大小.那么忽略
+					if (nDirCount >= APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize))
+					{
+						continue;
+					}
+					stl_BuckSelect.push_back(*stl_ListIterator);
+				}
 			}
 		}
-	}
-	else if (2 == nMode)
-	{
-		*pSt_StorageBucket = stl_BuckSelect.front();
-	}
-	else if (3 == nMode)
-	{
-		*pSt_StorageBucket = stl_BuckSelect.back();
+		//通过指定模式获得一个key
+		if (stl_BuckSelect.empty())
+		{
+			APIHelp_IsErrorOccur = TRUE;
+			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
+			return FALSE;
+		}
+		if (1 == nMode)
+		{
+			XNETHANDLE xhToken = 0;
+			BaseLib_OperatorHandle_Create(&xhToken, 0, stl_BuckSelect.size(), FALSE);
+			if (xhToken == stl_BuckSelect.size())
+			{
+				xhToken--;
+			}
+			list<XENGINE_STORAGEBUCKET>::const_iterator stl_ListIterator = stl_BuckSelect.begin();
+			for (XNETHANDLE i = 0; stl_ListIterator != stl_BuckSelect.end(); stl_ListIterator++, i++)
+			{
+				if (xhToken == i)
+				{
+					*pSt_StorageBucket = *stl_ListIterator;
+					break;
+				}
+			}
+		}
+		else if (2 == nMode)
+		{
+			*pSt_StorageBucket = stl_BuckSelect.front();
+		}
+		else if (3 == nMode)
+		{
+			*pSt_StorageBucket = stl_BuckSelect.back();
+		}
 	}
 
 	return TRUE;

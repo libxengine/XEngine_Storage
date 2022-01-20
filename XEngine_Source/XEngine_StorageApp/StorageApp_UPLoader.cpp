@@ -146,7 +146,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	XENGINE_STORAGEBUCKET st_StorageBucket;
 	memset(&st_StorageBucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
 
-	if (!APIHelp_Distributed_UPStorage(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, st_LoadbalanceCfg.st_LBLocation.nUPLoadMode))
+	if (!APIHelp_Distributed_UPStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, st_LoadbalanceCfg.st_LBLocation.nUPLoadMode))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求上传文件失败,可能BUCKET:% 不正确,错误：%lX"), lpszClientAddr, pSt_HTTPParam->tszHttpUri, APIHelp_GetLastError());
 		return FALSE;
