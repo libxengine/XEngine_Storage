@@ -56,7 +56,7 @@ void File_UPLoad()
 		printf("upload failed:%lX\n", APIHelp_GetLastError());
 		return;
 	}
-	printf("upload:%d\n", nCode);
+	printf("upload:%d\n%s\n", nCode, ptszMsgBuffer);
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
 //下载文件
