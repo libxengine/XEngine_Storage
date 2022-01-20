@@ -98,9 +98,9 @@ extern "C" BOOL Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMethod, LPCTSTR lps
 {
 	return m_StoragePacket.Protocol_StoragePacket_BasicAuth(lpszMethod, lpszPostUrl, lpszClientAddr, lpszUser, lpszPass, ptszMsgBuffer, pInt_MsgLen);
 }
-extern "C" BOOL Protocol_StoragePacket_UPDown(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, LPCTSTR lpszFileHash)
+extern "C" BOOL Protocol_StoragePacket_UPDown(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, BOOL bDown, LPCTSTR lpszFileHash)
 {
-	return m_StoragePacket.Protocol_StoragePacket_UPDown(ptszMsgBuffer, pInt_MsgLen, lpszBuckKey, lpszFileName, lpszClientAddr, nFileSize, lpszFileHash);
+	return m_StoragePacket.Protocol_StoragePacket_UPDown(ptszMsgBuffer, pInt_MsgLen, lpszBuckKey, lpszFileName, lpszClientAddr, nFileSize, bDown, lpszFileHash);
 }
 extern "C" BOOL Protocol_StoragePacket_QueryFile(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
 {

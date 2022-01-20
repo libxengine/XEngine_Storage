@@ -296,7 +296,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
 			Session_UPStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
-			Protocol_StoragePacket_UPDown(tszProxyStr, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+			Protocol_StoragePacket_UPDown(tszProxyStr, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, FALSE, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 			if (APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass, tszProxyStr, &nHttpCode))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass);

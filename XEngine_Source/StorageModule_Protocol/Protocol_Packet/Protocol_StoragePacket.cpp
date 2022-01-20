@@ -353,7 +353,12 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMetho
   类型：整数型
   可空：N
   意思：文件大小
- 参数.七：lpszFileHash
+ 参数.七：bDown
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：是上传还是下载
+ 参数.八：lpszFileHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -363,7 +368,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMetho
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, LPCTSTR lpszFileHash /* = NULL */)
+BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, BOOL bDown, LPCTSTR lpszFileHash /* = NULL */)
 {
     Protocol_IsErrorOccur = FALSE;
 
@@ -375,6 +380,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer
     }
     Json::Value st_JsonRoot;
 
+    st_JsonRoot["bDown"] = bDown;
     st_JsonRoot["lpszBuckKey"] = lpszBuckKey;
     st_JsonRoot["lpszFileName"] = lpszFileName;
     st_JsonRoot["lpszClientAddr"] = lpszClientAddr;

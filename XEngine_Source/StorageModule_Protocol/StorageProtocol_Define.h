@@ -518,7 +518,12 @@ extern "C" BOOL Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMethod, LPCTSTR lps
   类型：整数型
   可空：N
   意思：文件大小
- 参数.七：lpszFileHash
+ 参数.七：bDown
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：是上传还是下载
+ 参数.八：lpszFileHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -528,7 +533,7 @@ extern "C" BOOL Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMethod, LPCTSTR lps
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_UPDown(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, LPCTSTR lpszFileHash = NULL);
+extern "C" BOOL Protocol_StoragePacket_UPDown(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, BOOL bDown, LPCTSTR lpszFileHash = NULL);
 /********************************************************************
 函数名称：Protocol_StorageParse_QueryFile
 函数功能：查询回复打包协议
