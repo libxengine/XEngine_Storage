@@ -7,8 +7,8 @@ c c++ 存储服务 c c++ 文件存储服务
 c c++ file storage service  
 This is an api gateway for uploading and downloading.  
 The service is for users who have business needs for upload and download services (such as developers who need to upload and download servers).  
-This server is more inclined to store the API interface direction  
-best storage service for http,batter than nginx and more convenient to manage. On going maintenance  
+This server is more inclined to storestorage transfer and API Manage interface  
+best storage service for http,batter than nginx and more convenient to manage,more concise code. On going maintenance  
 
 ## Software feature
 The purpose of development and implementation based on libXEngine is a cross-platform network storage service  
@@ -97,7 +97,6 @@ P2P distributed download is the same as the hyper-threaded download of other dow
 
 ## now task
 P2P WAN file search and download support  
-upload file code optimization  
 
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  
