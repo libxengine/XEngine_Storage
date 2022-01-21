@@ -38,7 +38,6 @@ BOOL XEngine_Task_Pass(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lpsz
 		memset(tszClientAddr, '\0', sizeof(tszClientAddr));
 
 		Protocol_StorageParse_ProxyNotify(lpszMsgBuffer, nMsgLen, tszClientAddr, tszPathKey, tszFileName, tszFileHash, &nFileSize);
-
 		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求的下载文件通知协议成功,文件:%s,大小:%lld"), lpszClientAddr, tszFileName, nFileSize);

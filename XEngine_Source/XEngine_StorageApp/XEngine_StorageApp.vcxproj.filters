@@ -19,12 +19,6 @@
     <Filter Include="源文件\Storage_APPTask">
       <UniqueIdentifier>{40f770d9-b733-4850-8351-c1ab77d56900}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\Storage_APPHelp">
-      <UniqueIdentifier>{a417f386-25d6-47ac-a994-5ffcf8b453ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\Storage_APPHelp">
-      <UniqueIdentifier>{5625d0f7-4a2d-4a18-86b6-adaaa214ad88}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XEngine_StorageApp.cpp">
@@ -47,9 +41,6 @@
     </ClCompile>
     <ClCompile Include="Storage_APPTask\Storage_TaskPass.cpp">
       <Filter>源文件\Storage_APPTask</Filter>
-    </ClCompile>
-    <ClCompile Include="Storage_APPHelp\Storage_APPHelp.cpp">
-      <Filter>源文件\Storage_APPHelp</Filter>
     </ClCompile>
     <ClCompile Include="StorageApp_P2XPNet.cpp">
       <Filter>源文件</Filter>
@@ -82,9 +73,6 @@
     </ClInclude>
     <ClInclude Include="Storage_APPTask\Storage_TaskPass.h">
       <Filter>头文件\Storage_APPTask</Filter>
-    </ClInclude>
-    <ClInclude Include="Storage_APPHelp\Storage_APPHelp.h">
-      <Filter>头文件\Storage_APPHelp</Filter>
     </ClInclude>
     <ClInclude Include="StorageApp_P2XPNet.h">
       <Filter>头文件</Filter>

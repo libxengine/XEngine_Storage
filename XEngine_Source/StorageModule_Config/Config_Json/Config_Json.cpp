@@ -293,28 +293,37 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 	}
 	pSt_ServerConfig->bDistributed = st_JsonRoot["bDistributed"].asInt();
 
-	if (st_JsonRoot["LBConfig"].empty() || (1 != st_JsonRoot["LBConfig"].size()))
+	if (st_JsonRoot["LBDistributed"].empty() || (4 != st_JsonRoot["LBDistributed"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
-		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LBCONFIG;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LBDISTRIBUTED;
 		return FALSE;
 	}
-	Json::Value st_JsonLBConfig = st_JsonRoot["LBConfig"];
-	pSt_ServerConfig->st_LBConfig.nServerMode = st_JsonLBConfig["nUseMode"].asInt();
+	Json::Value st_JsonLBDistributed = st_JsonRoot["LBDistributed"];
+	pSt_ServerConfig->st_LBDistributed.nCenterMode = st_JsonLBDistributed["nCenterMode"].asInt();
+	pSt_ServerConfig->st_LBDistributed.nUPLoadMode = st_JsonLBDistributed["nUPLoadMode"].asInt();
+	pSt_ServerConfig->st_LBDistributed.nDownldMode = st_JsonLBDistributed["nDownldMode"].asInt();
+	pSt_ServerConfig->st_LBDistributed.nStorageMode = st_JsonLBDistributed["nStorageMode"].asInt();
 
-	if (st_JsonRoot["LoadBalance"].empty() || (5 != st_JsonRoot["LoadBalance"].size()))
+	if (st_JsonRoot["LBLocation"].empty() || (4 != st_JsonRoot["LBLocation"].size()))
+	{
+		Config_IsErrorOccur = TRUE;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LBLOCATION;
+		return FALSE;
+	}
+	Json::Value st_JsonLBLocation = st_JsonRoot["LBLocation"];
+	pSt_ServerConfig->st_LBLocation.nCenterMode = st_JsonLBLocation["nCenterMode"].asInt();
+	pSt_ServerConfig->st_LBLocation.nUPLoadMode = st_JsonLBLocation["nUPLoadMode"].asInt();
+	pSt_ServerConfig->st_LBLocation.nDownldMode = st_JsonLBLocation["nDownldMode"].asInt();
+	pSt_ServerConfig->st_LBLocation.nStorageMode = st_JsonLBLocation["nStorageMode"].asInt();
+
+	if (st_JsonRoot["LoadBalance"].empty() || (4 != st_JsonRoot["LoadBalance"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LAODBALANCE;
 		return FALSE;
 	}
 	Json::Value st_JsonLoadBalance = st_JsonRoot["LoadBalance"];
-
-	pSt_ServerConfig->st_LoadBalance.pStl_ListUseMode = new list<int>;
-	for (unsigned int i = 0; i < st_JsonLoadBalance["nUseMode"].size(); i++)
-	{
-		pSt_ServerConfig->st_LoadBalance.pStl_ListUseMode->push_back(st_JsonLoadBalance["nUseMode"][i].asInt());
-	}
 
 	pSt_ServerConfig->st_LoadBalance.pStl_ListCenter = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["CenterAddr"].size(); i++)

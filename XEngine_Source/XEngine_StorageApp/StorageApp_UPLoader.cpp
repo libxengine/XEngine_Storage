@@ -50,9 +50,9 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	memset(tszFileDir, '\0', sizeof(tszFileDir));
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
-	LPCTSTR lpszMethodGet = _T("PUT");
-
-	if (0 != _tcsncmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodGet)))
+	LPCTSTR lpszMethodPut = _T("PUT");
+	LPCTSTR lpszMethodPost = _T("POST");
+	if ((0 != _tcsncmp(lpszMethodPut, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodPut))) && (0 != _tcsncmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodPost))))
 	{
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 405;
@@ -62,16 +62,65 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,发送的方法:%s 不支持"), lpszClientAddr, pSt_HTTPParam->tszHttpMethod);
 		return FALSE;
 	}
-	if (!XEngine_APPHelp_ProxyAuth(lpszClientAddr, lpszMethodGet, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER))
-	{
-		return FALSE;
-	}
+	//用户验证
 	if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
 	{
+		TCHAR tszUserName[64];
+		TCHAR tszUserPass[64];
+
+		memset(tszUserName, '\0', sizeof(tszUserName));
+		memset(tszUserPass, '\0', sizeof(tszUserPass));
+		if (!APIHelp_Api_ProxyAuth(tszUserName, tszUserPass, pptszListHdr, nHdrCount))
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.bAuth = TRUE;
+			st_HDRParam.nHttpCode = 401;
+
+			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,用户验证失败,错误:%lX"), lpszClientAddr, APIHelp_GetLastError());
+			return FALSE;
+		}
+		if (_tcslen(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy) > 0)
+		{
+			int nBLen = 0;
+			int nResponseCode = 0;
+			TCHAR* ptszBody = NULL;
+
+			Protocol_StoragePacket_BasicAuth(pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
+			APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &ptszBody, &nBLen);
+			if (200 != nResponseCode)
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.bAuth = TRUE;
+				st_HDRParam.nHttpCode = nResponseCode;
+
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
+			}
+			BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszUserName, tszUserPass);
+		}
+		else
+		{
+			if (!Session_User_Exist(tszUserName, tszUserPass))
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.bAuth = TRUE;
+				st_HDRParam.nHttpCode = 401;
+
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,验证用户失败,无法继续"), lpszClientAddr);
+				return FALSE;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,本地验证用户验证通过,用户名:%s,密码:%s"), lpszClientAddr, tszUserName, tszUserPass);
+		}
 		st_HDRParam.bAuth = TRUE;
 	}
 	//使用重定向?
-	if (APIHelp_Distributed_IsMode(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUseMode, STORAGE_NETTYPE_HTTPUPLOADER))
+	if (st_LoadbalanceCfg.st_LBDistributed.nUPLoadMode > 0)
 	{
 		TCHAR tszHdrBuffer[1024];
 		TCHAR tszStorageAddr[128];
@@ -82,7 +131,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 302;
 
-		APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUPLoader, tszStorageAddr);
+		APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUPLoader, tszStorageAddr, st_LoadbalanceCfg.st_LBDistributed.nUPLoadMode);
 		_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), tszStorageAddr, pSt_HTTPParam->tszHttpUri);
 
 		RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
@@ -97,7 +146,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	XENGINE_STORAGEBUCKET st_StorageBucket;
 	memset(&st_StorageBucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
 
-	if (!APIHelp_Distributed_UPStorage(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
+	if (!APIHelp_Distributed_UPStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, st_LoadbalanceCfg.st_LBLocation.nUPLoadMode))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求上传文件失败,可能BUCKET:% 不正确,错误：%lX"), lpszClientAddr, pSt_HTTPParam->tszHttpUri, APIHelp_GetLastError());
 		return FALSE;
@@ -109,27 +158,32 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		int nPosStart = 0;
 		int nPosEnd = 0;
 		__int64x nPosCount = 0;
-		//得到长度大小
-		if (XEngine_APPHelp_RangeFile(lpszClientAddr, &nPosStart, &nPosEnd, &nPosCount, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPUPLOADER))
+		//得到断点续传大小
+		if (!APIHelp_Api_RangeFile(&nPosStart, &nPosEnd, &nPosCount, pptszListHdr, nHdrCount))
 		{
-			//是新的还是断点续传的
-			if ((0 != nPosStart) || (0 != nPosEnd))
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 411;
+			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,没有用户数据大小字段,无法继续"), lpszClientAddr);
+			return FALSE;
+		}
+		//是新的还是断点续传的
+		if ((0 != nPosStart) || (0 != nPosEnd))
+		{
+			//是否启用了断点续传
+			if (!st_ServiceCfg.st_XStorage.bResumable)
 			{
-				//是否启用了断点续传
-				if (!st_ServiceCfg.st_XStorage.bResumable)
-				{
-					st_HDRParam.bIsClose = TRUE;
-					st_HDRParam.nHttpCode = 416;
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 416;
 
-					RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求断点续传上传文件失败,服务端关闭了此功能,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
-					return FALSE;
-				}
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求断点续传上传文件失败,服务端关闭了此功能,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
+				return FALSE;
 			}
 		}
-		RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
-		if (!Session_UPStroage_Insert(lpszClientAddr, tszFileDir, nPosCount, nRVCount, nPosStart, nPosEnd))
+		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, nPosCount, nRVCount, nPosStart, nPosEnd))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 404;
@@ -139,21 +193,17 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,插入用户请求失败,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
 			return FALSE;
 		}
-	}
-	if (nMsgLen <= 0)
-	{
-		st_HDRParam.bIsClose = TRUE;
-		st_HDRParam.nHttpCode = 411;
-		RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,用户数据大小为0?"), lpszClientAddr);
-		return FALSE;
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求设置了数据范围:%d - %d/%lld"), lpszClientAddr, nPosStart, nPosEnd, nPosCount);
 	}
 	Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer, nMsgLen);
 	RfcComponents_HttpServer_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 	if (nHDSize >= nRVCount)
 	{
+		int nPLen = MAX_PATH;
+		TCHAR tszPassNotify[MAX_PATH];
 		SESSION_STORAGEINFO st_StorageInfo;
+
+		memset(tszPassNotify, '\0', MAX_PATH);
 		memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
 		Session_UPStroage_Close(lpszClientAddr);
@@ -177,20 +227,32 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 
 		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFilePath, st_StorageBucket.tszFilePath);
 		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, pSt_HTTPParam->tszHttpUri + 1);
-		st_ProtocolFile.st_ProtocolFile.nFileSize = nRVCount;
+		st_ProtocolFile.st_ProtocolFile.nFileSize = st_StorageInfo.ullFSize;
 
 		OPenSsl_Api_Digest(tszFileDir, tszHashStr, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
 		BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		//处理结果
-		if (!XEngine_APPHelp_VerHash(lpszClientAddr, tszFileDir, st_ProtocolFile.st_ProtocolFile.tszFileHash, pptszListHdr, nHdrCount))
+		if (st_ServiceCfg.st_XStorage.bUPHash)
 		{
-			st_HDRParam.bIsClose = TRUE;
-			st_HDRParam.nHttpCode = 403;
-			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-			return FALSE;
+			if (APIHelp_Api_VerHash(st_ProtocolFile.st_ProtocolFile.tszFileHash, pptszListHdr, nHdrCount))
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,上传的文件信息HASH效验成功,文件:%s HASH:%s"), lpszClientAddr, tszFileDir, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+			}
+			else
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 403;
+				_tremove(tszFileDir);
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,上传的文件信息HASH校验失败,无法继续,文件:%s 已被删除,HASH:%s,错误:%lX"), lpszClientAddr, tszFileDir, st_ProtocolFile.st_ProtocolFile.tszFileHash, APIHelp_GetLastError());
+				return FALSE;
+			}
 		}
+		
 		BOOL bRet = TRUE;
+		Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, FALSE, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		if (0 != st_ServiceCfg.st_XSql.nSQLType)
 		{
 			_tcscpy(st_ProtocolFile.tszBuckKey, st_StorageBucket.tszBuckKey);
@@ -206,7 +268,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			{
 				st_HDRParam.bIsClose = TRUE;
 				st_HDRParam.nHttpCode = 200;
-				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszPassNotify, nPLen);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d"), lpszClientAddr, tszFileDir, nRVCount);
 			}
@@ -214,7 +276,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			{
 				st_HDRParam.bIsClose = TRUE;
 				st_HDRParam.nHttpCode = 403;
-				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszPassNotify, nPLen);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, XStorageDB_GetLastError());
 			}
@@ -223,24 +285,15 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 200;
-			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszPassNotify, nPLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d,数据库没有启用,不插入数据库"), lpszClientAddr, tszFileDir, nRVCount);
 		}
 		//PASS代理
 		if (st_ServiceCfg.st_XProxy.st_XProxyPass.bUPPass && bRet)
 		{
-			int nPLen = MAX_PATH;
 			int nHttpCode = 0;
-			TCHAR tszProxyStr[MAX_PATH];
-			SESSION_STORAGEINFO st_StorageInfo;
-
-			memset(tszProxyStr, '\0', MAX_PATH);
-			memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
-
-			Session_UPStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
-			Protocol_StoragePacket_UPDown(st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, tszProxyStr, &nPLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
-			if (APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass, tszProxyStr, &nHttpCode))
+			if (APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass, tszPassNotify, &nHttpCode))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass);
 			}

@@ -136,7 +136,7 @@ extern "C" BOOL Protocol_P2XPParse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, X
   类型：字符指针
   可空：N
   意思：输出文件客户端地址
- 参数.四：ptszPathKey
+ 参数.四：ptszBuckKey
   In/Out：Out
   类型：字符指针
   可空：N
@@ -161,7 +161,7 @@ extern "C" BOOL Protocol_P2XPParse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, X
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszClientAddr, TCHAR * ptszPathKey, TCHAR * ptszFileName, TCHAR * ptszFileHash, __int64x * pInt_FileSize);
+extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszClientAddr, TCHAR * ptszBuckKey, TCHAR * ptszFileName, TCHAR * ptszFileHash, __int64x * pInt_FileSize);
 /********************************************************************
 函数名称：Protocol_StorageParse_QueryFile
 函数功能：文件查询请求解析函数
@@ -195,7 +195,7 @@ extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMs
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_QueryFile(LPCSTR lpszMsgBuffer, CHAR * ptszTimeStart, CHAR * ptszTimeEnd, CHAR * ptszPathKey = NULL, CHAR * ptszFileName = NULL, CHAR * ptszFileHash = NULL);
+extern "C" BOOL Protocol_StorageParse_QueryFile(LPCSTR lpszMsgBuffer, CHAR * ptszTimeStart, CHAR * ptszTimeEnd, CHAR * ptszBuckKey = NULL, CHAR * ptszFileName = NULL, CHAR * ptszFileHash = NULL);
 /********************************************************************
 函数名称：Protocol_StorageParse_ReportFile
 函数功能：解析文件报告协议
@@ -488,32 +488,42 @@ extern "C" BOOL Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMethod, LPCTSTR lps
 /********************************************************************
 函数名称：Protocol_StoragePacket_UPDown
 函数功能：上传下载完成代理通知协议
- 参数.一：lpszFileName
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：文件的地址
- 参数.二：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：用户客户端地址
- 参数.三：nFileSize
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：文件大小
- 参数.四：ptszMsgBuffer
+ 参数.一：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：数据包
- 参数.五：pInt_MsgLen
+ 参数.二：pInt_MsgLen
   In/Out：Out
   类型：整数型
   可空：N
   意思：导出数据包大小
- 参数.六：lpszFileHash
+ 参数.三：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入文件所属BUCKET
+ 参数.四：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：文件的地址
+ 参数.五：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：用户客户端地址
+ 参数.六：nFileSize
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：文件大小
+ 参数.七：bDown
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：是上传还是下载
+ 参数.八：lpszFileHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -523,7 +533,7 @@ extern "C" BOOL Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMethod, LPCTSTR lps
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_UPDown(LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileHash = NULL);
+extern "C" BOOL Protocol_StoragePacket_UPDown(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, BOOL bDown, LPCTSTR lpszFileHash = NULL);
 /********************************************************************
 函数名称：Protocol_StorageParse_QueryFile
 函数功能：查询回复打包协议

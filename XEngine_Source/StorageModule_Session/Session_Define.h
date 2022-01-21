@@ -18,6 +18,7 @@ typedef struct
 	TCHAR tszFileDir[MAX_PATH];                                           //文件地址
 	TCHAR tszClientAddr[128];                                             //操作的用户地址
 	TCHAR tszFileHash[128];                                               //文件HASH值
+	TCHAR tszBuckKey[128];                                                //BUCKKey
 	__int64x ullCount;                                                    //总大小
 	__int64x ullRWCount;                                                  //读取(写入)总大小
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
@@ -110,32 +111,37 @@ extern "C" BOOL Session_DLStroage_Destory();
   类型：常量字符指针
   可空：N
   意思：输入要操作的客户端
- 参数.二：lpszFileDir
+ 参数.二：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入BUCKET名称
+ 参数.三：lpszFileDir
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：输入文件地址
- 参数.三：pInt_Count
+ 参数.四：pInt_Count
   In/Out：Out
   类型：整数型指针
   可空：N
   意思：输出文件大小
- 参数.四：pInt_LeftCount
+ 参数.五：pInt_LeftCount
   In/Out：Out
   类型：整数型指针
   可空：N
   意思：输出需要读取大小
- 参数.五：nPosStart
+ 参数.六：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入开始位置
- 参数.六：nPostEnd
+ 参数.七：nPostEnd
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入结束位置
- 参数.七：lpszFileHash
+ 参数.八：lpszFileHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -145,7 +151,7 @@ extern "C" BOOL Session_DLStroage_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0, LPCTSTR lpszFileHash = NULL);
+extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0, LPCTSTR lpszFileHash = NULL);
 /********************************************************************
 函数名称：Session_DLStroage_GetBuffer
 函数功能：获得下载器中指定缓冲区
@@ -290,27 +296,32 @@ extern "C" BOOL Session_UPStroage_Destory();
   类型：常量字符指针
   可空：N
   意思：输入要操作的客户端
- 参数.二：lpszFileDir
+ 参数.二：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入BUCKET名称
+ 参数.三：lpszFileDir
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：输入文件地址
- 参数.三：nFileSize
+ 参数.四：nFileSize
   In/Out：Out
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.四：nLeftCount
+ 参数.五：nLeftCount
   In/Out：In
   类型：整数型
   可空：N
   意思：输入需要写入的大小
- 参数.五：nPosStart
+ 参数.六：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入起始位置
- 参数.六：nPostEnd
+ 参数.七：nPostEnd
   In/Out：In
   类型：整数型
   可空：Y
@@ -320,7 +331,7 @@ extern "C" BOOL Session_UPStroage_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart = 0, int nPostEnd = 0);
+extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart = 0, int nPostEnd = 0);
 /********************************************************************
 函数名称：Session_UPStroage_GetInfo
 函数功能：获取上传客户端信息

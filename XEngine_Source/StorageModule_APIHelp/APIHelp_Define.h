@@ -20,27 +20,8 @@ typedef struct
 //////////////////////////////////////////////////////////////////////////
 extern "C" DWORD StorageHelp_GetLastError(int* pInt_SysError = NULL);
 /************************************************************************/
-/*                                                                      */
+/*                       分布式函数                                     */
 /************************************************************************/
-/********************************************************************
-函数名称：APIHelp_Distributed_IsMode
-函数功能：判断负载模式是否为指定模式
- 参数.一：pStl_ListMode
-  In/Out：In
-  类型：STL容器指针
-  可空：N
-  意思：输入支持的模式列表
- 参数.二：nMode
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入要判断的模式
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL APIHelp_Distributed_IsMode(list<int>*pStl_ListMode, int nMode);
 /********************************************************************
 函数名称：APIHelp_Distributed_RandomAddr
 函数功能：随机选择一个负载的重定向服务器地址
@@ -54,12 +35,17 @@ extern "C" BOOL APIHelp_Distributed_IsMode(list<int>*pStl_ListMode, int nMode);
   类型：字符指针
   可空：N
   意思：输出获取到的负载地址
+ 参数.三：nMode
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：负载模式
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr);
+extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr, int nMode);
 /********************************************************************
 函数名称：APIHelp_Distributed_FileList
 函数功能：解析所有解析到的内容并且打包成指定结构
@@ -111,19 +97,143 @@ extern "C" BOOL APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGIN
 /********************************************************************
 函数名称：APIHelp_Distributed_UPStorage
 函数功能：通过分布式存储列表获得一个存储地址
- 参数.一：pStl_ListBucket
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的URL
+ 参数.二：pStl_ListBucket
   In/Out：In
   类型：容器指针
   可空：N
   意思：输入要解析的列表
- 参数.二：pSt_StorageBucket
+ 参数.三：pSt_StorageBucket
   In/Out：Out
   类型：数据结构指针
   可空：N
   意思：输出获取到的可用存储
+ 参数.四：nMode
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入LB的模式
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket);
+extern "C" BOOL APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode);
+/********************************************************************
+函数名称：APIHelp_Distributed_GetPathKey
+函数功能：通过BUCKET名称查找对应路径
+ 参数.一：pStl_ListBucket
+  In/Out：In
+  类型：STL容器指针
+  可空：N
+  意思：输入要操作的BUCKET容器
+ 参数.二：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要匹配的BUCKET名称
+ 参数.三：ptszFilePath
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出找到的路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCTSTR lpszBuckKey, TCHAR* ptszFilePath);
+/************************************************************************/
+/*                       帮助函数                                       */
+/************************************************************************/
+/********************************************************************
+函数名称：APIHelp_Api_ProxyAuth
+函数功能：代理验证
+ 参数.一：ptszUser
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出用户名
+ 参数.二：ptszPass
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出密码
+ 参数.三：pptszListHdr
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入要解析的HTTP头
+ 参数.四：nHdrCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的HTTP头列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL APIHelp_Api_ProxyAuth(TCHAR* ptszUser, TCHAR* ptszPass, TCHAR** pptszListHdr, int nHdrCount);
+/********************************************************************
+函数名称：APIHelp_Api_RangeFile
+函数功能：获取HTTP的范围
+ 参数.一：pInt_SPos
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出起始范围
+ 参数.二：pInt_EPos
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出结束范围
+ 参数.三：pInt_Count
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出总大小
+ 参数.四：pptszListHdr
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入HTTP协议头列表
+ 参数.五：nHdrCount
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64x* pInt_Count, TCHAR** pptszListHdr, int nHdrCount);
+/********************************************************************
+函数名称：APIHelp_Api_VerHash
+函数功能：验证HASH值
+ 参数.一：lpszFileHash
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要比对的HASH值
+ 参数.二：pptszListHdr
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入HTTP协议头列表
+ 参数.三：nHdrCount
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount);

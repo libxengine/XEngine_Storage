@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <signal.h>
 #include <errno.h>
+#include <io.h>
 #include <thread>
 #include <list>
 #include <string>
@@ -112,7 +113,6 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "Storage_APPTask/Storage_TaskPass.h"
 #include "Storage_APPTask/Storage_TaskP2p.h"
 #include "Storage_APPTask/Storage_TaskManage.h"
-#include "Storage_APPHelp/Storage_APPHelp.h"
 
 #ifdef _WINDOWS
 #pragma comment(lib,"Ws2_32.lib")

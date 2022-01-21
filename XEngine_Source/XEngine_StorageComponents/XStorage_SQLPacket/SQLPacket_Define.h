@@ -53,12 +53,17 @@ extern "C" BOOL XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage);
 /********************************************************************
 函数名称：XStorage_MySql_FileDelete
 函数功能：删除一个数据库文件信息
- 参数.一：lpszFile
+ 参数.一：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：所属BUCK名称
+ 参数.二：lpszFile
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要删除的文件全路径
- 参数.二：lpszHash
+ 参数.三：lpszHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -68,7 +73,7 @@ extern "C" BOOL XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage);
   意思：是否成功
 备注：参数不能全为空,不会删除文件
 *********************************************************************/
-extern "C" BOOL XStorage_MySql_FileDelete(LPCSTR lpszFile = NULL, LPCSTR lpszHash = NULL);
+extern "C" BOOL XStorage_MySql_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCSTR lpszFile = NULL, LPCSTR lpszHash = NULL);
 /********************************************************************
 函数名称：XStorage_MySql_FileQuery
 函数功能：查询文件信息
@@ -92,80 +97,32 @@ extern "C" BOOL XStorage_MySql_FileDelete(LPCSTR lpszFile = NULL, LPCSTR lpszHas
   类型：常量字符指针
   可空：Y
   意思：查找结束时间,20190730
- 参数.五：lpszFile
+ 参数.五：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：查询的BUCK名
+ 参数.六：lpszFile
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要查询的名称
- 参数.六：lpszHash
+ 参数.七：lpszHash
   In/Out：In
   类型：常量字符指针
   可空：Y
-  意思：要查询的文件MD5
+  意思：要查询的文件HASH
+ 参数.八：lpszTableName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要查询的表明,为NULL所有
 返回值
   类型：逻辑型
   意思：是否成功
 备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszMD5不能全为空
 *********************************************************************/
-extern "C" BOOL XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL, LPCSTR lpszFile = NULL, LPCSTR lpszHash = NULL);
-/********************************************************************
-函数名称：XStorage_MySql_FileQueryForTable
-函数功能：通过指定表名称查询所有文件
- 参数.一：pppSt_ListFile
-  In/Out：Out
-  类型：三级指针
-  可空：N
-  意思：输出查询到的文件信息
- 参数.二：pInt_ListCount
-  In/Out：Out
-  类型：三级指针
-  可空：N
-  意思：导出获取到的列表个数
- 参数.三：lpszTableName
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要查询的表名称
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：参数一需要调用基础库的内存释放函数进行释放内存
-*********************************************************************/
-extern "C" BOOL XStorage_MySql_FileQueryForTable(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCSTR lpszTableName);
-/********************************************************************
-函数名称：XStorage_MySql_FileQueryForHash
-函数功能：通过HASH查询文件信息
- 参数.一：pSt_FileInfo
-  In/Out：Out
-  类型：数据结构指针
-  可空：N
-  意思：输出查询到的文件信息
- 参数.二：lpszFileMD5
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要查询的文件MD5
- 参数.三：lpszUser
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入文件所属用户
- 参数.四：lpszTimeStart
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：输入开始时间
- 参数.五：lpszTimeEnd
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：输入结束时间
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL XStorage_MySql_FileQueryForHash(XSTORAGECORE_DBFILE* pSt_FileInfo, LPCSTR lpszFileMD5, LPCSTR lpszUser = NULL, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL);
+extern "C" BOOL XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL, LPCTSTR lpszBuckKey = NULL, LPCSTR lpszFile = NULL, LPCSTR lpszHash = NULL, LPCTSTR lpszTableName = NULL);
 /************************************************************************/
 /*                         SQLITE数据库函数                             */
 /************************************************************************/
@@ -214,12 +171,17 @@ extern "C" BOOL XStorage_SQLite_FileInsert(XSTORAGECORE_DBFILE* pSt_DBManage);
 /********************************************************************
 函数名称：XStorage_SQLite_FileDelete
 函数功能：删除一个数据库文件信息
- 参数.一：lpszFile
+ 参数.一：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：所属BUCK名称
+ 参数.二：lpszFile
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要删除的文件全路径
- 参数.二：lpszHash
+ 参数.三：lpszHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -229,7 +191,7 @@ extern "C" BOOL XStorage_SQLite_FileInsert(XSTORAGECORE_DBFILE* pSt_DBManage);
   意思：是否成功
 备注：参数不能全为空,不会删除文件
 *********************************************************************/
-extern "C" BOOL XStorage_SQLite_FileDelete(LPCTSTR lpszFile = NULL, LPCTSTR lpszHash = NULL);
+extern "C" BOOL XStorage_SQLite_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFile = NULL, LPCTSTR lpszHash = NULL);
 /********************************************************************
 函数名称：XStorage_SQLite_FileQuery
 函数功能：查询文件信息
@@ -253,43 +215,139 @@ extern "C" BOOL XStorage_SQLite_FileDelete(LPCTSTR lpszFile = NULL, LPCTSTR lpsz
   类型：常量字符指针
   可空：Y
   意思：查找结束时间,20190730
- 参数.五：lpszFile
+ 参数.五：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：查询的BUCK名
+ 参数.六：lpszFile
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要查询的名称
- 参数.六：lpszHash
+ 参数.七：lpszHash
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要查询的文件HASH
+ 参数.八：lpszTableName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要查询的表明,为NULL所有
 返回值
   类型：逻辑型
   意思：是否成功
 备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszHash不能全为空
 *********************************************************************/
-extern "C" BOOL XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL, LPCTSTR lpszFile = NULL, LPCTSTR lpszHash = NULL);
+extern "C" BOOL XStorage_SQLite_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFile = NULL, LPCTSTR lpszHash = NULL, LPCTSTR lpszTableName = NULL);
+/************************************************************************/
+/*                         SQL帮助函数集                                */
+/************************************************************************/
 /********************************************************************
-函数名称：XStorage_SQLite_FileQueryForTable
-函数功能：通过指定表名称查询所有文件
- 参数.一：pppSt_ListFile
+函数名称：XStorage_SQLHelp_Insert
+函数功能：数据插入函数
+ 参数.一：ptszSQLBuffer
   In/Out：Out
-  类型：三级指针
+  类型：字符指针
   可空：N
-  意思：输出查询到的文件信息
- 参数.二：pInt_ListCount
-  In/Out：Out
-  类型：三级指针
-  可空：N
-  意思：导出获取到的列表个数
- 参数.三：lpszTableName
+  意思：输出打好包的插入语句
+ 参数.二：pSt_DBFile
   In/Out：In
-  类型：常量字符指针
+  类型：数据结构指针
   可空：N
-  意思：输入要查询的表名称
+  意思：输入要插入的数据
 返回值
   类型：逻辑型
   意思：是否成功
-备注：参数一需要调用基础库的内存释放函数进行释放内存
+备注：
 *********************************************************************/
-extern "C" BOOL XStorage_SQLite_FileQueryForTable(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTableName);
+extern "C" BOOL XStorage_SQLHelp_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBFILE* pSt_DBFile);
+/********************************************************************
+函数名称：XStorage_SQLHelp_Delete
+函数功能：删除语句
+ 参数.一：ptszSQLBuffer
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出打好包的查询语句
+ 参数.二：lpszTableName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要查询的表名称
+ 参数.三：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入BUCKET名
+ 参数.四：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入文件名称
+ 参数.五：lpszFileHash
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入文件HASH值
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL XStorage_SQLHelp_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
+/********************************************************************
+函数名称：XStorage_SQLHelp_Query
+函数功能：数据库查询打包函数
+ 参数.一：ptszSQLBuffer
+  In/Out：In
+  类型：字符指针
+  可空：N
+  意思：输出打好包的查询语句
+ 参数.二：lpszTableName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要查询的表名称
+ 参数.三：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入BUCKET名
+ 参数.四：lpszFilePath
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入文件路径
+ 参数.五：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入文件名称
+ 参数.六：lpszFileHash
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入文件HASH值
+ 参数.七：lpszFileUser
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入文件所属用户
+ 参数.八：lpszTimeStart
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入文件开始时间范围
+ 参数.九：lpszTimeEnd
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入文件结束时间范围
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL XStorage_SQLHelp_Query(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL, LPCTSTR lpszFileUser = NULL, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL);

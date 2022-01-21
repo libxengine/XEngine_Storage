@@ -66,27 +66,32 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   类型：常量字符指针
   可空：N
   意思：输入要操作的客户端
- 参数.二：lpszFileDir
+ 参数.二：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入BUCKET名称
+ 参数.三：lpszFileDir
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：输入文件地址
- 参数.三：nFileSize
+ 参数.四：nFileSize
   In/Out：Out
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.四：nLeftCount
+ 参数.五：nLeftCount
   In/Out：In
   类型：整数型
   可空：N
   意思：输入需要写入的大小
- 参数.五：nPosStart
+ 参数.六：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入起始位置
- 参数.六：nPostEnd
+ 参数.七：nPostEnd
   In/Out：In
   类型：整数型
   可空：Y
@@ -96,7 +101,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
+BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -120,17 +125,18 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 
 	SESSION_STORAGEUPLOADER st_Client;
 	memset(&st_Client, '\0', sizeof(SESSION_STORAGEUPLOADER));
-
+	//填充下载信息
 	st_Client.st_StorageInfo.ullPosStart = nPosStart;
 	st_Client.st_StorageInfo.ullPosEnd = nPostEnd;
 	st_Client.st_StorageInfo.ullRWCount = nLeftCount;
 	st_Client.st_StorageInfo.ullCount = nFileSize;
+	_tcscpy(st_Client.st_StorageInfo.tszBuckKey, lpszBuckKey);
 	_tcscpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
 	_tcscpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
-	//填充下载信息
-	if ((m_bResume) && ((0 != nPosStart) || (0 != nPostEnd)))
+	//文件是否存在
+	if ((m_bResume) && ((0 != nPosStart) || (0 != nPostEnd)) && (0 == _taccess(lpszFileDir, 0)))
 	{
-		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("ab+"));
+		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("rb+"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
 			Session_IsErrorOccur = TRUE;
@@ -251,7 +257,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR
 			break;
 		}
 	}
-	stl_MapIterator->second.st_StorageInfo.ullRWLen += nMsgLen;
+	stl_MapIterator->second.st_StorageInfo.ullRWLen += nWLen;
 	st_Locker.unlock_shared();
 	return TRUE;
 }

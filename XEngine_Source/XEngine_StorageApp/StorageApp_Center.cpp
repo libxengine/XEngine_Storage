@@ -56,21 +56,69 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
 	LPCTSTR lpszMethodPost = _T("POST");
-	LPCTSTR lpszMethodGet = _T("GET");
 	LPCTSTR lpszMethodOption = _T("OPTIONS");
+
+	if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
+	{
+		TCHAR tszUserName[64];
+		TCHAR tszUserPass[64];
+
+		memset(tszUserName, '\0', sizeof(tszUserName));
+		memset(tszUserPass, '\0', sizeof(tszUserPass));
+		if (!APIHelp_Api_ProxyAuth(tszUserName, tszUserPass, pptszListHdr, nHdrCount))
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.bAuth = TRUE;
+			st_HDRParam.nHttpCode = 401;
+
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,用户验证失败,错误:%lX"), lpszClientAddr, APIHelp_GetLastError());
+			return FALSE;
+		}
+		if (_tcslen(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy) > 0)
+		{
+			int nBLen = 0;
+			int nResponseCode = 0;
+			TCHAR* ptszBody = NULL;
+
+			Protocol_StoragePacket_BasicAuth(pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
+			APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &ptszBody, &nBLen);
+			if (200 != nResponseCode)
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.bAuth = TRUE;
+				st_HDRParam.nHttpCode = nResponseCode;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
+			}
+			BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszUserName, tszUserPass);
+		}
+		else
+		{
+			if (!Session_User_Exist(tszUserName, tszUserPass))
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.bAuth = TRUE;
+				st_HDRParam.nHttpCode = 401;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,验证用户失败,无法继续"), lpszClientAddr);
+				return FALSE;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,本地验证用户验证通过,用户名:%s,密码:%s"), lpszClientAddr, tszUserName, tszUserPass);
+		}
+		st_HDRParam.bAuth = TRUE;
+	}
 
 	if (0 == _tcsnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodPost)))
 	{
-		if (!XEngine_APPHelp_ProxyAuth(lpszClientAddr, lpszMethodPost, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPCENTER))
-		{
-			return FALSE;
-		}
-		if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
-		{
-			st_HDRParam.bAuth = TRUE;
-		}
 		//使用重定向?
-		if (APIHelp_Distributed_IsMode(st_LoadbalanceCfg.st_LoadBalance.pStl_ListUseMode, STORAGE_NETTYPE_HTTPCENTER))
+		if (st_LoadbalanceCfg.st_LBDistributed.nCenterMode > 0)
 		{
 			TCHAR tszHdrBuffer[1024];
 			TCHAR tszStorageAddr[128];
@@ -81,7 +129,7 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 302;
 
-			APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter, tszStorageAddr);
+			APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter, tszStorageAddr, st_LoadbalanceCfg.st_LBDistributed.nCenterMode);
 			_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), tszStorageAddr, pSt_HTTPParam->tszHttpUri);
 
 			RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
@@ -109,18 +157,6 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		{
 			XEngine_Task_Manage(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
 		}
-	}
-	else if (0 == _tcsnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodGet)))
-	{
-		if (!XEngine_APPHelp_ProxyAuth(lpszClientAddr, lpszMethodGet, pSt_HTTPParam->tszHttpUri, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPCENTER))
-		{
-			return FALSE;
-		}
-		if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
-		{
-			st_HDRParam.bAuth = TRUE;
-		}
-		XEngine_Task_P2PGet(pSt_HTTPParam->tszHttpUri + 1, lpszClientAddr, pSt_HTTPParam);
 	}
 	else if (0 == _tcsnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodOption)))
 	{

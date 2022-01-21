@@ -33,10 +33,10 @@ SOCKET m_hSocket;
 
 int APPClient_P2XPLogin()
 {
-	DWORD dwNetType = 0;
 	Json::Value st_JsonRoot;
 	TCHAR tszMsgBuffer[2048];
 	XENGINE_PROTOCOLHDR st_ProtocolHdr;
+	ENUM_XENGINE_NETXAPI_SOCKET_CONNECTTYPE dwNetType;
 
 	memset(tszPublicAddr, '\0', sizeof(tszPublicAddr));
 	memset(tszPrivateAddr, '\0', sizeof(tszPrivateAddr));
@@ -45,7 +45,7 @@ int APPClient_P2XPLogin()
 
 	st_ProtocolHdr.wHeader = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_HEADER;
 	st_ProtocolHdr.unOperatorType = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_P2XP;
-	st_ProtocolHdr.unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_AUTH_REQLOGIN;
+	st_ProtocolHdr.unOperatorCode = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_P2XP_REQLOGIN;
 	st_ProtocolHdr.byVersion = 2;
 	st_ProtocolHdr.wTail = XENGIEN_COMMUNICATION_PACKET_PROTOCOL_TAIL;
 

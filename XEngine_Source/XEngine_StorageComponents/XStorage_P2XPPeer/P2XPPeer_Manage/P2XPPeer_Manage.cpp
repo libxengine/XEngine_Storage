@@ -429,7 +429,7 @@ BOOL CP2XPPeer_Manage::P2XPPeer_Manage_GetAllList(TCHAR*** pppszP2XPClient, int*
 	{
 		_tcscpy((*pppszP2XPClient)[i], stl_MapIterator->first.c_str());
 	}
-	*pInt_ListCount = stl_MapClients.size();
+	*pInt_ListCount = stl_MapPeerAddr.size();
 	st_rwLocker.unlock_shared();
 	return TRUE;
 }
