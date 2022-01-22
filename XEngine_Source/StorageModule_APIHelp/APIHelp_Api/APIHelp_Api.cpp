@@ -54,7 +54,6 @@ BOOL CAPIHelp_Api::APIHelp_Api_ProxyAuth(TCHAR* ptszUser, TCHAR* ptszPass, TCHAR
 {
 	APIHelp_IsErrorOccur = FALSE;
 
-	int nSDLen = 1024;
 	int nAuthType = 0;
 	int nAuthLen = MAX_PATH;
 

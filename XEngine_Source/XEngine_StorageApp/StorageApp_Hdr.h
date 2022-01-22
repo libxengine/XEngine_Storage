@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <signal.h>
 #include <errno.h>
-#include <io.h>
 #include <thread>
 #include <list>
 #include <string>
@@ -14,6 +13,7 @@
 #ifdef _WINDOWS
 #include <windows.h>
 #include <tchar.h>
+#include <io.h>
 #else
 #include <unistd.h>
 #include <sys/wait.h>
