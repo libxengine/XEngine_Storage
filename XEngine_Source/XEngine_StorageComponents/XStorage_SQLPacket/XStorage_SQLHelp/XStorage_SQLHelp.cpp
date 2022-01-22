@@ -163,7 +163,6 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Query(TCHAR* ptszSQLBuffer, LPCTSTR lps
 {
     XStorage_IsErrorOccur = FALSE;
 
-    BOOL bInit = FALSE;
     TCHAR tszSQLQuery[1024];
     memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 

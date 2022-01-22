@@ -11,6 +11,7 @@
 // 添加要在此处预编译的标头
 #include "framework.h"
 #include <tchar.h>
+#include <io.h>
 #else
 #include <unistd.h>
 #endif
@@ -20,7 +21,6 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
-#include <io.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <list>
