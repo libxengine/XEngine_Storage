@@ -257,6 +257,25 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 		{
 			return FALSE;
 		}
+		//判断目录大小是否正常
+		int nListCount = 0;
+		__int64u nDirCount = 0;   //当前目录大小
+		CHAR** ppListFile;
+		SystemApi_File_EnumFile(pSt_StorageBucket->tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
+		for (int j = 0; j < nListCount; j++)
+		{
+			struct __stat64 st_FStat;
+			_stat64(ppListFile[j], &st_FStat);
+			nDirCount += st_FStat.st_size;
+		}
+		BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
+		//如果当前目录大小大于设定的大小.
+		if (nDirCount >= APIHelp_Distributed_GetSize(pSt_StorageBucket->tszBuckSize))
+		{
+			APIHelp_IsErrorOccur = TRUE;
+			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_SIZE;
+			return FALSE;
+		}
 	}
 	else
 	{
