@@ -11,6 +11,7 @@
 // 添加要在此处预编译的标头
 #include "framework.h"
 #include <tchar.h>
+#include <io.h>
 #else
 #include <unistd.h>
 #endif
@@ -20,7 +21,6 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
-#include <io.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <list>
@@ -50,9 +50,5 @@ extern BOOL Session_IsErrorOccur;
 extern DWORD Session_dwErrorCode;
 
 #ifdef _WINDOWS
-#ifdef _WIN64
-#pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib.lib")
-#else
-#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib.lib")
-#endif
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #endif

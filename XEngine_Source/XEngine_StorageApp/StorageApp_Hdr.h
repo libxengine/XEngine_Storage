@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <signal.h>
 #include <errno.h>
-#include <io.h>
 #include <thread>
 #include <list>
 #include <string>
@@ -14,6 +13,7 @@
 #ifdef _WINDOWS
 #include <windows.h>
 #include <tchar.h>
+#include <io.h>
 #else
 #include <unistd.h>
 #include <sys/wait.h>
@@ -128,12 +128,21 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #ifdef _WIN64
+#ifdef _DEBUG
+#pragma comment(lib,"../x64/Debug/StorageModule_Session.lib")
+#pragma comment(lib,"../x64/Debug/StorageModule_Config.lib")
+#pragma comment(lib,"../x64/Debug/StorageModule_APIHelp.lib")
+#pragma comment(lib,"../x64/Debug/StorageModule_Protocol.lib")
+#pragma comment(lib,"../x64/Debug/XStorage_SQLPacket.lib")
+#pragma comment(lib,"../x64/Debug/XStorage_P2XPPeer.lib")
+#else
 #pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Protocol.lib")
 #pragma comment(lib,"../x64/Release/XStorage_SQLPacket.lib")
 #pragma comment(lib,"../x64/Release/XStorage_P2XPPeer.lib")
+#endif
 #else
 #ifdef _DEBUG
 #pragma comment(lib,"../Debug/StorageModule_Session.lib")

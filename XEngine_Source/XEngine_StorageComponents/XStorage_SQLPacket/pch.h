@@ -55,13 +55,6 @@ extern BOOL XStorage_IsErrorOccur;
 extern DWORD XStorage_dwErrorCode;
 
 #ifdef _WINDOWS
-#ifdef _WIN64
-#pragma comment(lib,"x64/XEngine_BaseLib/XEngine_BaseLib.lib")
-#pragma comment(lib,"x64/XEngine_HelpComponents/HelpComponents_DataBase.lib")
-#else
-#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib.lib")
-#pragma comment(lib,"x86/XEngine_HelpComponents/HelpComponents_DataBase.lib")
-#endif // _WIN64
-#else
-
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
+#pragma comment(lib,"XEngine_HelpComponents/HelpComponents_DataBase.lib")
 #endif

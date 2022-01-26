@@ -64,7 +64,6 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 				memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
 				Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
-
 				Protocol_StoragePacket_UPDown(tszProxyStr, &nPLen, st_StorageInfo.tszFileDir, st_StorageInfo.tszBuckKey, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, TRUE, st_StorageInfo.tszFileHash);
 				if (APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode))
 				{
