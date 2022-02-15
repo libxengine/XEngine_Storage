@@ -45,3 +45,19 @@ using namespace std;
 *********************************************************************/
 extern BOOL Config_IsErrorOccur;
 extern DWORD Config_dwErrorCode;
+
+#ifdef _WINDOWS
+#ifdef _DEBUG
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Debug/jsoncpp")
+#else
+#pragma comment(lib,"../Debug/jsoncpp")
+#endif
+#else
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Release/jsoncpp")
+#else
+#pragma comment(lib,"../Release/jsoncpp")
+#endif
+#endif
+#endif

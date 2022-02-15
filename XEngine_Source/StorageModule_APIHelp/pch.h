@@ -67,4 +67,17 @@ extern DWORD APIHelp_dwErrorCode;
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpServer")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
+#ifdef _DEBUG
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Debug/jsoncpp")
+#else
+#pragma comment(lib,"../Debug/jsoncpp")
+#endif
+#else
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Release/jsoncpp")
+#else
+#pragma comment(lib,"../Release/jsoncpp")
+#endif
+#endif
 #endif

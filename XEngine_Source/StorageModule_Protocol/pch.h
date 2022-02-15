@@ -61,4 +61,17 @@ extern DWORD Protocol_dwErrorCode;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
+#ifdef _DEBUG
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Debug/jsoncpp")
+#else
+#pragma comment(lib,"../Debug/jsoncpp")
+#endif
+#else
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Release/jsoncpp")
+#else
+#pragma comment(lib,"../Release/jsoncpp")
+#endif
+#endif
 #endif

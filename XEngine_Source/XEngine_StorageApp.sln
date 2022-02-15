@@ -24,6 +24,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_Protocol", "S
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XStorage_P2XPPeer", "XEngine_StorageComponents\XStorage_P2XPPeer\XStorage_P2XPPeer.vcxproj", "{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_ThirdPart", "XEngine_ThirdPart", "{83E1D53F-3BB6-4CF2-AC05-52F9B37A8954}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp", "XEngine_ThirdPart\jsoncpp\jsoncpp.vcxproj", "{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -88,6 +92,14 @@ Global
 		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Release|x64.Build.0 = Release|x64
 		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Release|x86.ActiveCfg = Release|Win32
 		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Release|x86.Build.0 = Release|Win32
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Debug|x64.ActiveCfg = Debug|x64
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Debug|x64.Build.0 = Debug|x64
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Debug|x86.ActiveCfg = Debug|Win32
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Debug|x86.Build.0 = Debug|Win32
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Release|x64.ActiveCfg = Release|x64
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Release|x64.Build.0 = Release|x64
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Release|x86.ActiveCfg = Release|Win32
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +107,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CAEF9BAE-38FB-407C-8C83-87A97B3647D3} = {4FF9D547-65B4-4B26-923C-4207BAA3AACB}
 		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74} = {4FF9D547-65B4-4B26-923C-4207BAA3AACB}
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {83E1D53F-3BB6-4CF2-AC05-52F9B37A8954}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B1A862E2-1FE4-4F3E-B84C-3479A0B3A783}
