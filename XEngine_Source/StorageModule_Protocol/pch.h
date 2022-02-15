@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <tchar.h>
 #include <time.h>
-#include <json/json.h>
 #else
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,13 +22,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#ifdef _CENTOS
-#include <json/json.h>
-#else
-#include <jsoncpp/json/json.h>
-#endif
 #endif
 #endif //PCH_H
+#include <json/json.h>
 #include <list>
 #include <unordered_map>
 using namespace std;

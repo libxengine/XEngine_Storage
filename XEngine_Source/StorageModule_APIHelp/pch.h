@@ -11,14 +11,8 @@
 // 添加要在此处预编译的标头
 #include "framework.h"
 #include <tchar.h>
-#include <json/json.h>
 #include <WinSock2.h>
 #else
-#ifdef _CENTOS
-#include <json/json.h>
-#else
-#include <jsoncpp/json/json.h>
-#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -28,6 +22,7 @@
 #include <list>
 #include <string>
 #include <memory>
+#include <json/json.h>
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
