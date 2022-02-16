@@ -13,7 +13,10 @@
 *********************************************************************/
 CAPIHelp_Distributed::CAPIHelp_Distributed()
 {
-
+	nRandomFront = 0;
+	nRandomBack = 0;
+	nUPFront = 0;
+	nUPBack = 0;
 }
 CAPIHelp_Distributed::~CAPIHelp_Distributed()
 {
@@ -78,14 +81,37 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 	}
 	else if (2 == nMode)
 	{
-		bFound = TRUE;
-		_tcscpy(ptszAddr, pStl_ListAddr->front().c_str());
+		if (nRandomFront >= pStl_ListAddr->size())
+		{
+			nRandomFront = 0;
+		}
+		int i = 0;
+		for (auto stl_ListIterator = pStl_ListAddr->begin(); stl_ListIterator != pStl_ListAddr->end(); stl_ListIterator++, i++)
+		{
+			if (nRandomFront == i)
+			{
+				bFound = TRUE;
+				_tcscpy(ptszAddr, stl_ListIterator->c_str());
+				break;
+			}
+		}
 	}
 	else if (3 == nMode)
 	{
-
-		bFound = TRUE;
-		_tcscpy(ptszAddr, pStl_ListAddr->back().c_str());
+		if (nRandomBack >= pStl_ListAddr->size())
+		{
+			nRandomBack = 0;
+		}
+		int i = 0;
+		for (auto stl_ListIterator = pStl_ListAddr->rbegin(); stl_ListIterator != pStl_ListAddr->rend(); stl_ListIterator++, i++)
+		{
+			if (nRandomBack == i)
+			{
+				bFound = TRUE;
+				_tcscpy(ptszAddr, stl_ListIterator->c_str());
+				break;
+			}
+		}
 	}
 
 	if (!bFound)
@@ -349,11 +375,35 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 		}
 		else if (2 == nMode)
 		{
-			*pSt_StorageBucket = stl_BuckSelect.front();
+			if (nUPFront >= stl_BuckSelect.size())
+			{
+				nUPFront = 0;
+			}
+			int i = 0;
+			for (auto stl_ListIterator = stl_BuckSelect.begin(); stl_ListIterator != stl_BuckSelect.end(); stl_ListIterator++, i++)
+			{
+				if (nUPFront == i)
+				{
+					*pSt_StorageBucket = *stl_ListIterator;
+					break;
+				}
+			}
 		}
 		else if (3 == nMode)
 		{
-			*pSt_StorageBucket = stl_BuckSelect.back();
+			if (nUPFront >= stl_BuckSelect.size())
+			{
+				nUPFront = 0;
+			}
+			int i = 0;
+			for (auto stl_ListIterator = stl_BuckSelect.rbegin(); stl_ListIterator != stl_BuckSelect.rend(); stl_ListIterator++, i++)
+			{
+				if (nUPFront == i)
+				{
+					*pSt_StorageBucket = *stl_ListIterator;
+					break;
+				}
+			}
 		}
 	}
 
