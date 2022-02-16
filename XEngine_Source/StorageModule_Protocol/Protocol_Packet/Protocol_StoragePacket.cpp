@@ -83,7 +83,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuf
         st_JsonObject["tszFileUser"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileUser;
         st_JsonObject["tszFileHash"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileHash;
         st_JsonObject["tszFileTime"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileTime;
-        st_JsonObject["nFileSize"] = (*pppSt_DBFile)[i]->st_ProtocolFile.nFileSize;
+        st_JsonObject["nFileSize"] = (Json::Value::Int64)(*pppSt_DBFile)[i]->st_ProtocolFile.nFileSize;
         //只有在P2P下取文件列表才有效
         if (_tcslen((*pppSt_DBFile)[i]->tszTableName) > 0)
         {
@@ -165,11 +165,11 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_Info(TCHAR* ptszMsgBuffer, 
 		Json::Value st_JsonObject;
 		st_JsonObject["tszClientAddr"] = (*pppSt_DLInfo)[i]->tszClientAddr;
         st_JsonObject["tszFilePath"] = (*pppSt_DLInfo)[i]->tszFileDir;
-        st_JsonObject["ullCount"] = (*pppSt_DLInfo)[i]->ullCount;
-        st_JsonObject["ullRWCount"] = (*pppSt_DLInfo)[i]->ullRWCount;
-        st_JsonObject["ullRWLen"] = (*pppSt_DLInfo)[i]->ullRWLen;
-        st_JsonObject["ullPosStart"] = (*pppSt_DLInfo)[i]->ullPosStart;
-        st_JsonObject["ullPosEnd"] = (*pppSt_DLInfo)[i]->ullPosEnd;
+        st_JsonObject["ullCount"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullCount;
+        st_JsonObject["ullRWCount"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullRWCount;
+        st_JsonObject["ullRWLen"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullRWLen;
+        st_JsonObject["ullPosStart"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullPosStart;
+        st_JsonObject["ullPosEnd"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullPosEnd;
 
         st_JsonDLArray.append(st_JsonObject);
 	}
@@ -178,11 +178,11 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_Info(TCHAR* ptszMsgBuffer, 
 		Json::Value st_JsonObject;
 		st_JsonObject["tszClientAddr"] = (*pppSt_DLInfo)[i]->tszClientAddr;
 		st_JsonObject["tszFilePath"] = (*pppSt_DLInfo)[i]->tszFileDir;
-		st_JsonObject["ullCount"] = (*pppSt_DLInfo)[i]->ullCount;
-		st_JsonObject["ullRWCount"] = (*pppSt_DLInfo)[i]->ullRWCount;
-		st_JsonObject["ullRWLen"] = (*pppSt_DLInfo)[i]->ullRWLen;
-		st_JsonObject["ullPosStart"] = (*pppSt_DLInfo)[i]->ullPosStart;
-		st_JsonObject["ullPosEnd"] = (*pppSt_DLInfo)[i]->ullPosEnd;
+		st_JsonObject["ullCount"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullCount;
+		st_JsonObject["ullRWCount"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullRWCount;
+		st_JsonObject["ullRWLen"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullRWLen;
+		st_JsonObject["ullPosStart"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullPosStart;
+		st_JsonObject["ullPosEnd"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullPosEnd;
 
         st_JsonUPArray.append(st_JsonObject);
 	}
@@ -384,7 +384,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer
     st_JsonRoot["lpszBuckKey"] = lpszBuckKey;
     st_JsonRoot["lpszFileName"] = lpszFileName;
     st_JsonRoot["lpszClientAddr"] = lpszClientAddr;
-    st_JsonRoot["nFileSize"] = nFileSize;
+    st_JsonRoot["nFileSize"] = (Json::Value::Int64)nFileSize;
     if (NULL == lpszFileHash)
     {
         st_JsonRoot["lpszFileHash"];

@@ -3,6 +3,8 @@ UNICODE = 0
 
 FLAGS = RELEASE=$(RELEASE)
 
+THIRD_JSONCPP_PATH = ./XEngine_ThirdPart/jsoncpp
+
 STORAGE_SQL_PATH = ./XEngine_StorageComponents/XStorage_SQLPacket
 STORAGE_P2XP_PATH = ./XEngine_StorageComponents/XStorage_P2XPPeer
 
@@ -13,13 +15,17 @@ BASE_PROTOCOL_PATH = ./StorageModule_Protocol
 
 APPSERVICE_STORAGE_PATH = ./XEngine_StorageApp
 
-NETENGINE_LIB = libXStorage_SQLPacket.so libXStorage_P2XPPeer.so                       \
+NETENGINE_LIB = libjsoncpp.so                                                          \
+                libXStorage_SQLPacket.so libXStorage_P2XPPeer.so                       \
                 libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so libStorageModule_Protocol.so         \
 		 XEngine_StorageApp.exe 
 
 .PHONY:MakeAll 
 MakeAll:$(NETENGINE_LIB)
 	
+libjsoncpp.so:
+	make -C $(THIRD_JSONCPP_PATH) $(FLAGS)
+
 libXStorage_SQLPacket.so:
 	make -C $(STORAGE_SQL_PATH) $(FLAGS)
 libXStorage_P2XPPeer.so:
