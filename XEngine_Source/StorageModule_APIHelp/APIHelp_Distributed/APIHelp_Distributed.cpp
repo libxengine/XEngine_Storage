@@ -355,6 +355,8 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
 			return FALSE;
 		}
+
+		BOOL bFound = FALSE;
 		if (1 == nMode)
 		{
 			XNETHANDLE xhToken = 0;
@@ -368,6 +370,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 			{
 				if (xhToken == i)
 				{
+					bFound = TRUE;
 					*pSt_StorageBucket = *stl_ListIterator;
 					break;
 				}
@@ -384,6 +387,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 			{
 				if (nUPFront == i)
 				{
+					bFound = TRUE;
 					*pSt_StorageBucket = *stl_ListIterator;
 					break;
 				}
@@ -391,19 +395,27 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 		}
 		else if (3 == nMode)
 		{
-			if (nUPFront >= stl_BuckSelect.size())
+			if (nUPBack >= stl_BuckSelect.size())
 			{
-				nUPFront = 0;
+				nUPBack = 0;
 			}
 			int i = 0;
 			for (auto stl_ListIterator = stl_BuckSelect.rbegin(); stl_ListIterator != stl_BuckSelect.rend(); stl_ListIterator++, i++)
 			{
-				if (nUPFront == i)
+				if (nUPBack == i)
 				{
+					bFound = TRUE;
 					*pSt_StorageBucket = *stl_ListIterator;
 					break;
 				}
 			}
+		}
+		
+		if (!bFound)
+		{
+			APIHelp_IsErrorOccur = TRUE;
+			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
+			return FALSE;
 		}
 	}
 
