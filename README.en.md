@@ -1,6 +1,7 @@
 [中文](README.md) ||  [English](README.en.md)  
 # XEngine_Storage
 This repository has a development and master branch. If you want to use it, please use the master branch  
+please use git tool to download,like is git clone or gortoisegit.compile is failed when use download zip packet.
 
 ## Introduction
 c c++ 存储服务 c c++ 文件存储服务  
@@ -35,35 +36,18 @@ feature list:
 #### Requirements  
 support system above windows 7sp1 and linux(ubuntu20.04,centos8)  
 XEngine need V7.24 or above  
-vcpkg need 2021.05.11 or above  
 
 #### Windows
-use vs2019 x86(debug or release) x64(only release) open and complie  
+use vs open and complie  
 You need to configure the environment in the following way, otherwise you may need to set the library directory in the project yourself  
-
-##### install Dependent library
-vcpkg:https://github.com/microsoft/vcpkg   
-vcpkg.exe install jsoncpp  
-vcpkg integrate install  
-you can not use vcpkg and config jsoncpp development for youself   
 
 ##### XEngine
 download xengine through git.read xengine project readme file to configure your env  
 
 #### Linux
 Linux use Makefile to complie  
-supproted ubuntu x64 or centos x64     
+supproted ubuntu x64 or centos x64  
 
-##### install Dependent library
-install jsoncpp to your system  
-ubuntu20.04  
-sudo apt install libjsoncpp-devel  
-Centos8.x  
-sudo dnf install jsoncpp-devel  
-
-##### XEngine Install
-you can install xengine env to your system by shell   
-like this:sudo XEngine_LINEnv.sh -i 3  
 ##### complie
 execute command in XEngine_Source path  
 make complie  
