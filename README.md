@@ -1,7 +1,6 @@
 [中文](README.md) ||  [English](README.en.md)  
 # XEngine_Storage
 本仓库有开发和主分支,如果要使用,请使用master分支下的代码  
-请使用git工具下载,比如git clone 或者 TortoiseGit.zip包可能会造成编译失败的问题
 
 ## 介绍
 c c++ 存储服务 c c++ 文件存储服务  

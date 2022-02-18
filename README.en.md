@@ -1,7 +1,6 @@
 [中文](README.md) ||  [English](README.en.md)  
 # XEngine_Storage
 This repository has a development and master branch. If you want to use it, please use the master branch  
-please use git tool to download,like is git clone or gortoisegit.compile is failed when use download zip packet.
 
 ## Introduction
 c c++ 存储服务 c c++ 文件存储服务  

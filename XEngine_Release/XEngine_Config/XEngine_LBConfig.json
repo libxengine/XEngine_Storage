@@ -29,8 +29,7 @@
                 "Size":"1024MB",
                 "XEngine_Key":"storagekey1",
                 "XEngine_Path":"./XEngine_File"
-            }
-,
+            },
             {
                 "bEnable":1,
                 "nLevel":1,
