@@ -1,13 +1,13 @@
-#pragma once
+ï»¿#pragma once
 /********************************************************************
 //    Created:     2021/07/08  15:24:30
 //    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_APIHelp\APIHelp_Distributed\APIHelp_Distributed.h
 //    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_APIHelp\APIHelp_Distributed
 //    File Base:   APIHelp_Distributed
 //    File Ext:    h
-//    Project:     XEngine(ÍøÂçÍ¨ĞÅÒıÇæ)
+//    Project:     XEngine(ç½‘ç»œé€šä¿¡å¼•æ“)
 //    Author:      qyt
-//    Purpose:     ·Ö²¼Ê½°ïÖúº¯Êı
+//    Purpose:     åˆ†å¸ƒå¼å¸®åŠ©å‡½æ•°
 //    History:
 *********************************************************************/
 

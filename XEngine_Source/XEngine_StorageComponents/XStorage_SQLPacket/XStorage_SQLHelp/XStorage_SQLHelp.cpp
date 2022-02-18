@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "XStorage_SQLHelp.h"
 /********************************************************************
 //    Created:     2022/01/06  10:24:07
@@ -6,9 +6,9 @@
 //    File Path:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageComponents\XStorage_SQLPacket\XStorage_SQLHelp
 //    File Base:   XStorage_SQLHelp
 //    File Ext:    cpp
-//    Project:     XEngine(ÍøÂçÍ¨ÐÅÒýÇæ)
+//    Project:     XEngine(ç½‘ç»œé€šä¿¡å¼•æ“Ž)
 //    Author:      qyt
-//    Purpose:     SQLÊý¾Ý¿âÓï·¨°ïÖúÀà
+//    Purpose:     SQLæ•°æ®åº“è¯­æ³•å¸®åŠ©ç±»
 //    History:
 *********************************************************************/
 CXStorage_SQLHelp::CXStorage_SQLHelp()
@@ -18,25 +18,25 @@ CXStorage_SQLHelp::~CXStorage_SQLHelp()
 {
 }
 //////////////////////////////////////////////////////////////////////////
-//                         ¹«ÓÐº¯Êý
+//                         å…¬æœ‰å‡½æ•°
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-º¯ÊýÃû³Æ£ºXStorage_SQLHelp_Insert
-º¯Êý¹¦ÄÜ£ºÊý¾Ý²åÈëº¯Êý
- ²ÎÊý.Ò»£ºptszSQLBuffer
-  In/Out£ºOut
-  ÀàÐÍ£º×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³ö´òºÃ°üµÄ²åÈëÓï¾ä
- ²ÎÊý.¶þ£ºpSt_DBFile
-  In/Out£ºIn
-  ÀàÐÍ£ºÊý¾Ý½á¹¹Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª²åÈëµÄÊý¾Ý
-·µ»ØÖµ
-  ÀàÐÍ£ºÂß¼­ÐÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šXStorage_SQLHelp_Insert
+å‡½æ•°åŠŸèƒ½ï¼šæ•°æ®æ’å…¥å‡½æ•°
+ å‚æ•°.ä¸€ï¼šptszSQLBuffer
+  In/Outï¼šOut
+  ç±»åž‹ï¼šå­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºæ‰“å¥½åŒ…çš„æ’å…¥è¯­å¥
+ å‚æ•°.äºŒï¼špSt_DBFile
+  In/Outï¼šIn
+  ç±»åž‹ï¼šæ•°æ®ç»“æž„æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦æ’å…¥çš„æ•°æ®
+è¿”å›žå€¼
+  ç±»åž‹ï¼šé€»è¾‘åž‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBFILE* pSt_DBFile)
 {
@@ -47,7 +47,7 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Insert(TCHAR* ptszSQLBuffer, XSTORAGECO
 
 	memset(tszTableName, '\0', sizeof(tszTableName));
 	memset(&st_LibTimer, '\0', sizeof(XENGINE_LIBTIMER));
-	//»ñµÃ²åÈëÈÕÆÚ±í
+	//èŽ·å¾—æ’å…¥æ—¥æœŸè¡¨
 	BaseLib_OperatorTime_GetSysTime(&st_LibTimer);
 
 	if (_tcslen(pSt_DBFile->tszTableName) > 0)
@@ -63,37 +63,37 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Insert(TCHAR* ptszSQLBuffer, XSTORAGECO
 	return TRUE;
 }
 /********************************************************************
-º¯ÊýÃû³Æ£ºXStorage_SQLHelp_Delete
-º¯Êý¹¦ÄÜ£ºÉ¾³ýÓï¾ä
- ²ÎÊý.Ò»£ºptszSQLBuffer
-  In/Out£ºIn
-  ÀàÐÍ£º×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³ö´òºÃ°üµÄ²éÑ¯Óï¾ä
- ²ÎÊý.¶þ£ºlpszTableName
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÒª²éÑ¯µÄ±íÃû³Æ
- ²ÎÊý.Èý£ºlpszBuckKey
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëBUCKETÃû
- ²ÎÊý.ËÄ£ºlpszFileName
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÎÄ¼þÃû³Æ
- ²ÎÊý.Îå£ºlpszFileHash
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÎÄ¼þHASHÖµ
-·µ»ØÖµ
-  ÀàÐÍ£ºÂß¼­ÐÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šXStorage_SQLHelp_Delete
+å‡½æ•°åŠŸèƒ½ï¼šåˆ é™¤è¯­å¥
+ å‚æ•°.ä¸€ï¼šptszSQLBuffer
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºæ‰“å¥½åŒ…çš„æŸ¥è¯¢è¯­å¥
+ å‚æ•°.äºŒï¼šlpszTableName
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥è¦æŸ¥è¯¢çš„è¡¨åç§°
+ å‚æ•°.ä¸‰ï¼šlpszBuckKey
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥BUCKETå
+ å‚æ•°.å››ï¼šlpszFileName
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥æ–‡ä»¶åç§°
+ å‚æ•°.äº”ï¼šlpszFileHash
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥æ–‡ä»¶HASHå€¼
+è¿”å›žå€¼
+  ç±»åž‹ï¼šé€»è¾‘åž‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */)
 {
@@ -107,57 +107,57 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lp
 	return TRUE;
 }
 /********************************************************************
-º¯ÊýÃû³Æ£ºXStorage_SQLHelp_Query
-º¯Êý¹¦ÄÜ£ºÊý¾Ý¿â²éÑ¯´ò°üº¯Êý
- ²ÎÊý.Ò»£ºptszSQLBuffer
-  In/Out£ºIn
-  ÀàÐÍ£º×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³ö´òºÃ°üµÄ²éÑ¯Óï¾ä
- ²ÎÊý.¶þ£ºlpszTableName
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÒª²éÑ¯µÄ±íÃû³Æ
- ²ÎÊý.Èý£ºlpszBuckKey
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëBUCKETÃû
- ²ÎÊý.ËÄ£ºlpszFilePath
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÎÄ¼þÂ·¾¶
- ²ÎÊý.Îå£ºlpszFileName
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÎÄ¼þÃû³Æ
- ²ÎÊý.Áù£ºlpszFileHash
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÎÄ¼þHASHÖµ
- ²ÎÊý.Æß£ºlpszFileUser
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÎÄ¼þËùÊôÓÃ»§
- ²ÎÊý.°Ë£ºlpszTimeStart
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÎÄ¼þ¿ªÊ¼Ê±¼ä·¶Î§
- ²ÎÊý.¾Å£ºlpszTimeEnd
-  In/Out£ºIn
-  ÀàÐÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºY
-  ÒâË¼£ºÊäÈëÎÄ¼þ½áÊøÊ±¼ä·¶Î§
-·µ»ØÖµ
-  ÀàÐÍ£ºÂß¼­ÐÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šXStorage_SQLHelp_Query
+å‡½æ•°åŠŸèƒ½ï¼šæ•°æ®åº“æŸ¥è¯¢æ‰“åŒ…å‡½æ•°
+ å‚æ•°.ä¸€ï¼šptszSQLBuffer
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºæ‰“å¥½åŒ…çš„æŸ¥è¯¢è¯­å¥
+ å‚æ•°.äºŒï¼šlpszTableName
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥è¦æŸ¥è¯¢çš„è¡¨åç§°
+ å‚æ•°.ä¸‰ï¼šlpszBuckKey
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥BUCKETå
+ å‚æ•°.å››ï¼šlpszFilePath
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥æ–‡ä»¶è·¯å¾„
+ å‚æ•°.äº”ï¼šlpszFileName
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥æ–‡ä»¶åç§°
+ å‚æ•°.å…­ï¼šlpszFileHash
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥æ–‡ä»¶HASHå€¼
+ å‚æ•°.ä¸ƒï¼šlpszFileUser
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥æ–‡ä»¶æ‰€å±žç”¨æˆ·
+ å‚æ•°.å…«ï¼šlpszTimeStart
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥æ–‡ä»¶å¼€å§‹æ—¶é—´èŒƒå›´
+ å‚æ•°.ä¹ï¼šlpszTimeEnd
+  In/Outï¼šIn
+  ç±»åž‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šY
+  æ„æ€ï¼šè¾“å…¥æ–‡ä»¶ç»“æŸæ—¶é—´èŒƒå›´
+è¿”å›žå€¼
+  ç±»åž‹ï¼šé€»è¾‘åž‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Query(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFilePath /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */, LPCTSTR lpszFileUser /* = NULL */, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */)
 {
@@ -172,7 +172,7 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Query(TCHAR* ptszSQLBuffer, LPCTSTR lps
     return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
-//                          ±£»¤º¯Êý
+//                          ä¿æŠ¤å‡½æ•°
 //////////////////////////////////////////////////////////////////////////
 BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFilePath /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */, LPCTSTR lpszFileUser /* = NULL */, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */)
 {
@@ -181,7 +181,7 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lp
 	BOOL bInit = FALSE;
 	TCHAR tszSQLQuery[MAX_PATH];
 	memset(tszSQLQuery, '\0', MAX_PATH);
-	//ÎÄ¼þËùÊôBUCKET
+	//æ–‡ä»¶æ‰€å±žBUCKET
 	if (NULL != lpszBuckKey)
 	{
 		if (_tcslen(lpszBuckKey) > 0)
@@ -200,7 +200,7 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lp
 			bInit = TRUE;
 		}
 	}
-	//ÎÄ¼þÂ·¾¶
+	//æ–‡ä»¶è·¯å¾„
 	if (NULL != lpszFilePath)
 	{
 		if (_tcslen(lpszFilePath) > 0)
@@ -219,7 +219,7 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lp
 			bInit = TRUE;
 		}
 	}
-	//ÎÄ¼þÃû³Æ
+	//æ–‡ä»¶åç§°
 	if (NULL != lpszFileName)
 	{
 		if (_tcslen(lpszFileName) > 0)
@@ -238,7 +238,7 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lp
 			bInit = TRUE;
 		}
 	}
-	//ÎÄ¼þHASH
+	//æ–‡ä»¶HASH
 	if (NULL != lpszFileHash)
 	{
 		if (_tcslen(lpszFileHash) > 0)
@@ -257,7 +257,7 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lp
 			bInit = TRUE;
 		}
 	}
-	//ÎÄ¼þËùÊôÓÃ»§
+	//æ–‡ä»¶æ‰€å±žç”¨æˆ·
 	if (NULL != lpszFileUser)
 	{
 		if (_tcslen(lpszFileUser) > 0)
@@ -276,7 +276,7 @@ BOOL CXStorage_SQLHelp::XStorage_SQLHelp_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lp
 			bInit = TRUE;
 		}
 	}
-	//Ê±¼ä·¶Î§
+	//æ—¶é—´èŒƒå›´
 	if ((NULL != lpszTimeStart) && (NULL != lpszTimeEnd))
 	{
 		if ((_tcslen(lpszTimeStart) > 0) && (_tcslen(lpszTimeEnd) > 0))

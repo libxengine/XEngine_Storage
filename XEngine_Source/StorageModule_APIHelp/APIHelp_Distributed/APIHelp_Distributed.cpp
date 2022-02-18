@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "APIHelp_Distributed.h"
 /********************************************************************
 //    Created:     2021/07/08  15:26:13
@@ -6,9 +6,9 @@
 //    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_APIHelp\APIHelp_Distributed
 //    File Base:   APIHelp_Distributed
 //    File Ext:    cpp
-//    Project:     XEngine(ÍøÂçÍ¨ĞÅÒıÇæ)
+//    Project:     XEngine(ç½‘ç»œé€šä¿¡å¼•æ“)
 //    Author:      qyt
-//    Purpose:     ·Ö²¼Ê½°ïÖúº¯Êı
+//    Purpose:     åˆ†å¸ƒå¼å¸®åŠ©å‡½æ•°
 //    History:
 *********************************************************************/
 CAPIHelp_Distributed::CAPIHelp_Distributed()
@@ -23,30 +23,30 @@ CAPIHelp_Distributed::~CAPIHelp_Distributed()
 
 }
 //////////////////////////////////////////////////////////////////////////
-//                               ¹«ÓĞº¯Êı
+//                               å…¬æœ‰å‡½æ•°
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-º¯ÊıÃû³Æ£ºAPIHelp_Distributed_RandomAddr
-º¯Êı¹¦ÄÜ£ºËæ»úÑ¡ÔñÒ»¸ö¸ºÔØµÄÖØ¶¨Ïò·şÎñÆ÷µØÖ·
- ²ÎÊı.Ò»£ºpStl_ListAddr
-  In/Out£ºIn
-  ÀàĞÍ£ºSTLÈİÆ÷Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈë¸ºÔØ·şÎñÆ÷ÁĞ±í
- ²ÎÊı.¶ş£ºptszAddr
-  In/Out£ºOut
-  ÀàĞÍ£º×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³ö»ñÈ¡µ½µÄ¸ºÔØµØÖ·
- ²ÎÊı.Èı£ºnMode
-  In/Out£ºOut
-  ÀàĞÍ£ºÕûÊıĞÍ
-  ¿É¿Õ£ºN
-  ÒâË¼£º¸ºÔØÄ£Ê½
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šAPIHelp_Distributed_RandomAddr
+å‡½æ•°åŠŸèƒ½ï¼šéšæœºé€‰æ‹©ä¸€ä¸ªè´Ÿè½½çš„é‡å®šå‘æœåŠ¡å™¨åœ°å€
+ å‚æ•°.ä¸€ï¼špStl_ListAddr
+  In/Outï¼šIn
+  ç±»å‹ï¼šSTLå®¹å™¨æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è´Ÿè½½æœåŠ¡å™¨åˆ—è¡¨
+ å‚æ•°.äºŒï¼šptszAddr
+  In/Outï¼šOut
+  ç±»å‹ï¼šå­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºè·å–åˆ°çš„è´Ÿè½½åœ°å€
+ å‚æ•°.ä¸‰ï¼šnMode
+  In/Outï¼šOut
+  ç±»å‹ï¼šæ•´æ•°å‹
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè´Ÿè½½æ¨¡å¼
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr, int nMode)
 {
@@ -123,27 +123,27 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 	return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºAPIHelp_Distributed_FileList
-º¯Êı¹¦ÄÜ£º½âÎöËùÓĞ½âÎöµ½µÄÄÚÈİ²¢ÇÒ´ò°ü³ÉÖ¸¶¨½á¹¹
- ²ÎÊı.Ò»£ºpStl_ListParse
-  In/Out£ºIn
-  ÀàĞÍ£ºSTLÈİÆ÷Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª½âÎöµÄÄÚÈİÁĞ±í
- ²ÎÊı.¶ş£ºpppSt_ListPacket
-  In/Out£ºOut
-  ÀàĞÍ£ºÈı¼¶Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³öÎÄ¼şĞÅÏ¢½á¹¹ÁĞ±í
- ²ÎÊı.Èı£ºpInt_ListCount
-  In/Out£ºOut
-  ÀàĞÍ£ºÕûÊıĞÍ
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³öÎÄ¼şÁĞ±í¸öÊı
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šAPIHelp_Distributed_FileList
+å‡½æ•°åŠŸèƒ½ï¼šè§£ææ‰€æœ‰è§£æåˆ°çš„å†…å®¹å¹¶ä¸”æ‰“åŒ…æˆæŒ‡å®šç»“æ„
+ å‚æ•°.ä¸€ï¼špStl_ListParse
+  In/Outï¼šIn
+  ç±»å‹ï¼šSTLå®¹å™¨æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦è§£æçš„å†…å®¹åˆ—è¡¨
+ å‚æ•°.äºŒï¼špppSt_ListPacket
+  In/Outï¼šOut
+  ç±»å‹ï¼šä¸‰çº§æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºæ–‡ä»¶ä¿¡æ¯ç»“æ„åˆ—è¡¨
+ å‚æ•°.ä¸‰ï¼špInt_ListCount
+  In/Outï¼šOut
+  ç±»å‹ï¼šæ•´æ•°å‹
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºæ–‡ä»¶åˆ—è¡¨ä¸ªæ•°
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>* pStl_ListParse, XSTORAGECORE_DBFILE*** pppSt_ListPacket, int* pInt_ListCount)
 {
@@ -166,27 +166,27 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>
 	return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºAPIHelp_Distributed_DLStorage
-º¯Êı¹¦ÄÜ£ºÍ¨¹ıURLKEYµÃµ½Ò»¸ö¶ÔÓ¦ÏÂÔØµØÖ·
- ²ÎÊı.Ò»£ºlpszMsgBuffer
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª½âÎöµÄURL
- ²ÎÊı.¶ş£ºpStl_ListBucket
-  In/Out£ºIn
-  ÀàĞÍ£ºÈİÆ÷Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª½âÎöµÄÁĞ±í
- ²ÎÊı.Èı£ºpSt_StorageBucket
-  In/Out£ºOut
-  ÀàĞÍ£ºÊı¾İ½á¹¹Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³ö»ñÈ¡µ½µÄ¿ÉÓÃ´æ´¢
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šAPIHelp_Distributed_DLStorage
+å‡½æ•°åŠŸèƒ½ï¼šé€šè¿‡URLKEYå¾—åˆ°ä¸€ä¸ªå¯¹åº”ä¸‹è½½åœ°å€
+ å‚æ•°.ä¸€ï¼šlpszMsgBuffer
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦è§£æçš„URL
+ å‚æ•°.äºŒï¼špStl_ListBucket
+  In/Outï¼šIn
+  ç±»å‹ï¼šå®¹å™¨æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦è§£æçš„åˆ—è¡¨
+ å‚æ•°.ä¸‰ï¼špSt_StorageBucket
+  In/Outï¼šOut
+  ç±»å‹ï¼šæ•°æ®ç»“æ„æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºè·å–åˆ°çš„å¯ç”¨å­˜å‚¨
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket)
 {
@@ -201,7 +201,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
 	BOOL bFound = FALSE;
 	TCHAR tszKeyStr[128];
 	memset(tszKeyStr, '\0', sizeof(tszKeyStr));
-	//»ñµÃkey
+	//è·å¾—key
 	int i = 1;
 	int nLen = _tcslen(lpszMsgBuffer);
 	for (; i < nLen; i++)
@@ -220,7 +220,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
 		return FALSE;
 	}
 	bFound = FALSE;
-	//»ñµÃ¶ÔÓ¦´æ´¢
+	//è·å¾—å¯¹åº”å­˜å‚¨
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
 		if (0 == _tcsncmp(tszKeyStr, stl_ListIterator->tszBuckKey, _tcslen(tszKeyStr)))
@@ -240,32 +240,32 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
 	return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºAPIHelp_Distributed_UPStorage
-º¯Êı¹¦ÄÜ£ºÍ¨¹ı·Ö²¼Ê½´æ´¢ÁĞ±í»ñµÃÒ»¸ö´æ´¢µØÖ·
- ²ÎÊı.Ò»£ºlpszMsgBuffer
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª½âÎöµÄURL
- ²ÎÊı.¶ş£ºpStl_ListBucket
-  In/Out£ºIn
-  ÀàĞÍ£ºÈİÆ÷Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª½âÎöµÄÁĞ±í
- ²ÎÊı.Èı£ºpSt_StorageBucket
-  In/Out£ºOut
-  ÀàĞÍ£ºÊı¾İ½á¹¹Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³ö»ñÈ¡µ½µÄ¿ÉÓÃ´æ´¢
- ²ÎÊı.ËÄ£ºnMode
-  In/Out£ºIn
-  ÀàĞÍ£ºÕûÊıĞÍ
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëLBµÄÄ£Ê½
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šAPIHelp_Distributed_UPStorage
+å‡½æ•°åŠŸèƒ½ï¼šé€šè¿‡åˆ†å¸ƒå¼å­˜å‚¨åˆ—è¡¨è·å¾—ä¸€ä¸ªå­˜å‚¨åœ°å€
+ å‚æ•°.ä¸€ï¼šlpszMsgBuffer
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦è§£æçš„URL
+ å‚æ•°.äºŒï¼špStl_ListBucket
+  In/Outï¼šIn
+  ç±»å‹ï¼šå®¹å™¨æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦è§£æçš„åˆ—è¡¨
+ å‚æ•°.ä¸‰ï¼špSt_StorageBucket
+  In/Outï¼šOut
+  ç±»å‹ï¼šæ•°æ®ç»“æ„æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºè·å–åˆ°çš„å¯ç”¨å­˜å‚¨
+ å‚æ•°.å››ï¼šnMode
+  In/Outï¼šIn
+  ç±»å‹ï¼šæ•´æ•°å‹
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥LBçš„æ¨¡å¼
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode)
 {
@@ -283,9 +283,9 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 		{
 			return FALSE;
 		}
-		//ÅĞ¶ÏÄ¿Â¼´óĞ¡ÊÇ·ñÕı³£
+		//åˆ¤æ–­ç›®å½•å¤§å°æ˜¯å¦æ­£å¸¸
 		int nListCount = 0;
-		__int64u nDirCount = 0;   //µ±Ç°Ä¿Â¼´óĞ¡
+		__int64u nDirCount = 0;   //å½“å‰ç›®å½•å¤§å°
 		CHAR** ppListFile;
 		SystemApi_File_EnumFile(pSt_StorageBucket->tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
 		for (int j = 0; j < nListCount; j++)
@@ -295,7 +295,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 			nDirCount += st_FStat.st_size;
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
-		//Èç¹ûµ±Ç°Ä¿Â¼´óĞ¡´óÓÚÉè¶¨µÄ´óĞ¡.
+		//å¦‚æœå½“å‰ç›®å½•å¤§å°å¤§äºè®¾å®šçš„å¤§å°.
 		if (nDirCount >= APIHelp_Distributed_GetSize(pSt_StorageBucket->tszBuckSize))
 		{
 			APIHelp_IsErrorOccur = TRUE;
@@ -307,29 +307,29 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 	{
 		int nLastLevel = 99999;
 		list<XENGINE_STORAGEBUCKET> stl_BuckSelect;
-		//ÏÈµÃµ½×îĞ¡¼¶±ğ
+		//å…ˆå¾—åˆ°æœ€å°çº§åˆ«
 		for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 		{
-			//Ö»´¦ÀíÆôÓÃµÄ
+			//åªå¤„ç†å¯ç”¨çš„
 			if (stl_ListIterator->bEnable)
 			{
 				if (stl_ListIterator->nLevel < nLastLevel)
 				{
-					nLastLevel = stl_ListIterator->nLevel; //µÃµ½×îĞ¡¼¶±ğ
+					nLastLevel = stl_ListIterator->nLevel; //å¾—åˆ°æœ€å°çº§åˆ«
 				}
 			}
 		}
-		//ÔÚÀ´»ñµÃÕâ¸ö¼¶±ğµÄÁĞ±í
+		//åœ¨æ¥è·å¾—è¿™ä¸ªçº§åˆ«çš„åˆ—è¡¨
 		for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 		{
-			//Ö»´¦ÀíÆôÓÃµÄ
+			//åªå¤„ç†å¯ç”¨çš„
 			if (stl_ListIterator->bEnable)
 			{
-				//´¦ÀíÓÅÏÈ¼¶
+				//å¤„ç†ä¼˜å…ˆçº§
 				if (stl_ListIterator->nLevel == nLastLevel)
 				{
 					int nListCount = 0;
-					__int64u nDirCount = 0;   //µ±Ç°Ä¿Â¼´óĞ¡
+					__int64u nDirCount = 0;   //å½“å‰ç›®å½•å¤§å°
 					CHAR** ppListFile;
 					SystemApi_File_EnumFile(stl_ListIterator->tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
 					for (int j = 0; j < nListCount; j++)
@@ -339,7 +339,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 						nDirCount += st_FStat.st_size;
 					}
 					BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
-					//Èç¹ûµ±Ç°Ä¿Â¼´óĞ¡´óÓÚÉè¶¨µÄ´óĞ¡.ÄÇÃ´ºöÂÔ
+					//å¦‚æœå½“å‰ç›®å½•å¤§å°å¤§äºè®¾å®šçš„å¤§å°.é‚£ä¹ˆå¿½ç•¥
 					if (nDirCount >= APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize))
 					{
 						continue;
@@ -348,7 +348,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 				}
 			}
 		}
-		//Í¨¹ıÖ¸¶¨Ä£Ê½»ñµÃÒ»¸ökey
+		//é€šè¿‡æŒ‡å®šæ¨¡å¼è·å¾—ä¸€ä¸ªkey
 		if (stl_BuckSelect.empty())
 		{
 			APIHelp_IsErrorOccur = TRUE;
@@ -422,27 +422,27 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 	return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºAPIHelp_Distributed_GetPathKey
-º¯Êı¹¦ÄÜ£ºÍ¨¹ıBUCKETÃû³Æ²éÕÒ¶ÔÓ¦Â·¾¶
- ²ÎÊı.Ò»£ºpStl_ListBucket
-  In/Out£ºIn
-  ÀàĞÍ£ºSTLÈİÆ÷Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª²Ù×÷µÄBUCKETÈİÆ÷
- ²ÎÊı.¶ş£ºlpszBuckKey
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒªÆ¥ÅäµÄBUCKETÃû³Æ
- ²ÎÊı.Èı£ºptszFilePath
-  In/Out£ºOut
-  ÀàĞÍ£º×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³öÕÒµ½µÄÂ·¾¶
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šAPIHelp_Distributed_GetPathKey
+å‡½æ•°åŠŸèƒ½ï¼šé€šè¿‡BUCKETåç§°æŸ¥æ‰¾å¯¹åº”è·¯å¾„
+ å‚æ•°.ä¸€ï¼špStl_ListBucket
+  In/Outï¼šIn
+  ç±»å‹ï¼šSTLå®¹å™¨æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦æ“ä½œçš„BUCKETå®¹å™¨
+ å‚æ•°.äºŒï¼šlpszBuckKey
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦åŒ¹é…çš„BUCKETåç§°
+ å‚æ•°.ä¸‰ï¼šptszFilePath
+  In/Outï¼šOut
+  ç±»å‹ï¼šå­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºæ‰¾åˆ°çš„è·¯å¾„
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CAPIHelp_Distributed::APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCTSTR lpszBuckKey, TCHAR* ptszFilePath)
 {
@@ -473,30 +473,30 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBU
 	return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
-//                               ±£»¤º¯Êı
+//                               ä¿æŠ¤å‡½æ•°
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-º¯ÊıÃû³Æ£ºAPIHelp_Distributed_FileListParse
-º¯Êı¹¦ÄÜ£ºÎÄ¼şÁĞ±í½âÎöº¯Êı
- ²ÎÊı.Ò»£ºlpszMsgBuffer
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª½âÎöµÄJSON
- ²ÎÊı.¶ş£ºnMsgLen
-  In/Out£ºIn
-  ÀàĞÍ£ºÕûÊıĞÍ
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª½âÎöµÄ´óĞ¡
- ²ÎÊı.Èı£ºpSt_DBFile
-  In/Out£ºOut
-  ÀàĞÍ£ºÊı¾İ½á¹¹Ö¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊä³ö½âÎöºóµÄÎÄ¼şĞÅÏ¢
-·µ»ØÖµ
-  ÀàĞÍ£ºÂß¼­ĞÍ
-  ÒâË¼£ºÊÇ·ñ³É¹¦
-±¸×¢£º
+å‡½æ•°åç§°ï¼šAPIHelp_Distributed_FileListParse
+å‡½æ•°åŠŸèƒ½ï¼šæ–‡ä»¶åˆ—è¡¨è§£æå‡½æ•°
+ å‚æ•°.ä¸€ï¼šlpszMsgBuffer
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦è§£æçš„JSON
+ å‚æ•°.äºŒï¼šnMsgLen
+  In/Outï¼šIn
+  ç±»å‹ï¼šæ•´æ•°å‹
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦è§£æçš„å¤§å°
+ å‚æ•°.ä¸‰ï¼špSt_DBFile
+  In/Outï¼šOut
+  ç±»å‹ï¼šæ•°æ®ç»“æ„æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å‡ºè§£æåçš„æ–‡ä»¶ä¿¡æ¯
+è¿”å›å€¼
+  ç±»å‹ï¼šé€»è¾‘å‹
+  æ„æ€ï¼šæ˜¯å¦æˆåŠŸ
+å¤‡æ³¨ï¼š
 *********************************************************************/
 BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileListParse(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE *pSt_DBFile)
 {
@@ -513,7 +513,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileListParse(LPCTSTR lpszMsgBuff
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARSE;
 		return FALSE;
 	}
-	//²éÕÒÎÄ¼şÁĞ±í,Ò»°ãÖ»ÓĞÒ»¸ö
+	//æŸ¥æ‰¾æ–‡ä»¶åˆ—è¡¨,ä¸€èˆ¬åªæœ‰ä¸€ä¸ª
 	int nCount = st_JsonRoot["Count"].asInt();
 	Json::Value st_JsonArray = st_JsonRoot["List"];
 
@@ -532,17 +532,17 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileListParse(LPCTSTR lpszMsgBuff
 	return TRUE;
 }
 /********************************************************************
-º¯ÊıÃû³Æ£ºAPIHelp_Distributed_GetSize
-º¯Êı¹¦ÄÜ£º»ñÈ¡´æ´¢ÉèÖÃ´óĞ¡
- ²ÎÊı.Ò»£ºlpszMsgBuffer
-  In/Out£ºIn
-  ÀàĞÍ£º³£Á¿×Ö·ûÖ¸Õë
-  ¿É¿Õ£ºN
-  ÒâË¼£ºÊäÈëÒª»ñÈ¡µÄ»º³åÇø
-·µ»ØÖµ
-  ÀàĞÍ£ºÕûÊıĞÍ
-  ÒâË¼£º»ñÈ¡µ½µÄ´óĞ¡×Ö½Ú
-±¸×¢£º
+å‡½æ•°åç§°ï¼šAPIHelp_Distributed_GetSize
+å‡½æ•°åŠŸèƒ½ï¼šè·å–å­˜å‚¨è®¾ç½®å¤§å°
+ å‚æ•°.ä¸€ï¼šlpszMsgBuffer
+  In/Outï¼šIn
+  ç±»å‹ï¼šå¸¸é‡å­—ç¬¦æŒ‡é’ˆ
+  å¯ç©ºï¼šN
+  æ„æ€ï¼šè¾“å…¥è¦è·å–çš„ç¼“å†²åŒº
+è¿”å›å€¼
+  ç±»å‹ï¼šæ•´æ•°å‹
+  æ„æ€ï¼šè·å–åˆ°çš„å¤§å°å­—èŠ‚
+å¤‡æ³¨ï¼š
 *********************************************************************/
 __int64u CAPIHelp_Distributed::APIHelp_Distributed_GetSize(LPCTSTR lpszMsgBuffer)
 {
@@ -553,12 +553,12 @@ __int64u CAPIHelp_Distributed::APIHelp_Distributed_GetSize(LPCTSTR lpszMsgBuffer
 
 	memset(tszSizeStr, '\0', sizeof(tszSizeStr));
 	memset(tszUnitStr, '\0', sizeof(tszUnitStr));
-	//·Ö±ğµÃµ½Êı×ÖºÍµ¥Î»
+	//åˆ†åˆ«å¾—åˆ°æ•°å­—å’Œå•ä½
 	memcpy(tszSizeStr, lpszMsgBuffer, _tcslen(lpszMsgBuffer) - 2);
 	BaseLib_OperatorString_GetLastString(lpszMsgBuffer, 2, tszUnitStr);
 
 	__int64u nllSize = _ttoi64(tszSizeStr);
-	//µÃµ½µ¥Î»´óĞ¡
+	//å¾—åˆ°å•ä½å¤§å°
 	if (0 == _tcsncmp(tszUnitStr, _T("KB"), 2))
 	{
 		nllSize = nllSize * 1024;
