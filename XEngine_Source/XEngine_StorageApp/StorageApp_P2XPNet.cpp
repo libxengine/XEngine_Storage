@@ -63,13 +63,7 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 				return FALSE;
 			}
 			//获取外网IP所在位置
-			APIHELP_IPADDRINFO st_IPInfo;
-			memset(&st_IPInfo, '\0', sizeof(APIHELP_IPADDRINFO));
-
-			APIHelp_NetWork_GetIPInfo(st_ClientPeer.st_PeerAddr.tszPublicAddr, &st_IPInfo);
-
-			_tcscpy(st_ClientPeer.st_PeerAddr.tszUserLocation, st_IPInfo.tszIPProvince);
-			_tcscpy(st_ClientPeer.st_PeerAddr.tszUserISP, st_IPInfo.tszIPISP);
+			APIHelp_NetWork_GetIPInfo(st_ClientPeer.st_PeerAddr.tszPublicAddr, &st_ClientPeer.st_IPAddrInfo);
 			st_ClientPeer.st_PeerTimer.dwUserTime = time(NULL);
 			st_ClientPeer.st_PeerTimer.dwKeepAlive = time(NULL);
 			st_ClientPeer.bIsLogin = TRUE;
@@ -205,7 +199,7 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,查询用户失败,获取用户失败,用户名:%s,错误码:%lX"), lpszClientAddr, tszUserName, P2XPPeer_GetLastError());
 				return FALSE;
 			}
-			Protocol_P2XPPacket_User(pSt_ProtocolHdr, &st_PeerInfo.st_PeerAddr, tszSDBuffer, &nSDLen);
+			Protocol_P2XPPacket_User(pSt_ProtocolHdr, &st_PeerInfo.st_PeerAddr, &st_PeerInfo.st_IPAddrInfo, tszSDBuffer, &nSDLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_TCPP2XP);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("客户端:%s,请求查询用户:%s 成功"), lpszClientAddr, tszUserName);
 		}

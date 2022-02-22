@@ -81,9 +81,9 @@ extern "C" BOOL Protocol_P2XPPacket_WLan(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, 
 {
 	return m_P2XPPacket.Protocol_P2XPPacket_WLan(pSt_ProtocolHdr, pStl_ListClients, ptszMsgBuffer, pInt_MsgLen);
 }
-extern "C" BOOL Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL * pSt_PeerInfo, TCHAR * ptszMsgBuffer, int* pInt_Len)
+extern "C" BOOL Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL * pSt_PeerInfo, APIHELP_IPADDRINFO * pSt_AddrInfo, TCHAR * ptszMsgBuffer, int* pInt_Len)
 {
-	return m_P2XPPacket.Protocol_P2XPPacket_User(pSt_ProtocolHdr, pSt_PeerInfo, ptszMsgBuffer, pInt_Len);
+	return m_P2XPPacket.Protocol_P2XPPacket_User(pSt_ProtocolHdr, pSt_PeerInfo, pSt_AddrInfo, ptszMsgBuffer, pInt_Len);
 }
 extern "C" BOOL Protocol_P2XPPacket_Connect(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPIO_PROTOCOL * pSt_IOProtocol, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
