@@ -63,20 +63,13 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 				return FALSE;
 			}
 			//获取外网IP所在位置
-#ifdef _WINDOWS
-			TCHAR tszLocation[128];
-			TCHAR tszISPInfo[128];
+			APIHELP_IPADDRINFO st_IPInfo;
+			memset(&st_IPInfo, '\0', sizeof(APIHELP_IPADDRINFO));
 
-			memset(tszLocation, '\0', sizeof(tszLocation));
-			memset(tszISPInfo, '\0', sizeof(tszISPInfo));
+			APIHelp_NetWork_GetIPInfo(st_ClientPeer.st_PeerAddr.tszPublicAddr, &st_IPInfo);
 
-			NetXApi_Address_IPtoAddr(st_ClientPeer.st_PeerAddr.tszPublicAddr, tszLocation, tszISPInfo);
-			int nLen = _tcslen(tszISPInfo);
-			BaseLib_OperatorString_UTFToAnsi(tszLocation, st_ClientPeer.st_PeerAddr.tszUserLocation, &nLen);
-			BaseLib_OperatorString_UTFToAnsi(tszISPInfo, st_ClientPeer.st_PeerAddr.tszUserISP, &nLen);
-#else
-			NetXApi_Address_IPtoAddr(st_ClientPeer.st_PeerAddr.tszPublicAddr, st_ClientPeer.st_PeerAddr.tszUserLocation, st_ClientPeer.st_PeerAddr.tszUserISP);
-#endif
+			_tcscpy(st_ClientPeer.st_PeerAddr.tszUserLocation, st_IPInfo.tszIPProvince);
+			_tcscpy(st_ClientPeer.st_PeerAddr.tszUserISP, st_IPInfo.tszIPISP);
 			st_ClientPeer.st_PeerTimer.dwUserTime = time(NULL);
 			st_ClientPeer.st_PeerTimer.dwKeepAlive = time(NULL);
 			st_ClientPeer.bIsLogin = TRUE;

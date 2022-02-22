@@ -189,13 +189,6 @@ int main(int argc, char** argv)
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，创建流量限速对象模式成功"));
 
-	if (!NetXApi_Address_OpenQQWry(st_ServiceCfg.st_P2xp.tszQQWryFile))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化IP地址数据库失败,错误:%lX"), NetXApi_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化IP地址数据库成功"));
-
 	if (st_ServiceCfg.st_XTime.bHBTime)
 	{
 		if (!SocketOpt_HeartBeat_InitEx(&xhHBDownload, st_ServiceCfg.st_XTime.nStorageTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBDownload))

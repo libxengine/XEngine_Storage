@@ -2,7 +2,6 @@ copy /y "%XEngine_Library%\x64\XEngine_BaseLib\XEngine_BaseLib.dll" "./"
 copy /y "%XEngine_Library%\x64\XEngine_BaseLib\XEngine_Algorithm.dll" "./"
 copy /y "%XEngine_Library%\x64\XEngine_Core\XEngine_Core.dll" "./"
 copy /y "%XEngine_Library%\x64\XEngine_Core\XEngine_ManagePool.dll" "./"
-copy /y "%XEngine_Library%\x64\XEngine_Core\XEngine_NetXApi.dll" "./"
 copy /y "%XEngine_Library%\x64\XEngine_Core\XEngine_OPenSsl.dll" "./"
 
 copy /y "%XEngine_Library%\x64\XEngine_SystemSdk\XEngine_SystemApi.dll" "./"
