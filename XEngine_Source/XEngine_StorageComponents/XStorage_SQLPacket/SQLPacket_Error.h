@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 /********************************************************************
 //	Created:	2019/6/28   14:56
 //	Filename: 	E:\NetEngine_Windows\NetEngine_SourceCode\NetEngine_Storage\NetEngine_XStorageCore\XStorageCore_Error.h

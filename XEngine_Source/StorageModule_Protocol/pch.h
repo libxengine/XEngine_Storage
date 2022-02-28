@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <tchar.h>
 #include <time.h>
-#include <json/json.h>
 #else
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,13 +22,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#ifdef _CENTOS
-#include <json/json.h>
-#else
-#include <jsoncpp/json/json.h>
-#endif
 #endif
 #endif //PCH_H
+#include <json/json.h>
 #include <list>
 #include <unordered_map>
 using namespace std;
@@ -40,6 +35,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 #include "../XStorage_Protocol.h"
 #include "../StorageModule_Session/Session_Define.h"
 #include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
@@ -61,4 +58,17 @@ extern DWORD Protocol_dwErrorCode;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
+#ifdef _DEBUG
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Debug/jsoncpp")
+#else
+#pragma comment(lib,"../Debug/jsoncpp")
+#endif
+#else
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Release/jsoncpp")
+#else
+#pragma comment(lib,"../Release/jsoncpp")
+#endif
+#endif
 #endif

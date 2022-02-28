@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 /********************************************************************
 //    Created:     2021/10/25  14:34:34
 //    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_Protocol\Protocol_Packet\Protocol_P2XPPacket.h
@@ -25,7 +25,7 @@ public:
 	BOOL Protocol_P2XPPacket_Common(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCTSTR lpszMsgBuffer = NULL);
 	BOOL Protocol_P2XPPacket_Lan(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL*** pppSt_ListClients, int nListCount, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
 	BOOL Protocol_P2XPPacket_WLan(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, list<XENGINE_P2XPPEER_PROTOCOL>* pStl_ListClients, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
-	BOOL Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+	BOOL Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, APIHELP_IPADDRINFO* pSt_AddrInfo, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
 	BOOL Protocol_P2XPPacket_Connect(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, XENGINE_P2XPIO_PROTOCOL* pSt_IOProtocol, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
 	BOOL Protocol_P2XPPacket_QueryFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
 protected:

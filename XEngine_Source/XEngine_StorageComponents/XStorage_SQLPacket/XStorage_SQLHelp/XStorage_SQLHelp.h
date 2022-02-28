@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 /********************************************************************
 //    Created:     2022/01/06  10:23:13
 //    File Name:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageComponents\XStorage_SQLPacket\XStorage_SQLHelp\XStorage_SQLHelp.h

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 /********************************************************************
 //	Created:	2013/1/18  12:24
 //	File Name: 	G:\U_DISK_Path\NetSocketEngine\NetEngine_P2xp\NetEngine_P2XPProtocol\P2XPProtocol_Define.h
@@ -367,12 +367,17 @@ extern "C" BOOL Protocol_P2XPPacket_WLan(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, l
   类型：数据结构指针
   可空：N
   意思：输入获取到的用户信息
- 参数.三：ptszMsgBuffer
+ 参数.三：pSt_AddrInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：IP地址信息
+ 参数.四：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：导出封装好的缓冲区
- 参数.四：pInt_MsgLen
+ 参数.五：pInt_MsgLen
   In/Out：In/Out
   类型：整数型指针
   可空：N
@@ -382,7 +387,7 @@ extern "C" BOOL Protocol_P2XPPacket_WLan(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, l
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, TCHAR* ptszMsgBuffer, int* pInt_Len);
+extern "C" BOOL Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, APIHELP_IPADDRINFO * pSt_AddrInfo, TCHAR* ptszMsgBuffer, int* pInt_Len);
 /********************************************************************
 函数名称：Protocol_P2XPPacket_Connect
 函数功能：请求连接打包函数

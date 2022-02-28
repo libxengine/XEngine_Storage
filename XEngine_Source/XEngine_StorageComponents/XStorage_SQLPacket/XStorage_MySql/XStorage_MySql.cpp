@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "XStorage_MySql.h"
 /********************************************************************
 //    Created:     2021/09/28  15:50:22
@@ -6,9 +6,9 @@
 //    File Path:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageComponents\XStorage_SQLPacket\XStorage_MySql
 //    File Base:   XStorage_MySql
 //    File Ext:    cpp
-//    Project:     XEngine(����ͨ������)
+//    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     MYSQL���ݿ������
+//    Purpose:     MYSQL数据库管理器
 //    History:
 *********************************************************************/
 CXStorage_MySql::CXStorage_MySql()
@@ -22,25 +22,25 @@ CXStorage_MySql::~CXStorage_MySql()
 
 }
 //////////////////////////////////////////////////////////////////////////
-//                         ���к���
+//                         公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-�������ƣ�XStorage_MySql_Init
-�������ܣ���ʼ���洢�������ݿ������
- ����.һ��pSt_DBConnector
-  In/Out��In
-  ���ͣ����ݽṹָ��
-  �ɿգ�N
-  ��˼������MYSQL���ݿ�������Ϣ
- ����.����nTimeDay
-  In/Out��In
-  ���ͣ�������
-  �ɿգ�N
-  ��˼�������ļ����ݱ���ʱ��
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע��
+函数名称：XStorage_MySql_Init
+函数功能：初始化存储服务数据库管理器
+ 参数.一：pSt_DBConnector
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：数据MYSQL数据库连接信息
+ 参数.二：nTimeDay
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入文件数据保留时间
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
 *********************************************************************/
 BOOL CXStorage_MySql::XStorage_MySql_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConnector, int nTimeDay)
 {
@@ -58,7 +58,7 @@ BOOL CXStorage_MySql::XStorage_MySql_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConn
 #else
     LPCTSTR lpszStrCharset = _T("utf8");
 #endif
-    //�������ݿ�
+    //连接数据库
     _tcscpy(pSt_DBConnector->tszDBName, _T("XEngine_Storage"));
     if (!DataBase_MySQL_Connect(&xhDBSQL, pSt_DBConnector, 5, TRUE, lpszStrCharset))
     {
@@ -78,12 +78,12 @@ BOOL CXStorage_MySql::XStorage_MySql_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConn
     return TRUE;
 }
 /********************************************************************
-�������ƣ�XStorage_MySql_Destory
-�������ܣ��������ݿ������
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע��
+函数名称：XStorage_MySql_Destory
+函数功能：销毁数据库管理器
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
 *********************************************************************/
 BOOL CXStorage_MySql::XStorage_MySql_Destory()
 {
@@ -106,17 +106,17 @@ BOOL CXStorage_MySql::XStorage_MySql_Destory()
     return TRUE;
 }
 /********************************************************************
-�������ƣ�XStorage_MySql_FileInsert
-�������ܣ�����һ���ļ����ݵ����ݿ���
- ����.һ��pSt_DBManage
-  In/Out��In
-  ���ͣ����ݽṹָ��
-  �ɿգ�N
-  ��˼��Ҫ�����������Ϣ
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע������ṹ����ֵ���������
+函数名称：XStorage_MySql_FileInsert
+函数功能：插入一个文件数据到数据库中
+ 参数.一：pSt_DBManage
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：要插入的数据信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：这个结构所有值都必须填充
 *********************************************************************/
 BOOL CXStorage_MySql::XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
 {
@@ -149,27 +149,27 @@ BOOL CXStorage_MySql::XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
     return TRUE;
 }
 /********************************************************************
-�������ƣ�XStorage_MySql_FileDelete
-�������ܣ�ɾ��һ�����ݿ��ļ���Ϣ
- ����.һ��lpszBuckKey
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�Y
-  ��˼������BUCK����
- ����.����lpszFile
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�Y
-  ��˼��Ҫɾ�����ļ�ȫ·��
- ����.����lpszHash
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�Y
-  ��˼��Ҫɾ�����ļ�HASH
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע����������ȫΪ��,����ɾ���ļ�
+函数名称：XStorage_MySql_FileDelete
+函数功能：删除一个数据库文件信息
+ 参数.一：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：所属BUCK名称
+ 参数.二：lpszFile
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要删除的文件全路径
+ 参数.三：lpszHash
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要删除的文件HASH
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：参数不能全为空,不会删除文件
 *********************************************************************/
 BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */)
 {
@@ -187,7 +187,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszBuckKey /* = NULL */
     {
         return FALSE;
     }
-    //��ѵ����ɾ��
+    //轮训查找删除
     for (int i = 0; i < nListCount; i++)
     {
 		TCHAR tszSQLStatement[1024];
@@ -205,52 +205,52 @@ BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszBuckKey /* = NULL */
     return TRUE;
 }
 /********************************************************************
-�������ƣ�XStorage_MySql_FileQuery
-�������ܣ���ѯ�ļ���Ϣ
- ����.һ��pppSt_ListFile
-  In/Out��Out
-  ���ͣ�����ָ��
-  �ɿգ�N
-  ��˼��������ѯ�����ļ��б�,�˺�����Ҫ���û�������ڴ��ͷź���
- ����.����pInt_ListCount
-  In/Out��Out
-  ���ͣ�����ָ��
-  �ɿգ�N
-  ��˼�������ļ�����
- ����.����lpszTimeStart
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�Y
-  ��˼�����ҿ�ʼʱ��,20190701
- ����.�ģ�lpszTimeEnd
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�Y
-  ��˼�����ҽ���ʱ��,20190730
- ����.�壺lpszBuckKey
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�Y
-  ��˼����ѯ��BUCK��
- ����.����lpszFile
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�Y
-  ��˼��Ҫ��ѯ������
- ����.�ߣ�lpszHash
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�Y
-  ��˼��Ҫ��ѯ���ļ�HASH
- ����.�ˣ�lpszTableName
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�Y
-  ��˼������Ҫ��ѯ�ı���,ΪNULL����
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע�����ؼٿ���û�в��ҵ�,������¼������.����lpszFile��lpszHash����ȫΪ��
+函数名称：XStorage_MySql_FileQuery
+函数功能：查询文件信息
+ 参数.一：pppSt_ListFile
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：导出查询到的文件列表,此函数需要调用基础库的内存释放函数
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：导出文件个数
+ 参数.三：lpszTimeStart
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：查找开始时间,20190701
+ 参数.四：lpszTimeEnd
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：查找结束时间,20190730
+ 参数.五：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：查询的BUCK名
+ 参数.六：lpszFile
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要查询的名称
+ 参数.七：lpszHash
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要查询的文件HASH
+ 参数.八：lpszTableName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要查询的表明,为NULL所有
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszHash不能全为空
 *********************************************************************/
 BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */, LPCTSTR lpszTableName /* = NULL */)
 {
@@ -262,7 +262,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
         XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_PARAMENT;
         return FALSE;
     }
-    //��ѯ
+    //查询
     XHDATA xhTable = 0;
     __int64u nllLine = 0;
     __int64u nllRow = 0;
@@ -273,7 +273,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
 
     if (NULL == lpszTableName)
     {
-		//����Ƿ�ʱ�䷶Χ����
+		//检查是否时间范围检索
 		if ((NULL != lpszTimeStart) && (NULL != lpszTimeEnd))
 		{
 			if (_tcslen(lpszTimeStart) > 0 && _tcslen(lpszTimeEnd) > 0)
@@ -295,7 +295,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
 			XStorage_dwErrorCode = DataBase_GetLastError();
 			return FALSE;
 		}
-		//��ѵ
+		//轮训
 		for (__int64u i = 0; i < nllLine; i++)
 		{
 			TCHAR** pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
@@ -309,10 +309,10 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
 			memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
 
 			XStorage_SQLHelp_Query(tszSQLStatement, pptszResult[0], lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
-			//��ѯ�ļ�
+			//查询文件
 			if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
 			{
-				//ѭ����ȡ���в��ҵ����ļ�
+				//循环获取所有查找到的文件
 				for (__int64u j = 0; j < dwLineResult; j++)
 				{
 					TCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhResult);
@@ -360,10 +360,10 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
     else
     {
 		XStorage_SQLHelp_Query(tszSQLStatement, lpszTableName, lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
-		//��ѯ�ļ�
+		//查询文件
 		if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
 		{
-			//ѭ����ȡ���в��ҵ����ļ�
+			//循环获取所有查找到的文件
 			for (__int64u i = 0; i < nllLine; i++)
 			{
 				TCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
@@ -406,7 +406,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
 			DataBase_MySQL_FreeResult(xhDBSQL, xhTable);
 		}
     }
-    //�Ƿ�Ϊ��
+    //是否为空
     if (stl_ListFile.empty())
     {
         XStorage_IsErrorOccur = TRUE;
@@ -425,15 +425,15 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
     return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
-//                    ��������
+//                    保护函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-�������ƣ�XStorage_MySql_CreateTable
-�������ܣ����������·ݵ��ļ���
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע��
+函数名称：XStorage_MySql_CreateTable
+函数功能：创建按照月份的文件表
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
 *********************************************************************/
 BOOL CXStorage_MySql::XStorage_MySql_CreateTable()
 {
@@ -462,14 +462,14 @@ BOOL CXStorage_MySql::XStorage_MySql_CreateTable()
         }
 
 		_stprintf_s(tszSQLQuery, _T("CREATE TABLE IF NOT EXISTS `%s` ("
-			"`ID` int NOT NULL AUTO_INCREMENT COMMENT 'ID���',"
-            "`BuckKey` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '·��KEY',"
-			"`FilePath` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '�ļ�·��',"
-			"`FileName` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '�ļ�����',"
-			"`FileHash` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '�ļ�HASH',"
-			"`FileUser` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '�ļ������û�',"
-			"`FileSize` bigint NOT NULL COMMENT '�ļ���С',"
-			"`FileTime` datetime NOT NULL COMMENT '����ʱ��',"
+			"`ID` int NOT NULL AUTO_INCREMENT COMMENT 'ID序号',"
+            "`BuckKey` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '路径KEY',"
+			"`FilePath` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件路径',"
+			"`FileName` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件名称',"
+			"`FileHash` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件HASH',"
+			"`FileUser` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件所属用户',"
+			"`FileSize` bigint NOT NULL COMMENT '文件大小',"
+			"`FileTime` datetime NOT NULL COMMENT '插入时间',"
 			"PRIMARY KEY (`ID`) USING BTREE"
 			") ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;"
 		), tszTableName);
@@ -484,22 +484,22 @@ BOOL CXStorage_MySql::XStorage_MySql_CreateTable()
     return TRUE;
 }
 /********************************************************************
-�������ƣ�XStorage_MySql_TimeDay
-�������ܣ�����ָ��ʱ���뵱ǰʱ��������
- ����.һ��lpszStartTime
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�N
-  ��˼�����뿪ʼ�����ʱ��
- ����.����pInt_Month
-  In/Out��Out
-  ���ͣ�������ָ��
-  �ɿգ�N
-  ��˼���������·�
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע��
+函数名称：XStorage_MySql_TimeDay
+函数功能：计算指定时间与当前时间间隔天数
+ 参数.一：lpszStartTime
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入开始计算的时间
+ 参数.二：pInt_Month
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出相差月份
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
 *********************************************************************/
 BOOL CXStorage_MySql::XStorage_MySql_TimeMonth(LPCTSTR lpszStartTime, int* pInt_Month)
 {
@@ -524,12 +524,12 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeMonth(LPCTSTR lpszStartTime, int* pInt_
     return TRUE;
 }
 /********************************************************************
-�������ƣ�XStorage_MySql_TimeDel
-�������ܣ�ɾ���������ڱ�����
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע��
+函数名称：XStorage_MySql_TimeDel
+函数功能：删除过期日期表数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
 *********************************************************************/
 BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
 {
@@ -552,25 +552,25 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
                 continue;
             }
             int nTimeMonth = 0;
-            //ֻ���ڴ�����ȷ������²Ž���ɾ������
+            //只有在处理正确的情况下才进行删除操作
             if (XStorage_MySql_TimeMonth(pptszResult[0], &nTimeMonth))
             {
                 if (nTimeMonth > m_nTimeMonth)
                 {
-                    //ɾ���ļ�
+                    //删除文件
                     int nListCount = 0;
                     XSTORAGECORE_DBFILE **ppSt_ListFile;
                     XStorage_MySql_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, pptszResult[0]);
                     for (int i = 0; i < nListCount; i++)
                     {
-                        //ɾ���ļ�
+                        //删除文件
                         TCHAR tszFilePath[2048];
                         memset(tszFilePath, '\0', sizeof(tszFilePath));
 
                         _stprintf(tszFilePath, _T("%s/%s"), ppSt_ListFile[i]->st_ProtocolFile.tszFilePath, ppSt_ListFile[i]->st_ProtocolFile.tszFileName);
                         _tremove(tszFilePath);
                     }
-                    //ɾ�����ݿ�
+                    //删除数据库
                     memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
                     _stprintf_s(tszSQLQuery, _T("DROP TABLE `%s`"), pptszResult[0]);
                     DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery);
@@ -583,7 +583,7 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
     return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
-//                      �̺߳���
+//                      线程函数
 //////////////////////////////////////////////////////////////////////////
 XHTHREAD CXStorage_MySql::XStorage_MySql_Thread(LPVOID lParam)
 {

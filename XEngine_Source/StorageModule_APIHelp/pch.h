@@ -11,14 +11,8 @@
 // 添加要在此处预编译的标头
 #include "framework.h"
 #include <tchar.h>
-#include <json/json.h>
 #include <WinSock2.h>
 #else
-#ifdef _CENTOS
-#include <json/json.h>
-#else
-#include <jsoncpp/json/json.h>
-#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -28,6 +22,7 @@
 #include <list>
 #include <string>
 #include <memory>
+#include <json/json.h>
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
@@ -67,4 +62,17 @@ extern DWORD APIHelp_dwErrorCode;
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpServer")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
+#ifdef _DEBUG
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Debug/jsoncpp")
+#else
+#pragma comment(lib,"../Debug/jsoncpp")
+#endif
+#else
+#ifdef _WIN64
+#pragma comment(lib,"../x64/Release/jsoncpp")
+#else
+#pragma comment(lib,"../Release/jsoncpp")
+#endif
+#endif
 #endif

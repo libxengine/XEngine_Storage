@@ -278,12 +278,17 @@ BOOL CProtocol_P2XPPacket::Protocol_P2XPPacket_WLan(XENGINE_PROTOCOLHDR* pSt_Pro
   类型：数据结构指针
   可空：N
   意思：输入获取到的用户信息
- 参数.三：ptszMsgBuffer
+ 参数.三：pSt_AddrInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：IP地址信息
+ 参数.四：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：导出封装好的缓冲区
- 参数.四：pInt_MsgLen
+ 参数.五：pInt_MsgLen
   In/Out：In/Out
   类型：整数型指针
   可空：N
@@ -293,7 +298,7 @@ BOOL CProtocol_P2XPPacket::Protocol_P2XPPacket_WLan(XENGINE_PROTOCOLHDR* pSt_Pro
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_P2XPPacket::Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+BOOL CProtocol_P2XPPacket::Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, APIHELP_IPADDRINFO* pSt_AddrInfo, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
     Protocol_IsErrorOccur = FALSE;
 
@@ -304,6 +309,7 @@ BOOL CProtocol_P2XPPacket::Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR* pSt_Pro
         return FALSE;
     }
     Json::Value st_JsonRoot;
+	Json::Value st_JsonAddr;
     Json::StreamWriterBuilder st_JsonBuilder;
 
     st_JsonRoot["Code"] = 0;
@@ -313,9 +319,15 @@ BOOL CProtocol_P2XPPacket::Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR* pSt_Pro
     st_JsonRoot["tszConnectAddr"] = pSt_PeerInfo->tszConnectAddr;
     st_JsonRoot["tszPrivateAddr"] = pSt_PeerInfo->tszPrivateAddr;
     st_JsonRoot["tszPublicAddr"] = pSt_PeerInfo->tszPublicAddr;
-    st_JsonRoot["tszUserISP"] = pSt_PeerInfo->tszUserISP;
-    st_JsonRoot["tszUserLocation"] = pSt_PeerInfo->tszUserLocation;
     st_JsonRoot["tszUserName"] = pSt_PeerInfo->tszUserName;
+
+	st_JsonAddr["tszIPCountry"] = pSt_AddrInfo->tszIPCountry;
+	st_JsonAddr["tszIPProvince"] = pSt_AddrInfo->tszIPProvince;
+	st_JsonAddr["tszIPCity"] = pSt_AddrInfo->tszIPCity;
+	st_JsonAddr["tszIPCounty"] = pSt_AddrInfo->tszIPCounty;
+	st_JsonAddr["tszIPISP"] = pSt_AddrInfo->tszIPISP;
+
+	st_JsonRoot["st_AddrInfo"] = st_JsonAddr;
 
     st_JsonBuilder["emitUTF8"] = true;
 	if (NULL == pSt_ProtocolHdr)

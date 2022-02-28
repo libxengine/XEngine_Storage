@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "APIHelp_Api.h"
 /********************************************************************
 //    Created:     2022/01/07  14:36:59
@@ -6,9 +6,9 @@
 //    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_APIHelp\APIHelp_Api
 //    File Base:   APIHelp_Api
 //    File Ext:    cpp
-//    Project:     XEngine(����ͨ������)
+//    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     ��������
+//    Purpose:     帮助函数
 //    History:
 *********************************************************************/
 CAPIHelp_Api::CAPIHelp_Api()
@@ -20,35 +20,35 @@ CAPIHelp_Api::~CAPIHelp_Api()
 
 }
 //////////////////////////////////////////////////////////////////////////
-//                               ���к���
+//                               公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-�������ƣ�APIHelp_Api_ProxyAuth
-�������ܣ�������֤
- ����.һ��ptszUser
-  In/Out��Out
-  ���ͣ��ַ�ָ��
-  �ɿգ�N
-  ��˼������û���
- ����.����ptszPass
-  In/Out��Out
-  ���ͣ��ַ�ָ��
-  �ɿգ�N
-  ��˼���������
- ����.����pptszListHdr
-  In/Out��In
-  ���ͣ�ָ��ָ���ָ��
-  �ɿգ�N
-  ��˼������Ҫ������HTTPͷ
- ����.�ģ�nHdrCount
-  In/Out��In
-  ���ͣ�������
-  �ɿգ�N
-  ��˼������Ҫ������HTTPͷ�б�����
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע��
+函数名称：APIHelp_Api_ProxyAuth
+函数功能：代理验证
+ 参数.一：ptszUser
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出用户名
+ 参数.二：ptszPass
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出密码
+ 参数.三：pptszListHdr
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入要解析的HTTP头
+ 参数.四：nHdrCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的HTTP头列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
 *********************************************************************/
 BOOL CAPIHelp_Api::APIHelp_Api_ProxyAuth(TCHAR* ptszUser, TCHAR* ptszPass, TCHAR** pptszListHdr, int nHdrCount)
 {
@@ -62,14 +62,14 @@ BOOL CAPIHelp_Api::APIHelp_Api_ProxyAuth(TCHAR* ptszUser, TCHAR* ptszPass, TCHAR
 
 	memset(tszAuthStr, '\0', MAX_PATH);
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
-	//�Ƿ�����֤��Ϣ
+	//是否有验证信息
 	if (!RfcComponents_HttpHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
 	{
 		APIHelp_IsErrorOccur = TRUE;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTAUTH;
 		return FALSE;
 	}
-	//�Ƿ���BASIC
+	//是否是BASIC
 	if (1 != nAuthType)
 	{
 		APIHelp_IsErrorOccur = TRUE;
@@ -80,37 +80,37 @@ BOOL CAPIHelp_Api::APIHelp_Api_ProxyAuth(TCHAR* ptszUser, TCHAR* ptszPass, TCHAR
 	return TRUE;
 }
 /********************************************************************
-�������ƣ�APIHelp_Api_RangeFile
-�������ܣ���ȡHTTP�ķ�Χ
- ����.һ��pInt_SPos
-  In/Out��Out
-  ���ͣ�������ָ��
-  �ɿգ�N
-  ��˼�������ʼ��Χ
- ����.����pInt_EPos
-  In/Out��Out
-  ���ͣ�������ָ��
-  �ɿգ�N
-  ��˼�����������Χ
- ����.����pInt_Count
-  In/Out��Out
-  ���ͣ�������ָ��
-  �ɿգ�N
-  ��˼������ܴ�С
- ����.�ģ�pptszListHdr
-  In/Out��In
-  ���ͣ�ָ��ָ���ָ��
-  �ɿգ�N
-  ��˼������HTTPЭ��ͷ�б�
- ����.�壺nHdrCount
-  In/Out��In
-  ���ͣ�ָ��ָ���ָ��
-  �ɿգ�N
-  ��˼�������б�����
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע��
+函数名称：APIHelp_Api_RangeFile
+函数功能：获取HTTP的范围
+ 参数.一：pInt_SPos
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出起始范围
+ 参数.二：pInt_EPos
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出结束范围
+ 参数.三：pInt_Count
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出总大小
+ 参数.四：pptszListHdr
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入HTTP协议头列表
+ 参数.五：nHdrCount
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
 *********************************************************************/
 BOOL CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64x* pInt_Count, TCHAR** pptszListHdr, int nHdrCount)
 {
@@ -126,11 +126,11 @@ BOOL CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64
 	memset(tszKeyStr, '\0', sizeof(tszKeyStr));
 	memset(tszValueStr, '\0', sizeof(tszValueStr));
 	memset(tszFieldStr, '\0', sizeof(tszFieldStr));
-	//�Ƿ��з�Χ
+	//是否有范围
 	if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszRangeStr, tszFieldStr))
 	{
-		//�Ƿ�û���ҵ�
-		int nBPos = 0;  //ĳЩʱ���и�BYTE   
+		//是否没有找到
+		int nBPos = 0;  //某些时候有个BYTE   
 		if (NULL != _tcsstr(tszFieldStr, _T("bytes=")))
 		{
 			nBPos = 6;
@@ -141,7 +141,7 @@ BOOL CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARSELEN;
 			return FALSE;
 		}
-		//�õ� 1/2 ����еĻ�
+		//得到 1/2 如果有的话
 		TCHAR tszRangeEnd[128];
 		TCHAR tszRangeCount[128];
 
@@ -180,27 +180,27 @@ BOOL CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64
 	return TRUE;
 }
 /********************************************************************
-�������ƣ�APIHelp_Api_VerHash
-�������ܣ���֤HASHֵ
- ����.һ��lpszFileHash
-  In/Out��In
-  ���ͣ������ַ�ָ��
-  �ɿգ�N
-  ��˼������Ҫ�ȶԵ�HASHֵ
- ����.����pptszListHdr
-  In/Out��In
-  ���ͣ�ָ��ָ���ָ��
-  �ɿգ�N
-  ��˼������HTTPЭ��ͷ�б�
- ����.����nHdrCount
-  In/Out��In
-  ���ͣ�ָ��ָ���ָ��
-  �ɿգ�N
-  ��˼�������б�����
-����ֵ
-  ���ͣ��߼���
-  ��˼���Ƿ�ɹ�
-��ע��
+函数名称：APIHelp_Api_VerHash
+函数功能：验证HASH值
+ 参数.一：lpszFileHash
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要比对的HASH值
+ 参数.二：pptszListHdr
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入HTTP协议头列表
+ 参数.三：nHdrCount
+  In/Out：In
+  类型：指向指针的指针
+  可空：N
+  意思：输入列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
 *********************************************************************/
 BOOL CAPIHelp_Api::APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount)
 {
