@@ -224,3 +224,63 @@ BOOL CAPIHelp_Api::APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHd
 	}
 	return TRUE;
 }
+/********************************************************************
+函数名称：APIHelp_Api_GetIPInfo
+函数功能：获取IP信息
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的缓冲区
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要操作的大小
+ 参数.三：pSt_IPAddrInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出获取到的IP信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CAPIHelp_Api::APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_IPADDRINFO* pSt_IPAddrInfo)
+{
+	APIHelp_IsErrorOccur = FALSE;
+
+	Json::Value st_JsonRoot;
+	JSONCPP_STRING st_JsonError;
+	Json::CharReaderBuilder st_JsonBuilder;
+	//解析
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
+	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
+	{
+		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARSE;
+		return FALSE;
+	}
+	//是否获取成功
+	if (0 != st_JsonRoot["code"].asInt())
+	{
+		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_CODE;
+		return FALSE;
+	}
+	Json::Value st_JsonObject = st_JsonRoot["data"];
+
+	_tcscpy(pSt_IPAddrInfo->tszIPStart, st_JsonObject["tszIPStart"].asCString());
+	_tcscpy(pSt_IPAddrInfo->tszIPEnd, st_JsonObject["tszIPEnd"].asCString());
+	_tcscpy(pSt_IPAddrInfo->tszIPAddress, st_JsonObject["tszIPAddress"].asCString());
+	_tcscpy(pSt_IPAddrInfo->tszIPAddr, st_JsonObject["tszIPAddr"].asCString());
+	_tcscpy(pSt_IPAddrInfo->tszIPCity, st_JsonObject["tszIPCity"].asCString());
+	_tcscpy(pSt_IPAddrInfo->tszIPCountry, st_JsonObject["tszIPCountry"].asCString());
+	_tcscpy(pSt_IPAddrInfo->tszIPCounty, st_JsonObject["tszIPCounty"].asCString());
+	_tcscpy(pSt_IPAddrInfo->tszIPProvince, st_JsonObject["tszIPProvince"].asCString());
+	_tcscpy(pSt_IPAddrInfo->tszIPISP, st_JsonObject["tszIPISP"].asCString());
+	_tcscpy(pSt_IPAddrInfo->tszIPTime, st_JsonObject["tszIPTime"].asCString());
+
+	return TRUE;
+}

@@ -237,3 +237,27 @@ extern "C" BOOL APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64x* 
 备注：
 *********************************************************************/
 extern "C" BOOL APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount);
+/********************************************************************
+函数名称：APIHelp_Api_GetIPInfo
+函数功能：获取IP信息
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的缓冲区
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要操作的大小
+ 参数.三：pSt_IPAddrInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出获取到的IP信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_IPADDRINFO* pSt_IPAddrInfo);
