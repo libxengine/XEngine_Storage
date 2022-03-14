@@ -63,7 +63,14 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 				return FALSE;
 			}
 			//获取外网IP所在位置
-			APIHelp_NetWork_GetIPInfo(st_ClientPeer.st_PeerAddr.tszPublicAddr, &st_ClientPeer.st_IPAddrInfo);
+			int nBLen = 0;
+			TCHAR* ptszBody;
+			TCHAR tszUrlBuffer[MAX_PATH];
+			memset(tszUrlBuffer, '\0', MAX_PATH);
+			
+			_stprintf(tszUrlBuffer, _T("http://app.xyry.org:5501/api?function=ipquery&params1=%s&params2=0"), st_ClientPeer.st_PeerAddr.tszPublicAddr);
+			APIHelp_HttpRequest_Get(tszUrlBuffer, &ptszBody, &nBLen);
+			APIHelp_Api_GetIPInfo(ptszBody, nBLen, &st_ClientPeer.st_IPAddrInfo);
 			st_ClientPeer.st_PeerTimer.dwUserTime = time(NULL);
 			st_ClientPeer.st_PeerTimer.dwKeepAlive = time(NULL);
 			st_ClientPeer.bIsLogin = TRUE;

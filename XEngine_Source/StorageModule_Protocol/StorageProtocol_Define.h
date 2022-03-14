@@ -387,7 +387,7 @@ extern "C" BOOL Protocol_P2XPPacket_WLan(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, l
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, APIHELP_IPADDRINFO * pSt_AddrInfo, TCHAR* ptszMsgBuffer, int* pInt_Len);
+extern "C" BOOL Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, XENGINE_IPADDRINFO * pSt_AddrInfo, TCHAR* ptszMsgBuffer, int* pInt_Len);
 /********************************************************************
 函数名称：Protocol_P2XPPacket_Connect
 函数功能：请求连接打包函数
