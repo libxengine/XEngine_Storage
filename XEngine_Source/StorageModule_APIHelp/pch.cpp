@@ -66,3 +66,7 @@ extern "C" BOOL APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR * *pptszListHdr,
 {
 	return m_APIHelp.APIHelp_Api_VerHash(lpszFileHash, pptszListHdr, nHdrCount);
 }
+extern "C" BOOL APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_IPADDRINFO * pSt_IPAddrInfo)
+{
+	return m_APIHelp.APIHelp_Api_GetIPInfo(lpszMsgBuffer, nMsgLen, pSt_IPAddrInfo);
+}

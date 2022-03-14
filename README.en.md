@@ -95,11 +95,6 @@ Port:HTTP Center Port 5100,Download 5101,UPLoad 5102,P2P 5103
 3. Submit the code
 4. New Pull Request
 
-## Clean up statement
-the software will not generate any files to other directories in your system.  
-the software will not modify any of your system configuration.  
-the software can achieve complete cleanup by directly delete the directory.  
-
 ## Follow us
 If you think this software is helpful to you, please give us a START
 

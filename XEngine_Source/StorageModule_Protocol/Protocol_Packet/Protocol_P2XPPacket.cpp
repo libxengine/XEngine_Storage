@@ -298,7 +298,7 @@ BOOL CProtocol_P2XPPacket::Protocol_P2XPPacket_WLan(XENGINE_PROTOCOLHDR* pSt_Pro
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_P2XPPacket::Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, APIHELP_IPADDRINFO* pSt_AddrInfo, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+BOOL CProtocol_P2XPPacket::Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, XENGINE_IPADDRINFO* pSt_AddrInfo, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
     Protocol_IsErrorOccur = FALSE;
 

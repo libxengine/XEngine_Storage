@@ -12,3 +12,4 @@ EXPORTS
 	APIHelp_Api_ProxyAuth
 	APIHelp_Api_RangeFile
 	APIHelp_Api_VerHash
+	APIHelp_Api_GetIPInfo

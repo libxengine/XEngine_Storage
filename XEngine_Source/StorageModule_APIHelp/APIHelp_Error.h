@@ -20,3 +20,4 @@
 #define ERROR_STORAGE_MODULE_APIHELP_NOTHASH 0x0030014                //没有HASH值
 #define ERROR_STORAGE_MODULE_APIHELP_NOTMATCH 0x0030015               //HASH不匹配
 #define ERROR_STORAGE_MODULE_APIHELP_SIZE 0x0030016                   //目录大小已经满了
+#define ERROR_STORAGE_MODULE_APIHELP_CODE 0x0030017                   //服务器返回失败

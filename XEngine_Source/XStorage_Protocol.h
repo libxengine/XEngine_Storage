@@ -30,6 +30,8 @@
 //////////////////////////////////////////////////////////////////////////
 //                         协议结构体
 //////////////////////////////////////////////////////////////////////////
+#pragma pack(push)
+#pragma pack(1)
 //文件传输头文件,可用于P2XP文件传输和组包管理模块文件传输
 typedef struct tag_XEngine_Protocol_File
 {
@@ -59,3 +61,18 @@ typedef struct tag_XEngine_P2XPIO_Protocol
 	int nDestPort;                                                        //要连接的端口
 	BOOL bIsTcp;                                                          //连接类型TCP,否则为UDP
 }XENGINE_P2XPIO_PROTOCOL, * LPXENGINE_P2XPIO_PROTOCOL;
+//IP地址信息
+typedef struct
+{
+	TCHAR tszIPStart[128];
+	TCHAR tszIPEnd[128];
+	TCHAR tszIPAddr[128];       //IP地址
+	TCHAR tszIPCountry[128];    //国家/地区
+	TCHAR tszIPProvince[128];   //省/自治区
+	TCHAR tszIPCity[128];       //市
+	TCHAR tszIPCounty[128];     //县
+	TCHAR tszIPAddress[128];    //详细地址
+	TCHAR tszIPISP[128];        //运营商
+	TCHAR tszIPTime[128];       //数据库日期
+}XENGINE_IPADDRINFO;
+#pragma pack(pop)
