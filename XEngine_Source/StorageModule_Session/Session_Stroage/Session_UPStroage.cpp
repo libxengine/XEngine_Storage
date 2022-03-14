@@ -372,9 +372,9 @@ BOOL CSession_UPStroage::Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 		}
 		if (0 == stl_MapIterator->second.st_StorageInfo.ullFSize)
 		{
-			struct __stat64 st_FStat;
-			memset(&st_FStat, '\0', sizeof(struct __stat64));
-			_stat64(stl_MapIterator->second.st_StorageInfo.tszFileDir, &st_FStat);
+			struct _tstat64 st_FStat;
+			memset(&st_FStat, '\0', sizeof(struct _tstat64));
+			_tstat64(stl_MapIterator->second.st_StorageInfo.tszFileDir, &st_FStat);
 			stl_MapIterator->second.st_StorageInfo.ullFSize = st_FStat.st_size;
 		}
 		//大小是否足够
@@ -412,9 +412,9 @@ BOOL CSession_UPStroage::Session_UPStroage_Close(LPCTSTR lpszClientAddr)
 		{
 			fclose(stl_MapIterator->second.st_StorageInfo.pSt_File);
 		}
-		struct __stat64 st_FStat;
-		memset(&st_FStat, '\0', sizeof(struct __stat64));
-		_stat64(stl_MapIterator->second.st_StorageInfo.tszFileDir, &st_FStat);
+		struct _tstat64 st_FStat;
+		memset(&st_FStat, '\0', sizeof(struct _tstat64));
+		_tstat64(stl_MapIterator->second.st_StorageInfo.tszFileDir, &st_FStat);
 		stl_MapIterator->second.st_StorageInfo.ullFSize = st_FStat.st_size;
 	}
 	st_Locker.unlock();

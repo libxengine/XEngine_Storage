@@ -85,7 +85,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 		{
 			nRandomFront = 0;
 		}
-		int i = 0;
+		unsigned int i = 0;
 		for (auto stl_ListIterator = pStl_ListAddr->begin(); stl_ListIterator != pStl_ListAddr->end(); stl_ListIterator++, i++)
 		{
 			if (nRandomFront == i)
@@ -102,7 +102,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 		{
 			nRandomBack = 0;
 		}
-		int i = 0;
+		unsigned int i = 0;
 		for (auto stl_ListIterator = pStl_ListAddr->rbegin(); stl_ListIterator != pStl_ListAddr->rend(); stl_ListIterator++, i++)
 		{
 			if (nRandomBack == i)
@@ -290,8 +290,8 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 		SystemApi_File_EnumFile(pSt_StorageBucket->tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
 		for (int j = 0; j < nListCount; j++)
 		{
-			struct __stat64 st_FStat;
-			_stat64(ppListFile[j], &st_FStat);
+			struct _tstat64 st_FStat;
+			_tstat64(ppListFile[j], &st_FStat);
 			nDirCount += st_FStat.st_size;
 		}
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
@@ -334,8 +334,8 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 					SystemApi_File_EnumFile(stl_ListIterator->tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
 					for (int j = 0; j < nListCount; j++)
 					{
-						struct __stat64 st_FStat;
-						_stat64(ppListFile[j], &st_FStat);
+						struct _tstat64 st_FStat;
+						_tstat64(ppListFile[j], &st_FStat);
 						nDirCount += st_FStat.st_size;
 					}
 					BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
@@ -382,7 +382,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 			{
 				nUPFront = 0;
 			}
-			int i = 0;
+			unsigned int i = 0;
 			for (auto stl_ListIterator = stl_BuckSelect.begin(); stl_ListIterator != stl_BuckSelect.end(); stl_ListIterator++, i++)
 			{
 				if (nUPFront == i)
@@ -399,7 +399,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 			{
 				nUPBack = 0;
 			}
-			int i = 0;
+			unsigned int i = 0;
 			for (auto stl_ListIterator = stl_BuckSelect.rbegin(); stl_ListIterator != stl_BuckSelect.rend(); stl_ListIterator++, i++)
 			{
 				if (nUPBack == i)
