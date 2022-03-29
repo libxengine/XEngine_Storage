@@ -10,7 +10,11 @@
 #ifdef _WINDOWS
 // 添加要在此处预编译的标头
 #include "framework.h"
+#include <conio.h>
+#include <windows.h>
 #include <tchar.h>
+#include <time.h>
+#include <WinSock2.h>
 #else
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,6 +24,9 @@
 #endif
 #endif //PCH_H
 #include <list>
+#include <memory>
+#include <thread>
+#include <inttypes.h>
 #include <shared_mutex>
 #include <unordered_map>
 using namespace std;
@@ -28,23 +35,26 @@ using namespace std;
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include "../../XStorage_Protocol.h"
-#include "P2XPPeer_Define.h"
-#include "P2XPPeer_Error.h"
+#include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
+#include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
+#include "../XStorage_Protocol.h"
+#include "Database_Define.h"
+#include "Database_Error.h"
 /********************************************************************
-//    Created:     2021/07/08  13:17:23
-//    File Name:   D:\XEngine_Storage\XEngine_Source\XEngine_P2XPComponents\XEngine_P2XPPeer\pch.h
-//    File Path:   D:\XEngine_Storage\XEngine_Source\XEngine_P2XPComponents\XEngine_P2XPPeer
+//    Created:     2022/03/29  14:08:09
+//    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_Database\pch.h
+//    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_Database
 //    File Base:   pch
 //    File Ext:    h
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     P2XP节点管理器模块公用头
+//    Purpose:     公用头文件
 //    History:
 *********************************************************************/
-extern BOOL PeerManage_IsErrorOccur;
-extern DWORD PeerManage_dwErrorCode;
+extern BOOL Database_IsErrorOccur;
+extern DWORD Database_dwErrorCode;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
+#pragma comment(lib,"XEngine_HelpComponents/HelpComponents_DataBase.lib")
 #endif

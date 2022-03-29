@@ -70,8 +70,7 @@ void ServiceApp_Stop(int signo)
 		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
-		XStorage_MySql_Destory();
-		XStorage_SQLite_Destory();
+		Database_File_Destory();
 
 		if (NULL != pSTDThread)
 		{
@@ -224,23 +223,14 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，心跳管理服务配置为不启用..."));
 	}
 
-	if (1 == st_ServiceCfg.st_XSql.nSQLType)
+	if (st_ServiceCfg.st_XSql.bEnable)
 	{
-		if (!XStorage_MySql_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql, st_ServiceCfg.st_XTime.nDBMonth))
+		if (!Database_File_Init((DATABASE_MYSQL_CONNECTINFO*)&st_ServiceCfg.st_XSql, st_ServiceCfg.st_XTime.nDBMonth))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化MYSQL数据库服务失败，错误：%lX"), XStorageDB_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化MYSQL数据库服务失败，错误：%lX"), Database_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化MYSQL数据库服务成功"));
-	}
-	else if (2 == st_ServiceCfg.st_XSql.nSQLType)
-	{
-		if (!XStorage_SQLite_Init(st_ServiceCfg.st_XSql.tszSQLFile, st_ServiceCfg.st_XTime.nDBMonth))
-		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化SQLITE数据库服务失败，错误：%lX"), XStorageDB_GetLastError());
-			goto XENGINE_EXITAPP;
-		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化SQLITE数据库服务成功"));
 	}
 	else
 	{
@@ -423,7 +413,7 @@ int main(int argc, char** argv)
 	//启动P2P服务
 	if (st_ServiceCfg.nP2XPPort > 0)
 	{
-		xhP2XPPacket = HelpComponents_Datas_Init(st_ServiceCfg.st_XMax.nMaxQueue, 0, st_ServiceCfg.st_XMax.nP2XPThread);
+		xhP2XPPacket = HelpComponents_Datas_Init(st_ServiceCfg.st_XMax.nMaxQueue, st_ServiceCfg.st_XMax.nP2XPThread);
 		if (NULL == xhP2XPPacket)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化P2XP包管理器失败，错误：%lX"), Packets_GetLastError());
@@ -522,8 +512,7 @@ XENGINE_EXITAPP:
 		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
-		XStorage_MySql_Destory();
-		XStorage_SQLite_Destory();
+		Database_File_Destory();
 
 		if (NULL != pSTDThread)
 		{

@@ -1,0 +1,10 @@
+LIBRARY
+
+EXPORTS
+	Database_GetLastError
+
+	Database_File_Init
+	Database_File_Destory
+	Database_File_FileInsert
+	Database_File_FileDelete
+	Database_File_FileQuery

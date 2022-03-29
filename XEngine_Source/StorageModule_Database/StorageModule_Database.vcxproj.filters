@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\P2XPPeer_Manage">
-      <UniqueIdentifier>{adf7aaae-3fa4-4436-8790-131d40aa690c}</UniqueIdentifier>
+    <Filter Include="头文件\Database_File">
+      <UniqueIdentifier>{5cc22b37-1b56-4225-a8bd-0357cd256977}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\P2XPPeer_Manage">
-      <UniqueIdentifier>{d33ee088-fa44-46f3-8b6a-ff716db143f8}</UniqueIdentifier>
+    <Filter Include="源文件\Database_File">
+      <UniqueIdentifier>{bb11ac98-cdc8-42f3-a64f-5101de28e90a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -27,14 +27,14 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="P2XPPeer_Manage\P2XPPeer_Manage.h">
-      <Filter>头文件\P2XPPeer_Manage</Filter>
-    </ClInclude>
-    <ClInclude Include="P2XPPeer_Define.h">
+    <ClInclude Include="Database_Define.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="P2XPPeer_Error.h">
+    <ClInclude Include="Database_Error.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Database_File\Database_File.h">
+      <Filter>头文件\Database_File</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -44,12 +44,12 @@
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="P2XPPeer_Manage\P2XPPeer_Manage.cpp">
-      <Filter>源文件\P2XPPeer_Manage</Filter>
+    <ClCompile Include="Database_File\Database_File.cpp">
+      <Filter>源文件\Database_File</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="XStorage_P2XPPeer.def">
+    <None Include="StorageModule_Database.def">
       <Filter>源文件</Filter>
     </None>
   </ItemGroup>

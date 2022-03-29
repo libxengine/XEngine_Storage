@@ -27,18 +27,11 @@ XHTHREAD XEngine_Task_P2PThread()
 			if (Protocol_StorageParse_QueryFile(tszMsgBuffer, tszTimeStart, tszTimeEnd, tszBuckKey, tszFileName, tszFileHash))
 			{
 				//查询文件是否存在数据库,不存在不关心
-				if (0 != st_ServiceCfg.st_XSql.nSQLType)
+				if (st_ServiceCfg.st_XSql.bEnable)
 				{
 					int nListCount = 0;
 					XSTORAGECORE_DBFILE** pppSt_ListFile;
-					if (1 == st_ServiceCfg.st_XSql.nSQLType)
-					{
-						XStorage_MySql_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBuckKey, tszFileName, tszFileHash);
-					}
-					else
-					{
-						XStorage_SQLite_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBuckKey, tszFileName, tszFileHash);
-					}
+					Database_File_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBuckKey, tszFileName, tszFileHash);
 					if (nListCount > 0)
 					{
 						_stprintf(pppSt_ListFile[0]->tszTableName, _T("%s:%d"), st_ServiceCfg.tszIPAddr, st_ServiceCfg.nStorageDLPort);

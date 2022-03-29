@@ -1,23 +1,23 @@
 ﻿#include "pch.h"
-#include "XStorage_MySql.h"
+#include "Database_File.h"
 /********************************************************************
-//    Created:     2021/09/28  15:50:22
-//    File Name:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageComponents\XStorage_SQLPacket\XStorage_MySql\XStorage_MySql.cpp
-//    File Path:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageComponents\XStorage_SQLPacket\XStorage_MySql
-//    File Base:   XStorage_MySql
+//    Created:     2022/03/29  14:07:14
+//    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_Database\Database_File\Database_File.cpp
+//    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_Database\Database_File
+//    File Base:   Database_File
 //    File Ext:    cpp
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     MYSQL数据库管理器
+//    Purpose:     文件数据库管理器
 //    History:
 *********************************************************************/
-CXStorage_MySql::CXStorage_MySql()
+CDatabase_File::CDatabase_File()
 {
     bIsRun = FALSE;
     m_nTimeMonth = 0;
     xhDBSQL = 0;
 }
-CXStorage_MySql::~CXStorage_MySql()
+CDatabase_File::~CDatabase_File()
 {
 
 }
@@ -25,7 +25,7 @@ CXStorage_MySql::~CXStorage_MySql()
 //                         公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-函数名称：XStorage_MySql_Init
+函数名称：Database_File_Init
 函数功能：初始化存储服务数据库管理器
  参数.一：pSt_DBConnector
   In/Out：In
@@ -42,14 +42,14 @@ CXStorage_MySql::~CXStorage_MySql()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConnector, int nTimeDay)
+BOOL CDatabase_File::Database_File_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConnector, int nTimeDay)
 {
-    XStorage_IsErrorOccur = FALSE;
+    Database_IsErrorOccur = FALSE;
 
     if (NULL == pSt_DBConnector)
     {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INIT_PARAMENT;
+        Database_IsErrorOccur = TRUE;
+        Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INIT_PARAMENT;
         return FALSE;
     }
     m_nTimeMonth = nTimeDay;
@@ -62,32 +62,32 @@ BOOL CXStorage_MySql::XStorage_MySql_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConn
     _tcscpy(pSt_DBConnector->tszDBName, _T("XEngine_Storage"));
     if (!DataBase_MySQL_Connect(&xhDBSQL, pSt_DBConnector, 5, TRUE, lpszStrCharset))
     {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = DataBase_GetLastError();
+        Database_IsErrorOccur = TRUE;
+        Database_dwErrorCode = DataBase_GetLastError();
         return FALSE;
     }
     bIsRun = TRUE;
    
-    pSTDThread = make_shared<std::thread>(XStorage_MySql_Thread, this);
+    pSTDThread = make_shared<std::thread>(Database_File_Thread, this);
     if (!pSTDThread->joinable())
     {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INIT_THREAD;
+        Database_IsErrorOccur = TRUE;
+        Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INIT_THREAD;
         return FALSE;
     }
     return TRUE;
 }
 /********************************************************************
-函数名称：XStorage_MySql_Destory
+函数名称：Database_File_Destory
 函数功能：销毁数据库管理器
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_Destory()
+BOOL CDatabase_File::Database_File_Destory()
 {
-    XStorage_IsErrorOccur = FALSE;
+    Database_IsErrorOccur = FALSE;
 
     if (!bIsRun)
     {
@@ -106,7 +106,7 @@ BOOL CXStorage_MySql::XStorage_MySql_Destory()
     return TRUE;
 }
 /********************************************************************
-函数名称：XStorage_MySql_FileInsert
+函数名称：Database_File_FileInsert
 函数功能：插入一个文件数据到数据库中
  参数.一：pSt_DBManage
   In/Out：In
@@ -118,38 +118,56 @@ BOOL CXStorage_MySql::XStorage_MySql_Destory()
   意思：是否成功
 备注：这个结构所有值都必须填充
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
+BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
 {
-    XStorage_IsErrorOccur = FALSE;
+    Database_IsErrorOccur = FALSE;
 
     if (NULL == pSt_DBFile)
     {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INSERTFILE_PARAMENT;
+        Database_IsErrorOccur = TRUE;
+        Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INSERTFILE_PARAMENT;
         return FALSE;
     }
     int nListCount = 0;
     XSTORAGECORE_DBFILE **ppSt_ListFile;
-    if (XStorage_MySql_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, pSt_DBFile->st_ProtocolFile.tszFileHash))
+    if (Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, pSt_DBFile->st_ProtocolFile.tszFileHash))
     {
         BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
         return TRUE;
     }
     BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
-    TCHAR tszSQLStatement[2048];
-    memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
 
-    XStorage_SQLHelp_Insert(tszSQLStatement, pSt_DBFile);
+	TCHAR tszSQLStatement[2048];
+    TCHAR tszTableName[64];
+    XENGINE_LIBTIMER st_LibTimer;
+
+	memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
+	memset(tszTableName, '\0', sizeof(tszTableName));
+	memset(&st_LibTimer, '\0', sizeof(XENGINE_LIBTIMER));
+	//获得插入日期表
+	BaseLib_OperatorTime_GetSysTime(&st_LibTimer);
+
+	if (_tcslen(pSt_DBFile->tszTableName) > 0)
+	{
+		_tcscpy(tszTableName, pSt_DBFile->tszTableName);
+	}
+	else
+	{
+		_stprintf(tszTableName, _T("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
+	}
+
+	_stprintf(tszSQLStatement, _T("INSERT INTO `%s` (BuckKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,'%04d-%02d-%02d %02d:%02d:%02d')"), tszTableName, pSt_DBFile->tszBuckKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize, st_LibTimer.wYear, st_LibTimer.wMonth, st_LibTimer.wDay, st_LibTimer.wHour, st_LibTimer.wMinute, st_LibTimer.wSecond);
+
     if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
     {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = DataBase_GetLastError();
+        Database_IsErrorOccur = TRUE;
+        Database_dwErrorCode = DataBase_GetLastError();
         return FALSE;
     }
     return TRUE;
 }
 /********************************************************************
-函数名称：XStorage_MySql_FileDelete
+函数名称：Database_File_FileDelete
 函数功能：删除一个数据库文件信息
  参数.一：lpszBuckKey
   In/Out：In
@@ -171,19 +189,19 @@ BOOL CXStorage_MySql::XStorage_MySql_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
   意思：是否成功
 备注：参数不能全为空,不会删除文件
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */)
+BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */)
 {
-    XStorage_IsErrorOccur = FALSE;
+    Database_IsErrorOccur = FALSE;
 
     if ((NULL == lpszFile) && (NULL == lpszHash))
     {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_DELETEFILE_PARAMENT;
+        Database_IsErrorOccur = TRUE;
+        Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_DELETEFILE_PARAMENT;
         return FALSE;
     }
     int nListCount = 0;
     XSTORAGECORE_DBFILE **ppSt_ListFile;
-    if (!XStorage_MySql_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, lpszFile, lpszHash))
+    if (!Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, lpszFile, lpszHash))
     {
         return FALSE;
     }
@@ -191,13 +209,18 @@ BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszBuckKey /* = NULL */
     for (int i = 0; i < nListCount; i++)
     {
 		TCHAR tszSQLStatement[1024];
+		TCHAR tszSQLQuery[1024];
+
+		memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 		memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-		XStorage_SQLHelp_Delete(tszSQLStatement, ppSt_ListFile[i]->tszTableName, lpszBuckKey, lpszFile, lpszHash);
+
+		Database_File_Packet(tszSQLQuery, lpszBuckKey, NULL, lpszFile, lpszHash);
+		_stprintf(tszSQLStatement, _T("DELETE FROM `%s` %s"), ppSt_ListFile[i]->tszTableName, tszSQLQuery);
 
         if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
         {
-            XStorage_IsErrorOccur = TRUE;
-            XStorage_dwErrorCode = DataBase_GetLastError();
+            Database_IsErrorOccur = TRUE;
+            Database_dwErrorCode = DataBase_GetLastError();
             return FALSE;
         }
     }
@@ -205,7 +228,7 @@ BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszBuckKey /* = NULL */
     return TRUE;
 }
 /********************************************************************
-函数名称：XStorage_MySql_FileQuery
+函数名称：Database_File_FileQuery
 函数功能：查询文件信息
  参数.一：pppSt_ListFile
   In/Out：Out
@@ -252,14 +275,14 @@ BOOL CXStorage_MySql::XStorage_MySql_FileDelete(LPCTSTR lpszBuckKey /* = NULL */
   意思：是否成功
 备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszHash不能全为空
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */, LPCTSTR lpszTableName /* = NULL */)
+BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */, LPCTSTR lpszTableName /* = NULL */)
 {
-    XStorage_IsErrorOccur = FALSE;
+    Database_IsErrorOccur = FALSE;
 
     if ((NULL == lpszHash) && (NULL == lpszFile))
     {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_PARAMENT;
+        Database_IsErrorOccur = TRUE;
+        Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_PARAMENT;
         return FALSE;
     }
     //查询
@@ -291,8 +314,8 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
 		}
 		if (!DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
 		{
-			XStorage_IsErrorOccur = TRUE;
-			XStorage_dwErrorCode = DataBase_GetLastError();
+			Database_IsErrorOccur = TRUE;
+			Database_dwErrorCode = DataBase_GetLastError();
 			return FALSE;
 		}
 		//轮训
@@ -306,9 +329,14 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
 			__int64u dwLineResult = 0;
 			__int64u dwFieldResult = 0;
 			XNETHANDLE xhResult;
+			TCHAR tszSQLQuery[1024];
+
+			memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 			memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
 
-			XStorage_SQLHelp_Query(tszSQLStatement, pptszResult[0], lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
+			_stprintf(tszSQLStatement, _T("SELECT * FROM `%s`"), pptszResult[0]);
+			Database_File_Packet(tszSQLQuery, lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
+			_tcscat(tszSQLStatement, tszSQLQuery);
 			//查询文件
 			if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
 			{
@@ -359,7 +387,12 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
     }
     else
     {
-		XStorage_SQLHelp_Query(tszSQLStatement, lpszTableName, lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
+		TCHAR tszSQLQuery[1024];
+		memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
+
+		_stprintf(tszSQLStatement, _T("SELECT * FROM `%s`"), lpszTableName);
+		Database_File_Packet(tszSQLStatement, lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
+		_tcscat(tszSQLStatement, tszSQLQuery);
 		//查询文件
 		if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
 		{
@@ -409,8 +442,8 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
     //是否为空
     if (stl_ListFile.empty())
     {
-        XStorage_IsErrorOccur = TRUE;
-        XStorage_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_EMPTY;
+        Database_IsErrorOccur = TRUE;
+        Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_EMPTY;
         return FALSE;
     }
     BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ListFile, stl_ListFile.size(), sizeof(XSTORAGECORE_DBFILE));
@@ -428,16 +461,16 @@ BOOL CXStorage_MySql::XStorage_MySql_FileQuery(XSTORAGECORE_DBFILE*** pppSt_List
 //                    保护函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-函数名称：XStorage_MySql_CreateTable
+函数名称：Database_File_CreateTable
 函数功能：创建按照月份的文件表
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_CreateTable()
+BOOL CDatabase_File::Database_File_CreateTable()
 {
-    XStorage_IsErrorOccur = FALSE;
+    Database_IsErrorOccur = FALSE;
 
     for (int i = 0; i < 2; i++)
     {
@@ -476,15 +509,15 @@ BOOL CXStorage_MySql::XStorage_MySql_CreateTable()
 
 		if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery))
 		{
-			XStorage_IsErrorOccur = TRUE;
-			XStorage_dwErrorCode = DataBase_GetLastError();
+			Database_IsErrorOccur = TRUE;
+			Database_dwErrorCode = DataBase_GetLastError();
 			return FALSE;
 		}
     }
     return TRUE;
 }
 /********************************************************************
-函数名称：XStorage_MySql_TimeDay
+函数名称：Database_File_TimeDay
 函数功能：计算指定时间与当前时间间隔天数
  参数.一：lpszStartTime
   In/Out：In
@@ -501,9 +534,9 @@ BOOL CXStorage_MySql::XStorage_MySql_CreateTable()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_TimeMonth(LPCTSTR lpszStartTime, int* pInt_Month)
+BOOL CDatabase_File::Database_File_TimeMonth(LPCTSTR lpszStartTime, int* pInt_Month)
 {
-    XStorage_IsErrorOccur = FALSE;
+    Database_IsErrorOccur = FALSE;
 
     XENGINE_LIBTIMER st_EndTime;
     memset(&st_EndTime, '\0', sizeof(XENGINE_LIBTIMER));
@@ -524,16 +557,16 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeMonth(LPCTSTR lpszStartTime, int* pInt_
     return TRUE;
 }
 /********************************************************************
-函数名称：XStorage_MySql_TimeDel
+函数名称：Database_File_TimeDel
 函数功能：删除过期日期表数据
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
+BOOL CDatabase_File::Database_File_TimeDel()
 {
-    XStorage_IsErrorOccur = FALSE;
+    Database_IsErrorOccur = FALSE;
 
     __int64u dwLine = 0;
     __int64u dwField = 0;
@@ -553,14 +586,14 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
             }
             int nTimeMonth = 0;
             //只有在处理正确的情况下才进行删除操作
-            if (XStorage_MySql_TimeMonth(pptszResult[0], &nTimeMonth))
+            if (Database_File_TimeMonth(pptszResult[0], &nTimeMonth))
             {
                 if (nTimeMonth > m_nTimeMonth)
                 {
                     //删除文件
                     int nListCount = 0;
                     XSTORAGECORE_DBFILE **ppSt_ListFile;
-                    XStorage_MySql_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, pptszResult[0]);
+                    Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, pptszResult[0]);
                     for (int i = 0; i < nListCount; i++)
                     {
                         //删除文件
@@ -582,25 +615,149 @@ BOOL CXStorage_MySql::XStorage_MySql_TimeDel()
     DataBase_MySQL_FreeResult(xhDBSQL, xhTableResult);
     return TRUE;
 }
+BOOL CDatabase_File::Database_File_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFilePath /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */, LPCTSTR lpszFileUser /* = NULL */, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */)
+{
+	Database_IsErrorOccur = FALSE;
+
+	BOOL bInit = FALSE;
+	TCHAR tszSQLQuery[MAX_PATH];
+	memset(tszSQLQuery, '\0', MAX_PATH);
+	//文件所属BUCKET
+	if (NULL != lpszBuckKey)
+	{
+		if (_tcslen(lpszBuckKey) > 0)
+		{
+			if (bInit)
+			{
+				_tcscat(ptszSQLBuffer, _T(" AND "));
+			}
+			else
+			{
+				_tcscat(ptszSQLBuffer, _T(" WHERE "));
+			}
+			memset(tszSQLQuery, '\0', MAX_PATH);
+			_stprintf(tszSQLQuery, _T("BuckKey = '%s'"), lpszBuckKey);
+			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			bInit = TRUE;
+		}
+	}
+	//文件路径
+	if (NULL != lpszFilePath)
+	{
+		if (_tcslen(lpszFilePath) > 0)
+		{
+			if (bInit)
+			{
+				_tcscat(ptszSQLBuffer, _T(" AND "));
+			}
+			else
+			{
+				_tcscat(ptszSQLBuffer, _T("WHERE "));
+			}
+			memset(tszSQLQuery, '\0', MAX_PATH);
+			_stprintf(tszSQLQuery, _T("FilePath = '%s'"), lpszFilePath);
+			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			bInit = TRUE;
+		}
+	}
+	//文件名称
+	if (NULL != lpszFileName)
+	{
+		if (_tcslen(lpszFileName) > 0)
+		{
+			if (bInit)
+			{
+				_tcscat(ptszSQLBuffer, _T(" AND "));
+			}
+			else
+			{
+				_tcscat(ptszSQLBuffer, _T("WHERE "));
+			}
+			memset(tszSQLQuery, '\0', MAX_PATH);
+			_stprintf(tszSQLQuery, _T("FileName = '%s'"), lpszFileName);
+			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			bInit = TRUE;
+		}
+	}
+	//文件HASH
+	if (NULL != lpszFileHash)
+	{
+		if (_tcslen(lpszFileHash) > 0)
+		{
+			if (bInit)
+			{
+				_tcscat(ptszSQLBuffer, _T(" AND "));
+			}
+			else
+			{
+				_tcscat(ptszSQLBuffer, _T("WHERE "));
+			}
+			memset(tszSQLQuery, '\0', MAX_PATH);
+			_stprintf(tszSQLQuery, _T("FileHash = '%s'"), lpszFileHash);
+			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			bInit = TRUE;
+		}
+	}
+	//文件所属用户
+	if (NULL != lpszFileUser)
+	{
+		if (_tcslen(lpszFileUser) > 0)
+		{
+			if (bInit)
+			{
+				_tcscat(ptszSQLBuffer, _T(" AND "));
+			}
+			else
+			{
+				_tcscat(ptszSQLBuffer, _T("WHERE "));
+			}
+			memset(tszSQLQuery, '\0', MAX_PATH);
+			_stprintf(tszSQLQuery, _T("FileUser = '%s'"), lpszFileUser);
+			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			bInit = TRUE;
+		}
+	}
+	//时间范围
+	if ((NULL != lpszTimeStart) && (NULL != lpszTimeEnd))
+	{
+		if ((_tcslen(lpszTimeStart) > 0) && (_tcslen(lpszTimeEnd) > 0))
+		{
+			if (bInit)
+			{
+				_tcscat(ptszSQLBuffer, _T(" AND "));
+			}
+			else
+			{
+				_tcscat(ptszSQLBuffer, _T("WHERE "));
+			}
+			memset(tszSQLQuery, '\0', MAX_PATH);
+			_stprintf(tszSQLQuery, _T("BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
+			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			bInit = TRUE;
+		}
+	}
+
+	return TRUE;
+}
 //////////////////////////////////////////////////////////////////////////
 //                      线程函数
 //////////////////////////////////////////////////////////////////////////
-XHTHREAD CXStorage_MySql::XStorage_MySql_Thread(LPVOID lParam)
+XHTHREAD CDatabase_File::Database_File_Thread(LPVOID lParam)
 {
-    CXStorage_MySql *pClass_This = (CXStorage_MySql *)lParam;
+    CDatabase_File *pClass_This = (CDatabase_File *)lParam;
     time_t nTimeStart = time(NULL);
     time_t nTimeEnd = 0;
     int nTime = 60 * 60 * 12;
 
-	pClass_This->XStorage_MySql_TimeDel();
-	pClass_This->XStorage_MySql_CreateTable();
+	pClass_This->Database_File_TimeDel();
+	pClass_This->Database_File_CreateTable();
 
 	while (pClass_This->bIsRun)
 	{
 		if ((nTimeEnd - nTimeStart) > nTime)
 		{
-			pClass_This->XStorage_MySql_TimeDel();
-			pClass_This->XStorage_MySql_CreateTable();
+			pClass_This->Database_File_TimeDel();
+			pClass_This->Database_File_CreateTable();
 		}
 		nTimeEnd = time(NULL);
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));

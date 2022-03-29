@@ -39,7 +39,7 @@ using namespace std;
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 #include "../XStorage_Protocol.h"
 #include "../StorageModule_Session/Session_Define.h"
-#include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
+#include "../StorageModule_Database/Database_Define.h"
 #include "StorageProtocol_Define.h"
 #include "StorageProtocol_Error.h"
 /********************************************************************

@@ -49,10 +49,10 @@ using namespace std;
 #include "../XStorage_Protocol.h"
 #include "../StorageModule_Session/Session_Define.h"
 #include "../StorageModule_Session/Session_Error.h"
-#include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Define.h"
-#include "../XEngine_StorageComponents/XStorage_SQLPacket/SQLPacket_Error.h"
-#include "../XEngine_StorageComponents/XStorage_P2XPPeer/P2XPPeer_Define.h"
-#include "../XEngine_StorageComponents/XStorage_P2XPPeer/P2XPPeer_Error.h"
+#include "../StorageModule_Database/Database_Define.h"
+#include "../StorageModule_Database/Database_Error.h"
+#include "../StorageModule_P2XPPeer/P2XPPeer_Define.h"
+#include "../StorageModule_P2XPPeer/P2XPPeer_Error.h"
 #include "../StorageModule_Protocol/StorageProtocol_Define.h"
 #include "../StorageModule_Protocol/StorageProtocol_Error.h"
 #include "../StorageModule_Config/Config_Define.h"
@@ -130,15 +130,15 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../x64/Debug/StorageModule_Config.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_Protocol.lib")
-#pragma comment(lib,"../x64/Debug/XStorage_SQLPacket.lib")
-#pragma comment(lib,"../x64/Debug/XStorage_P2XPPeer.lib")
+#pragma comment(lib,"../x64/Debug/StorageModule_Database.lib")
+#pragma comment(lib,"../x64/Debug/StorageModule_P2XPPeer.lib")
 #else
 #pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Protocol.lib")
-#pragma comment(lib,"../x64/Release/XStorage_SQLPacket.lib")
-#pragma comment(lib,"../x64/Release/XStorage_P2XPPeer.lib")
+#pragma comment(lib,"../x64/Release/StorageModule_Database.lib")
+#pragma comment(lib,"../x64/Release/StorageModule_P2XPPeer.lib")
 #endif
 #else
 #ifdef _DEBUG
@@ -146,15 +146,15 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../Debug/StorageModule_Config.lib")
 #pragma comment(lib,"../Debug/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../Debug/StorageModule_Protocol.lib")
-#pragma comment(lib,"../Debug/XStorage_SQLPacket.lib")
-#pragma comment(lib,"../Debug/XStorage_P2XPPeer.lib")
+#pragma comment(lib,"../Debug/StorageModule_Database.lib")
+#pragma comment(lib,"../Debug/StorageModule_P2XPPeer.lib")
 #else
 #pragma comment(lib,"../Release/StorageModule_Session.lib")
 #pragma comment(lib,"../Release/StorageModule_Config.lib")
 #pragma comment(lib,"../Release/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../Release/StorageModule_Protocol.lib")
-#pragma comment(lib,"../Release/XStorage_SQLPacket.lib")
-#pragma comment(lib,"../Release/XStorage_P2XPPeer.lib")
+#pragma comment(lib,"../Release/StorageModule_Database.lib")
+#pragma comment(lib,"../Release/StorageModule_P2XPPeer.lib")
 #endif
 #endif
 #endif

@@ -128,7 +128,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XLog.nMaxCount = st_JsonXLog["MaxCount"].asInt();
 	pSt_ServerConfig->st_XLog.nLogLeave = st_JsonXLog["LogLeave"].asInt();
 
-	if (st_JsonRoot["XSql"].empty() || (6 != st_JsonRoot["XSql"].size()))
+	if (st_JsonRoot["XSql"].empty() || (5 != st_JsonRoot["XSql"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSQL;
@@ -136,12 +136,11 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	}
 	Json::Value st_JsonXSql = st_JsonRoot["XSql"];
 
-	pSt_ServerConfig->st_XSql.nSQLType = st_JsonXSql["SQLType"].asInt();
+	pSt_ServerConfig->st_XSql.bEnable = st_JsonXSql["SQLEnable"].asBool();
 	pSt_ServerConfig->st_XSql.nSQLPort = st_JsonXSql["SQLPort"].asInt();
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLAddr, st_JsonXSql["SQLAddr"].asCString());
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLUser, st_JsonXSql["SQLUser"].asCString());
 	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLPass, st_JsonXSql["SQLPass"].asCString());
-	_tcscpy(pSt_ServerConfig->st_XSql.tszSQLFile, st_JsonXSql["SQLFile"].asCString());
 
 	if (st_JsonRoot["XStorage"].empty() || (3 != st_JsonRoot["XStorage"].size()))
 	{

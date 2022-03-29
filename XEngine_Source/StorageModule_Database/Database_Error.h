@@ -1,14 +1,14 @@
 ﻿#pragma once
 /********************************************************************
-//	Created:	2019/6/28   14:56
-//	Filename: 	E:\NetEngine_Windows\NetEngine_SourceCode\NetEngine_Storage\NetEngine_XStorageCore\XStorageCore_Error.h
-//	File Path:	E:\NetEngine_Windows\NetEngine_SourceCode\NetEngine_Storage\NetEngine_XStorageCore
-//	File Base:	XStorageCore_Error
-//	File Ext:	h
-//  Project:    NetEngine(网络通信引擎)
-//	Author:		qyt
-//	Purpose:	X存储服务导出错误
-//	History:
+//    Created:     2022/03/29  14:21:56
+//    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_Database\Database_Error.h
+//    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_Database
+//    File Base:   Database_Error
+//    File Ext:    h
+//    Project:     XEngine(网络通信引擎)
+//    Author:      qyt
+//    Purpose:     数据库操作导出错误
+//    History:
 *********************************************************************/
 //////////////////////////////////////////////////////////////////////////
 //                        导出的数据库错误
