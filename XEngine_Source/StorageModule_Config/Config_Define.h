@@ -59,6 +59,7 @@ typedef struct tag_XEngine_ServerConfig
         TCHAR tszDBName[128];                                         
         int nSQLPort;
         BOOL bEnable;
+        TCHAR tszSQLFile[MAX_PATH];
     }st_XSql;
     struct  
 	{
@@ -90,7 +91,6 @@ typedef struct tag_XEngine_ServerConfig
 	}st_XLimit;
     struct  
     {
-        int nMode;
         int nTime;
         int nSDPort;
         int nRVPort;
