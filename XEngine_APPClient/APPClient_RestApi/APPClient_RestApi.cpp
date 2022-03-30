@@ -1,21 +1,16 @@
-﻿#ifdef _WINDOWS
+﻿#ifdef _MSC_BUILD
 #include <windows.h>
 #include <tchar.h>
-#include <json/json.h>
+#pragma comment(lib,"../../XEngine_Source/Debug/jsoncpp")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp")
 #pragma comment(lib,"Ws2_32")
-#else
-#ifdef _CENTOS
-#include <json/json.h>
-#else
-#include <jsoncpp/json/json.h>
-#endif
 #endif
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include <list>
+#include <json/json.h>
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
@@ -26,6 +21,10 @@
 using namespace std;
 
 //g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_NetHelp -lXEngine_BaseLib -lNetHelp_APIHelp -ljsoncpp -Wl,-rpath=../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib:../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_NetHelp,--disable-new-dtags
+//需要优先配置XEngine
+//WINDOWS使用VS2022 x86 debug 编译
+//linux使用下面的命令编译
+//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIHelp -ljsoncpp
 
 //查询
 void API_Manage_Query()

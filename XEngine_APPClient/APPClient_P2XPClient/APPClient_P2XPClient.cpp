@@ -1,7 +1,15 @@
-﻿#ifdef _WINDOWS
+﻿#ifdef _MSC_BUILD
 #include <windows.h>
 #include <tchar.h>
+#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib")
+#pragma comment(lib,"x86/XEngine_Client/XClient_Socket")
+#pragma comment(lib,"x86/XEngine_Core/XEngine_NetXApi")
+#pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIHelp")
+#pragma comment(lib,"Ws2_32")
+#pragma comment(lib,"../../XEngine_Source/Debug/jsoncpp")
 #else
+#include <sys/types.h>
+#include <sys/socket.h>
 #endif
 #include <json/json.h>
 #include <XEngine_Include/XEngine_CommHdr.h>
@@ -16,14 +24,13 @@
 #include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 #include "../../XEngine_Source/XStorage_Protocol.h"
 
-#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib")
-#pragma comment(lib,"x86/XEngine_Client/XClient_Socket")
-#pragma comment(lib,"x86/XEngine_Core/XEngine_NetXApi")
-#pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIHelp")
-#pragma comment(lib,"Ws2_32")
+//需要优先配置XEngine
+//WINDOWS使用VS2022 x86 debug 编译
+//linux使用下面的命令编译
+//g++ -std=c++17 -Wall -g APPClient_P2XPClient.cpp -o APPClient_P2XPClient.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_Client -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lXEngine_OPenSsl -lXEngine_NetXApi -lXClient_Socket -lNetHelp_APIHelp -ljsoncpp
 
 LPCTSTR lpszUserName = _T("123123aa");
-LPCTSTR lpszAddr = _T("192.168.1.7");
+LPCTSTR lpszAddr = _T("192.168.1.8");
 
 TCHAR tszPublicAddr[128];
 TCHAR tszPrivateAddr[128];
@@ -55,16 +62,15 @@ int APPClient_P2XPLogin()
 		return -1;
 	}
 	int nListCount = 0;
-	APIHELP_NETCARD** ppSt_APICard;
-	if (!APIHelp_NetWork_GetIPAddr(&ppSt_APICard, &nListCount, TRUE, tszPublicAddr))
-	{
-		return -1;
-	}
+	NETXAPI_CARDINFO** ppSt_APICard;
+	NetXApi_Socket_GetCardInfo(&ppSt_APICard, &nListCount, AF_INET);
+	APIHelp_NetWork_GetIPNet(tszPublicAddr);
 	if (nListCount <= 0)
 	{
 		return -1;
 	}
-	_tcscpy(tszPrivateAddr, ppSt_APICard[0]->tszIPAddr);
+	//得到IP地址
+	strcpy(tszPrivateAddr, ppSt_APICard[0]->tszIPAddr);
 	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_APICard, nListCount);
 
 	st_JsonRoot["tszUserName"] = lpszUserName;
@@ -203,8 +209,10 @@ int APPClient_P2XPConnect()
 
 int main()
 {
+#ifdef _MSC_BUILD
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
+#endif
 
 	if (!XClient_TCPSelect_Create(&m_hSocket, lpszAddr, nPort))
 	{
@@ -216,6 +224,9 @@ int main()
 	APPClient_P2XPConnect();
 
 	XClient_TCPSelect_Close(m_hSocket);
+	
+#ifdef _MSC_BUILD
 	WSACleanup();
+#endif
 	return 0;
 }

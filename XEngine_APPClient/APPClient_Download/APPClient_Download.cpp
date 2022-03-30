@@ -2,12 +2,19 @@
 //P2P Distributed(Hyper-Threading download sample code),only supports LAN,The example code is just to demonstrate how to implement it, and it needs to be adjusted for business
 //你可以使用libcurl实现HTTP下载功能,主要是利用了Range字段实现分块下载
 //You can use libcurl to implement the HTTP download, mainly using the Range field to achieve block download
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 #include <windows.h>
 #include <tchar.h>
+#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib")
+#pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIHelp")
+#pragma comment(lib,"x86/XEngine_DownLoad/XEngine_DownLoad")
+#pragma comment(lib,"x86/XEngine_SystemSdk/XEngine_SystemApi")
+#pragma comment(lib,"Ws2_32")
+#pragma comment(lib,"../../XEngine_Source/Debug/jsoncpp")
 #else
 #endif
 #include <list>
+#include <thread>
 #include <json/json.h>
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
@@ -24,11 +31,10 @@
 #include "../../XEngine_Source/XStorage_Protocol.h"
 using namespace std;
 
-#pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib")
-#pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIHelp")
-#pragma comment(lib,"x86/XEngine_DownLoad/XEngine_DownLoad")
-#pragma comment(lib,"x86/XEngine_SystemSdk/XEngine_SystemApi")
-#pragma comment(lib,"Ws2_32")
+//需要优先配置XEngine
+//WINDOWS使用VS2022 x86 debug 编译
+//linux使用下面的命令编译
+//g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_DownLoad -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIHelp -lXEngine_Download -lXEngine_SystemApi -ljsoncpp
 
 typedef struct 
 {
@@ -88,15 +94,15 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 	list<P2PFILE_INFO>::const_iterator stl_ListIterator = pStl_ListFile->begin();
 	for (int i = 0; stl_ListIterator != pStl_ListFile->end(); stl_ListIterator++, i++)
 	{
-		TCHAR tszDLUrl[MAX_PATH];
+		TCHAR tszDLUrl[1024];
 		TCHAR tszRange[128];
 
-		memset(tszDLUrl, '\0', MAX_PATH);
+		memset(tszDLUrl, '\0', sizeof(tszDLUrl));
 		memset(tszRange, '\0', sizeof(tszRange));
 
 		_stprintf(tszDLUrl, _T("%s/%s/%s"), stl_ListIterator->tszIPAddr, stl_ListIterator->st_ProtocolFile.tszFilePath + 2, stl_ListIterator->st_ProtocolFile.tszFileName);
 		//是否是最后一块
-		if (pStl_ListFile->size() == (i + 1))
+		if ((int)pStl_ListFile->size() == (i + 1))
 		{
 			pSt_P2PFile[i].nPosStart = nPos;
 			pSt_P2PFile[i].nPosEnd = 0;
@@ -112,7 +118,7 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 		
 		if (!DownLoad_Http_Create(&pSt_P2PFile[i].xhToken, tszDLUrl, lpszFile, tszRange, NULL, NULL, NULL))
 		{
-			printf("create download task is failed:%lX\n", Download_GetLastError());
+			printf("create download task is failed:%X\n", Download_GetLastError());
 		}
 	}
 	//直到所有完成
@@ -135,7 +141,7 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 		{
 			break;
 		}
-		Sleep(500);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 
 	for (unsigned int i = 0; i < pStl_ListFile->size(); i++)
@@ -148,8 +154,10 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 
 int main()
 {
+#ifdef _MSC_BUILD
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
+#endif
 
 	int nHTTPCode = 0;
 	int nBodyLen = 2048;
@@ -179,6 +187,9 @@ int main()
 	P2PFile_Create(&stl_ListFile, lpszFile);
 
 	BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszMsgBody);
+
+#ifdef _MSC_BUILD
 	WSACleanup();
+#endif
 	return 0;
 }
