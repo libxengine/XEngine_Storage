@@ -7,7 +7,7 @@ LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XE
 LIB = -lXEngine_BaseLib -lHelpComponents_DataBase
 LIBEX = -static-libgcc -lrt -ldl 
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = Database_File.o pch.o
+LIBINCLUDE = Database_Client.o Database_File.o Database_Help.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -26,9 +26,13 @@ endif
 all:$(LIBINCLUDE)
 	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libXStorage_SQLPacket.so -shared $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
+Database_Client.o:./Database_Client/Database_Client.cpp                                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Database_Client/Database_Client.cpp
 Database_File.o:./Database_File/Database_File.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Database_File/Database_File.cpp
-	
+Database_Help.o:./Database_Help/Database_Help.cpp                                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Database_Help/Database_Help.cpp
+
 pch.o:pch.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) pch.cpp
 

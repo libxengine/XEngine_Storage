@@ -157,14 +157,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Database_Client\Database_Client.h" />
     <ClInclude Include="Database_Define.h" />
     <ClInclude Include="Database_Error.h" />
     <ClInclude Include="Database_File\Database_File.h" />
+    <ClInclude Include="Database_Help\Database_Help.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Database_Client\Database_Client.cpp" />
     <ClCompile Include="Database_File\Database_File.cpp" />
+    <ClCompile Include="Database_Help\Database_Help.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

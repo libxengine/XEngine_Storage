@@ -19,6 +19,18 @@
     <Filter Include="源文件\Database_File">
       <UniqueIdentifier>{bb11ac98-cdc8-42f3-a64f-5101de28e90a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Database_Client">
+      <UniqueIdentifier>{d5daf7bd-cb2f-4033-b76e-17091d42f222}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Database_Client">
+      <UniqueIdentifier>{5a33deb9-3278-4ee1-a571-85f8b8d0edda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Database_Help">
+      <UniqueIdentifier>{b7135fc4-e9a7-4461-a72e-b7eba661f9e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Database_Help">
+      <UniqueIdentifier>{ebe3a727-0fc0-47ee-bcfe-c5de217ca9a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -36,6 +48,12 @@
     <ClInclude Include="Database_File\Database_File.h">
       <Filter>头文件\Database_File</Filter>
     </ClInclude>
+    <ClInclude Include="Database_Client\Database_Client.h">
+      <Filter>头文件\Database_Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Database_Help\Database_Help.h">
+      <Filter>头文件\Database_Help</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -46,6 +64,12 @@
     </ClCompile>
     <ClCompile Include="Database_File\Database_File.cpp">
       <Filter>源文件\Database_File</Filter>
+    </ClCompile>
+    <ClCompile Include="Database_Client\Database_Client.cpp">
+      <Filter>源文件\Database_Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Database_Help\Database_Help.cpp">
+      <Filter>源文件\Database_Help</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

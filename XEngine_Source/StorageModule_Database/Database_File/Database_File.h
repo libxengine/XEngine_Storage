@@ -26,7 +26,6 @@ protected:
     BOOL Database_File_CreateTable();
     BOOL Database_File_TimeMonth(LPCTSTR lpszStartTime, int* pInt_Month);
     BOOL Database_File_TimeDel();
-    BOOL Database_File_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL, LPCTSTR lpszFileUser = NULL, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL);
 protected:
     static XHTHREAD Database_File_Thread(LPVOID lParam);
 private:

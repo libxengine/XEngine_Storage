@@ -138,25 +138,9 @@ BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
     BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
 
 	TCHAR tszSQLStatement[2048];
-    TCHAR tszTableName[64];
-    XENGINE_LIBTIMER st_LibTimer;
-
 	memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-	memset(tszTableName, '\0', sizeof(tszTableName));
-	memset(&st_LibTimer, '\0', sizeof(XENGINE_LIBTIMER));
-	//获得插入日期表
-	BaseLib_OperatorTime_GetSysTime(&st_LibTimer);
 
-	if (_tcslen(pSt_DBFile->tszTableName) > 0)
-	{
-		_tcscpy(tszTableName, pSt_DBFile->tszTableName);
-	}
-	else
-	{
-		_stprintf(tszTableName, _T("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
-	}
-
-	_stprintf(tszSQLStatement, _T("INSERT INTO `%s` (BuckKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,'%04d-%02d-%02d %02d:%02d:%02d')"), tszTableName, pSt_DBFile->tszBuckKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize, st_LibTimer.wYear, st_LibTimer.wMonth, st_LibTimer.wDay, st_LibTimer.wHour, st_LibTimer.wMinute, st_LibTimer.wSecond);
+    Database_Help_Insert(tszSQLStatement, pSt_DBFile);
 
     if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
     {
@@ -209,13 +193,8 @@ BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, 
     for (int i = 0; i < nListCount; i++)
     {
 		TCHAR tszSQLStatement[1024];
-		TCHAR tszSQLQuery[1024];
-
-		memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 		memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-
-		Database_File_Packet(tszSQLQuery, lpszBuckKey, NULL, lpszFile, lpszHash);
-		_stprintf(tszSQLStatement, _T("DELETE FROM `%s` %s"), ppSt_ListFile[i]->tszTableName, tszSQLQuery);
+        Database_Help_Delete(tszSQLStatement, ppSt_ListFile[i]->tszTableName, lpszBuckKey, lpszFile, lpszHash);
 
         if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
         {
@@ -329,14 +308,9 @@ BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
 			__int64u dwLineResult = 0;
 			__int64u dwFieldResult = 0;
 			XNETHANDLE xhResult;
-			TCHAR tszSQLQuery[1024];
-
-			memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 			memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
 
-			_stprintf(tszSQLStatement, _T("SELECT * FROM `%s`"), pptszResult[0]);
-			Database_File_Packet(tszSQLQuery, lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
-			_tcscat(tszSQLStatement, tszSQLQuery);
+            Database_Help_Query(tszSQLStatement, pptszResult[0], lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
 			//查询文件
 			if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
 			{
@@ -387,12 +361,7 @@ BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
     }
     else
     {
-		TCHAR tszSQLQuery[1024];
-		memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
-
-		_stprintf(tszSQLStatement, _T("SELECT * FROM `%s`"), lpszTableName);
-		Database_File_Packet(tszSQLStatement, lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
-		_tcscat(tszSQLStatement, tszSQLQuery);
+        Database_Help_Query(tszSQLStatement, lpszTableName, lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
 		//查询文件
 		if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
 		{
@@ -614,130 +583,6 @@ BOOL CDatabase_File::Database_File_TimeDel()
     }
     DataBase_MySQL_FreeResult(xhDBSQL, xhTableResult);
     return TRUE;
-}
-BOOL CDatabase_File::Database_File_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFilePath /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */, LPCTSTR lpszFileUser /* = NULL */, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */)
-{
-	Database_IsErrorOccur = FALSE;
-
-	BOOL bInit = FALSE;
-	TCHAR tszSQLQuery[MAX_PATH];
-	memset(tszSQLQuery, '\0', MAX_PATH);
-	//文件所属BUCKET
-	if (NULL != lpszBuckKey)
-	{
-		if (_tcslen(lpszBuckKey) > 0)
-		{
-			if (bInit)
-			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
-			}
-			else
-			{
-				_tcscat(ptszSQLBuffer, _T(" WHERE "));
-			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("BuckKey = '%s'"), lpszBuckKey);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
-		}
-	}
-	//文件路径
-	if (NULL != lpszFilePath)
-	{
-		if (_tcslen(lpszFilePath) > 0)
-		{
-			if (bInit)
-			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
-			}
-			else
-			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
-			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("FilePath = '%s'"), lpszFilePath);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
-		}
-	}
-	//文件名称
-	if (NULL != lpszFileName)
-	{
-		if (_tcslen(lpszFileName) > 0)
-		{
-			if (bInit)
-			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
-			}
-			else
-			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
-			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("FileName = '%s'"), lpszFileName);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
-		}
-	}
-	//文件HASH
-	if (NULL != lpszFileHash)
-	{
-		if (_tcslen(lpszFileHash) > 0)
-		{
-			if (bInit)
-			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
-			}
-			else
-			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
-			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("FileHash = '%s'"), lpszFileHash);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
-		}
-	}
-	//文件所属用户
-	if (NULL != lpszFileUser)
-	{
-		if (_tcslen(lpszFileUser) > 0)
-		{
-			if (bInit)
-			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
-			}
-			else
-			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
-			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("FileUser = '%s'"), lpszFileUser);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
-		}
-	}
-	//时间范围
-	if ((NULL != lpszTimeStart) && (NULL != lpszTimeEnd))
-	{
-		if ((_tcslen(lpszTimeStart) > 0) && (_tcslen(lpszTimeEnd) > 0))
-		{
-			if (bInit)
-			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
-			}
-			else
-			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
-			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
-		}
-	}
-
-	return TRUE;
 }
 //////////////////////////////////////////////////////////////////////////
 //                      线程函数
