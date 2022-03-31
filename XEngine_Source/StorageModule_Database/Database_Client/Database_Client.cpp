@@ -43,6 +43,13 @@ BOOL CDatabase_Client::Database_Client_Init(LPCTSTR lpszSQLFile)
     //创建数据库
     if (DataBase_SQLite_Create(lpszSQLFile))
     {
+		//打开数据库
+		if (!DataBase_SQLite_Open(&xhSQL, lpszSQLFile))
+		{
+			Database_IsErrorOccur = TRUE;
+			Database_dwErrorCode = DataBase_GetLastError();
+			return FALSE;
+		}
 		Database_Client_CreateTable(tszTableName);
     }
 	else
@@ -54,14 +61,14 @@ BOOL CDatabase_Client::Database_Client_Init(LPCTSTR lpszSQLFile)
 			Database_dwErrorCode = DataBase_GetLastError();
 			return FALSE;
 		}
+		//打开数据库
+		if (!DataBase_SQLite_Open(&xhSQL, lpszSQLFile))
+		{
+			Database_IsErrorOccur = TRUE;
+			Database_dwErrorCode = DataBase_GetLastError();
+			return FALSE;
+		}
 	}
-    //打开数据库
-    if (!DataBase_SQLite_Open(&xhSQL, lpszSQLFile))
-    {
-        Database_IsErrorOccur = TRUE;
-        Database_dwErrorCode = DataBase_GetLastError();
-        return FALSE;
-    }
     return TRUE;
 }
 /********************************************************************
@@ -323,7 +330,7 @@ BOOL CDatabase_Client::Database_Client_CreateTable(LPCTSTR lpszTableName)
 	TCHAR tszSQLQuery[2048];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
-	_stprintf_s(tszSQLQuery, _T("PRAGMA foreign_keys = false;"
+	_stprintf_s(tszSQLQuery, _T(
 		"CREATE TABLE IF NOT EXISTS \"%s\" ("
 		"  \"ID\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
 		"  \"BuckKey\" TEXT,"
@@ -334,7 +341,6 @@ BOOL CDatabase_Client::Database_Client_CreateTable(LPCTSTR lpszTableName)
 		"  \"FileSize\" integer NOT NULL,"
 		"  \"FileTime\" TEXT NOT NULL"
 		");"
-		"PRAGMA foreign_keys = true;"
 	), lpszTableName);
 
 	if (!DataBase_SQLite_Exec(xhSQL, tszSQLQuery))
