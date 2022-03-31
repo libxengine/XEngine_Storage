@@ -185,7 +185,7 @@ BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, 
     }
     int nListCount = 0;
     XSTORAGECORE_DBFILE **ppSt_ListFile;
-    if (!Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, lpszFile, lpszHash))
+    if (!Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, lpszBuckKey, lpszFile, lpszHash))
     {
         return FALSE;
     }
