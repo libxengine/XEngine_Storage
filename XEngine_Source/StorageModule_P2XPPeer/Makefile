@@ -24,7 +24,7 @@ UNICODE =
 endif
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libXStorage_P2XPPeer.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libStorageModule_P2XPPeer.so -shared -fPIC $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
     
 P2XPPeer_Manage.o:./P2XPPeer_Manage/P2XPPeer_Manage.cpp                                 
@@ -35,8 +35,8 @@ pch.o:pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libXStorage_P2XPPeer.so 
-	cp ./libXStorage_P2XPPeer.so ../../../XEngine_Release/libXStorage_P2XPPeer.so
+InstallSo:./libStorageModule_P2XPPeer.so 
+	cp ./libStorageModule_P2XPPeer.so ../../XEngine_Release/libStorageModule_P2XPPeer.so
 
 
 CleanAll:CleanObj CleanMk

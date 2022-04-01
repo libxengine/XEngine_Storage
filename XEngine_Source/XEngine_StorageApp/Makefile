@@ -2,7 +2,7 @@ CC = g++ -Wall
 RELEASE = 0
 UNICODE = 0  
 LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L /usr/local/lib/XEngine_Release/XEngine_HelpComponents -L /usr/local/lib/XEngine_Release/XEngine_RfcComponents -L /usr/local/lib/XEngine_Release/XEngine_NetHelp    \
-          -L ../StorageModule_Database -L ../StorageModule_P2XPPeer -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp -L ../StorageModule_Protocol -L ../XEngine_ThirdPart/jsoncpp \                                        
+          -L ../StorageModule_Database -L ../StorageModule_P2XPPeer -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp -L ../StorageModule_Protocol -L ../XEngine_ThirdPart/jsoncpp                                       
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lXEngine_ProcFile -lXEngine_SystemApi -lHelpComponents_XLog -lHelpComponents_Packets -lRfcComponents_HttpServer -lNetHelp_APIHelp \
       -lStorageModule_Database -lStorageModule_P2XPPeer -lStorageModule_Config -lStorageModule_Session -lStorageModule_APIHelp -lStorageModule_Protocol \
 	  -ljsoncpp

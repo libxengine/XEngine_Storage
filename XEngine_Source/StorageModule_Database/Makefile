@@ -24,7 +24,7 @@ UNICODE =
 endif
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libXStorage_SQLPacket.so -shared $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libStorageModule_Database.so -shared $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
 Database_Client.o:./Database_Client/Database_Client.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Database_Client/Database_Client.cpp
@@ -38,8 +38,8 @@ pch.o:pch.cpp
 
 
 InstallAll:InstallSo
-InstallSo:./libXStorage_SQLPacket.so
-	cp ./libXStorage_SQLPacket.so ../../../XEngine_Release/libXStorage_SQLPacket.so
+InstallSo:./libStorageModule_Database.so
+	cp ./libStorageModule_Database.so ../../XEngine_Release/libStorageModule_Database.so
 
 
 CleanAll:CleanObj CleanMk
