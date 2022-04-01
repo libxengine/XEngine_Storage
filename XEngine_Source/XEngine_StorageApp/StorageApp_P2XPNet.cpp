@@ -62,6 +62,12 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端:%s,处理登录错误,解析协议失败,错误码:%lX"), lpszClientAddr, Protocol_GetLastError());
 				return FALSE;
 			}
+			//如果没有填充公用地址,用他的连接地址代替,外网服务器都可以这样做
+			if (_tcslen(st_ClientPeer.st_PeerAddr.tszPublicAddr) <= 0)
+			{
+				_tcscpy(st_ClientPeer.st_PeerAddr.tszPublicAddr, lpszClientAddr);
+				BaseLib_OperatorIPAddr_SegAddr(st_ClientPeer.st_PeerAddr.tszPublicAddr, NULL);
+			}
 			//获取外网IP所在位置
 			int nBLen = 0;
 			TCHAR* ptszBody;
@@ -70,7 +76,11 @@ BOOL XEngine_Task_TCPP2xp(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, LPCTSTR lpszClie
 			
 			_stprintf(tszUrlBuffer, _T("http://app.xyry.org:5501/api?function=ipquery&params1=%s&params2=0"), st_ClientPeer.st_PeerAddr.tszPublicAddr);
 			APIHelp_HttpRequest_Get(tszUrlBuffer, &ptszBody, &nBLen);
-			APIHelp_Api_GetIPInfo(ptszBody, nBLen, &st_ClientPeer.st_IPAddrInfo);
+			if (nBLen > 0)
+			{
+				APIHelp_Api_GetIPInfo(ptszBody, nBLen, &st_ClientPeer.st_IPAddrInfo);
+				BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszBody);
+			}
 			st_ClientPeer.st_PeerTimer.dwUserTime = time(NULL);
 			st_ClientPeer.st_PeerTimer.dwKeepAlive = time(NULL);
 			st_ClientPeer.bIsLogin = TRUE;
