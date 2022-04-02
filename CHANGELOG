@@ -1,0 +1,414 @@
+XEngine_Storage V3.6.0.1001
+
+添加:在Protocol_StorageParse_QueryFile函数中添加模式参数
+修改:移动数据库和P2XP模块到主目录
+修改:SQL函数名称
+修改:p2p会自动填充客户端外网地址了
+修改:任务处理支持客户端和文件数据库操作了
+修改:默认启动数据库
+修复:数据库删除的问题
+修复:p2p获取ip信息内存泄露
+删除:配置文件p2p模式字段
+删除:XENGINE_STORAGE_APP_METHOD_P2P任务方法
+
+added:mode parament in Protocol_StorageParse_QueryFile function
+modify:move database and p2xp module to root dir
+modify:sql function name
+modify:p2p can be auto fill public address
+modify:task support client and file database operator
+modify:enable client database.
+fixed:the problem that the file delete
+fixed:memoryleak problem that p2p get ip information
+delete:p2p mode field
+delete:task XENGINE_STORAGE_APP_METHOD_P2P method.
+======================================================================================
+XEngine_Storage V3.5.1.1001
+
+修改:获取IP地址信息方式
+修正:编译问题
+
+modify:how to get ipaddress information
+fixed:compile error
+======================================================================================
+XEngine_Storage V3.5.0.1001
+
+添加:JSONCPP现在集成到项目中
+支持:x64 debug编译了
+升级:字符编码使用utf8-bom
+修改:获取IP信息方法
+修改:扩展了IP地址信息字段
+修正:分布式重定向 2 和 3 模式总是会选择其中一种的问题
+修正:当APIHelp_Distributed_UPStorage 没有找到可用地址的问题
+
+added:jsoncpp into project
+support:windows x64 debug compile...
+update:charset encoding use utf8-bom
+modify:Method of get IP address information
+modify:Expanded ip address information
+fixed:The problem that only one of the distributed redirection 2 and 3 modes will always be selected
+fixed:the problem when APIHelp_Distributed_UPStorage not found address
+======================================================================================
+XEngine_Storage V3.4.1.1001
+
+修改:支持windows x64 debug的编译
+修复:指定的bucket名称不处理空间大小的问题
+修复:当上传storagekey错误的名称没有发送结果
+修复:linux编译问题
+
+modify:support x64 debug compile on windows
+fixed:Specifying the bucket name does not handle problem of space size
+fixed:not send result when get upload storagekey name failed
+fixed:linux build
+======================================================================================
+XEngine_Storage V3.4.0.1001
+
+添加:sql打包查询语句为数据库模块
+添加:apihelp函数到存储模块冲app程序中
+添加:上传支持post方法
+添加:为apihelp模块获取bucket名称映射
+添加:配置模块st_LBLocation
+添加:完成通知bdown字段
+添加:上传完成后返回文件信息
+添加:上传文件支持指定和不指定bucket名
+修改:所有模块都支持bucket key参数了
+修改:上传下载业务的授权验证代码
+修改:上传下载的rangefile解析代码
+修改:上传下载插入bucketkey
+修改:上传的hash验证
+修改:任务管理方法名称
+修改:Protocol_StorageParse_DirOperator lpszUserDir参数可以为null
+修改:移动XEngine_Task_P2PGet到XEngine_Task_Manage中
+修改:负载均衡可以为每个服务设置了
+修改:APIHelp_Distributed_RandomAddr 支持负载模式选择
+修改:重定向支持模式选择
+修改:为配置模块修改st_LBConfig为st_LBDistributed
+修改:上传接口支持lb模式
+修正:p2p客户端统计不正确
+修正:获取长度被覆盖的问题
+修正:上传存储模块创建文件不正确
+修正:上传文件信息没有插入会话模块
+修正:初始化没有创建sql表的问题
+修正:查询sql时间不正确的问题
+修正:文件查询崩溃
+修正:删除方法没有删除文件的问题
+修正:获取文件大小不正确
+修正:APIHelp_Distributed_RandomAddr模式类型不正确
+删除:mysql的XStorage_MySql_FileQueryForTable和XStorage_MySql_FileQueryForHash
+删除:sqlite的XStorage_SQLite_FileQueryForTable函数
+删除:apihelp相关代码从存储程序中
+删除:p2p局域网和用户api函数
+删除:delete:APIHelp_Distributed_IsMode函数
+
+added:sql Statement packet code for sql module
+added:apihelp function for storage module from app program
+added:upload support post method.
+added:get bucket name mapping path for apihelp module
+added:st_LBLocation configure for configure module
+added:complete notify bDown field
+added:return file info after upload complete
+added:Upload files support specifying bucket or not specifying
+modify:all module support bucket key parament
+modify:authorize verification code for upload and download and center
+modify:rangefile parse code for upload and download
+modify:insert bucket key for download and upload
+modify:hash verificaiton for upload
+modify:task manage method name
+modify:Protocol_StorageParse_DirOperator lpszUserDir parament can be null
+modify:move XEngine_Task_P2PGet function into XEngine_Task_Manage
+modify:Load balancing can be set for each service
+modify:APIHelp_Distributed_RandomAddr support loadbalance mode selection
+modify:Redirect distributed judgment method
+modify:st_LBConfig to st_LBDistributed for configure module
+modify:upload interface support loadbalance mode
+fixed:p2p client count incorrent
+fixed:Get length overwritten problem
+fixed:upload storage module create file error
+fixed:not insert session module when upload file
+fixed:init dose not create sql table
+fixed:query sql time not incorrent
+fixed:dir query crashed
+fixed:delete method dose not delete file
+fixed:get file size is incorrent
+fixed:APIHelp_Distributed_RandomAddr mode type incorrent
+delete:mysql XStorage_MySql_FileQueryForTable and XStorage_MySql_FileQueryForHash function
+delete:sqlite XStorage_SQLite_FileQueryForTable function
+delete:apihelp file for storage app
+delete:p2p lan and user api function
+delete:APIHelp_Distributed_IsMode function
+======================================================================================
+XEngine_Storage V3.3.0.1001
+
+添加:为配置文件增加存储负载均衡配置
+添加:为APIHelp模块增加下载和上传存储分布式选择函数
+添加:为上传和下载功能增加存储分布式功能
+添加:为协议模块增加bucket key 解析和打包
+修改:APIHELP分布式支持文件名称字段
+修改:协议打包函数Protocol_StoragePacket_QueryFile 删除了ROOT DIR参数
+修改:协议解析函数Protocol_StorageParse_DirOperator 增加了一个新参数
+修改:sql模块支持buckkey字段
+删除:配置模块重复代码
+删除:负载配置IP地址字段
+修复:http upload 没有包含长度字段的时候无法返回消息的问题
+修复:XEngine_APPHelp_RangeFile 没有长度也返回真的情况
+
+added: storage load balance for configure module
+added: download and upload storage distributed choice function for Api help module
+added: download and uploader support get bucket for distributed
+added: bucket key parse and packet for protocol module
+modify: APIHelp_Distribute support filename field
+modify: protocol packet Protocol_StoragePacket_QueryFile function delete lpszRootDir parament
+modify: protocol parse Protocol_StorageParse_DirOperator function add ptszBuckKey parament
+modify: sql module support buckkey field
+delete: Remove redundant code for configure
+delete: loadblance ipaddr field
+fixed: http upload does not contain the length and does not return a message
+fixed: XEngine_APPHelp_RangeFile function not length return ture
+======================================================================================
+XEngine_Storage V3.2.0.1001 
+
+增加:下载的文件会有HASH值在HTTP头中了
+增加:会话模块现在保存hash值了
+增加:PASS代理现在被设置1秒超时了
+增加:现在上传文件支持强制验证HASH值功能
+更新:启动代码日志
+修改:下载文件的时候发送的minitype不正确
+修改:支持XEngineV7.26版本
+修改:上传文件现在没有HASH验证也能正确处理PASS代理和数据入库了
+优化:客户端关闭函数
+优化:获取任务列表
+修正:密码验证处理的问题
+修正:p2p函数处理任务完成崩溃的问题
+修正:广播发送失败没有关闭句柄
+修正:下载PASS代理HASH值错误
+修正:上传文件只有length长度处理文件完成不正确的问题
+
+added:download add hashfile field to http hdr
+added:session module add file hash field
+added:set connect timeout for proxy of pass
+added:added bUPHash configure for configure module
+update:Alignment start up code
+modify:when download file will send the correct minitype
+modify:support XEngine V7.26API Function
+modify:can be process pass proxy and database insert when upload file have not hash verification
+improved:close client function
+improved:get task of http
+fixed:Password handling issues
+fixed:crashed when p2p processing is complete
+fixed:broadcast send failed but not to close
+fixed:Download pass proxy hash is incorrect
+fixed:The upload session is not processed correctly when there is only the length field
+======================================================================================
+XEngine_Storage V3.1.0.1001 
+
+增加:现在支持center,uploader,download的HTTPS支持
+删除:没有使用的MYSQL代码
+删除:任务事件代码
+删除:Protocol_StorageParse_UPEvent函数
+优化:数据库模块代码
+优化:上传日志和通知代码
+优化:启动程序日志信息
+修改:配置模块配置信息
+
+Add:support network of ssl for upload and download and center
+Delete:useless MYSQL code
+Delete:task event cpp
+Delete:Protocol_StorageParse_UPEvent function
+Improved:sql packet module
+Improved:upload log and pass code
+Improved:app log information with start
+Modify:configure module is configure info
+======================================================================================
+XEngine_Storage V3.0.0.1001 
+
+增加:P2P查询其他用户拥有文件
+增加:p2p节点模块支持查询所有客户端
+增加:HTTP支持查询局域网列表和用户信息
+修改:P2P和存储协议两个协议模块进行了合并
+修改:删除了P2P组件并且将P2P节点模块集成到存储组件
+修改:匹配XEngine V7.23版本
+修改:支持设置协议参数为空
+修正:编译问题
+优化:获取包缓冲区代码优化
+删除:tstring 类型
+
+added:p2p client can be query other client file
+added:all client list for p2ppeer module
+added:http query lan list question and http query user requestion
+modify:merge two protocol module to new protocol module
+modify:delete p2xp components and remove p2xppeer module to XEngine_StorageComponents
+modify:match XEngine V7.23
+modify:support setting protocol parament is null
+fixed:build error
+improved:get buffer from packet
+delete:tstring type
+======================================================================================
+XEngine_Storage V2.5 
+
+添加:支持启用和关闭断点续传
+添加:支持启用和关闭指定服务
+修改:xstroagesql_file 函数修改为 xstorage_mysql
+修改:session 模块删除 Session_UPStroage_GetComplete 并添加 Session_UPStroage_Close 函数
+修改:nSendMode删除并且替换为bResumable
+修改:XEngine_APPHelp_RangeFile函数现在会导出/后面的大小了
+修改:现在支持上传断点续传了
+删除:信息数据库相关代码文件
+修复:上传完成时不会向客户端发送任何消息而不写入数据库
+修复:没有上传完成就不会删除会话的问题
+
+added:enable or disable resumable.
+added:Support to close specific services
+modify:xstroagesql_file to xstorage_mysql
+modify:session module delete Session_UPStroage_GetComplete and add Session_UPStroage_Close function
+modify:nSendMode not use and replaced to bResumable
+modify:XEngine_APPHelp_RangeFile function support export / range parament
+modify:support resumable for upload file with session module
+delete:info database about code and file
+fixed:No message will be sent to the client when the upload is completed without writing to the database
+fixed::not delete session when upload complete
+======================================================================================
+XEngine_Storage V2.4 
+
+添加:上传现在支持限速了
+添加:广域网IP获取协议函数
+修改:下载使用系统事件的回调模式了
+修改:调整等待时间计算方式
+修改:合并了局域网和广域网IP地址获取函数
+删除:发送线程池代码
+删除:自动下载错误处理相关代码
+修正:获取广域网地址函数没有导出的问题
+
+add:enable recv limit speed
+add:wlan packet protocol function
+modify:use send callback to download file
+modify:Adjust the waiting time calculation method
+modify:WLANLIST AND LANLIST merge
+delete:send threadpool code
+delete:auto error with download
+fixed:P2XPProtocol_Packet_WLan not export
+======================================================================================
+XEngine_Storage V2.3 
+
+增加:业务服务心跳
+增加:使用-u 选项开启reuseraddr
+增加:获取所有会话模块信息
+增加:通过接口获取所有任务列表
+修复:P2P心跳不工作的问题
+修改:统一了发送数据方式
+修改:获取下载模块会话的缓冲区功能
+优化:发送等待时间和任务管理http信息
+
+added:center service heartbeat
+added:use reuseraddr option with -u parament
+added:get all information for session module
+added:all task list query by api
+fixed:p2p heartbeat not work
+modify:Unified sending function
+modify:get buffer function name the module of download
+improved:send wait time and task manage http information
+======================================================================================
+XEngine_Storage V2.2 
+
+修正:发送失败没有计算大小的问题
+修正:广播消息其他机器无法接受的问题
+修正:断下续传问题
+修改:等待时间现在为微秒了
+修改:可以通过查询得到下载URL
+增加:支持发送错误重试次数设置
+增加:OPTIONS方法支持,可用于心跳
+增加:为管理API增加创建,删除和查询方法
+增加:下载动态速率支持
+
+Fixed:not cal size with send failed
+Fixed:Can not receive broadcast messages on other machines
+Fixed:download resume pos not work
+Modify:wait time is microseconds now.
+Modify:can be download by query url
+Added:Support setting the number of retry errors
+Added:OPTIONS Method is supported.can use to heartbeat
+Added:create and delete and query management api for dir
+Added:dynamic rate first Version
+======================================================================================
+XEngine_Storage V2.1.0.1001 
+
+Added:Management Delete And Insert Api
+Added:Broadcast File Query And File Request with query
+Fixed:Sqlite Incorrent in linux
+Fixed:P2P Distributed Protocol do not work
+Modify:will be query local file when p2p file query
+Modify:The sql module file query interface requires the complete file path
+
+增加:删除和插入接口API
+增加:广播查询和本地文件查询请求协议
+修正:sqlite模块在LINUX下的问题
+修正:现在P2P分发协议可以正常使用了
+修改:查询的协议可以返回本地存在的内容了
+修改:SQL模块文件查询接口现在需要完整的文件和路径了
+======================================================================================
+XEngine_Storage V2.0 
+
+增加:IP地址解析库
+增加:现在P2XP协议能够正常被处理了
+更新:文档和配置文件
+
+added:IP Address library
+added:p2xp protocol can be processed.
+update:docment and configure file
+======================================================================================
+XEngine_Storage V1.5 
+
+增加:代理转发添加了请求的方法名
+增加:SQLITE数据库支持
+增加:支持热重载配置文件
+增加:API帮助模块
+增加:P2XP组件(节点模块,协议模块)
+优化:代码管理文件结构
+修正:LINUX编译问题
+修正:HASH计算的一些问题
+修正:负载均衡某些时候服务选中服务器
+
+added:Proxy forwarding add the requested method name
+added:sqlite database supported
+added:support hot reload with configure
+added:api help module
+added:p2xp components(peer module,protocol module)
+improved:code struct
+fixed:linux build error
+fixed:hash problem
+fixed:load balance cant choice server
+======================================================================================
+XEngine_Storage V1.4 
+新增:完成通知上传下载都支持了
+新增:分布式模式现在可以互相通知文件上传下载完成情况了
+新增:现在可以不使用数据库
+新增:代理传输的信息现在有hash值了
+修复:WINDOWS限速不正确
+修复:一些崩溃问题
+优化:大数据发送的一些问题
+
+added:upload and download of completion notification is supported.
+added:Distributed mode can be notify each other of the completion of file upload and download.
+added:can be not enable database
+fix:windows limit speed not right
+fix:some crash.
+improve:send problem with big file
+======================================================================================
+XEngine_Storage V1.3 
+
+Supported:upload and download http protocol of completion notifycation
+Supported:busniss and upload and download resrouce redirects
+Supported:upload and download breakpoint resume
+Supported:HTTP Basic Auth
+
+支持HTTP协议上传和下载完成通知
+支持业务上传和下载资源重定向
+支持上传和下载断点续传
+支持基本的HTTP验证
+======================================================================================
+XEngine_Storage V1.2 
+
+支持数据库写入,查询
+支持三方引擎(nginx upload module)
+======================================================================================
+XEngine_Storage V1.0.0.1001
+
+支持HTTP上传下载和限速的第一版本
