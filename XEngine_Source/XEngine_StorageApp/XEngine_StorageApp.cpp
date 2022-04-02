@@ -71,6 +71,7 @@ void ServiceApp_Stop(int signo)
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		Database_File_Destory();
+		Database_Client_Destory();
 
 		if (NULL != pSTDThread)
 		{
@@ -173,13 +174,6 @@ int main(int argc, char** argv)
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化服务器信号管理成功"));
 
-	if (!APIHelp_HttpRequest_SetGlobalTime(1))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，设置PASS代理超时失败,错误:%lX"), APIHelp_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，设置PASS代理超时成功"));
-
 	xhLimit = Algorithm_Calculation_Create();
 	if (NULL == xhLimit)
 	{
@@ -230,11 +224,16 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化MYSQL数据库服务失败，错误：%lX"), Database_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化MYSQL数据库服务成功"));
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化MYSQL数据库服务成功,数据库地址:%s"), st_ServiceCfg.st_XSql.tszSQLAddr);
 	}
 	else
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，数据库被设置为不启用"));
+		if (!Database_Client_Init(st_ServiceCfg.st_XSql.tszSQLFile))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化SQLite数据库服务失败，错误：%lX"), Database_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化SQLite数据库服务成功,数据库地址:%s"), st_ServiceCfg.st_XSql.tszSQLFile);
 	}
 
 	if (!Session_User_Init(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszUserList))
@@ -445,8 +444,8 @@ int main(int argc, char** argv)
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nP2XPThread);
-
-		if (st_ServiceCfg.st_P2xp.nMode > 0)
+		//默认为假才是客户端,才能启用P2P
+		if (!st_ServiceCfg.st_XSql.bEnable)
 		{
 			if (!NetCore_BroadCast_RecvInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 			{
@@ -467,8 +466,8 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，P2P存储服务配置为不启动"));
 		}
 	}
-	m_StrVersion = st_ServiceCfg.st_XVer.pStl_ListStorage->front();
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), m_StrVersion.c_str());
+
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), st_ServiceCfg.st_XVer.pStl_ListStorage->front().c_str());
 
 	while (bIsRun)
 	{
@@ -513,6 +512,7 @@ XENGINE_EXITAPP:
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		Database_File_Destory();
+		Database_Client_Destory();
 
 		if (NULL != pSTDThread)
 		{
