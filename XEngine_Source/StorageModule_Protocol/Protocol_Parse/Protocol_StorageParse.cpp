@@ -55,12 +55,17 @@ CProtocol_StorageParse::~CProtocol_StorageParse()
   类型：字符指针
   可空：Y
   意思：查询的文件HASH
+ 参数.七：pInt_Mode
+  In/Out：Out
+  类型：整数型
+  可空：Y
+  意思：输出查询返回模式
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR* ptszTimeStart, TCHAR* ptszTimeEnd, TCHAR* ptszBuckKey /* = NULL */, TCHAR* ptszFileName /* = NULL */, TCHAR* ptszFileHash /* = NULL */)
+BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR* ptszTimeStart, TCHAR* ptszTimeEnd, TCHAR* ptszBuckKey /* = NULL */, TCHAR* ptszFileName /* = NULL */, TCHAR* ptszFileHash /* = NULL */, int* pInt_Mode /* = NULL */)
 {
     Protocol_IsErrorOccur = FALSE;
 
@@ -120,6 +125,13 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuff
 			_tcscpy(ptszBuckKey, st_JsonRoot["lpszBuckKey"].asCString());
 		}
 	}
+    if (NULL != pInt_Mode)
+    {
+		if (!st_JsonRoot["nMode"].isNull())
+		{
+            *pInt_Mode = st_JsonRoot["nMode"].asInt();
+		}
+    }
     return TRUE;
 }
 /********************************************************************

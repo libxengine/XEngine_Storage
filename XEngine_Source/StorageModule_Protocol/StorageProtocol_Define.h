@@ -190,12 +190,17 @@ extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMs
   类型：字符指针
   可空：N
   意思：查询的文件MD5
+ 参数.七：pInt_Mode
+  In/Out：Out
+  类型：整数型
+  可空：Y
+  意思：输出查询返回模式
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_QueryFile(LPCSTR lpszMsgBuffer, CHAR * ptszTimeStart, CHAR * ptszTimeEnd, CHAR * ptszBuckKey = NULL, CHAR * ptszFileName = NULL, CHAR * ptszFileHash = NULL);
+extern "C" BOOL Protocol_StorageParse_QueryFile(LPCSTR lpszMsgBuffer, CHAR * ptszTimeStart, CHAR * ptszTimeEnd, CHAR * ptszBuckKey = NULL, CHAR * ptszFileName = NULL, CHAR * ptszFileHash = NULL, int* pInt_Mode = NULL);
 /********************************************************************
 函数名称：Protocol_StorageParse_ReportFile
 函数功能：解析文件报告协议

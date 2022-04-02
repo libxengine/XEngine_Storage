@@ -10,22 +10,24 @@
 #ifdef _WINDOWS
 // 添加要在此处预编译的标头
 #include "framework.h"
-#include <stdlib.h>
+#include <conio.h>
+#include <windows.h>
 #include <tchar.h>
 #include <time.h>
+#include <WinSock2.h>
 #else
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <time.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include <pthread.h>
 #endif
 #endif //PCH_H
-#include <json/json.h>
 #include <list>
+#include <memory>
+#include <thread>
+#include <inttypes.h>
+#include <shared_mutex>
 #include <unordered_map>
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
@@ -35,40 +37,24 @@ using namespace std;
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 #include "../XStorage_Protocol.h"
-#include "../StorageModule_Session/Session_Define.h"
-#include "../StorageModule_Database/Database_Define.h"
-#include "StorageProtocol_Define.h"
-#include "StorageProtocol_Error.h"
+#include "Database_Define.h"
+#include "Database_Error.h"
 /********************************************************************
-//    Created:     2021/10/25  14:37:26
-//    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_Protocol\pch.h
-//    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_Protocol
+//    Created:     2022/03/29  14:08:09
+//    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_Database\pch.h
+//    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_Database
 //    File Base:   pch
 //    File Ext:    h
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     协议模块公用头
+//    Purpose:     公用头文件
 //    History:
 *********************************************************************/
-extern BOOL Protocol_IsErrorOccur;
-extern DWORD Protocol_dwErrorCode;
+extern BOOL Database_IsErrorOccur;
+extern DWORD Database_dwErrorCode;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
-#ifdef _DEBUG
-#ifdef _WIN64
-#pragma comment(lib,"../x64/Debug/jsoncpp")
-#else
-#pragma comment(lib,"../Debug/jsoncpp")
-#endif
-#else
-#ifdef _WIN64
-#pragma comment(lib,"../x64/Release/jsoncpp")
-#else
-#pragma comment(lib,"../Release/jsoncpp")
-#endif
-#endif
+#pragma comment(lib,"XEngine_HelpComponents/HelpComponents_DataBase.lib")
 #endif

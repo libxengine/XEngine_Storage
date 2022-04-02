@@ -1,100 +1,100 @@
 {
-  "tszIPAddr":"192.168.1.9",
-  "bDeamon":0,
-  "nCenterPort":5100,
-  "nStorageDLPort":5101,
-  "nStorageUPPort":5102,
-  "nP2XPPort":5103,
-  "XMax":{
-      "MaxClient":10000,
-      "MaxQueue":10000,
-      "IOThread":2,
-      "CenterThread":2,
-      "nStorageUPThread":2,
-      "nStorageDLThread":2,
-      "nP2XPThread":2
-  },
-  "XTime":{
-      "bHBTime":0,
-      "nDBMonth":3,
-      "nTimeCheck":3,
-      "nCenterTimeOut":5,
-      "nStorageTimeOut":5,
-      "nP2XPTimeOut":5
-  },
-  "XLog":{
-      "MaxSize":1024000,
-      "MaxCount":10,
-      "LogLeave":32
-  },
-  "XSql":{
-      "SQLType":0,
-      "SQLFile":"./XEngine_SQL/SQLFile.db",
-      "SQLAddr":"127.0.0.1",
-      "SQLPort":3306,
-      "SQLUser":"ruiyue",
-      "SQLPass":"123123Ruiyue"
-  },
-  "XStorage":{
-      "bResumable":1,
-      "bUPHash":0,
-      "nHashMode":2
-  },
-  "XProxy":{
-      "XProxyAuth":{
-          "bAuth":0,
-          "tszUserList":"./XEngine_Config/UserList.txt",
-          "tszAuthProxy":""
-      },
-      "XProxyPass":{
-          "bUPGet":0,
-          "bDLGet":0,
-          "tszUPPass":"http://192.168.1.7:5200/Api/Pass/UPFile",
-          "tszDLPass":"http://192.168.1.7:5200/Api/Pass/UPFile"
-      }
-  },
-  "XLimit":{
-      "nDLTry":10,
-      "nMaxUPLoad":4096000,
-      "nMaxDNLoad":4096000
-  },
-  "XP2xp":{
-      "nMode":2,
-      "nTime":2,
-      "nSDPort":15000,
-      "nRVPort":15001,
-      "tszQQWryFile":"./XEngine_SQL/qqwry.dat"
-  },
-  "XCert":{
-      "bDLEnable":0,
-      "bUPEnable":0,
-      "bCHEnable":0,
-      "nSslType":0,
-      "tszCertChain":"./XEngine_Cert/1_www.xyry.org_bundle.crt",
-      "tszCertKey":"./XEngine_Cert/2_www.xyry.org.key"
-  },
-  "XVer":{
-      "StorageVersion":[
-          "3.5.1.1001 Build20220314",
-          "3.5.0.1001 Build20220228",
-          "3.4.1.1001 Build20220126",
-          "3.4.0.1001 Build20220121",
-          "3.3.0.1001 Build20220106",
-          "3.2.0.1001 Build20211211",
-          "3.1.0.1001 Build20211109",
-          "3.0.0.1001 Build20211029",
-          "2.5.0.1001 Build20210930",
-          "2.4.0.1001 Build20210918",
-          "2.3.0.1001 Build20210903",
-          "2.2.0.1001 Build20210820",
-          "2.1.0.1001 Build20210805",
-          "2.0.0.1001 Build20210723",
-          "1.5.0.1001 Build20210716",
-          "1.4.0.1001 Build20210702",
-          "1.3.0.1001 Build20210625",
-          "1.2.0.1001 Build20210618",
-          "1.1.0.1001 Build20210611",
-          "1.0.0.1001 Build20210501"
-      ]
-  }
+    "tszIPAddr":"192.168.1.12",
+    "bDeamon":0,
+    "nCenterPort":5100,
+    "nStorageDLPort":5101,
+    "nStorageUPPort":5102,
+    "nP2XPPort":5103,
+    "XMax":{
+        "MaxClient":10000,
+        "MaxQueue":10000,
+        "IOThread":2,
+        "CenterThread":2,
+        "nStorageUPThread":2,
+        "nStorageDLThread":2,
+        "nP2XPThread":2
+    },
+    "XTime":{
+        "bHBTime":0,
+        "nDBMonth":3,
+        "nTimeCheck":3,
+        "nCenterTimeOut":5,
+        "nStorageTimeOut":5,
+        "nP2XPTimeOut":5
+    },
+    "XLog":{
+        "MaxSize":1024000,
+        "MaxCount":10,
+        "LogLeave":32
+    },
+    "XSql":{
+        "SQLEnable":false,
+        "SQLFile":"./XEngine_SQL/SQLFile.db",
+        "SQLAddr":"192.168.1.12",
+        "SQLPort":3306,
+        "SQLUser":"ruiyue",
+        "SQLPass":"123123Ruiyue"
+    },
+    "XStorage":{
+        "bResumable":1,
+        "bUPHash":0,
+        "nHashMode":2
+    },
+    "XProxy":{
+        "XProxyAuth":{
+            "bAuth":0,
+            "tszUserList":"./XEngine_Config/UserList.txt",
+            "tszAuthProxy":""
+        },
+        "XProxyPass":{
+            "bUPGet":0,
+            "bDLGet":0,
+            "tszUPPass":"http://192.168.1.7:5200/Api/Pass/UPFile",
+            "tszDLPass":"http://192.168.1.7:5200/Api/Pass/UPFile"
+        }
+    },
+    "XLimit":{
+        "nDLTry":10,
+        "nMaxUPLoad":4096000,
+        "nMaxDNLoad":4096000
+    },
+    "XP2xp":{
+        "nTime":2,
+        "nSDPort":15000,
+        "nRVPort":15001,
+        "tszQQWryFile":"./XEngine_SQL/qqwry.dat"
+    },
+    "XCert":{
+        "bDLEnable":0,
+        "bUPEnable":0,
+        "bCHEnable":0,
+        "nSslType":0,
+        "tszCertChain":"./XEngine_Cert/1_www.xyry.org_bundle.crt",
+        "tszCertKey":"./XEngine_Cert/2_www.xyry.org.key"
+    },
+    "XVer":{
+        "StorageVersion":[
+            "3.6.0.1001 Build20220402",
+            "3.5.1.1001 Build20220314",
+            "3.5.0.1001 Build20220228",
+            "3.4.1.1001 Build20220126",
+            "3.4.0.1001 Build20220121",
+            "3.3.0.1001 Build20220106",
+            "3.2.0.1001 Build20211211",
+            "3.1.0.1001 Build20211109",
+            "3.0.0.1001 Build20211029",
+            "2.5.0.1001 Build20210930",
+            "2.4.0.1001 Build20210918",
+            "2.3.0.1001 Build20210903",
+            "2.2.0.1001 Build20210820",
+            "2.1.0.1001 Build20210805",
+            "2.0.0.1001 Build20210723",
+            "1.5.0.1001 Build20210716",
+            "1.4.0.1001 Build20210702",
+            "1.3.0.1001 Build20210625",
+            "1.2.0.1001 Build20210618",
+            "1.1.0.1001 Build20210611",
+            "1.0.0.1001 Build20210501"
+        ]
+    }
 }

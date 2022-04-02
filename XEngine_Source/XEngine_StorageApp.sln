@@ -1,17 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31321.278
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_StorageApp", "XEngine_StorageApp\XEngine_StorageApp.vcxproj", "{0F90944D-3817-444A-9A4D-A25362DC0AB5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_Session", "StorageModule_Session\StorageModule_Session.vcxproj", "{E858E3E8-8552-4AE5-A640-D6BDDC6572C5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_Config", "StorageModule_Config\StorageModule_Config.vcxproj", "{782538C0-67CB-4395-83AF-439C2DD38EEB}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_StorageComponents", "XEngine_StorageComponents", "{4FF9D547-65B4-4B26-923C-4207BAA3AACB}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XStorage_SQLPacket", "XEngine_StorageComponents\XStorage_SQLPacket\XStorage_SQLPacket.vcxproj", "{CAEF9BAE-38FB-407C-8C83-87A97B3647D3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_APIHelp", "StorageModule_APIHelp\StorageModule_APIHelp.vcxproj", "{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}"
 EndProject
@@ -22,11 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XStorage_Include", "XStorag
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_Protocol", "StorageModule_Protocol\StorageModule_Protocol.vcxproj", "{427DADD2-908A-464E-8CC7-D7A3DC518332}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XStorage_P2XPPeer", "XEngine_StorageComponents\XStorage_P2XPPeer\XStorage_P2XPPeer.vcxproj", "{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XEngine_ThirdPart", "XEngine_ThirdPart", "{83E1D53F-3BB6-4CF2-AC05-52F9B37A8954}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp", "XEngine_ThirdPart\jsoncpp\jsoncpp.vcxproj", "{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_Database", "StorageModule_Database\StorageModule_Database.vcxproj", "{8B90FA35-1D93-4174-BF1C-926D52F0C67F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_P2XPPeer", "StorageModule_P2XPPeer\StorageModule_P2XPPeer.vcxproj", "{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,14 +58,6 @@ Global
 		{782538C0-67CB-4395-83AF-439C2DD38EEB}.Release|x64.Build.0 = Release|x64
 		{782538C0-67CB-4395-83AF-439C2DD38EEB}.Release|x86.ActiveCfg = Release|Win32
 		{782538C0-67CB-4395-83AF-439C2DD38EEB}.Release|x86.Build.0 = Release|Win32
-		{CAEF9BAE-38FB-407C-8C83-87A97B3647D3}.Debug|x64.ActiveCfg = Debug|x64
-		{CAEF9BAE-38FB-407C-8C83-87A97B3647D3}.Debug|x64.Build.0 = Debug|x64
-		{CAEF9BAE-38FB-407C-8C83-87A97B3647D3}.Debug|x86.ActiveCfg = Debug|Win32
-		{CAEF9BAE-38FB-407C-8C83-87A97B3647D3}.Debug|x86.Build.0 = Debug|Win32
-		{CAEF9BAE-38FB-407C-8C83-87A97B3647D3}.Release|x64.ActiveCfg = Release|x64
-		{CAEF9BAE-38FB-407C-8C83-87A97B3647D3}.Release|x64.Build.0 = Release|x64
-		{CAEF9BAE-38FB-407C-8C83-87A97B3647D3}.Release|x86.ActiveCfg = Release|Win32
-		{CAEF9BAE-38FB-407C-8C83-87A97B3647D3}.Release|x86.Build.0 = Release|Win32
 		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Debug|x64.ActiveCfg = Debug|x64
 		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Debug|x64.Build.0 = Debug|x64
 		{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}.Debug|x86.ActiveCfg = Debug|Win32
@@ -84,14 +74,6 @@ Global
 		{427DADD2-908A-464E-8CC7-D7A3DC518332}.Release|x64.Build.0 = Release|x64
 		{427DADD2-908A-464E-8CC7-D7A3DC518332}.Release|x86.ActiveCfg = Release|Win32
 		{427DADD2-908A-464E-8CC7-D7A3DC518332}.Release|x86.Build.0 = Release|Win32
-		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Debug|x64.ActiveCfg = Debug|x64
-		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Debug|x64.Build.0 = Debug|x64
-		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Debug|x86.ActiveCfg = Debug|Win32
-		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Debug|x86.Build.0 = Debug|Win32
-		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Release|x64.ActiveCfg = Release|x64
-		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Release|x64.Build.0 = Release|x64
-		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Release|x86.ActiveCfg = Release|Win32
-		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74}.Release|x86.Build.0 = Release|Win32
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Debug|x64.ActiveCfg = Debug|x64
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Debug|x64.Build.0 = Debug|x64
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Debug|x86.ActiveCfg = Debug|Win32
@@ -100,13 +82,27 @@ Global
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Release|x64.Build.0 = Release|x64
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Release|x86.ActiveCfg = Release|Win32
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}.Release|x86.Build.0 = Release|Win32
+		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Debug|x64.ActiveCfg = Debug|x64
+		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Debug|x64.Build.0 = Debug|x64
+		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Debug|x86.ActiveCfg = Debug|Win32
+		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Debug|x86.Build.0 = Debug|Win32
+		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Release|x64.ActiveCfg = Release|x64
+		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Release|x64.Build.0 = Release|x64
+		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Release|x86.ActiveCfg = Release|Win32
+		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Release|x86.Build.0 = Release|Win32
+		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Debug|x64.ActiveCfg = Debug|x64
+		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Debug|x64.Build.0 = Debug|x64
+		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Debug|x86.ActiveCfg = Debug|Win32
+		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Debug|x86.Build.0 = Debug|Win32
+		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Release|x64.ActiveCfg = Release|x64
+		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Release|x64.Build.0 = Release|x64
+		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Release|x86.ActiveCfg = Release|Win32
+		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{CAEF9BAE-38FB-407C-8C83-87A97B3647D3} = {4FF9D547-65B4-4B26-923C-4207BAA3AACB}
-		{C4BCB220-AA53-4FFE-9374-A8797C2D1B74} = {4FF9D547-65B4-4B26-923C-4207BAA3AACB}
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {83E1D53F-3BB6-4CF2-AC05-52F9B37A8954}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

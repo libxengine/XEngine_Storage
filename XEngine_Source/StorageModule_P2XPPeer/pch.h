@@ -10,22 +10,17 @@
 #ifdef _WINDOWS
 // 添加要在此处预编译的标头
 #include "framework.h"
-#include <stdlib.h>
 #include <tchar.h>
-#include <time.h>
 #else
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <time.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include <pthread.h>
 #endif
 #endif //PCH_H
-#include <json/json.h>
 #include <list>
+#include <shared_mutex>
 #include <unordered_map>
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
@@ -33,42 +28,23 @@ using namespace std;
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
-#include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
 #include "../XStorage_Protocol.h"
-#include "../StorageModule_Session/Session_Define.h"
-#include "../StorageModule_Database/Database_Define.h"
-#include "StorageProtocol_Define.h"
-#include "StorageProtocol_Error.h"
+#include "P2XPPeer_Define.h"
+#include "P2XPPeer_Error.h"
 /********************************************************************
-//    Created:     2021/10/25  14:37:26
-//    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_Protocol\pch.h
-//    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_Protocol
+//    Created:     2022/03/29  14:31:31
+//    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_P2XPPeer\pch.h
+//    File Path:   D:\XEngine_Storage\XEngine_Source\StorageModule_P2XPPeer
 //    File Base:   pch
 //    File Ext:    h
 //    Project:     XEngine(网络通信引擎)
 //    Author:      qyt
-//    Purpose:     协议模块公用头
+//    Purpose:     P2XP节点管理器模块公用头
 //    History:
 *********************************************************************/
-extern BOOL Protocol_IsErrorOccur;
-extern DWORD Protocol_dwErrorCode;
+extern BOOL PeerManage_IsErrorOccur;
+extern DWORD PeerManage_dwErrorCode;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
-#ifdef _DEBUG
-#ifdef _WIN64
-#pragma comment(lib,"../x64/Debug/jsoncpp")
-#else
-#pragma comment(lib,"../Debug/jsoncpp")
-#endif
-#else
-#ifdef _WIN64
-#pragma comment(lib,"../x64/Release/jsoncpp")
-#else
-#pragma comment(lib,"../Release/jsoncpp")
-#endif
-#endif
 #endif

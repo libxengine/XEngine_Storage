@@ -1,0 +1,20 @@
+LIBRARY
+
+EXPORTS
+	Database_GetLastError
+
+	Database_Help_Insert
+	Database_Help_Delete
+	Database_Help_Query
+
+	Database_File_Init
+	Database_File_Destory
+	Database_File_FileInsert
+	Database_File_FileDelete
+	Database_File_FileQuery
+
+	Database_Client_Init
+	Database_Client_Destory
+	Database_Client_FileInsert
+	Database_Client_FileDelete
+	Database_Client_FileQuery

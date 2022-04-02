@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\Database_File">
+      <UniqueIdentifier>{5cc22b37-1b56-4225-a8bd-0357cd256977}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Database_File">
+      <UniqueIdentifier>{bb11ac98-cdc8-42f3-a64f-5101de28e90a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Database_Client">
+      <UniqueIdentifier>{d5daf7bd-cb2f-4033-b76e-17091d42f222}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Database_Client">
+      <UniqueIdentifier>{5a33deb9-3278-4ee1-a571-85f8b8d0edda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Database_Help">
+      <UniqueIdentifier>{b7135fc4-e9a7-4461-a72e-b7eba661f9e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Database_Help">
+      <UniqueIdentifier>{ebe3a727-0fc0-47ee-bcfe-c5de217ca9a9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Database_Define.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Database_Error.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Database_File\Database_File.h">
+      <Filter>头文件\Database_File</Filter>
+    </ClInclude>
+    <ClInclude Include="Database_Client\Database_Client.h">
+      <Filter>头文件\Database_Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Database_Help\Database_Help.h">
+      <Filter>头文件\Database_Help</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Database_File\Database_File.cpp">
+      <Filter>源文件\Database_File</Filter>
+    </ClCompile>
+    <ClCompile Include="Database_Client\Database_Client.cpp">
+      <Filter>源文件\Database_Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Database_Help\Database_Help.cpp">
+      <Filter>源文件\Database_Help</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="StorageModule_Database.def">
+      <Filter>源文件</Filter>
+    </None>
+  </ItemGroup>
+</Project>

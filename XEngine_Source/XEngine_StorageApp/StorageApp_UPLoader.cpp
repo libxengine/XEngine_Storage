@@ -258,18 +258,10 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		
 		BOOL bRet = TRUE;
 		Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, FALSE, st_ProtocolFile.st_ProtocolFile.tszFileHash);
-		if (0 != st_ServiceCfg.st_XSql.nSQLType)
+		if (st_ServiceCfg.st_XSql.bEnable)
 		{
 			_tcscpy(st_ProtocolFile.tszBuckKey, st_StorageBucket.tszBuckKey);
-			if (1 == st_ServiceCfg.st_XSql.nSQLType)
-			{
-				bRet = XStorage_MySql_FileInsert(&st_ProtocolFile);
-			}
-			else
-			{
-				bRet = XStorage_SQLite_FileInsert(&st_ProtocolFile);
-			}
-			if (bRet)
+			if (Database_File_FileInsert(&st_ProtocolFile))
 			{
 				st_HDRParam.bIsClose = TRUE;
 				st_HDRParam.nHttpCode = 200;
@@ -283,7 +275,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 				st_HDRParam.nHttpCode = 403;
 				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszPassNotify, nPLen);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, XStorageDB_GetLastError());
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, Database_GetLastError());
 			}
 		}
 		else
