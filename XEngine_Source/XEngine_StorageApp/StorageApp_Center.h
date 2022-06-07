@@ -1,6 +1,4 @@
 ﻿#pragma once
-
-#define XENGINE_STORAGE_APP_TASK_EVENT  _T("Event")
 #define XENGINE_STORAGE_APP_TASK_PASS  _T("Pass")
 #define XENGINE_STORAGE_APP_TASK_MANAGE  _T("Manage")
 

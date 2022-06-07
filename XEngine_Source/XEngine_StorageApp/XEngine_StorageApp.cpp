@@ -146,7 +146,7 @@ int main(int argc, char** argv)
 		TCHAR tszAddr[128];
 		memset(tszAddr, '\0', sizeof(tszAddr));
 
-		_stprintf(tszAddr, _T("Http://127.0.0.1:%d/Api/Event/Config"), st_ServiceCfg.nCenterPort);
+		_stprintf(tszAddr, _T("Http://127.0.0.1:%d/Api/Manage/Config"), st_ServiceCfg.nCenterPort);
 		APIHelp_HttpRequest_Post(tszAddr);
 		return 0;
 	}
