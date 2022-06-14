@@ -99,7 +99,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,发送广播请求失败,错误:%lX"), lpszClientAddr, NetCore_GetLastError());
 				return FALSE;
 			}
-			NetCore_BroadCast_Close(hSDSocket);
 
 			time_t nTimeStart = time(NULL);
 			while (1)
@@ -119,6 +118,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 					break;
 				}
 			}
+			NetCore_BroadCast_Close(hSDSocket);
 			NetCore_BroadCast_Close(hRVSocket);
 
 			if (stl_ListFile.empty())
