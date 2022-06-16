@@ -33,12 +33,6 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Protocol_Packet\Protocol_P2XPPacket.h">
-      <Filter>头文件\Protocol_Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="Protocol_Parse\Protocol_P2XPParse.h">
-      <Filter>头文件\Protocol_Parse</Filter>
-    </ClInclude>
     <ClInclude Include="StorageProtocol_Define.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -58,12 +52,6 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Protocol_Packet\Protocol_P2XPPacket.cpp">
-      <Filter>源文件\Protocol_Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="Protocol_Parse\Protocol_P2XPParse.cpp">
-      <Filter>源文件\Protocol_Parse</Filter>
     </ClCompile>
     <ClCompile Include="Protocol_Packet\Protocol_StoragePacket.cpp">
       <Filter>源文件\Protocol_Packet</Filter>
