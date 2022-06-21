@@ -398,3 +398,57 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer
     _tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
     return TRUE;
 }
+/********************************************************************
+函数名称：Protocol_StoragePacket_REQFile
+函数功能：查询文件请求函数
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要查询的文件名
+ 参数.四：lpszFileHash
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要查询的文件MD5
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */)
+{
+	Protocol_IsErrorOccur = FALSE;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		Protocol_IsErrorOccur = TRUE;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return FALSE;
+	}
+	Json::Value st_JsonRoot;
+	if (NULL != lpszFileName)
+	{
+		st_JsonRoot["lpszFileName"] = lpszFileName;
+	}
+	if (NULL != lpszFileHash)
+	{
+		st_JsonRoot["lpszFileHash"] = lpszFileHash;
+	}
+	st_JsonRoot["unOperatorType"] = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_STORAGE;
+	st_JsonRoot["unOperatorCode"] = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQQUERY;
+	//打包输出信息
+	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
+	return TRUE;
+}

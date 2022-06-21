@@ -68,3 +68,7 @@ extern "C" BOOL Protocol_StoragePacket_DirOperator(TCHAR * ptszMsgBuffer, int* p
 {
 	return m_StoragePacket.Protocol_StoragePacket_DirOperator(ptszMsgBuffer, pInt_MsgLen, pppszListEnum, nListCount);
 }
+extern "C" BOOL Protocol_StoragePacket_REQFile(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName, LPCTSTR lpszFileHash)
+{
+	return m_StoragePacket.Protocol_StoragePacket_REQFile(ptszMsgBuffer, pInt_MsgLen, lpszFileName, lpszFileHash);
+}

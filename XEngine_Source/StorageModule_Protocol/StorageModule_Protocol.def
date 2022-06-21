@@ -14,3 +14,4 @@ EXPORTS
 	Protocol_StoragePacket_QueryFile
 	Protocol_StoragePacket_Info
 	Protocol_StoragePacket_DirOperator
+	Protocol_StoragePacket_REQFile
