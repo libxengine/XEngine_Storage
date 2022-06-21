@@ -51,8 +51,6 @@ using namespace std;
 #include "../StorageModule_Session/Session_Error.h"
 #include "../StorageModule_Database/Database_Define.h"
 #include "../StorageModule_Database/Database_Error.h"
-#include "../StorageModule_P2XPPeer/P2XPPeer_Define.h"
-#include "../StorageModule_P2XPPeer/P2XPPeer_Error.h"
 #include "../StorageModule_Protocol/StorageProtocol_Define.h"
 #include "../StorageModule_Protocol/StorageProtocol_Error.h"
 #include "../StorageModule_Config/Config_Define.h"
@@ -67,7 +65,6 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPUPLOADER 1
 #define STORAGE_NETTYPE_HTTPDOWNLOAD 2
 #define STORAGE_NETTYPE_HTTPCENTER 3
-#define STORAGE_NETTYPE_TCPP2XP 4
 
 extern BOOL bIsRun;
 extern XLOG xhLog;
@@ -75,17 +72,14 @@ extern XLOG xhLog;
 extern XNETHANDLE xhHBDownload;
 extern XNETHANDLE xhHBUPLoader;
 extern XNETHANDLE xhHBCenter;
-extern XNETHANDLE xhHBP2xp;
 
 extern XNETHANDLE xhNetDownload;
 extern XNETHANDLE xhNetUPLoader;
 extern XNETHANDLE xhNetCenter;
-extern XNETHANDLE xhNetP2xp;
 
 extern XNETHANDLE xhUPPool;
 extern XNETHANDLE xhDLPool;
 extern XNETHANDLE xhCTPool;
-extern XNETHANDLE xhP2XPPool;
 
 extern XHANDLE xhDLSsl;
 extern XHANDLE xhUPSsl;
@@ -94,7 +88,6 @@ extern XHANDLE xhLimit;
 extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
-extern XHANDLE xhP2XPPacket;
 
 extern SOCKET hBroadSocket;
 extern shared_ptr<std::thread> pSTDThread;
@@ -131,14 +124,12 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../x64/Debug/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_Protocol.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_Database.lib")
-#pragma comment(lib,"../x64/Debug/StorageModule_P2XPPeer.lib")
 #else
 #pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Protocol.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Database.lib")
-#pragma comment(lib,"../x64/Release/StorageModule_P2XPPeer.lib")
 #endif
 #else
 #ifdef _DEBUG
@@ -147,14 +138,12 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../Debug/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../Debug/StorageModule_Protocol.lib")
 #pragma comment(lib,"../Debug/StorageModule_Database.lib")
-#pragma comment(lib,"../Debug/StorageModule_P2XPPeer.lib")
 #else
 #pragma comment(lib,"../Release/StorageModule_Session.lib")
 #pragma comment(lib,"../Release/StorageModule_Config.lib")
 #pragma comment(lib,"../Release/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../Release/StorageModule_Protocol.lib")
 #pragma comment(lib,"../Release/StorageModule_Database.lib")
-#pragma comment(lib,"../Release/StorageModule_P2XPPeer.lib")
 #endif
 #endif
 #endif

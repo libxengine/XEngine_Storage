@@ -6,17 +6,14 @@ XLOG xhLog = NULL;
 XNETHANDLE xhHBDownload = 0;
 XNETHANDLE xhHBUPLoader = 0;
 XNETHANDLE xhHBCenter = 0;
-XNETHANDLE xhHBP2xp = 0;
 
 XNETHANDLE xhNetDownload = 0;
 XNETHANDLE xhNetUPLoader = 0;
 XNETHANDLE xhNetCenter = 0;
-XNETHANDLE xhNetP2xp = 0;
 
 XNETHANDLE xhUPPool = 0;
 XNETHANDLE xhDLPool = 0;
 XNETHANDLE xhCTPool = 0;
-XNETHANDLE xhP2XPPool = 0;
 
 XHANDLE xhDLSsl = NULL;
 XHANDLE xhUPSsl = NULL;
@@ -25,7 +22,6 @@ XHANDLE xhLimit = NULL;
 XHANDLE xhUPHttp = NULL;
 XHANDLE xhDLHttp = NULL;
 XHANDLE xhCenterHttp = NULL;
-XHANDLE xhP2XPPacket = 0;
 
 SOCKET hBroadSocket = 0;
 shared_ptr<std::thread> pSTDThread = NULL;
@@ -43,7 +39,6 @@ void ServiceApp_Stop(int signo)
 		RfcComponents_HttpServer_DestroyEx(xhUPHttp);
 		RfcComponents_HttpServer_DestroyEx(xhDLHttp);
 		RfcComponents_HttpServer_DestroyEx(xhCenterHttp);
-		HelpComponents_Datas_Destory(xhP2XPPacket);
 
 		OPenSsl_Server_StopEx(xhDLSsl);
 		OPenSsl_Server_StopEx(xhUPSsl);
@@ -52,17 +47,14 @@ void ServiceApp_Stop(int signo)
 		NetCore_TCPXCore_DestroyEx(xhNetDownload);
 		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
 		NetCore_TCPXCore_DestroyEx(xhNetCenter);
-		NetCore_TCPXCore_DestroyEx(xhNetP2xp);
 
 		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
 		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
 		SocketOpt_HeartBeat_DestoryEx(xhHBCenter);
-		SocketOpt_HeartBeat_DestoryEx(xhHBP2xp);
 
 		ManagePool_Thread_NQDestroy(xhUPPool);
 		ManagePool_Thread_NQDestroy(xhDLPool);
 		ManagePool_Thread_NQDestroy(xhCTPool);
-		ManagePool_Thread_NQDestroy(xhP2XPPool);
 
 		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
@@ -129,7 +121,6 @@ int main(int argc, char** argv)
 	THREADPOOL_PARAMENT** ppSt_ListUPThread;
 	THREADPOOL_PARAMENT** ppSt_ListDLThread;
 	THREADPOOL_PARAMENT** ppSt_ListCTThread;
-	THREADPOOL_PARAMENT** ppSt_ListP2xpThread;
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceCfg, '\0', sizeof(XENGINE_SERVERCONFIG));
@@ -204,13 +195,6 @@ int main(int argc, char** argv)
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化业务管理服务成功，句柄：%llu,时间:%d,次数:%d"), xhHBUPLoader, st_ServiceCfg.st_XTime.nCenterTimeOut, st_ServiceCfg.st_XTime.nTimeCheck);
-
-		if (!SocketOpt_HeartBeat_InitEx(&xhHBP2xp, st_ServiceCfg.st_XTime.nP2XPTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBP2xp))
-		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化P2XP心跳管理服务失败，错误：%lX"), NetCore_GetLastError());
-			goto XENGINE_EXITAPP;
-		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化P2XP心跳管理服务成功，句柄：%llu,时间:%d,次数:%d"), xhHBP2xp, st_ServiceCfg.st_XTime.nP2XPTimeOut, st_ServiceCfg.st_XTime.nTimeCheck);
 	}
 	else
 	{
@@ -409,62 +393,26 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动HTTP业务任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
 	}
-	//启动P2P服务
-	if (st_ServiceCfg.nP2XPPort > 0)
+	//默认为假才是客户端,才能启用P2P
+	if (!st_ServiceCfg.st_XSql.bEnable)
 	{
-		xhP2XPPacket = HelpComponents_Datas_Init(st_ServiceCfg.st_XMax.nMaxQueue, st_ServiceCfg.st_XMax.nP2XPThread);
-		if (NULL == xhP2XPPacket)
+		if (!NetCore_BroadCast_RecvInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化P2XP包管理器失败，错误：%lX"), Packets_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP组包器成功"));
-
-		if (!NetCore_TCPXCore_StartEx(&xhNetP2xp, st_ServiceCfg.nP2XPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nP2XPThread, FALSE, st_ServiceCfg.bReuseraddr))
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务成功,端口:%d"), st_ServiceCfg.st_P2xp.nRVPort);
+		pSTDThread = make_shared<std::thread>(XEngine_Task_P2PThread);
+		if (!pSTDThread->joinable())
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2XP网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nP2XPPort, NetCore_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务线程失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP网络服务成功，句柄：%llu，端口：%d,IO线程个数:%d"), xhNetP2xp, st_ServiceCfg.nP2XPPort, st_ServiceCfg.st_XMax.nP2XPThread);
-		NetCore_TCPXCore_RegisterCallBackEx(xhNetP2xp, XEngine_Callback_P2xpLogin, XEngine_Callback_P2xpRecv, XEngine_Callback_P2xpLeave);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，注册P2XP网络服务事件成功！"));
-
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListP2xpThread, st_ServiceCfg.st_XMax.nP2XPThread, sizeof(THREADPOOL_PARAMENT));
-		for (int i = 0; i < st_ServiceCfg.st_XMax.nP2XPThread; i++)
-		{
-			int* pInt_Pos = new int;
-			*pInt_Pos = i;
-
-			ppSt_ListP2xpThread[i]->lParam = pInt_Pos;
-			ppSt_ListP2xpThread[i]->fpCall_ThreadsTask = XEngine_P2XP_TCPThread;
-		}
-		if (!ManagePool_Thread_NQCreate(&xhP2XPPool, &ppSt_ListP2xpThread, st_ServiceCfg.st_XMax.nP2XPThread))
-		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2XP处理线程池失败，错误：%d"), errno);
-			goto XENGINE_EXITAPP;
-		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2XP任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nP2XPThread);
-		//默认为假才是客户端,才能启用P2P
-		if (!st_ServiceCfg.st_XSql.bEnable)
-		{
-			if (!NetCore_BroadCast_RecvInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
-			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
-				goto XENGINE_EXITAPP;
-			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务成功,端口:%d"), st_ServiceCfg.st_P2xp.nRVPort);
-			pSTDThread = make_shared<std::thread>(XEngine_Task_P2PThread);
-			if (!pSTDThread->joinable())
-			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务线程失败，错误：%d"), errno);
-				goto XENGINE_EXITAPP;
-			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务线程成功"));
-		}
-		else
-		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，P2P存储服务配置为不启动"));
-		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务线程成功"));
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，P2P存储服务配置为不启动"));
 	}
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), st_ServiceCfg.st_XVer.pStl_ListStorage->front().c_str());
@@ -484,7 +432,6 @@ XENGINE_EXITAPP:
 		RfcComponents_HttpServer_DestroyEx(xhUPHttp);
 		RfcComponents_HttpServer_DestroyEx(xhDLHttp);
 		RfcComponents_HttpServer_DestroyEx(xhCenterHttp);
-		HelpComponents_Datas_Destory(xhP2XPPacket);
 
 		OPenSsl_Server_StopEx(xhDLSsl);
 		OPenSsl_Server_StopEx(xhUPSsl);
@@ -493,17 +440,14 @@ XENGINE_EXITAPP:
 		NetCore_TCPXCore_DestroyEx(xhNetDownload);
 		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
 		NetCore_TCPXCore_DestroyEx(xhNetCenter);
-		NetCore_TCPXCore_DestroyEx(xhNetP2xp);
 
 		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
 		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
 		SocketOpt_HeartBeat_DestoryEx(xhHBCenter);
-		SocketOpt_HeartBeat_DestoryEx(xhHBP2xp);
 
 		ManagePool_Thread_NQDestroy(xhUPPool);
 		ManagePool_Thread_NQDestroy(xhDLPool);
 		ManagePool_Thread_NQDestroy(xhCTPool);
-		ManagePool_Thread_NQDestroy(xhP2XPPool);
 
 		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
