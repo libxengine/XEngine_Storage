@@ -1,3 +1,19 @@
+XEngine_Storage V3.7.0.1001
+
+优化:关闭广播
+修改:Protocol_P2XPPacket_QueryFile函数名为Protocol_StoragePacket_REQFile
+修改:程序启动会打印XEngine版本了
+修正:动态重载配置文件不正确
+修正:客户离开类型日志打印问题
+删除:p2p相关文件和代码
+
+improved:close broadcast
+modify:Protocol_P2XPPacket_QueryFile function name to Protocol_StoragePacket_REQFile function name
+modify:print xengine version when start program
+fixed:reload configure file is incorrent
+fixed:print problem that client leave type
+delete:p2xp about file and code
+======================================================================================
 XEngine_Storage V3.6.0.1001
 
 添加:在Protocol_StorageParse_QueryFile函数中添加模式参数

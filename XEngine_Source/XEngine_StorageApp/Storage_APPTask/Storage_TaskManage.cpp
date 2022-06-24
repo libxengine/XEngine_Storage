@@ -17,7 +17,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 	if (0 == _tcsnicmp(XENGINE_STORAGE_APP_METHOD_CONFIG, lpszAPIName, _tcslen(XENGINE_STORAGE_APP_METHOD_CONFIG)))
 	{
 		StorageApp_Config_Parament(0, NULL);
-		RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,处理用户重载配置文件成功"), lpszClientAddr);
 	}
@@ -83,7 +83,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			SOCKET hRVSocket;
 			list<APIHELP_LBFILEINFO> stl_ListFile;
 
-			Protocol_P2XPPacket_QueryFile(tszSDBuffer, &nSDLen, NULL, tszFileHash);
+			Protocol_StoragePacket_REQFile(tszSDBuffer, &nSDLen, NULL, tszFileHash);
 			NetCore_BroadCast_SendInit(&hSDSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr);
 			NetCore_BroadCast_RecvInit(&hRVSocket, st_ServiceCfg.st_P2xp.nSDPort);
 
@@ -99,7 +99,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,发送广播请求失败,错误:%lX"), lpszClientAddr, NetCore_GetLastError());
 				return FALSE;
 			}
-			NetCore_BroadCast_Close(hSDSocket);
 
 			time_t nTimeStart = time(NULL);
 			while (1)
@@ -119,6 +118,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 					break;
 				}
 			}
+			NetCore_BroadCast_Close(hSDSocket);
 			NetCore_BroadCast_Close(hRVSocket);
 
 			if (stl_ListFile.empty())

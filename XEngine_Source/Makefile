@@ -5,9 +5,7 @@ FLAGS = RELEASE=$(RELEASE)
 
 THIRD_JSONCPP_PATH = ./XEngine_ThirdPart/jsoncpp
 
-STORAGE_SQL_PATH = ./StorageModule_Database
-STORAGE_P2XP_PATH = ./StorageModule_P2XPPeer
-
+BASE_SQL_PATH = ./StorageModule_Database
 BASE_CONFIG_PATH = ./StorageModule_Config
 BASE_SESSION_PATH = ./StorageModule_Session
 BASE_APIHELP_PATH = ./StorageModule_APIHelp
@@ -16,9 +14,8 @@ BASE_PROTOCOL_PATH = ./StorageModule_Protocol
 APPSERVICE_STORAGE_PATH = ./XEngine_StorageApp
 
 NETENGINE_LIB = libjsoncpp.so                                                          \
-                libStorageModule_Database.so libStorageModule_P2XPPeer.so                       \
-                libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so libStorageModule_Protocol.so         \
-		 XEngine_StorageApp.exe 
+                libStorageModule_Database.so libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so libStorageModule_Protocol.so         \
+		 		XEngine_StorageApp.exe 
 
 .PHONY:MakeAll 
 MakeAll:$(NETENGINE_LIB)
@@ -27,10 +24,7 @@ libjsoncpp.so:
 	make -C $(THIRD_JSONCPP_PATH) $(FLAGS)
 
 libStorageModule_Database.so:
-	make -C $(STORAGE_SQL_PATH) $(FLAGS)
-libStorageModule_P2XPPeer.so:
-	make -C $(STORAGE_P2XP_PATH) $(FLAGS)
-
+	make -C $(BASE_SQL_PATH) $(FLAGS)
 libStorageModule_Config.so:
 	make -C $(BASE_CONFIG_PATH) $(FLAGS)
 libStorageModule_Session.so:

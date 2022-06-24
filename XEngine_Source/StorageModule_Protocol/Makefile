@@ -7,7 +7,7 @@ LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L ../XEngine_ThirdP
 LIB = -lXEngine_BaseLib -ljsoncpp
 LIBEX = -static-libgcc -lrt -ldl 
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = Protocol_P2XPPacket.o Protocol_StoragePacket.o Protocol_P2XPParse.o Protocol_StorageParse.o pch.o
+LIBINCLUDE = Protocol_StoragePacket.o Protocol_StorageParse.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
@@ -32,12 +32,8 @@ endif
 all:$(LIBINCLUDE)
 	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libStorageModule_Protocol.so -shared $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
-Protocol_P2XPPacket.o:./Protocol_Packet/Protocol_P2XPPacket.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Protocol_Packet/Protocol_P2XPPacket.cpp  
 Protocol_StoragePacket.o:./Protocol_Packet/Protocol_StoragePacket.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Protocol_Packet/Protocol_StoragePacket.cpp 
-Protocol_P2XPParse.o:./Protocol_Parse/Protocol_P2XPParse.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Protocol_Parse/Protocol_P2XPParse.cpp 
 Protocol_StorageParse.o:./Protocol_Parse/Protocol_StorageParse.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Protocol_Parse/Protocol_StorageParse.cpp 
 	

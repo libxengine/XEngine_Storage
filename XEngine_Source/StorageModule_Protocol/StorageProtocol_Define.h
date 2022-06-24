@@ -18,107 +18,6 @@ extern "C" DWORD Protocol_GetLastError(int *pInt_ErrorCode = NULL);
 /*                        解析协议导出                                  */
 /************************************************************************/
 /********************************************************************
-函数名称：Protocol_P2XPParse_Login
-函数功能：登录解析函数
- 参数.一：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要解析的缓冲区
- 参数.二：nMsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区大小
- 参数.三：pSt_P2XPPeer
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输出解析后的节点信息
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_P2XPParse_Login(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_P2XPPEER_PROTOCOL* pSt_P2XPPeer);
-/********************************************************************
-函数名称：Protocol_P2XPParse_List
-函数功能：解析列表请求
- 参数.一：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要解析的缓冲区
- 参数.二：nMsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区大小
- 参数.三：ptszPubAddr
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出公有地址
- 参数.四：ptszPriAddr
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出私有地址
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_P2XPParse_List(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszPubAddr, TCHAR* ptszPriAddr);
-/********************************************************************
-函数名称：Protocol_P2XPParse_List
-函数功能：解析列表请求
- 参数.一：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要解析的缓冲区
- 参数.二：nMsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区大小
- 参数.三：ptszUserName
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出查询的用户名
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_P2XPParse_User(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR* ptszUserName);
-/********************************************************************
-函数名称：Protocol_P2XPParse_Connect
-函数功能：请求连接到指定地址
- 参数.一：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要解析的缓冲区
- 参数.二：nMsgLen
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入缓冲区大小
- 参数.三：pSt_P2XPPeer
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输出解析后的节点信息
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_P2XPParse_Connect(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_P2XPIO_PROTOCOL* pSt_IOProtocol);
-/********************************************************************
 函数名称：Protocol_StorageParse_ProxyNotify
 函数功能：解析上传下载通知协议
  参数.一：lpszMsgBuffer
@@ -262,195 +161,6 @@ extern "C" BOOL Protocol_StorageParse_DirOperator(LPCSTR lpszMsgBuffer, CHAR * p
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
-/********************************************************************
-函数名称：Protocol_P2XPPacket_Common
-函数功能：P2XP公用协议打包函数
- 参数.一：pSt_ProtocolHdr
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入要打包的协议头
- 参数.二：ptszMsgBuffer
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出打好包的缓冲区
- 参数.三：pInt_MsgLen
-  In/Out：Out
-  类型：整数型指针
-  可空：N
-  意思：输出缓冲区大小
- 参数.四：nCode
-  In/Out：In
-  类型：整数型
-  可空：Y
-  意思：输入返回的值
- 参数.五：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：输入要打包的后续内容
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_P2XPPacket_Common(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCTSTR lpszMsgBuffer = NULL);
-/********************************************************************
-函数名称：Protocol_P2XPPacket_Lan
-函数功能：响应同步局域网地址列表
- 参数.一：pSt_ProtocolHdr
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入要打包的协议头
- 参数.二：pppSt_ListClients
-  In/Out：In
-  类型：三级指针
-  可空：N
-  意思：输入局域网地址信息列表
- 参数.三：nListCount
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：局域网地址列表个数
- 参数.四：ptszMsgBuffer
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：导出封装好的缓冲区
- 参数.五：pInt_MsgLen
-  In/Out：In/Out
-  类型：整数型指针
-  可空：N
-  意思：输入你的缓冲区大小,输出缓冲区真实大小
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_P2XPPacket_Lan(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL*** pppSt_ListClients, int nListCount, TCHAR* ptszMsgBuffer, int* pInt_Len);
-/********************************************************************
-函数名称：Protocol_P2XPPacket_WLan
-函数功能：响应同步局域网所有地址列表
- 参数.一：pSt_ProtocolHdr
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入要打包的协议头
- 参数.二：pStl_ListClients
-  In/Out：In
-  类型：容器指针
-  可空：N
-  意思：客户端列表
- 参数.三：ptszMsgBuffer
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：导出封装好的缓冲区
- 参数.四：pInt_MsgLen
-  In/Out：In/Out
-  类型：整数型指针
-  可空：N
-  意思：输入你的缓冲区大小,输出缓冲区真实大小
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_P2XPPacket_WLan(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, list<XENGINE_P2XPPEER_PROTOCOL>* pStl_ListClients, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
-/********************************************************************
-函数名称：Protocol_P2XPPacket_User
-函数功能：响应用户查询用户信息的请求协议封包函数
- 参数.一：pSt_ProtocolHdr
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入要打包的协议头
- 参数.二：pSt_PeerInfo
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入获取到的用户信息
- 参数.三：pSt_AddrInfo
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：IP地址信息
- 参数.四：ptszMsgBuffer
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：导出封装好的缓冲区
- 参数.五：pInt_MsgLen
-  In/Out：In/Out
-  类型：整数型指针
-  可空：N
-  意思：输入你的缓冲区大小,输出缓冲区真实大小
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_P2XPPacket_User(XENGINE_PROTOCOLHDR * pSt_ProtocolHdr, XENGINE_P2XPPEER_PROTOCOL* pSt_PeerInfo, XENGINE_IPADDRINFO * pSt_AddrInfo, TCHAR* ptszMsgBuffer, int* pInt_Len);
-/********************************************************************
-函数名称：Protocol_P2XPPacket_Connect
-函数功能：请求连接打包函数
- 参数.一：pSt_ProtocolHdr
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入要打包的协议头
- 参数.二：pSt_IOProtocol
-  In/Out：In
-  类型：数据结构指针
-  可空：N
-  意思：输入连接信息
- 参数.三：ptszMsgBuffer
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：导出封装好的缓冲区
- 参数.四：pInt_MsgLen
-  In/Out：In/Out
-  类型：整数型指针
-  可空：N
-  意思：输入你的缓冲区大小,输出缓冲区真实大小
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_P2XPPacket_Connect(XENGINE_PROTOCOLHDR* pSt_ProtocolHdr, XENGINE_P2XPIO_PROTOCOL* pSt_IOProtocol, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
-/********************************************************************
-函数名称：Protocol_P2XPPacket_QueryFile
-函数功能：查询P2P文件请求函数
- 参数.一：ptszMsgBuffer
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出组好包的请求缓冲区
- 参数.二：pInt_MsgLen
-  In/Out：Out
-  类型：整数型指针
-  可空：N
-  意思：输出缓冲区大小
- 参数.三：lpszFileName
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：输入要查询的文件名
- 参数.四：lpszFileHash
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：输入要查询的文件MD5
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Protocol_P2XPPacket_QueryFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
 /********************************************************************
 函数名称：Protocol_StoragePacket_BasicAuth
 函数功能：基本验证协议代理转发
@@ -651,3 +361,32 @@ extern "C" BOOL Protocol_StoragePacket_Info(TCHAR * ptszMsgBuffer, int* pInt_Msg
 备注：
 *********************************************************************/
 extern "C" BOOL Protocol_StoragePacket_DirOperator(CHAR * ptszMsgBuffer, int* pInt_MsgLen, CHAR * **pppszListEnum, int nListCount);
+/********************************************************************
+函数名称：Protocol_StoragePacket_REQFile
+函数功能：查询文件请求函数
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要查询的文件名
+ 参数.四：lpszFileHash
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要查询的文件MD5
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);

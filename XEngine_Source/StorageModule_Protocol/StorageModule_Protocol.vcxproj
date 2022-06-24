@@ -169,9 +169,7 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Protocol_Packet\Protocol_P2XPPacket.h" />
     <ClInclude Include="Protocol_Packet\Protocol_StoragePacket.h" />
-    <ClInclude Include="Protocol_Parse\Protocol_P2XPParse.h" />
     <ClInclude Include="Protocol_Parse\Protocol_StorageParse.h" />
     <ClInclude Include="StorageProtocol_Define.h" />
     <ClInclude Include="StorageProtocol_Error.h" />
@@ -184,9 +182,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Protocol_Packet\Protocol_P2XPPacket.cpp" />
     <ClCompile Include="Protocol_Packet\Protocol_StoragePacket.cpp" />
-    <ClCompile Include="Protocol_Parse\Protocol_P2XPParse.cpp" />
     <ClCompile Include="Protocol_Parse\Protocol_StorageParse.cpp" />
   </ItemGroup>
   <ItemGroup>

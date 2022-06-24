@@ -160,7 +160,6 @@
     <ClCompile Include="Storage_APPTask\Storage_TaskManage.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskP2p.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskPass.cpp" />
-    <ClCompile Include="StorageApp_P2XPNet.cpp" />
     <ClCompile Include="XEngine_StorageApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,7 +168,6 @@
     <ClInclude Include="StorageApp_Download.h" />
     <ClInclude Include="StorageApp_Hdr.h" />
     <ClInclude Include="StorageApp_Network.h" />
-    <ClInclude Include="StorageApp_P2XPNet.h" />
     <ClInclude Include="StorageApp_UPLoader.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskManage.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskP2p.h" />

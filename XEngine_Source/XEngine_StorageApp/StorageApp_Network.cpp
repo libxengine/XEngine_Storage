@@ -130,28 +130,6 @@ void CALLBACK XEngine_Callback_CenterLeave(LPCTSTR lpszClientAddr, SOCKET hSocke
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPCENTER);
 }
 //////////////////////////////////////////////////////////////////////////
-BOOL CALLBACK XEngine_Callback_P2xpLogin(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
-{
-	HelpComponents_Datas_CreateEx(xhP2XPPacket, lpszClientAddr, 0);
-	SocketOpt_HeartBeat_InsertAddrEx(xhHBP2xp, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("P2XP客户端：%s，进入了服务器"), lpszClientAddr);
-	return TRUE;
-}
-void CALLBACK XEngine_Callback_P2xpRecv(LPCTSTR lpszClientAddr, SOCKET hSocket, LPCTSTR lpszRecvMsg, int nMsgLen, LPVOID lParam)
-{
-	if (!HelpComponents_Datas_PostEx(xhP2XPPacket, lpszClientAddr, lpszRecvMsg, nMsgLen))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("P2XP客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpServer_GetLastError());
-		return;
-	}
-	SocketOpt_HeartBeat_ActiveAddrEx(xhHBP2xp, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _T("P2XP客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
-}
-void CALLBACK XEngine_Callback_P2xpLeave(LPCTSTR lpszClientAddr, SOCKET hSocket, LPVOID lParam)
-{
-	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_TCPP2XP);
-}
-//////////////////////////////////////////////////////////////////////////
 void CALLBACK XEngine_Callback_HBDownload(LPCTSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPDOWNLOAD);
@@ -164,14 +142,10 @@ void CALLBACK XEngine_Callback_HBCenter(LPCTSTR lpszClientAddr, SOCKET hSocket, 
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPCENTER);
 }
-void CALLBACK XEngine_Callback_HBP2xp(LPCTSTR lpszClientAddr, SOCKET hSocket, int nStatus, LPVOID lParam)
-{
-	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_TCPP2XP);
-}
 //////////////////////////////////////////////////////////////////////////
 BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClientType)
 {
-	LPCTSTR lpszLeaveMsg;
+	string m_StrLeaveMsg;
 	string m_StrClient;
 
 	if (STORAGE_NETTYPE_HTTPUPLOADER == nClientType)
@@ -179,17 +153,17 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClient
 		m_StrClient = _T("上传客户端");
 		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
 		{
-			lpszLeaveMsg = _T("心跳超时");
+			m_StrLeaveMsg = _T("心跳超时");
 			NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
 		}
 		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
 		{
-			lpszLeaveMsg = _T("被动断开");
+			m_StrLeaveMsg = _T("被动断开");
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
 		}
 		else
 		{
-			lpszLeaveMsg = _T("主动关闭");
+			m_StrLeaveMsg = _T("主动关闭");
 			NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
 		}
@@ -202,17 +176,17 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClient
 		m_StrClient = _T("下载客户端");
 		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
 		{
-			lpszLeaveMsg = _T("心跳超时");
+			m_StrLeaveMsg = _T("心跳超时");
 			NetCore_TCPXCore_CloseForClientEx(xhNetDownload, lpszClientAddr);
 		}
 		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
 		{
-			lpszLeaveMsg = _T("被动断开");
+			m_StrLeaveMsg = _T("被动断开");
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBDownload, lpszClientAddr);
 		}
 		else
 		{
-			lpszLeaveMsg = _T("主动关闭");
+			m_StrLeaveMsg = _T("主动关闭");
 			NetCore_TCPXCore_CloseForClientEx(xhNetDownload, lpszClientAddr);
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBDownload, lpszClientAddr);
 		}
@@ -225,17 +199,17 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClient
 		m_StrClient = _T("业务客户端");
 		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
 		{
-			lpszLeaveMsg = _T("心跳超时");
+			m_StrLeaveMsg = _T("心跳超时");
 			NetCore_TCPXCore_CloseForClientEx(xhNetCenter, lpszClientAddr);
 		}
 		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
 		{
-			lpszLeaveMsg = _T("被动断开");
+			m_StrLeaveMsg = _T("被动断开");
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBCenter, lpszClientAddr);
 		}
 		else
 		{
-			lpszLeaveMsg = _T("主动关闭");
+			m_StrLeaveMsg = _T("主动关闭");
 
 			NetCore_TCPXCore_CloseForClientEx(xhNetCenter, lpszClientAddr);
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBCenter, lpszClientAddr);
@@ -243,30 +217,7 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClient
 		RfcComponents_HttpServer_CloseClinetEx(xhCenterHttp, lpszClientAddr);
 		OPenSsl_Server_CloseClientEx(xhCHSsl, lpszClientAddr);
 	}
-	else
-	{
-		m_StrClient = _T("P2XP客户端");
-		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
-		{
-			lpszLeaveMsg = _T("心跳超时");
-			NetCore_TCPXCore_CloseForClientEx(xhNetP2xp, lpszClientAddr);
-		}
-		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
-		{
-			lpszLeaveMsg = _T("被动断开");
-			SocketOpt_HeartBeat_DeleteAddrEx(xhHBP2xp, lpszClientAddr);
-		}
-		else
-		{
-			lpszLeaveMsg = _T("主动关闭");
-
-			NetCore_TCPXCore_CloseForClientEx(xhNetP2xp, lpszClientAddr);
-			SocketOpt_HeartBeat_DeleteAddrEx(xhHBP2xp, lpszClientAddr);
-		}
-		HelpComponents_Datas_DeleteEx(xhP2XPPacket, lpszClientAddr);
-		P2XPPeer_Manage_Delete(lpszClientAddr);
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s：%s，与服务器断开，原因：%s"), m_StrClient.c_str(), lpszClientAddr, lpszLeaveMsg);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("%s：%s，与服务器断开，原因：%s"), m_StrClient.c_str(), lpszClientAddr, m_StrLeaveMsg.c_str());
 	return TRUE;
 }
 ///////////////////////////////////////////////////////////////////////////////////
@@ -332,14 +283,6 @@ BOOL XEngine_Net_SendMsg(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsg
 		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBCenter, lpszClientAddr);
-		}
-	}
-	else if (STORAGE_NETTYPE_TCPP2XP == nType)
-	{
-		bRet = NetCore_TCPXCore_SendEx(xhNetP2xp, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
-		{
-			SocketOpt_HeartBeat_ActiveAddrEx(xhHBP2xp, lpszClientAddr);
 		}
 	}
 	if (!bRet)

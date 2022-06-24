@@ -24,8 +24,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp", "XEngine_ThirdPar
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_Database", "StorageModule_Database\StorageModule_Database.vcxproj", "{8B90FA35-1D93-4174-BF1C-926D52F0C67F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_P2XPPeer", "StorageModule_P2XPPeer\StorageModule_P2XPPeer.vcxproj", "{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -90,14 +88,6 @@ Global
 		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Release|x64.Build.0 = Release|x64
 		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Release|x86.ActiveCfg = Release|Win32
 		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Release|x86.Build.0 = Release|Win32
-		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Debug|x64.ActiveCfg = Debug|x64
-		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Debug|x64.Build.0 = Debug|x64
-		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Debug|x86.ActiveCfg = Debug|Win32
-		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Debug|x86.Build.0 = Debug|Win32
-		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Release|x64.ActiveCfg = Release|x64
-		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Release|x64.Build.0 = Release|x64
-		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Release|x86.ActiveCfg = Release|Win32
-		{91BB60C1-34B4-4D1F-92EB-53F8CC8B51C3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

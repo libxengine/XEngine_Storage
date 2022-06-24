@@ -163,12 +163,13 @@ int main()
 	int nBodyLen = 2048;
 	TCHAR *ptszMsgBody = NULL;
 	//请求分布式存储文件所有位置
-	LPCTSTR lpszUrl = _T("http://127.0.0.1:5100/Api/Manage/P2P");
+	LPCTSTR lpszUrl = _T("http://127.0.0.1:5100/Api/Manage/Query");
 	LPCTSTR lpszFile = _T("D:\\XEngine_Storage\\XEngine_APPClient\\Debug\\qq.exe");
 
 	Json::Value st_JsonRoot;
+	st_JsonRoot["nMode"] = 1;          //使用P2P下载
 	st_JsonRoot["lpszBuckKey"] = "storagekey2";
-	st_JsonRoot["lpszFileHash"] = "781E5E245D69B566979B86E28D23F2C7";
+	st_JsonRoot["lpszFileName"] = "qq.exe";
 
 	if (!APIHelp_HttpRequest_Post(lpszUrl, st_JsonRoot.toStyledString().c_str(), &nHTTPCode, &ptszMsgBody, &nBodyLen))
 	{

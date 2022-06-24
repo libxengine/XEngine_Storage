@@ -56,7 +56,7 @@
     "XLimit":{
         "nDLTry":10,
         "nMaxUPLoad":4096000,
-        "nMaxDNLoad":4096000
+        "nMaxDNLoad":40960000
     },
     "XP2xp":{
         "nTime":2,
