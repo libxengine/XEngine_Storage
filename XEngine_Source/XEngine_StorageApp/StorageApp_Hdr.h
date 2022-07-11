@@ -69,13 +69,13 @@ using namespace std;
 extern BOOL bIsRun;
 extern XLOG xhLog;
 
-extern XNETHANDLE xhHBDownload;
-extern XNETHANDLE xhHBUPLoader;
-extern XNETHANDLE xhHBCenter;
+extern XHANDLE xhHBDownload;
+extern XHANDLE xhHBUPLoader;
+extern XHANDLE xhHBCenter;
 
-extern XNETHANDLE xhNetDownload;
-extern XNETHANDLE xhNetUPLoader;
-extern XNETHANDLE xhNetCenter;
+extern XHANDLE xhNetDownload;
+extern XHANDLE xhNetUPLoader;
+extern XHANDLE xhNetCenter;
 
 extern XNETHANDLE xhUPPool;
 extern XNETHANDLE xhDLPool;

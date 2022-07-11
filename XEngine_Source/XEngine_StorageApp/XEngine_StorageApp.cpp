@@ -3,13 +3,13 @@
 BOOL bIsRun = FALSE;
 XLOG xhLog = NULL;
 
-XNETHANDLE xhHBDownload = 0;
-XNETHANDLE xhHBUPLoader = 0;
-XNETHANDLE xhHBCenter = 0;
+XHANDLE xhHBDownload = 0;
+XHANDLE xhHBUPLoader = 0;
+XHANDLE xhHBCenter = 0;
 
-XNETHANDLE xhNetDownload = 0;
-XNETHANDLE xhNetUPLoader = 0;
-XNETHANDLE xhNetCenter = 0;
+XHANDLE xhNetDownload = 0;
+XHANDLE xhNetUPLoader = 0;
+XHANDLE xhNetCenter = 0;
 
 XNETHANDLE xhUPPool = 0;
 XNETHANDLE xhDLPool = 0;
@@ -175,21 +175,24 @@ int main(int argc, char** argv)
 
 	if (st_ServiceCfg.st_XTime.bHBTime)
 	{
-		if (!SocketOpt_HeartBeat_InitEx(&xhHBDownload, st_ServiceCfg.st_XTime.nStorageTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBDownload))
+		xhHBDownload = SocketOpt_HeartBeat_InitEx(st_ServiceCfg.st_XTime.nStorageTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBDownload);
+		if (NULL == xhHBDownload)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化下载心跳管理服务失败，错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化下载心跳管理服务成功，句柄：%llu,时间:%d,次数:%d"), xhHBDownload, st_ServiceCfg.st_XTime.nStorageTimeOut, st_ServiceCfg.st_XTime.nTimeCheck);
 
-		if (!SocketOpt_HeartBeat_InitEx(&xhHBUPLoader, st_ServiceCfg.st_XTime.nStorageTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBUPLoader))
+		xhHBUPLoader = SocketOpt_HeartBeat_InitEx(st_ServiceCfg.st_XTime.nStorageTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBUPLoader);
+		if (NULL == xhHBUPLoader)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化上传心跳管理服务失败，错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化上传心跳管理服务成功，句柄：%llu,时间:%d,次数:%d"), xhHBUPLoader, st_ServiceCfg.st_XTime.nStorageTimeOut, st_ServiceCfg.st_XTime.nTimeCheck);
 
-		if (!SocketOpt_HeartBeat_InitEx(&xhHBCenter, st_ServiceCfg.st_XTime.nCenterTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBCenter))
+		xhHBCenter = SocketOpt_HeartBeat_InitEx(st_ServiceCfg.st_XTime.nCenterTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBCenter);
+		if (NULL == xhHBCenter)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化业务管理服务失败，错误：%lX"), NetCore_GetLastError());
 			goto XENGINE_EXITAPP;
@@ -259,7 +262,8 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，检测到没有启用下载SSL服务"));
 		}
 
-		if (!NetCore_TCPXCore_StartEx(&xhNetDownload, st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
+		xhNetDownload = NetCore_TCPXCore_StartEx(st_ServiceCfg.nStorageDLPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr);
+		if (NULL == xhNetDownload)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动下载存储网络服务失败,端口:%d，错误：%lX,%d"), st_ServiceCfg.nStorageDLPort, NetCore_GetLastError(), errno);
 			goto XENGINE_EXITAPP;
@@ -317,7 +321,8 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，检测到没有启用上传SSL服务"));
 		}
 
-		if (!NetCore_TCPXCore_StartEx(&xhNetUPLoader, st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
+		xhNetUPLoader = NetCore_TCPXCore_StartEx(st_ServiceCfg.nStorageUPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr);
+		if (NULL == xhNetUPLoader)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动上传存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nStorageUPPort, NetCore_GetLastError());
 			goto XENGINE_EXITAPP;
@@ -368,7 +373,8 @@ int main(int argc, char** argv)
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("启动服务中，检测到没有启用业务SSL服务"));
 		}
 
-		if (!NetCore_TCPXCore_StartEx(&xhNetCenter, st_ServiceCfg.nCenterPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr))
+		xhNetCenter = NetCore_TCPXCore_StartEx(st_ServiceCfg.nCenterPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, FALSE, st_ServiceCfg.bReuseraddr);
+		if (NULL == xhNetCenter)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动业务控制存储网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nCenterPort, NetCore_GetLastError());
 			goto XENGINE_EXITAPP;
