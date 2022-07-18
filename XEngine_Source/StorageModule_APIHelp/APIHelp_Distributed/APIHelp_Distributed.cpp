@@ -555,7 +555,8 @@ __int64u CAPIHelp_Distributed::APIHelp_Distributed_GetSize(LPCTSTR lpszMsgBuffer
 	memset(tszUnitStr, '\0', sizeof(tszUnitStr));
 	//分别得到数字和单位
 	memcpy(tszSizeStr, lpszMsgBuffer, _tcslen(lpszMsgBuffer) - 2);
-	BaseLib_OperatorString_GetLastString(lpszMsgBuffer, 2, tszUnitStr);
+	tszUnitStr[0] = lpszMsgBuffer[_tcslen(lpszMsgBuffer) - 2];
+	tszUnitStr[1] = lpszMsgBuffer[_tcslen(lpszMsgBuffer) - 1];
 
 	__int64u nllSize = _ttoi64(tszSizeStr);
 	//得到单位大小
