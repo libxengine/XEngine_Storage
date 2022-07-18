@@ -33,20 +33,28 @@ feature list:
 
 ## install
 
-#### Requirements  
-support system above windows 7sp1 and linux(ubuntu20.04,centos8)  
-XEngine need V7.24 or above  
+#### XEngine Evn
+you must install XEngine,need V7.38 or above,install XEngine can be refer to xengine Readme docment  
+GITEE:https://gitee.com/xyry/libxengine  
+GITHUB:https://github.com/libxengine/xengine
+
+##### fast to deployment 
+git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/libxengine/xengine.git  
+window Exection XEngine_WINEnv.bat   
+Linux Exection:sudo ./XEngine_LINEnv.sh -i 3  
+Macos Exection:./XEngine_LINEnv.sh -i 3
 
 #### Windows
-use vs open and complie  
-You need to configure the environment in the following way, otherwise you may need to set the library directory in the project yourself  
-
-##### XEngine
-download xengine through git.read xengine project readme file to configure your env  
+use vs open and compile,suport windows 7sp1 and above  
+Just Run it,use XEngine_AuthorizeApp
 
 #### Linux
-Linux use Makefile to complie  
-supproted ubuntu x64 or centos x64  
+use makefile compile,UBUNTU20.04 x64 or CENTOS8 x64  
+Run it on the terminal
+
+#### Macos
+use makefile compile,mac 12 and above  
+Run it on the terminal
 
 ##### complie
 execute command in XEngine_Source path  
