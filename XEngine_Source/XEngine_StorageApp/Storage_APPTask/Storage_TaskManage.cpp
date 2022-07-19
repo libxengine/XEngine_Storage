@@ -298,6 +298,21 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 
 		if (0 == nOPCode)
 		{
+			//处理路径格式
+			if (tszRealDir[_tcslen(tszRealDir) - 1] != '*')
+			{
+				int nPathType = 0;
+				BaseLib_OperatorString_GetPath(tszRealDir, &nPathType);
+				//判断是绝对路径还是相对路径
+				if (1 == nPathType)
+				{
+					_tcscat(tszRealDir, _T("\\*"));
+				}
+				else if (2 == nPathType)
+				{
+					_tcscat(tszRealDir, _T("/*"));
+				}
+			}
 			if (!SystemApi_File_EnumFile(tszRealDir, &ppszListDir, &nListCount, NULL, NULL, TRUE, 2))
 			{
 				st_HDRParam.bIsClose = TRUE;
