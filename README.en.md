@@ -92,6 +92,7 @@ P2P WAN file search and download support
 
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  
+When the jsoncpp module is used, the compilation runtime library selection must be consistent  
 
 ## Test Service
 Address:app.xyry.org or 159.75.200.173  
