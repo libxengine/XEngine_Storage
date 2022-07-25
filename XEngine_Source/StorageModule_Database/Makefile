@@ -9,7 +9,7 @@ LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XE
 LIB = -lXEngine_BaseLib -lHelpComponents_DataBase
 LIBEX = -ldl 
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = Database_Client.o Database_File.o Database_Help.o pch.o
+LIBINCLUDE = Database_File.o Database_Help.o pch.o
 
 ifeq ($(shell uname),Darwin)
 	SHAREDLL = dylib
@@ -37,8 +37,6 @@ endif
 all:$(LIBINCLUDE)
 	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libStorageModule_Database.$(SHAREDLL) $(SHAREFLAG) $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
-Database_Client.o:./Database_Client/Database_Client.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Database_Client/Database_Client.cpp
 Database_File.o:./Database_File/Database_File.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Database_File/Database_File.cpp
 Database_Help.o:./Database_Help/Database_Help.cpp                                 

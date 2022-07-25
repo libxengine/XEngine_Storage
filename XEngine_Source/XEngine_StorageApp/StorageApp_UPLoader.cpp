@@ -257,10 +257,10 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		}
 		
 		BOOL bRet = TRUE;
+		_tcscpy(st_ProtocolFile.tszBuckKey, st_StorageBucket.tszBuckKey);
 		Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, FALSE, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		if (st_ServiceCfg.st_XSql.bEnable)
 		{
-			_tcscpy(st_ProtocolFile.tszBuckKey, st_StorageBucket.tszBuckKey);
 			if (Database_File_FileInsert(&st_ProtocolFile))
 			{
 				st_HDRParam.bIsClose = TRUE;
