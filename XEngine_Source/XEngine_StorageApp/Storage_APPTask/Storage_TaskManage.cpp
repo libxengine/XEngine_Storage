@@ -64,20 +64,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		}
 		else
 		{
-			//首先判断本机存在不
-			if (nListCount > 0)
-			{
-				for (int i = 0; i < nListCount; i++)
-				{
-					_stprintf(ppSt_ListFile[i]->tszTableName, _T("127.0.0.1:%d"), st_ServiceCfg.nStorageDLPort);
-				}
-				Protocol_StoragePacket_QueryFile(tszRVBuffer, &nRVLen, &ppSt_ListFile, nListCount);
-				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
-				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求文件查询,发现本地拥有此文件.直接返回"), lpszClientAddr);
-				return TRUE;
-			}
 			//开始广播请求文件
 			SOCKET hSDSocket;
 			SOCKET hRVSocket;
