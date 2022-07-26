@@ -277,7 +277,6 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			}
 		}
 		
-		BOOL bRet = TRUE;
 		Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullCount, FALSE, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		if (st_ServiceCfg.st_XSql.bEnable)
 		{
@@ -307,7 +306,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d,数据库没有启用,不插入数据库"), lpszClientAddr, tszFileDir, nRVCount);
 		}
 		//PASS代理
-		if (st_ServiceCfg.st_XProxy.st_XProxyPass.bUPPass && bRet)
+		if (st_ServiceCfg.st_XProxy.st_XProxyPass.bUPPass)
 		{
 			int nHttpCode = 0;
 			if (APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass, tszPassNotify, &nHttpCode))
