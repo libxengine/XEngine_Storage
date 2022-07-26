@@ -322,6 +322,27 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 			return FALSE;
 		}
 	}
+	else if (5 == nMode)
+	{
+		BOOL bFound = FALSE;
+		//上传专用,由用户指定
+		list<XENGINE_STORAGEBUCKET>::const_iterator stl_ListIterator = pStl_ListBucket->begin();
+		for (; stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
+		{
+			if (0 == _tcsnicmp(pSt_StorageBucket->tszBuckKey, stl_ListIterator->tszBuckKey, _tcslen(pSt_StorageBucket->tszBuckKey)))
+			{
+				bFound = TRUE;
+				*pSt_StorageBucket = *stl_ListIterator;
+				break;
+			}
+		}
+		if (!bFound)
+		{
+			APIHelp_IsErrorOccur = TRUE;
+			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
+			return FALSE;
+		}
+	}
 	else
 	{
 		int nLastLevel = 99999;
