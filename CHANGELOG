@@ -1,3 +1,37 @@
+XEngine_Storage V3.8.0.1001
+
+更新:匹配了xengine v7.38
+修改:支持macos系统了
+修改:不在使用BaseLib_OperatorString_GetLastString函数
+修改:现在不在对本地文件进行处理了
+修改:未完成的上传也返回信息了
+修改:上传只支持指定bucket了
+修正:linux构建错误
+修正:配置错误
+修正:心跳和网络句柄打印错误
+修正:枚举文件路径参数不正确
+修正:程序退出某些时候崩溃的问题
+修正:上传返回的json长度字段不正确的问题
+优化:版本列表配置
+删除:客户端数据库相关代码
+删除:无用代码
+
+update:match xengine v7.38
+modify:support macos now
+modify:does not  use BaseLib_OperatorString_GetLastString fuinction
+modify:Do not judge the existence of files for this machine
+modify:Incomplete uploads also return information
+modify:upload supports specifying bucket
+fixed:linux build
+fixed:configure error
+fixed:heartbeat and tcpcore handle print error
+fixed:Incorrect path parameter for enumeration file
+fixed:The problem is crashed when exiting the program at sometime
+fixed:the len field of the upload result json is incorrect
+improved:version list configure
+delete:client database related code
+delete:unused code
+======================================================================================
 XEngine_Storage V3.7.0.1001
 
 优化:关闭广播
