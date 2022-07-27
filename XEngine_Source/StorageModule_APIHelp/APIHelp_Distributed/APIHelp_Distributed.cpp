@@ -287,7 +287,26 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 		int nListCount = 0;
 		__int64u nDirCount = 0;   //当前目录大小
 		CHAR** ppListFile;
-		SystemApi_File_EnumFile(pSt_StorageBucket->tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
+
+		TCHAR tszFilePath[MAX_PATH];
+		memset(tszFilePath, '\0', MAX_PATH);
+
+		_tcscpy(tszFilePath, pSt_StorageBucket->tszFilePath);
+		if (tszFilePath[_tcslen(tszFilePath) - 1] != '*')
+		{
+			int nPathType = 0;
+			BaseLib_OperatorString_GetPath(tszFilePath, &nPathType);
+			//判断是绝对路径还是相对路径
+			if (1 == nPathType)
+			{
+				_tcscat(tszFilePath, _T("\\*"));
+			}
+			else if (2 == nPathType)
+			{
+				_tcscat(tszFilePath, _T("/*"));
+			}
+		}
+		SystemApi_File_EnumFile(tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
 		for (int j = 0; j < nListCount; j++)
 		{
 			struct _tstat64 st_FStat;
@@ -300,6 +319,27 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 		{
 			APIHelp_IsErrorOccur = TRUE;
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_SIZE;
+			return FALSE;
+		}
+	}
+	else if (5 == nMode)
+	{
+		BOOL bFound = FALSE;
+		//上传专用,由用户指定
+		list<XENGINE_STORAGEBUCKET>::const_iterator stl_ListIterator = pStl_ListBucket->begin();
+		for (; stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
+		{
+			if (0 == _tcsnicmp(pSt_StorageBucket->tszBuckKey, stl_ListIterator->tszBuckKey, _tcslen(pSt_StorageBucket->tszBuckKey)))
+			{
+				bFound = TRUE;
+				*pSt_StorageBucket = *stl_ListIterator;
+				break;
+			}
+		}
+		if (!bFound)
+		{
+			APIHelp_IsErrorOccur = TRUE;
+			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
 			return FALSE;
 		}
 	}
@@ -331,7 +371,26 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 					int nListCount = 0;
 					__int64u nDirCount = 0;   //当前目录大小
 					CHAR** ppListFile;
-					SystemApi_File_EnumFile(stl_ListIterator->tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
+					//处理路径是否有通配符
+					TCHAR tszFilePath[MAX_PATH];
+					memset(tszFilePath, '\0', MAX_PATH);
+
+					_tcscpy(tszFilePath, pSt_StorageBucket->tszFilePath);
+					if (tszFilePath[_tcslen(tszFilePath) - 1] != '*')
+					{
+						int nPathType = 0;
+						BaseLib_OperatorString_GetPath(tszFilePath, &nPathType);
+						//判断是绝对路径还是相对路径
+						if (1 == nPathType)
+						{
+							_tcscat(tszFilePath, _T("\\*"));
+						}
+						else if (2 == nPathType)
+						{
+							_tcscat(tszFilePath, _T("/*"));
+						}
+					}
+					SystemApi_File_EnumFile(tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
 					for (int j = 0; j < nListCount; j++)
 					{
 						struct _tstat64 st_FStat;
@@ -555,7 +614,8 @@ __int64u CAPIHelp_Distributed::APIHelp_Distributed_GetSize(LPCTSTR lpszMsgBuffer
 	memset(tszUnitStr, '\0', sizeof(tszUnitStr));
 	//分别得到数字和单位
 	memcpy(tszSizeStr, lpszMsgBuffer, _tcslen(lpszMsgBuffer) - 2);
-	BaseLib_OperatorString_GetLastString(lpszMsgBuffer, 2, tszUnitStr);
+	tszUnitStr[0] = lpszMsgBuffer[_tcslen(lpszMsgBuffer) - 2];
+	tszUnitStr[1] = lpszMsgBuffer[_tcslen(lpszMsgBuffer) - 1];
 
 	__int64u nllSize = _ttoi64(tszSizeStr);
 	//得到单位大小

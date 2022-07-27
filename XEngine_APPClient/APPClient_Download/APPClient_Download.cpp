@@ -33,8 +33,8 @@ using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 debug 编译
-//linux使用下面的命令编译
-//g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_DownLoad -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIHelp -lXEngine_Download -lXEngine_SystemApi -ljsoncpp
+//linux::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_DownLoad -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIHelp -lXEngine_Download -lXEngine_SystemApi -ljsoncpp
+//macos::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIHelp -lXEngine_Download -lXEngine_SystemApi -ljsoncpp
 
 typedef struct 
 {

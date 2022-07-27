@@ -1,20 +1,31 @@
 CC = g++ -Wall -std=c++17 -fPIC
+SHAREFLAG = -shared
+SHAREDLL = so
 RELEASE = 0
 UNICODE = 0
 INCLUDE = -I ./
 FILECENTOS = /etc/redhat-release
 LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_HelpComponents
 LIB = -lXEngine_BaseLib -lHelpComponents_DataBase
-LIBEX = -static-libgcc -lrt -ldl 
+LIBEX = -ldl 
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = Database_Client.o Database_File.o Database_Help.o pch.o
+LIBINCLUDE = Database_File.o Database_Help.o pch.o
+
+ifeq ($(shell uname),Darwin)
+	SHAREDLL = dylib
+	SHAREFLAG = -dynamiclib
+	LOADSO = 
+else
+	SHAREDLL = so
+	SHAREFLAG = -shared
+endif
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+FLAGS = -c
+DEBUG = -g
 endif
 
 ifeq ($(UNICODE),1)
@@ -24,10 +35,8 @@ UNICODE =
 endif
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libStorageModule_Database.so -shared $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libStorageModule_Database.$(SHAREDLL) $(SHAREFLAG) $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
-Database_Client.o:./Database_Client/Database_Client.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Database_Client/Database_Client.cpp
 Database_File.o:./Database_File/Database_File.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Database_File/Database_File.cpp
 Database_Help.o:./Database_Help/Database_Help.cpp                                 
@@ -38,12 +47,12 @@ pch.o:pch.cpp
 
 
 InstallAll:InstallSo
-InstallSo:./libStorageModule_Database.so
-	cp ./libStorageModule_Database.so ../../XEngine_Release/libStorageModule_Database.so
+InstallSo:./libStorageModule_Database.$(SHAREDLL)
+	cp ./libStorageModule_Database.$(SHAREDLL) ../../XEngine_Release/libStorageModule_Database.$(SHAREDLL)
 
 
 CleanAll:CleanObj CleanMk
 CleanObj:
 	rm *.o                                           
 CleanMk:
-	rm *.so                                        
+	rm *.$(SHAREDLL)                                        

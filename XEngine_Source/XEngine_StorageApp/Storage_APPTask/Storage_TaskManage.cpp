@@ -44,14 +44,16 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 
 		Protocol_StorageParse_QueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash, &nMode);
 		//查找数据库
-		if (st_ServiceCfg.st_XSql.bEnable)
+		if (!st_ServiceCfg.st_XSql.bEnable)
 		{
-			Database_File_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 501;
+			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求查询文件失败,没有启用数据库,无法使用此功能!"), lpszClientAddr);
+			return TRUE;
 		}
-		else
-		{
-			Database_Client_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
-		}
+		Database_File_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
 		//根据使用模式来操作
 		if (0 == nMode)
 		{
@@ -64,20 +66,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		}
 		else
 		{
-			//首先判断本机存在不
-			if (nListCount > 0)
-			{
-				for (int i = 0; i < nListCount; i++)
-				{
-					_stprintf(ppSt_ListFile[i]->tszTableName, _T("127.0.0.1:%d"), st_ServiceCfg.nStorageDLPort);
-				}
-				Protocol_StoragePacket_QueryFile(tszRVBuffer, &nRVLen, &ppSt_ListFile, nListCount);
-				BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
-				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求文件查询,发现本地拥有此文件.直接返回"), lpszClientAddr);
-				return TRUE;
-			}
 			//开始广播请求文件
 			SOCKET hSDSocket;
 			SOCKET hRVSocket;
@@ -172,12 +160,13 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			if (st_ServiceCfg.st_XSql.bEnable)
 			{
 				Database_File_FileInsert(ppSt_DBFile[i]);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求添加文件到数据库成功,文件名:%s/%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
 			}
 			else
 			{
-				Database_Client_FileInsert(ppSt_DBFile[i]);
+				st_HDRParam.nHttpCode = 501;
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求添加文件到数据库失败,因为服务器没有启用此功能,文件名:%s/%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求添加文件到数据库成功,文件名:%s/%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
 		}
 		RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
@@ -196,14 +185,16 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				int nQueryCount = 0;
 				XSTORAGECORE_DBFILE** ppSt_DBQuery;
 
-				if (st_ServiceCfg.st_XSql.bEnable)
+				if (!st_ServiceCfg.st_XSql.bEnable)
 				{
-					Database_File_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, NULL, NULL, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
+					st_HDRParam.bIsClose = TRUE;
+					st_HDRParam.nHttpCode = 501;
+					RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求删除文件:%s HASH失败,没有启用数据库,无法使用此功能!"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
+					return TRUE;
 				}
-				else
-				{
-					Database_Client_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, NULL, NULL, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
-				}
+				Database_File_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, NULL, NULL, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
 				//删除数据库与文件
 				for (int i = 0; i < nQueryCount; i++)
 				{
@@ -211,14 +202,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 					memset(tszFilePath, '\0', sizeof(tszFilePath));
 
 					_stprintf(tszFilePath, _T("%s/%s"), ppSt_DBQuery[i]->st_ProtocolFile.tszFilePath, ppSt_DBQuery[i]->st_ProtocolFile.tszFileName);
-					if (st_ServiceCfg.st_XSql.bEnable)
-					{
-						Database_File_FileDelete(NULL, NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
-					}
-					else
-					{
-						Database_Client_FileDelete(NULL, NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
-					}
+					Database_File_FileDelete(NULL, NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
 					_tremove(tszFilePath);
 				}
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求删除文件HASH成功,文件名:%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
@@ -236,14 +220,16 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				}
 				_stprintf(tszFileDir, _T("%s/%s"), ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
 
-				if (st_ServiceCfg.st_XSql.bEnable)
+				if (!st_ServiceCfg.st_XSql.bEnable)
 				{
-					Database_File_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, NULL, tszFileDir);
+					st_HDRParam.bIsClose = TRUE;
+					st_HDRParam.nHttpCode = 501;
+					RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求删除文件:%s 名称失败,没有启用数据库,无法使用此功能!"), lpszClientAddr, tszFileDir);
+					return TRUE;
 				}
-				else
-				{
-					Database_Client_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, NULL, tszFileDir);
-				}
+				Database_File_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, NULL, tszFileDir);
 				//删除数据库与文件
 				for (int i = 0; i < nQueryCount; i++)
 				{
@@ -251,15 +237,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 					memset(tszFilePath, '\0', sizeof(tszFilePath));
 
 					_stprintf(tszFilePath, _T("%s/%s"), ppSt_DBQuery[i]->st_ProtocolFile.tszFilePath, ppSt_DBQuery[i]->st_ProtocolFile.tszFileName);
-					
-					if (st_ServiceCfg.st_XSql.bEnable)
-					{
-						Database_File_FileDelete(NULL, NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
-					}
-					else
-					{
-						Database_Client_FileDelete(NULL, NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
-					}
+					Database_File_FileDelete(NULL, NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
 					_tremove(tszFilePath);
 				}
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求删除文件名称成功,文件名:%s/%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
@@ -298,6 +276,21 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 
 		if (0 == nOPCode)
 		{
+			//处理路径格式
+			if (tszRealDir[_tcslen(tszRealDir) - 1] != '*')
+			{
+				int nPathType = 0;
+				BaseLib_OperatorString_GetPath(tszRealDir, &nPathType);
+				//判断是绝对路径还是相对路径
+				if (1 == nPathType)
+				{
+					_tcscat(tszRealDir, _T("\\*"));
+				}
+				else if (2 == nPathType)
+				{
+					_tcscat(tszRealDir, _T("/*"));
+				}
+			}
 			if (!SystemApi_File_EnumFile(tszRealDir, &ppszListDir, &nListCount, NULL, NULL, TRUE, 2))
 			{
 				st_HDRParam.bIsClose = TRUE;

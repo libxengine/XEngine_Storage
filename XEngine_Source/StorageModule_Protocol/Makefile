@@ -1,20 +1,31 @@
 CC = g++ -Wall -std=c++17 -fPIC
+SHAREFLAG = -shared
+SHAREDLL = so
 RELEASE = 0
 UNICODE = 0
 INCLUDE = -I ./ -I ../XEngine_ThirdPart/jsoncpp
 FILECENTOS = /etc/redhat-release
 LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L ../XEngine_ThirdPart/jsoncpp
 LIB = -lXEngine_BaseLib -ljsoncpp
-LIBEX = -static-libgcc -lrt -ldl 
+LIBEX = -ldl 
 LOADSO = -Wl,-rpath=./,--disable-new-dtags
 LIBINCLUDE = Protocol_StoragePacket.o Protocol_StorageParse.o pch.o
+
+ifeq ($(shell uname),Darwin)
+	SHAREDLL = dylib
+	SHAREFLAG = -dynamiclib
+	LOADSO = 
+else
+	SHAREDLL = so
+	SHAREFLAG = -shared
+endif
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -O2 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+FLAGS = -c 
+DEBUG = -g
 endif
 
 ifeq ($(UNICODE),1)
@@ -30,7 +41,7 @@ else
 endif
 
 all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libStorageModule_Protocol.so -shared $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libStorageModule_Protocol.$(SHAREDLL) $(SHAREFLAG) $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
 
 Protocol_StoragePacket.o:./Protocol_Packet/Protocol_StoragePacket.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Protocol_Packet/Protocol_StoragePacket.cpp 
@@ -42,12 +53,12 @@ pch.o:pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libStorageModule_Protocol.so
-	cp ./libStorageModule_Protocol.so ../../XEngine_Release/libStorageModule_Protocol.so
+InstallSo:./libStorageModule_Protocol.$(SHAREDLL)
+	cp ./libStorageModule_Protocol.$(SHAREDLL) ../../XEngine_Release/libStorageModule_Protocol.$(SHAREDLL)
 
 
 CleanAll:CleanObj CleanMk
 CleanObj:
 	rm *.o                                           
 CleanMk:
-	rm *.so    
+	rm *.$(SHAREDLL)    
