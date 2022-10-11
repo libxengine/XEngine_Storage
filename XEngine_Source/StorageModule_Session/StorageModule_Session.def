@@ -25,4 +25,3 @@ EXPORTS
 	Session_UPStroage_Exist
 	Session_UPStorage_GetAll
 	Session_UPStroage_Delete
-	Session_UPStroage_Close

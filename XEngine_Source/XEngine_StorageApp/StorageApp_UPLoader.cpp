@@ -148,7 +148,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 
 	memset(tszStorageKey, '\0', MAX_PATH);
 	memset(&st_StorageBucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
-	//是否制定了bucket
+	//是否指定了bucket
 	if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszStorageKey, st_StorageBucket.tszBuckKey))
 	{
 		if (!APIHelp_Distributed_UPStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, 5))
@@ -229,18 +229,16 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 
 		memset(tszPassNotify, '\0', MAX_PATH);
 		memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
-
-		Session_UPStroage_Close(lpszClientAddr);
 		Session_UPStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
 		//大小是否足够
-		if (st_StorageInfo.ullCount != st_StorageInfo.ullFSize)
+		if (st_StorageInfo.ullCount != st_StorageInfo.ullRWLen)
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 200;
 			Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWLen, FALSE);
 			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszPassNotify, nPLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,总大小:%lld,写入大小:%lld,文件不完整,需要等待断点续传完毕"), lpszClientAddr, tszFileDir, st_StorageInfo.ullCount, st_StorageInfo.ullFSize);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,总大小:%lld,写入大小:%lld,文件不完整,需要等待断点续传完毕"), lpszClientAddr, tszFileDir, st_StorageInfo.ullCount, st_StorageInfo.ullRWLen);
 			return TRUE;
 		}
 		int nHashLen = 0;
@@ -253,7 +251,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFilePath, st_StorageBucket.tszFilePath);
 		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, pSt_HTTPParam->tszHttpUri + 1);
 		_tcscpy(st_ProtocolFile.tszBuckKey, st_StorageBucket.tszBuckKey);
-		st_ProtocolFile.st_ProtocolFile.nFileSize = st_StorageInfo.ullFSize;
+		st_ProtocolFile.st_ProtocolFile.nFileSize = st_StorageInfo.ullRWLen;
 
 		OPenSsl_Api_Digest(tszFileDir, tszHashStr, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
 		BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);

@@ -136,6 +136,11 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	//文件是否存在
 	if ((m_bResume) && ((0 != nPosStart) || (0 != nPostEnd)) && (0 == _taccess(lpszFileDir, 0)))
 	{
+		struct _tstat64 st_FStat;
+		memset(&st_FStat, '\0', sizeof(struct _tstat64));
+		_tstat64(stl_MapIterator->second.st_StorageInfo.tszFileDir, &st_FStat);
+		stl_MapIterator->second.st_StorageInfo.ullRWLen = st_FStat.st_size;
+
 		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("rb+"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
@@ -370,52 +375,12 @@ BOOL CSession_UPStroage::Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 		{
 			fclose(stl_MapIterator->second.st_StorageInfo.pSt_File);
 		}
-		if (0 == stl_MapIterator->second.st_StorageInfo.ullFSize)
-		{
-			struct _tstat64 st_FStat;
-			memset(&st_FStat, '\0', sizeof(struct _tstat64));
-			_tstat64(stl_MapIterator->second.st_StorageInfo.tszFileDir, &st_FStat);
-			stl_MapIterator->second.st_StorageInfo.ullFSize = st_FStat.st_size;
-		}
 		//大小是否足够
-		if ((stl_MapIterator->second.st_StorageInfo.ullCount != stl_MapIterator->second.st_StorageInfo.ullFSize) && !m_bResume)
+		if ((stl_MapIterator->second.st_StorageInfo.ullCount != stl_MapIterator->second.st_StorageInfo.ullRWLen) && !m_bResume)
 		{
 			_tremove(stl_MapIterator->second.st_StorageInfo.tszFileDir);
 		}
 		stl_MapStroage.erase(stl_MapIterator);
-	}
-	st_Locker.unlock();
-	return TRUE;
-}
-/********************************************************************
-函数名称：Session_UPStroage_Close
-函数功能：关闭读写文件句柄
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：要关闭的客户端会话
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Close(LPCTSTR lpszClientAddr)
-{
-	Session_IsErrorOccur = FALSE;
-
-	st_Locker.lock();
-	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
-	if (stl_MapIterator != stl_MapStroage.end())
-	{
-		if (NULL != stl_MapIterator->second.st_StorageInfo.pSt_File)
-		{
-			fclose(stl_MapIterator->second.st_StorageInfo.pSt_File);
-		}
-		struct _tstat64 st_FStat;
-		memset(&st_FStat, '\0', sizeof(struct _tstat64));
-		_tstat64(stl_MapIterator->second.st_StorageInfo.tszFileDir, &st_FStat);
-		stl_MapIterator->second.st_StorageInfo.ullFSize = st_FStat.st_size;
 	}
 	st_Locker.unlock();
 	return TRUE;

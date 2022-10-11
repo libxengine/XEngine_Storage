@@ -20,9 +20,8 @@ typedef struct
 	TCHAR tszFileHash[128];                                               //文件HASH值
 	TCHAR tszBuckKey[128];                                                //BUCKKey
 	__int64x ullCount;                                                    //总大小
-	__int64x ullRWCount;                                                  //读取(写入)总大小
+	__int64x ullRWCount;                                                  //需要读取(写入)总大小
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
-	__int64x ullFSize;                                                    //文件真实大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
 	FILE* pSt_File;
@@ -411,17 +410,3 @@ extern "C" BOOL Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInf
 备注：
 *********************************************************************/
 extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr);
-/********************************************************************
-函数名称：Session_UPStroage_Close
-函数功能：关闭读写文件句柄
- 参数.一：lpszClientAddr
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：要关闭的客户端会话
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-extern "C" BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr);

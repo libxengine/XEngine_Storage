@@ -116,7 +116,3 @@ extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 {
 	return m_UPStorage.Session_UPStroage_Delete(lpszClientAddr);
 }
-extern "C" BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr)
-{
-	return m_UPStorage.Session_UPStroage_Close(lpszClientAddr);
-}
