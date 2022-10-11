@@ -25,7 +25,6 @@ typedef struct
 	__int64x ullFSize;                                                    //文件真实大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
-	int nErrorTime;                                                       //错误次数
 	FILE* pSt_File;
 }SESSION_STORAGEINFO;
 //////////////////////////////////////////////////////////////////////////
@@ -83,17 +82,12 @@ extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass);
 /********************************************************************
 函数名称：Session_DLStroage_Init
 函数功能：初始化下载会话管理器
- 参数.一：nTryTime
-  In/Out：In
-  类型：整数型
-  可空：Y
-  意思：输入下载错误重试次数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Init(int nTryTime = 3);
+extern "C" BOOL Session_DLStroage_Init();
 /********************************************************************
 函数名称：Session_DLStroage_Destory
 函数功能：销毁下载管理器
@@ -221,17 +215,12 @@ extern "C" BOOL Session_DLStroage_GetCount(int* pInt_ListCount);
   类型：整数型
   可空：N
   意思：输入文件位置
- 参数.三：bError
-  In/Out：In
-  类型：逻辑型
-  可空：Y
-  意思：是否有由错误引起的
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError = TRUE);
+extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek);
 /********************************************************************
 函数名称：Session_DLStorage_GetAll
 函数功能：获取下载池的任务列表
