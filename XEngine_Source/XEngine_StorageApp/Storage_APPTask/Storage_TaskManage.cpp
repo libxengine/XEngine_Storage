@@ -72,8 +72,8 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			list<APIHELP_LBFILEINFO> stl_ListFile;
 
 			Protocol_StoragePacket_REQFile(tszSDBuffer, &nSDLen, NULL, tszFileHash);
-			NetCore_BroadCast_SendInit(&hSDSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr);
-			NetCore_BroadCast_RecvInit(&hRVSocket, st_ServiceCfg.st_P2xp.nSDPort);
+			NetCore_BroadCast_SDCreate(&hSDSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr);
+			NetCore_BroadCast_RVCreate(&hRVSocket, st_ServiceCfg.st_P2xp.nSDPort);
 
 			if (!NetCore_BroadCast_Send(hSDSocket, tszSDBuffer, nSDLen))
 			{

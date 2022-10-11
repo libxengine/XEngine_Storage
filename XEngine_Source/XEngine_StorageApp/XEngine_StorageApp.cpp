@@ -164,7 +164,7 @@ int main(int argc, char** argv)
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化服务器信号管理成功"));
 
-	xhLimit = Algorithm_Calculation_Create();
+	xhLimit = Algorithm_Calculation_Create(5);
 	if (NULL == xhLimit)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，创建流量限速对象模式失败,错误:%lX"), Algorithm_GetLastError());
@@ -396,7 +396,7 @@ int main(int argc, char** argv)
 	//只有使用了数据库,才启用P2P
 	if (st_ServiceCfg.st_XSql.bEnable)
 	{
-		if (!NetCore_BroadCast_RecvInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
+		if (!NetCore_BroadCast_RVCreate(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
