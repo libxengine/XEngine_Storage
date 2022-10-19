@@ -46,9 +46,23 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 	int nListCount = 0;
 	__int64u nTimeWait = 0;
 	TCHAR tszMsgBuffer[4096];
+	SESSION_STORAGEINFO st_StorageInfo;
 
 	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
+	memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
+	Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
+	if (st_StorageInfo.nLimit > 0)
+	{
+		__int64u nLimitTime = 0;
+		Algorithm_Calculation_GetSDFlow(st_StorageInfo.xhToken, &nLimitTime);
+		if (nLimitTime > st_StorageInfo.nLimit)
+		{
+			//当前平均速度大于限制速度,不做处理
+			NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr);
+			return;
+		}
+	}
 	if (Session_DLStroage_GetBuffer(lpszClientAddr, tszMsgBuffer, &nMsgLen))
 	{
 		if (nMsgLen <= 0)
@@ -80,6 +94,10 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 		}
 		else
 		{
+			if (2 == st_ServiceCfg.st_XLimit.nLimitMode && st_StorageInfo.nLimit > 0)
+			{
+				Algorithm_Calculation_ADDSDFlow(st_StorageInfo.xhToken, nMsgLen);
+			}
 			XEngine_Task_SendDownload(lpszClientAddr, tszMsgBuffer, nMsgLen);
 		}
 	}
@@ -87,16 +105,21 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,获取用户对应文件内容失败,错误：%lX"), lpszClientAddr, Session_GetLastError());
 	}
-	//限速
-	Session_DLStroage_GetCount(&nListCount);
-	Algorithm_Calculation_SleepFlow(xhLimit, &nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, nListCount, 4096);
-	//WINDOWS下sleep_for精度可能不准
-	std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
+	//限速,1为全局限速
+	if (1 == st_ServiceCfg.st_XLimit.nLimitMode)
+	{
+		Session_DLStroage_GetCount(&nListCount);
+		Algorithm_Calculation_SleepFlow(xhLimit, &nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, nListCount, 4096);
+		//WINDOWS下sleep_for精度可能不准
+		std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
+	}
 }
 
 BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, TCHAR** pptszListHdr, int nHdrCount)
 {
 	int nSDLen = 2048;
+	int nLimit = 0;
+	XHANDLE xhLimit = NULL;
 	__int64x ullCount = 0;     //总大小
 	__int64x ullSize = 0;      //需要下载大小
 	TCHAR tszSDBuffer[2048];
@@ -140,6 +163,7 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		if (_tcslen(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy) > 0)
 		{
 			int nBLen = 0;
+			int nCode = 0;
 			int nResponseCode = 0;
 			TCHAR* ptszBody = NULL;
 
@@ -155,8 +179,9 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 			}
+			Protocol_StorageParse_SpeedLimit(ptszBody, nSDLen, &nCode, &nLimit);
 			BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszUserName, tszUserPass);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s,值:%d"), lpszClientAddr, st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszUserName, tszUserPass, nCode);
 		}
 		else
 		{
@@ -236,8 +261,12 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	OPenSsl_Api_Digest(tszFileDir, tszHashKey, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
 	BaseLib_OperatorString_StrToHex((char*)tszHashKey, nHashLen, tszHashStr);
 	BaseLib_OperatorString_GetFileAndPath(tszFileDir, NULL, NULL, NULL, st_HDRParam.tszMimeType);
+	if (nLimit > 0)
+	{
+		xhLimit = Algorithm_Calculation_Create();
+	}
 	//插入数据
-	if (!Session_DLStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, &ullCount, &ullSize, nPosStart, nPosEnd, tszHashStr))
+	if (!Session_DLStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, &ullCount, &ullSize, nPosStart, nPosEnd, tszHashStr, nLimit, xhLimit))
 	{
 		st_HDRParam.bIsClose = TRUE;
 		st_HDRParam.nHttpCode = 404;
