@@ -361,3 +361,60 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBu
 
     return TRUE;
 }
+/********************************************************************
+函数名称：Protocol_StorageParse_SpeedLimit
+函数功能：
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pInt_Code
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出回复值
+ 参数.四：pInt_Limit
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出回复的限制
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CProtocol_StorageParse::Protocol_StorageParse_SpeedLimit(LPCTSTR lpszMsgBuffer, int nMsgLen, int* pInt_Code, int* pInt_Limit)
+{
+	Protocol_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszMsgBuffer) || (NULL == pInt_Limit))
+	{
+		Protocol_IsErrorOccur = TRUE;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return FALSE;
+	}
+	Json::Value st_JsonRoot;
+	Json::CharReaderBuilder st_JsonBuild;
+	Json::CharReader* pSt_JsonReader(st_JsonBuild.newCharReader());
+
+	JSONCPP_STRING st_JsonError;
+	//解析JSON
+	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + _tcslen(lpszMsgBuffer), &st_JsonRoot, &st_JsonError))
+	{
+		Protocol_IsErrorOccur = TRUE;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
+		return FALSE;
+	}
+	delete pSt_JsonReader;
+	pSt_JsonReader = NULL;
+
+    *pInt_Code = st_JsonRoot["code"].asInt();
+    *pInt_Limit = st_JsonRoot["nLimitSpeed"].asInt();
+	return TRUE;
+}
