@@ -24,6 +24,9 @@ typedef struct
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
+
+	int nLimit;                                                           //限制工具
+	XHANDLE xhToken;
 	FILE* pSt_File;
 }SESSION_STORAGEINFO;
 //////////////////////////////////////////////////////////////////////////
@@ -139,12 +142,17 @@ extern "C" BOOL Session_DLStroage_Destory();
   类型：常量字符指针
   可空：Y
   意思：文件的HASH值
+ 参数.九：xhToken
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：输入限制器句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0, LPCTSTR lpszFileHash = NULL);
+extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0, LPCTSTR lpszFileHash = NULL, int nLimit = 0, XHANDLE xhToken = NULL);
 /********************************************************************
 函数名称：Session_DLStroage_GetBuffer
 函数功能：获得下载器中指定缓冲区
