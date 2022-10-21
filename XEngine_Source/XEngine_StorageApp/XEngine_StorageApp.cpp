@@ -3,17 +3,17 @@
 BOOL bIsRun = FALSE;
 XLOG xhLog = NULL;
 
-XHANDLE xhHBDownload = 0;
-XHANDLE xhHBUPLoader = 0;
-XHANDLE xhHBCenter = 0;
+XHANDLE xhHBDownload = NULL;
+XHANDLE xhHBUPLoader = NULL;
+XHANDLE xhHBCenter = NULL;
 
-XHANDLE xhNetDownload = 0;
-XHANDLE xhNetUPLoader = 0;
-XHANDLE xhNetCenter = 0;
+XHANDLE xhNetDownload = NULL;
+XHANDLE xhNetUPLoader = NULL;
+XHANDLE xhNetCenter = NULL;
 
-XNETHANDLE xhUPPool = 0;
-XNETHANDLE xhDLPool = 0;
-XNETHANDLE xhCTPool = 0;
+XHANDLE xhUPPool = NULL;
+XHANDLE xhDLPool = NULL;
+XHANDLE xhCTPool = NULL;
 
 XHANDLE xhDLSsl = NULL;
 XHANDLE xhUPSsl = NULL;
@@ -164,7 +164,7 @@ int main(int argc, char** argv)
 	signal(SIGABRT, ServiceApp_Stop);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化服务器信号管理成功"));
 
-	xhLimit = Algorithm_Calculation_Create(5);
+	xhLimit = Algorithm_Calculation_Create();
 	if (NULL == xhLimit)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，创建流量限速对象模式失败,错误:%lX"), Algorithm_GetLastError());
@@ -275,7 +275,8 @@ int main(int argc, char** argv)
 			ppSt_ListDLThread[i]->lParam = pInt_Pos;
 			ppSt_ListDLThread[i]->fpCall_ThreadsTask = XEngine_Download_HTTPThread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhDLPool, &ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread))
+		xhDLPool = ManagePool_Thread_NQCreate(&ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread);
+		if (NULL == xhDLPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP下载处理线程池失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
@@ -334,7 +335,8 @@ int main(int argc, char** argv)
 			ppSt_ListUPThread[i]->lParam = pInt_Pos;
 			ppSt_ListUPThread[i]->fpCall_ThreadsTask = XEngine_UPLoader_HTTPThread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhUPPool, &ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageDLThread))
+		xhUPPool = ManagePool_Thread_NQCreate(&ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageDLThread);
+		if (NULL == xhUPPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP上传处理线程池失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
@@ -386,7 +388,8 @@ int main(int argc, char** argv)
 			ppSt_ListCTThread[i]->lParam = pInt_Pos;
 			ppSt_ListCTThread[i]->fpCall_ThreadsTask = XEngine_Center_HTTPThread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhCTPool, &ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread))
+		xhCTPool = ManagePool_Thread_NQCreate(&ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread);
+		if (NULL == xhCTPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP业务处理线程池失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;

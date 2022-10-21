@@ -77,9 +77,9 @@ extern XHANDLE xhNetDownload;
 extern XHANDLE xhNetUPLoader;
 extern XHANDLE xhNetCenter;
 
-extern XNETHANDLE xhUPPool;
-extern XNETHANDLE xhDLPool;
-extern XNETHANDLE xhCTPool;
+extern XHANDLE xhUPPool;
+extern XHANDLE xhDLPool;
+extern XHANDLE xhCTPool;
 
 extern XHANDLE xhDLSsl;
 extern XHANDLE xhUPSsl;
