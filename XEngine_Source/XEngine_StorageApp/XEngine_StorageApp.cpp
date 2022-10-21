@@ -137,7 +137,7 @@ int main(int argc, char** argv)
 		memset(tszAddr, '\0', sizeof(tszAddr));
 
 		_stprintf(tszAddr, _T("Http://127.0.0.1:%d/Api/Manage/Config"), st_ServiceCfg.nCenterPort);
-		APIHelp_HttpRequest_Post(tszAddr);
+		APIHelp_HttpRequest_Custom(_T("POST"), tszAddr);
 		return 0;
 	}
 	st_XLogConfig.XLog_MaxBackupFile = st_ServiceCfg.st_XLog.nMaxCount;

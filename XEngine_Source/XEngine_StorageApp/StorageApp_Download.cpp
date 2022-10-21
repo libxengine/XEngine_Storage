@@ -79,7 +79,7 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 
 				Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
 				Protocol_StoragePacket_UPDown(tszProxyStr, &nPLen, st_StorageInfo.tszFileDir, st_StorageInfo.tszBuckKey, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWCount, TRUE, st_StorageInfo.tszFileHash);
-				if (APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode))
+				if (APIHelp_HttpRequest_Custom(_T("POST"), st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass, tszProxyStr, &nHttpCode))
 				{
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("下载客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszDLPass);
 				}
@@ -168,7 +168,7 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			TCHAR* ptszBody = NULL;
 
 			Protocol_StoragePacket_BasicAuth(pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
-			APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &ptszBody, &nBLen);
+			APIHelp_HttpRequest_Custom(_T("POST"), st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &ptszBody, &nBLen);
 			if (200 != nResponseCode)
 			{
 				st_HDRParam.bIsClose = TRUE;
