@@ -70,3 +70,7 @@ extern "C" BOOL APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGIN
 {
 	return m_APIHelp.APIHelp_Api_GetIPInfo(lpszMsgBuffer, nMsgLen, pSt_IPAddrInfo);
 }
+extern "C" BOOL APIHelp_Api_UrlParse(TCHAR * **ppptszList, int nListCount, TCHAR * ptszFileName, TCHAR * ptszKeyName)
+{
+	return m_APIHelp.APIHelp_Api_UrlParse(ppptszList, nListCount, ptszFileName, ptszKeyName);
+}

@@ -13,3 +13,4 @@ EXPORTS
 	APIHelp_Api_RangeFile
 	APIHelp_Api_VerHash
 	APIHelp_Api_GetIPInfo
+	APIHelp_Api_UrlParse

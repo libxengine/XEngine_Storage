@@ -142,14 +142,28 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	int nRVMode = 0;
 	int nRVCount = 0;
 	int nHDSize = 0;
-	TCHAR tszStorageKey[MAX_PATH];
+	TCHAR tszFileName[MAX_PATH];
 	XENGINE_STORAGEBUCKET st_StorageBucket;
-	LPCTSTR lpszStorageKey = _T("StorageKey");
 
-	memset(tszStorageKey, '\0', MAX_PATH);
+	memset(tszFileName, '\0', MAX_PATH);
 	memset(&st_StorageBucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
+	//解析参数
+	TCHAR** pptszParamList;
+	int nParamCount = 0;
+	RfcComponents_HttpHelp_GetParament(pSt_HTTPParam->tszHttpUri, &pptszParamList, &nParamCount);
+	if (nParamCount < 1)
+	{
+		st_HDRParam.nHttpCode = 413;
+		RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszParamList, nParamCount);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求上传文件失败,提供的参数:%s 不正确,错误：%lX"), lpszClientAddr, pSt_HTTPParam->tszHttpUri, HttpServer_GetLastError());
+		return FALSE;
+	}
+	APIHelp_Api_UrlParse(&pptszParamList, nParamCount, tszFileName, st_StorageBucket.tszBuckKey);
 	//是否指定了bucket
-	if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszStorageKey, st_StorageBucket.tszBuckKey))
+	//http://127.0.0.1:5102/api?filename=1.txt&storeagekey=storagekey1
+	if (_tcslen(st_StorageBucket.tszBuckKey) > 0)
 	{
 		if (!APIHelp_Distributed_UPStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, 5))
 		{
@@ -175,7 +189,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			return FALSE;
 		}
 	}
-	_stprintf(tszFileDir, _T("%s%s"), st_StorageBucket.tszFilePath, pSt_HTTPParam->tszHttpUri);
+	_stprintf(tszFileDir, _T("%s/%s"), st_StorageBucket.tszFilePath, tszFileName);
 
 	if (!Session_UPStroage_Exist(lpszClientAddr))
 	{
@@ -249,7 +263,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		memset(&st_ProtocolFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
 		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFilePath, st_StorageBucket.tszFilePath);
-		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, pSt_HTTPParam->tszHttpUri + 1);
+		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, tszFileName);
 		_tcscpy(st_ProtocolFile.tszBuckKey, st_StorageBucket.tszBuckKey);
 		st_ProtocolFile.st_ProtocolFile.nFileSize = st_StorageInfo.ullRWLen;
 

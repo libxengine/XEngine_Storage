@@ -261,3 +261,32 @@ extern "C" BOOL APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHdr, 
 备注：
 *********************************************************************/
 extern "C" BOOL APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_IPADDRINFO* pSt_IPAddrInfo);
+/********************************************************************
+函数名称：APIHelp_Api_UrlParse
+函数功能：URL参数解析函数
+ 参数.一：ppptszList
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入要解析的列表
+ 参数.二：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.三：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件名
+ 参数.四：ptszKeyName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出存储的bucket
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL APIHelp_Api_UrlParse(TCHAR*** ppptszList, int nListCount, TCHAR* ptszFileName, TCHAR* ptszKeyName);
