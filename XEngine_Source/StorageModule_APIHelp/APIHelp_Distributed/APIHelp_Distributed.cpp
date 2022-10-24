@@ -279,51 +279,6 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 	}
 	if (4 == nMode)
 	{
-		if (!APIHelp_Distributed_DLStorage(lpszMsgBuffer, pStl_ListBucket, pSt_StorageBucket))
-		{
-			return FALSE;
-		}
-		//判断目录大小是否正常
-		int nListCount = 0;
-		__int64u nDirCount = 0;   //当前目录大小
-		CHAR** ppListFile;
-
-		TCHAR tszFilePath[MAX_PATH];
-		memset(tszFilePath, '\0', MAX_PATH);
-
-		_tcscpy(tszFilePath, pSt_StorageBucket->tszFilePath);
-		if (tszFilePath[_tcslen(tszFilePath) - 1] != '*')
-		{
-			int nPathType = 0;
-			BaseLib_OperatorString_GetPath(tszFilePath, &nPathType);
-			//判断是绝对路径还是相对路径
-			if (1 == nPathType)
-			{
-				_tcscat(tszFilePath, _T("\\*"));
-			}
-			else if (2 == nPathType)
-			{
-				_tcscat(tszFilePath, _T("/*"));
-			}
-		}
-		SystemApi_File_EnumFile(tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
-		for (int j = 0; j < nListCount; j++)
-		{
-			struct _tstat64 st_FStat;
-			_tstat64(ppListFile[j], &st_FStat);
-			nDirCount += st_FStat.st_size;
-		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
-		//如果当前目录大小大于设定的大小.
-		if (nDirCount >= APIHelp_Distributed_GetSize(pSt_StorageBucket->tszBuckSize))
-		{
-			APIHelp_IsErrorOccur = TRUE;
-			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_SIZE;
-			return FALSE;
-		}
-	}
-	else if (5 == nMode)
-	{
 		BOOL bFound = FALSE;
 		//上传专用,由用户指定
 		list<XENGINE_STORAGEBUCKET>::const_iterator stl_ListIterator = pStl_ListBucket->begin();

@@ -165,7 +165,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	//http://127.0.0.1:5102/api?filename=1.txt&storeagekey=storagekey1
 	if (_tcslen(st_StorageBucket.tszBuckKey) > 0)
 	{
-		if (!APIHelp_Distributed_UPStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, 5))
+		if (!APIHelp_Distributed_UPStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, 4))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 413;
