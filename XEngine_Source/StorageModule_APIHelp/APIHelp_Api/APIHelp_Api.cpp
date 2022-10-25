@@ -332,7 +332,18 @@ BOOL CAPIHelp_Api::APIHelp_Api_UrlParse(TCHAR*** ppptszList, int nListCount, TCH
 
 		if (0 == _tcsnicmp(lpszHDRFile, tszKey, _tcslen(lpszHDRFile)))
 		{
+			//编码格式是utf8,需要转为ansi
+#ifdef _MSC_BUILD
+			TCHAR tszFileName[MAX_PATH];
+			memset(tszFileName, '\0', MAX_PATH);
+
+			OPenSsl_Codec_UrlDeCodec(tszValue, _tcslen(tszValue), tszFileName);
+
+			int nLen = _tcslen(tszFileName);
+			BaseLib_OperatorCharset_UTFToAnsi(tszFileName, ptszFileName, &nLen);
+#else
 			OPenSsl_Codec_UrlDeCodec(tszValue, _tcslen(tszValue), ptszFileName);
+#endif
 		}
 		else if (0 == _tcsnicmp(lpszHDRKey, tszKey, _tcslen(lpszHDRKey)))
 		{
