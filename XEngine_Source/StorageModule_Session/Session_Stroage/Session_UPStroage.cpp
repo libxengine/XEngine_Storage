@@ -138,8 +138,8 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	{
 		struct _tstat64 st_FStat;
 		memset(&st_FStat, '\0', sizeof(struct _tstat64));
-		_tstat64(stl_MapIterator->second.st_StorageInfo.tszFileDir, &st_FStat);
-		stl_MapIterator->second.st_StorageInfo.ullRWLen = st_FStat.st_size;
+		_tstat64(st_Client.st_StorageInfo.tszFileDir, &st_FStat);
+		st_Client.st_StorageInfo.ullRWLen = st_FStat.st_size;
 
 		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("rb+"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
