@@ -15,6 +15,7 @@ typedef struct
 {
     TCHAR tszUserName[128];
     TCHAR tszUserPass[128];
+    TCHAR tszUserLimit[128];
 }SESSION_USERINFO;
 
 class CSession_User
@@ -25,7 +26,7 @@ public:
 public:
     BOOL Session_User_Init(LPCTSTR lpszUserFile);
 	BOOL Session_User_Destory();
-    BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass);
+    BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* pInt_Limit = NULL);
 private:
     shared_mutex st_Locker;
 private:

@@ -41,9 +41,9 @@ extern "C" BOOL Session_User_Destory()
 {
 	return m_User.Session_User_Destory();
 }
-extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass)
+extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* pInt_Limit)
 {
-	return m_User.Session_User_Exist(lpszUser, lpszPass);
+	return m_User.Session_User_Exist(lpszUser, lpszPass, pInt_Limit);
 }
 /************************************************************************/
 /*                        存储会话导出的函数                            */

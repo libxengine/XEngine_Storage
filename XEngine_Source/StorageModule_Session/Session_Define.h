@@ -72,12 +72,17 @@ extern "C" BOOL Session_User_Destory();
   类型：常量字符指针
   可空：N
   意思：输入要判断的密码
+ 参数.三：pInt_Limit
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出获取到的限速
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass);
+extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* pInt_Limit = NULL);
 /************************************************************************/
 /*                        存储会话导出的函数                            */
 /************************************************************************/

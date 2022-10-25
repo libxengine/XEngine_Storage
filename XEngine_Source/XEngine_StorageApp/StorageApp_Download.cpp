@@ -185,7 +185,7 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		}
 		else
 		{
-			if (!Session_User_Exist(tszUserName, tszUserPass))
+			if (!Session_User_Exist(tszUserName, tszUserPass, &nLimit))
 			{
 				st_HDRParam.bIsClose = TRUE;
 				st_HDRParam.bAuth = TRUE;
