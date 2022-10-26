@@ -81,7 +81,7 @@ typedef struct tag_XEngine_ServerConfig
     }st_XProxy;
 	struct
 	{
-		int nLimitMode;
+		BOOL bLimitMode;
         __int64x nMaxUPLoader;
         __int64x nMaxDNLoader;
 	}st_XLimit;

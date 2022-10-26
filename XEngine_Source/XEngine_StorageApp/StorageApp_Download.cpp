@@ -52,14 +52,14 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 	memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
 	Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
-	if (st_StorageInfo.nLimit > 0)
+	if (st_ServiceCfg.st_XLimit.bLimitMode && st_StorageInfo.nLimit > 0)
 	{
 		__int64u nLimitTime = 0;
 		Algorithm_Calculation_GetSDFlow(st_StorageInfo.xhToken, &nLimitTime);
 		if (nLimitTime > st_StorageInfo.nLimit)
 		{
 			//当前平均速度大于限制速度,不做处理
-			NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr);
+			NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend);
 			return;
 		}
 	}
@@ -94,7 +94,7 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 		}
 		else
 		{
-			if (2 == st_ServiceCfg.st_XLimit.nLimitMode && st_StorageInfo.nLimit > 0)
+			if (st_ServiceCfg.st_XLimit.bLimitMode && st_StorageInfo.nLimit > 0)
 			{
 				Algorithm_Calculation_ADDSDFlow(st_StorageInfo.xhToken, nMsgLen);
 			}
@@ -105,8 +105,8 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,获取用户对应文件内容失败,错误：%lX"), lpszClientAddr, Session_GetLastError());
 	}
-	//限速,1为全局限速
-	if (1 == st_ServiceCfg.st_XLimit.nLimitMode)
+	//限速,如果没有单独限速,默认全局限速
+	if (st_ServiceCfg.st_XLimit.bLimitMode && (0 == st_StorageInfo.nLimit))
 	{
 		Session_DLStroage_GetCount(&nListCount);
 		Algorithm_Calculation_SleepFlow(xhLimit, &nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, nListCount, 4096);
