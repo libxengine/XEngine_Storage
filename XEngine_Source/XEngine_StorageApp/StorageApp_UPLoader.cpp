@@ -266,7 +266,8 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, tszFileName);
 		_tcscpy(st_ProtocolFile.tszBuckKey, st_StorageBucket.tszBuckKey);
 		st_ProtocolFile.st_ProtocolFile.nFileSize = st_StorageInfo.ullRWLen;
-
+		//上传完毕需要关闭,否则计算HASH会不正常
+		Session_UPStroage_Close(lpszClientAddr);
 		OPenSsl_Api_Digest(tszFileDir, tszHashStr, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
 		BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		//处理结果

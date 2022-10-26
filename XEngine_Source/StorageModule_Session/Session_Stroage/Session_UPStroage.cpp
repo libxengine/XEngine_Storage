@@ -385,3 +385,32 @@ BOOL CSession_UPStroage::Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 	st_Locker.unlock();
 	return TRUE;
 }
+/********************************************************************
+函数名称：Session_UPStroage_Close
+函数功能：关闭读写文件句柄
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：要关闭的客户端会话
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_Close(LPCTSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = FALSE;
+
+	st_Locker.lock_shared();
+	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator != stl_MapStroage.end())
+	{
+		if (NULL != stl_MapIterator->second.st_StorageInfo.pSt_File)
+		{
+			fclose(stl_MapIterator->second.st_StorageInfo.pSt_File);
+		}
+	}
+	st_Locker.unlock_shared();
+	return TRUE;
+}
