@@ -54,9 +54,18 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求查询文件失败,没有启用数据库,无法使用此功能!"), lpszClientAddr);
-				return TRUE;
+				return FALSE;
 			}
 			Database_File_FileQuery(&ppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash);
+			if (0 == nListCount)
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 404;
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求查询文件失败,没有找到文件,查找文件名:%s,文件HASH:%s!"), lpszClientAddr, tszFileName, tszFileHash);
+				return FALSE;
+			}
 			Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &ppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
 			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszMsgBuffer, nMsgLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
@@ -71,6 +80,16 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			SOCKET hRVSocket;
 			list<APIHELP_LBFILEINFO> stl_ListFile;
 
+			if (_tcslen(tszFileHash) <= 0)
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 400;
+
+				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,发送广播请求失败,因为查询文件HASH为空"), lpszClientAddr);
+				return FALSE;
+			}
 			Protocol_StoragePacket_REQFile(tszSDBuffer, &nSDLen, NULL, tszFileHash);
 			NetCore_BroadCast_SDCreate(&hSDSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr);
 			NetCore_BroadCast_RVCreate(&hRVSocket, st_ServiceCfg.st_P2xp.nSDPort);
@@ -117,9 +136,6 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 			}
 			else
 			{
-				st_HDRParam.bIsClose = TRUE;
-				st_HDRParam.nHttpCode = 200;
-
 				int nListCount = 0;
 				XSTORAGECORE_DBFILE** ppSt_ListPacket;
 				APIHelp_Distributed_FileList(&stl_ListFile, &ppSt_ListPacket, &nListCount);
