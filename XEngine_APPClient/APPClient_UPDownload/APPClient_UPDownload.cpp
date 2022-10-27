@@ -32,7 +32,7 @@ using namespace std;
 //上传文件
 void File_UPLoad()
 {
-	LPCTSTR lpszUrl = _T("http://192.168.1.8:5102/2.txt");
+	LPCTSTR lpszUrl = _T("http://127.0.0.1:5102/api?filename=newfile4.txt&storeagekey=storagekey2");
 	int nLen = 0;
 	int nCode = 0;
 	TCHAR* ptszMsgBuffer = NULL;
@@ -48,7 +48,7 @@ void File_UPLoad()
 	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
 
 	_stprintf(tszHdrBuffer, _T("Range: bytes=0-5/10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
-	if (!APIHelp_HttpRequest_Post(lpszUrl, lpszMsgBuffer, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, lpszMsgBuffer, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		printf("upload failed:%lX\n", APIHelp_GetLastError());
 		return;
@@ -66,9 +66,10 @@ void File_UPLoad()
 	printf("upload:%d\n", nCode);
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	//断点续传必须指定storagekey
+	nLen = 0;
 	memset(tszHdrBuffer, '\0', MAX_PATH);
 	_stprintf(tszHdrBuffer, _T("Range: bytes=5-9/10\r\nAuthorization: %s\r\nStorageKey: %s\r\n"), tszBaseBuffer, tszKeyBuffer);
-	if (!APIHelp_HttpRequest_Post(lpszUrl, lpszMsgBuffer2, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, lpszMsgBuffer2, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		printf("upload failed:%lX\n", APIHelp_GetLastError());
 		return;
@@ -79,10 +80,9 @@ void File_UPLoad()
 //下载文件
 void File_Download()
 {
-	LPCTSTR lpszUrl = _T("http://192.168.1.8:5101/storagekey2/2.txt");
+	LPCTSTR lpszUrl = _T("http://192.168.1.8:5101/storagekey2/newfile4.txt");
 
 	int nLen = 0;
-	int nCode = 0;
 	TCHAR* ptszMsgBuffer = NULL;
 	TCHAR tszBaseBuffer[128];
 	TCHAR tszHdrBuffer[MAX_PATH];
@@ -92,7 +92,7 @@ void File_Download()
 	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
 
 	_stprintf(tszHdrBuffer, _T("Range: bytes=0-5\r\nAuthorization: %s\r\n"), tszBaseBuffer);
-	if (!APIHelp_HttpRequest_Get(lpszUrl, &ptszMsgBuffer, &nLen, &nCode, tszHdrBuffer))
+	if (!APIHelp_HttpRequest_Custom(_T("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		printf("download failed:%lX\n", APIHelp_GetLastError());
 		return;
@@ -102,7 +102,7 @@ void File_Download()
 
 	memset(tszHdrBuffer, '\0', MAX_PATH);
 	_stprintf(tszHdrBuffer, _T("Range: bytes=5-10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
-	if (!APIHelp_HttpRequest_Get(lpszUrl, &ptszMsgBuffer, &nLen, &nCode, tszHdrBuffer))
+	if (!APIHelp_HttpRequest_Custom(_T("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		printf("download failed:%lX\n", APIHelp_GetLastError());
 		return;

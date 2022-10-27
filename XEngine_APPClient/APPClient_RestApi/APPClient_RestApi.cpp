@@ -38,7 +38,7 @@ void API_Manage_Query()
 	st_JsonRoot["lpszTimeEnd"];
 	st_JsonRoot["lpszBuckKey"] = "storagekey2";
 
-	if (!APIHelp_HttpRequest_Post(lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
 		printf("API_Manage_Query:%lX\n", APIHelp_GetLastError());
 		return;
@@ -66,7 +66,7 @@ void API_Manage_Insert()
 	st_JsonRoot["List"] = st_JsonArray;
 	st_JsonRoot["Count"] = 1;
 
-	if (!APIHelp_HttpRequest_Post(lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
 		printf("API_Manage_Insert:%lX\n", APIHelp_GetLastError());
 		return;
@@ -91,7 +91,7 @@ void API_Manage_Delete()
 	st_JsonRoot["List"] = st_JsonArray;
 	st_JsonRoot["Count"] = 1;
 
-	if (!APIHelp_HttpRequest_Post(lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
 		printf("API_Manage_Delete:%lX\n", APIHelp_GetLastError());
 		return;
@@ -111,7 +111,7 @@ void API_Manage_Dir()
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
 	st_JsonRoot["lpszUserDir"] = "user";
 	st_JsonRoot["nOPerator"] = 1;
-	if (!APIHelp_HttpRequest_Post(lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
 		printf("API_Manage_Dir:%lX\n", APIHelp_GetLastError());
 		return;
@@ -123,7 +123,7 @@ void API_Manage_Dir()
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
 	st_JsonRoot["lpszUserDir"];
 	st_JsonRoot["nOPerator"] = 0;
-	if (!APIHelp_HttpRequest_Post(lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
 		printf("API_Manage_Dir:%lX\n", APIHelp_GetLastError());
 		return;
@@ -135,7 +135,7 @@ void API_Manage_Dir()
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
 	st_JsonRoot["lpszUserDir"] = "user";
 	st_JsonRoot["nOPerator"] = 2;
-	if (!APIHelp_HttpRequest_Post(lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
 		printf("API_Manage_Dir:%lX\n", APIHelp_GetLastError());
 		return;
@@ -150,7 +150,7 @@ void API_Manage_Task()
 	int nLen = 0;
 	int nCode = 0;
 	TCHAR* ptszMsgBuffer = NULL;
-	if (!APIHelp_HttpRequest_Post(lpszUrl, NULL, &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, NULL, &nCode, &ptszMsgBuffer, &nLen))
 	{
 		printf("API_Manage_Task:%lX\n", APIHelp_GetLastError());
 		return;

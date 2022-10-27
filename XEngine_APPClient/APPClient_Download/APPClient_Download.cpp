@@ -79,7 +79,7 @@ void P2PParse_List(LPCTSTR lpszMsgBuffer, int nMsgLen, list<P2PFILE_INFO>* pStl_
 //创建分布式文件下载器
 typedef struct  
 {
-	XNETHANDLE xhToken;            //下载句柄
+	XHANDLE xhToken;            //下载句柄
 	__int64x nPosStart;
 	__int64x nPosEnd;
 }P2PFILE_PIECE;
@@ -115,8 +115,8 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 			nPos += nPiece;
 			_stprintf(tszRange, _T("%lld-%lld"), pSt_P2PFile[i].nPosStart, pSt_P2PFile[i].nPosEnd);
 		}
-		
-		if (!DownLoad_Http_Create(&pSt_P2PFile[i].xhToken, tszDLUrl, lpszFile, tszRange, NULL, NULL, NULL))
+		pSt_P2PFile[i].xhToken = DownLoad_Http_Create(tszDLUrl, lpszFile, tszRange, NULL, NULL, NULL);
+		if (NULL == pSt_P2PFile[i].xhToken)
 		{
 			printf("create download task is failed:%X\n", Download_GetLastError());
 		}
@@ -135,7 +135,7 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 			{
 				bComplete = FALSE;
 			}
-			printf("DLToken:%lld DLTotal:%lf DLNow:%lf DLStatus:%d\n", pSt_P2PFile[i].xhToken, st_TaskInfo.dlTotal, st_TaskInfo.dlNow, st_TaskInfo.en_DownStatus);
+			printf("DLToken:%p DLTotal:%lf DLNow:%lf DLStatus:%d\n", pSt_P2PFile[i].xhToken, st_TaskInfo.dlTotal, st_TaskInfo.dlNow, st_TaskInfo.en_DownStatus);
 		}
 		if (bComplete)
 		{
@@ -160,7 +160,7 @@ int main()
 #endif
 
 	int nHTTPCode = 0;
-	int nBodyLen = 2048;
+	int nBodyLen = 0;
 	TCHAR *ptszMsgBody = NULL;
 	//请求分布式存储文件所有位置
 	LPCTSTR lpszUrl = _T("http://127.0.0.1:5100/Api/Manage/Query");
@@ -169,9 +169,10 @@ int main()
 	Json::Value st_JsonRoot;
 	st_JsonRoot["nMode"] = 1;          //使用P2P下载
 	st_JsonRoot["lpszBuckKey"] = "storagekey2";
-	st_JsonRoot["lpszFileName"] = "qq.exe";
+	//st_JsonRoot["lpszFileName"] = "qq.exe";
+	st_JsonRoot["lpszFileHash"] = "D41D8CD98F00B204E9801998ECF8427E";
 
-	if (!APIHelp_HttpRequest_Post(lpszUrl, st_JsonRoot.toStyledString().c_str(), &nHTTPCode, &ptszMsgBody, &nBodyLen))
+	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nHTTPCode, &ptszMsgBody, &nBodyLen))
 	{
 		return -1;
 	}
