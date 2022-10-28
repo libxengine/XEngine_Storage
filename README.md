@@ -77,6 +77,9 @@ make FLAGS=CleanAll 清理编译
 - XEngine_APPClient  客户端演示代码  
 - XEngine_SQLFile    数据库脚本文件
   
+## 示例
+上传文件: curl -d 'hello xengine' -X POST "http://192.168.1.8:5102/api?filename=hello.txt&storeagekey=storagekey1"  
+下载文件: curl -X GET "http://192.168.1.8:5101/storagekey1/hello.txt"  
 
 ## 秒传实现  
 秒传的实现不是靠服务器实现的,而是靠客户端实现的.  
@@ -88,8 +91,8 @@ P2P分布式下载已经支持,不过目前只能在局域网中,暂时不支持
 P2P分布式下载与其他下载工具的超线程下载一样,原理是使用HTTP RANGE字段实现.各位可以通过libcurl等库实现此功能.  
 
 ## 当前任务
-管理接口调试  
 本地网络接口删除  
+上传目录控制,防止超过权限的上传动作  
 客户端连接数限制  
 P2P广域网文件查找与下载支持  
 分布式数据库存储

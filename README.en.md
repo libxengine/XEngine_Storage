@@ -87,6 +87,10 @@ P2P distributed download is the same as the hyper-threaded download of other dow
 - XEngine_APPClient client  code dir  
 - XEngine_SQLFile   database sql file
 
+## Example
+UPLoad File:   curl -d 'hello xengine' -X POST "http://192.168.1.8:5102/api?filename=hello.txt&storeagekey=storagekey1"  
+Download File: curl -X GET "http://192.168.1.8:5101/storagekey1/hello.txt"  
+
 ## now task
 P2P WAN file search and download support  
 
