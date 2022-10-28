@@ -25,7 +25,7 @@
         "LogLeave":32
     },
     "XSql":{
-        "SQLEnable":false,
+        "SQLEnable":true,
         "SQLAddr":"192.168.1.12",
         "SQLPort":3306,
         "SQLUser":"ruiyue",
@@ -38,7 +38,7 @@
     },
     "XProxy":{
         "XProxyAuth":{
-            "bAuth":0,
+            "bAuth":false,
             "tszUserList":"./XEngine_Config/UserList.txt",
             "tszAuthProxy":""
         },
@@ -50,7 +50,7 @@
         }
     },
     "XLimit":{
-        "nDLTry":10,
+        "bLimitMode":true,
         "nMaxUPLoad":4096000,
         "nMaxDNLoad":4096000
     },
@@ -68,6 +68,7 @@
         "tszCertKey":"./XEngine_Cert/2_www.xyry.org.key"
     },
     "XVer":[
+        "3.9.0.1001 Build20221028",
         "3.8.0.1001 Build20220727",
         "3.7.0.1001 Build20220624",
         "3.6.0.1001 Build20220402",
