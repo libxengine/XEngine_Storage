@@ -8,6 +8,7 @@ EXPORTS
 	Protocol_StorageParse_QueryFile
 	Protocol_StorageParse_ReportFile
 	Protocol_StorageParse_DirOperator
+	Protocol_StorageParse_SpeedLimit
 
 	Protocol_StoragePacket_BasicAuth
 	Protocol_StoragePacket_UPDown

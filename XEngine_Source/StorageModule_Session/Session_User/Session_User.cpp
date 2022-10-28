@@ -70,7 +70,7 @@ BOOL CSession_User::Session_User_Init(LPCTSTR lpszUserFile)
 		SESSION_USERINFO st_UserInfo;
 		memset(&st_UserInfo, '\0', sizeof(SESSION_USERINFO));
 
-		_stscanf(ptszTokStr, _T("%s %s"), st_UserInfo.tszUserName, st_UserInfo.tszUserPass);
+		_stscanf(ptszTokStr, _T("%s %s %s"), st_UserInfo.tszUserName, st_UserInfo.tszUserPass, st_UserInfo.tszUserLimit);
 		stl_MapUser.insert(make_pair(st_UserInfo.tszUserName, st_UserInfo));
 
 		ptszTokStr = _tcstok(NULL, lpszLineStr);
@@ -108,12 +108,17 @@ BOOL CSession_User::Session_User_Destory()
   类型：常量字符指针
   可空：N
   意思：输入要判断的密码
+ 参数.三：pInt_Limit
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出获取到的限速
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_User::Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass)
+BOOL CSession_User::Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* pInt_Limit /* = NULL */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -140,6 +145,10 @@ BOOL CSession_User::Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass)
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PASSWORD;
 		st_Locker.unlock_shared();
 		return FALSE;
+	}
+	if (NULL != pInt_Limit)
+	{
+		*pInt_Limit = _ttoi(stl_MapIterator->second.tszUserLimit);
 	}
 	st_Locker.unlock_shared();
 	return TRUE;

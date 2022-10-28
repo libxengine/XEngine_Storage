@@ -190,7 +190,15 @@ BOOL XEngine_Net_CloseClient(LPCTSTR lpszClientAddr, int nLeaveType, int nClient
 			NetCore_TCPXCore_CloseForClientEx(xhNetDownload, lpszClientAddr);
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBDownload, lpszClientAddr);
 		}
-		Session_DLStroage_Delete(lpszClientAddr);
+		SESSION_STORAGEINFO st_StorageInfo;
+		memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
+
+		if (Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo))
+		{
+			Algorithm_Calculation_Close(st_StorageInfo.xhToken);
+			Session_DLStroage_Delete(lpszClientAddr);
+		}
+		
 		RfcComponents_HttpServer_CloseClinetEx(xhDLHttp, lpszClientAddr);
 		OPenSsl_Server_CloseClientEx(xhDLSsl, lpszClientAddr);
 	}

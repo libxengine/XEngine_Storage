@@ -158,6 +158,35 @@ extern "C" BOOL Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuffer, int nMsg
 备注：
 *********************************************************************/
 extern "C" BOOL Protocol_StorageParse_DirOperator(LPCSTR lpszMsgBuffer, CHAR * ptszUserDir, TCHAR * ptszBuckKey, int* pInt_Operator);
+/********************************************************************
+函数名称：Protocol_StorageParse_SpeedLimit
+函数功能：
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pInt_Code
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出回复值
+ 参数.四：pInt_Limit
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出回复的限制
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Protocol_StorageParse_SpeedLimit(LPCTSTR lpszMsgBuffer, int nMsgLen, int* pInt_Code, int* pInt_Limit);
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/

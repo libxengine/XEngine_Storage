@@ -45,6 +45,10 @@ extern "C" BOOL Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBuffer, TCHAR *
 {
 	return m_StorageParse.Protocol_StorageParse_DirOperator(lpszMsgBuffer, ptszUserDir, ptszBuckKey, pInt_Operator);
 }
+extern "C" BOOL Protocol_StorageParse_SpeedLimit(LPCTSTR lpszMsgBuffer, int nMsgLen, int* pInt_Code, int* pInt_Limit)
+{
+	return m_StorageParse.Protocol_StorageParse_SpeedLimit(lpszMsgBuffer, nMsgLen, pInt_Code, pInt_Limit);
+}
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/

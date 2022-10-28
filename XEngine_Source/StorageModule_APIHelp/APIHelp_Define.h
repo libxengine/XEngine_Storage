@@ -97,22 +97,17 @@ extern "C" BOOL APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGIN
 /********************************************************************
 函数名称：APIHelp_Distributed_UPStorage
 函数功能：通过分布式存储列表获得一个存储地址
- 参数.一：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要解析的URL
- 参数.二：pStl_ListBucket
+ 参数.一：pStl_ListBucket
   In/Out：In
   类型：容器指针
   可空：N
   意思：输入要解析的列表
- 参数.三：pSt_StorageBucket
+ 参数.二：pSt_StorageBucket
   In/Out：Out
   类型：数据结构指针
   可空：N
   意思：输出获取到的可用存储
- 参数.四：nMode
+ 参数.三：nMode
   In/Out：In
   类型：整数型
   可空：N
@@ -122,7 +117,7 @@ extern "C" BOOL APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGIN
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode);
+extern "C" BOOL APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode);
 /********************************************************************
 函数名称：APIHelp_Distributed_GetPathKey
 函数功能：通过BUCKET名称查找对应路径
@@ -261,3 +256,32 @@ extern "C" BOOL APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHdr, 
 备注：
 *********************************************************************/
 extern "C" BOOL APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_IPADDRINFO* pSt_IPAddrInfo);
+/********************************************************************
+函数名称：APIHelp_Api_UrlParse
+函数功能：URL参数解析函数
+ 参数.一：ppptszList
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入要解析的列表
+ 参数.二：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.三：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件名
+ 参数.四：ptszKeyName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出存储的bucket
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL APIHelp_Api_UrlParse(TCHAR*** ppptszList, int nListCount, TCHAR* ptszFileName, TCHAR* ptszKeyName);

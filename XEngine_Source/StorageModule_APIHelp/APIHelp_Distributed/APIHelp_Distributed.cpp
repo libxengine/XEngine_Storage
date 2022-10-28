@@ -242,22 +242,17 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
 /********************************************************************
 函数名称：APIHelp_Distributed_UPStorage
 函数功能：通过分布式存储列表获得一个存储地址
- 参数.一：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要解析的URL
- 参数.二：pStl_ListBucket
+ 参数.一：pStl_ListBucket
   In/Out：In
   类型：容器指针
   可空：N
   意思：输入要解析的列表
- 参数.三：pSt_StorageBucket
+ 参数.二：pSt_StorageBucket
   In/Out：Out
   类型：数据结构指针
   可空：N
   意思：输出获取到的可用存储
- 参数.四：nMode
+ 参数.三：nMode
   In/Out：In
   类型：整数型
   可空：N
@@ -267,7 +262,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode)
+BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode)
 {
 	APIHelp_IsErrorOccur = FALSE;
 
@@ -278,51 +273,6 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(LPCTSTR lpszMsgBuffer, 
 		return FALSE;
 	}
 	if (4 == nMode)
-	{
-		if (!APIHelp_Distributed_DLStorage(lpszMsgBuffer, pStl_ListBucket, pSt_StorageBucket))
-		{
-			return FALSE;
-		}
-		//判断目录大小是否正常
-		int nListCount = 0;
-		__int64u nDirCount = 0;   //当前目录大小
-		CHAR** ppListFile;
-
-		TCHAR tszFilePath[MAX_PATH];
-		memset(tszFilePath, '\0', MAX_PATH);
-
-		_tcscpy(tszFilePath, pSt_StorageBucket->tszFilePath);
-		if (tszFilePath[_tcslen(tszFilePath) - 1] != '*')
-		{
-			int nPathType = 0;
-			BaseLib_OperatorString_GetPath(tszFilePath, &nPathType);
-			//判断是绝对路径还是相对路径
-			if (1 == nPathType)
-			{
-				_tcscat(tszFilePath, _T("\\*"));
-			}
-			else if (2 == nPathType)
-			{
-				_tcscat(tszFilePath, _T("/*"));
-			}
-		}
-		SystemApi_File_EnumFile(tszFilePath, &ppListFile, &nListCount, NULL, NULL, TRUE, 1);
-		for (int j = 0; j < nListCount; j++)
-		{
-			struct _tstat64 st_FStat;
-			_tstat64(ppListFile[j], &st_FStat);
-			nDirCount += st_FStat.st_size;
-		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
-		//如果当前目录大小大于设定的大小.
-		if (nDirCount >= APIHelp_Distributed_GetSize(pSt_StorageBucket->tszBuckSize))
-		{
-			APIHelp_IsErrorOccur = TRUE;
-			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_SIZE;
-			return FALSE;
-		}
-	}
-	else if (5 == nMode)
 	{
 		BOOL bFound = FALSE;
 		//上传专用,由用户指定
@@ -580,6 +530,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileListParse(LPCTSTR lpszMsgBuff
 	{
 		pSt_DBFile->st_ProtocolFile.nFileSize = st_JsonArray[i]["nFileSize"].asInt64();
 		_tcscpy(pSt_DBFile->tszTableName, st_JsonArray[i]["tszTableName"].asCString());
+		_tcscpy(pSt_DBFile->tszBuckKey, st_JsonArray[i]["tszBuckKey"].asCString());
 		_tcscpy(pSt_DBFile->st_ProtocolFile.tszFileUser, st_JsonArray[i]["tszFileUser"].asCString());
 		_tcscpy(pSt_DBFile->st_ProtocolFile.tszFileHash, st_JsonArray[i]["tszFileHash"].asCString());
 		_tcscpy(pSt_DBFile->st_ProtocolFile.tszFileName, st_JsonArray[i]["tszFileName"].asCString());

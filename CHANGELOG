@@ -1,3 +1,31 @@
+XEngine_Storage V3.9.0.1001
+
+添加:用户支持单独限速模式了
+更新:匹配XEngine V7.42版本
+修改:限制模式是逻辑型了
+修改:上传会话字段ullFSize修改为ullRWLen
+修改:P2P搜索文件可以不使用数据库了
+修改:P2P文件搜索必须设置文件HASH值
+修改:本地文件没有找到后会返回错误了
+优化:删除没有使用的APIHelp_Distributed_UPStorage函数参数
+优化:Session_UPStroage_Close函数代码
+修正:P2P没有查找没有返回bucket名称的问题
+删除:错误重试配置
+删除:没有使用的bucket选择模式代码
+
+added:support user speed limit
+update:match xengine v7.42
+modify:limit mode is boolean
+modify:up session changed ullRWLen from ullFSize
+modify:p2p search file can be not enable database
+modify:p2p file search have to setting hash value
+modify:local file search not found file that reply error code
+improved:delete unused parament for APIHelp_Distributed_UPStorage function
+improved:Session_UPStroage_Close function code
+fixed:p2p not reply bucket name
+delete:error try time configrue
+delete:unused select bucket mode code
+======================================================================================
 XEngine_Storage V3.8.0.1001
 
 更新:匹配了xengine v7.38

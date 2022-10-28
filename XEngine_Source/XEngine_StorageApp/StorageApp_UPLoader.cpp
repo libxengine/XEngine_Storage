@@ -88,7 +88,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			TCHAR* ptszBody = NULL;
 
 			Protocol_StoragePacket_BasicAuth(pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
-			APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &ptszBody, &nBLen);
+			APIHelp_HttpRequest_Custom(_T("POST"), st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &ptszBody, &nBLen);
 			if (200 != nResponseCode)
 			{
 				st_HDRParam.bIsClose = TRUE;
@@ -142,16 +142,30 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	int nRVMode = 0;
 	int nRVCount = 0;
 	int nHDSize = 0;
-	TCHAR tszStorageKey[MAX_PATH];
+	TCHAR tszFileName[MAX_PATH];
 	XENGINE_STORAGEBUCKET st_StorageBucket;
-	LPCTSTR lpszStorageKey = _T("StorageKey");
 
-	memset(tszStorageKey, '\0', MAX_PATH);
+	memset(tszFileName, '\0', MAX_PATH);
 	memset(&st_StorageBucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
-	//是否制定了bucket
-	if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszStorageKey, st_StorageBucket.tszBuckKey))
+	//解析参数
+	TCHAR** pptszParamList;
+	int nParamCount = 0;
+	RfcComponents_HttpHelp_GetParament(pSt_HTTPParam->tszHttpUri, &pptszParamList, &nParamCount);
+	if (nParamCount < 1)
 	{
-		if (!APIHelp_Distributed_UPStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, 5))
+		st_HDRParam.nHttpCode = 413;
+		RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszParamList, nParamCount);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求上传文件失败,提供的参数:%s 不正确,错误：%lX"), lpszClientAddr, pSt_HTTPParam->tszHttpUri, HttpServer_GetLastError());
+		return FALSE;
+	}
+	APIHelp_Api_UrlParse(&pptszParamList, nParamCount, tszFileName, st_StorageBucket.tszBuckKey);
+	//是否指定了bucket
+	//http://127.0.0.1:5102/api?filename=1.txt&storeagekey=storagekey1
+	if (_tcslen(st_StorageBucket.tszBuckKey) > 0)
+	{
+		if (!APIHelp_Distributed_UPStorage(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, 4))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 413;
@@ -164,7 +178,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	}
 	else
 	{
-		if (!APIHelp_Distributed_UPStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, st_LoadbalanceCfg.st_LBLocation.nUPLoadMode))
+		if (!APIHelp_Distributed_UPStorage(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket, st_LoadbalanceCfg.st_LBLocation.nUPLoadMode))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 413;
@@ -175,7 +189,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			return FALSE;
 		}
 	}
-	_stprintf(tszFileDir, _T("%s%s"), st_StorageBucket.tszFilePath, pSt_HTTPParam->tszHttpUri);
+	_stprintf(tszFileDir, _T("%s/%s"), st_StorageBucket.tszFilePath, tszFileName);
 
 	if (!Session_UPStroage_Exist(lpszClientAddr))
 	{
@@ -229,18 +243,16 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 
 		memset(tszPassNotify, '\0', MAX_PATH);
 		memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
-
-		Session_UPStroage_Close(lpszClientAddr);
 		Session_UPStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
 		//大小是否足够
-		if (st_StorageInfo.ullCount != st_StorageInfo.ullFSize)
+		if (st_StorageInfo.ullCount != st_StorageInfo.ullRWLen)
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 200;
 			Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWLen, FALSE);
 			RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszPassNotify, nPLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,总大小:%lld,写入大小:%lld,文件不完整,需要等待断点续传完毕"), lpszClientAddr, tszFileDir, st_StorageInfo.ullCount, st_StorageInfo.ullFSize);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("上传客户端:%s,请求上传文件成功,文件名:%s,总大小:%lld,写入大小:%lld,文件不完整,需要等待断点续传完毕"), lpszClientAddr, tszFileDir, st_StorageInfo.ullCount, st_StorageInfo.ullRWLen);
 			return TRUE;
 		}
 		int nHashLen = 0;
@@ -251,10 +263,11 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		memset(&st_ProtocolFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
 		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFilePath, st_StorageBucket.tszFilePath);
-		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, pSt_HTTPParam->tszHttpUri + 1);
+		_tcscpy(st_ProtocolFile.st_ProtocolFile.tszFileName, tszFileName);
 		_tcscpy(st_ProtocolFile.tszBuckKey, st_StorageBucket.tszBuckKey);
-		st_ProtocolFile.st_ProtocolFile.nFileSize = st_StorageInfo.ullFSize;
-
+		st_ProtocolFile.st_ProtocolFile.nFileSize = st_StorageInfo.ullRWLen;
+		//上传完毕需要关闭,否则计算HASH会不正常
+		Session_UPStroage_Close(lpszClientAddr);
 		OPenSsl_Api_Digest(tszFileDir, tszHashStr, &nHashLen, TRUE, st_ServiceCfg.st_XStorage.nHashMode);
 		BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		//处理结果
@@ -309,7 +322,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		if (st_ServiceCfg.st_XProxy.st_XProxyPass.bUPPass)
 		{
 			int nHttpCode = 0;
-			if (APIHelp_HttpRequest_Post(st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass, tszPassNotify, &nHttpCode))
+			if (APIHelp_HttpRequest_Custom(_T("POST"), st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass, tszPassNotify, &nHttpCode))
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("上传客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.st_XProxyPass.tszUPPass);
 			}

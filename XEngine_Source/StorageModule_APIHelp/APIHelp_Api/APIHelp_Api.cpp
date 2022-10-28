@@ -284,3 +284,71 @@ BOOL CAPIHelp_Api::APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XEN
 
 	return TRUE;
 }
+/********************************************************************
+函数名称：APIHelp_Api_UrlParse
+函数功能：URL参数解析函数
+ 参数.一：ppptszList
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入要解析的列表
+ 参数.二：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.三：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出文件名
+ 参数.四：ptszKeyName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出存储的bucket
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CAPIHelp_Api::APIHelp_Api_UrlParse(TCHAR*** ppptszList, int nListCount, TCHAR* ptszFileName, TCHAR* ptszKeyName)
+{
+	APIHelp_IsErrorOccur = FALSE;
+
+	LPCTSTR lpszHDRFile = _T("filename");
+	LPCTSTR lpszHDRKey = _T("storeagekey");
+	LPCTSTR lpszHDRPath = _T("path");
+
+	for (int i = 0; i < nListCount; i++)
+	{
+		TCHAR tszKey[MAX_PATH];
+		TCHAR tszValue[MAX_PATH];
+
+		memset(tszKey, '\0', MAX_PATH);
+		memset(tszValue, '\0', MAX_PATH);
+
+		BaseLib_OperatorString_GetKeyValue((*ppptszList)[i], _T("="), tszKey, tszValue);
+
+		if (0 == _tcsnicmp(lpszHDRFile, tszKey, _tcslen(lpszHDRFile)))
+		{
+			//编码格式是utf8,需要转为ansi
+#ifdef _MSC_BUILD
+			TCHAR tszFileName[MAX_PATH];
+			memset(tszFileName, '\0', MAX_PATH);
+
+			OPenSsl_Codec_UrlDeCodec(tszValue, _tcslen(tszValue), tszFileName);
+
+			int nLen = _tcslen(tszFileName);
+			BaseLib_OperatorCharset_UTFToAnsi(tszFileName, ptszFileName, &nLen);
+#else
+			OPenSsl_Codec_UrlDeCodec(tszValue, _tcslen(tszValue), ptszFileName);
+#endif
+		}
+		else if (0 == _tcsnicmp(lpszHDRKey, tszKey, _tcslen(lpszHDRKey)))
+		{
+			_tcscpy(ptszKeyName, tszValue);
+		}
+	}
+	return TRUE;
+}

@@ -23,21 +23,15 @@ CSession_DLStroage::~CSession_DLStroage()
 /********************************************************************
 函数名称：Session_DLStroage_Init
 函数功能：初始化下载会话管理器
- 参数.一：nTryTime
-  In/Out：In
-  类型：整数型
-  可空：Y
-  意思：输入下载错误重试次数
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_Init(int nTryTime /* = 3 */)
+BOOL CSession_DLStroage::Session_DLStroage_Init()
 {
 	Session_IsErrorOccur = FALSE;
 
-	m_nTryTime = nTryTime;
 	return TRUE;
 }
 /********************************************************************
@@ -101,12 +95,17 @@ BOOL CSession_DLStroage::Session_DLStroage_Destory()
   类型：常量字符指针
   可空：Y
   意思：文件的HASH值
+ 参数.九：xhToken
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：输入限制器句柄
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x* pInt_Count, __int64x* pInt_LeftCount, int nPosStart /* = 0 */, int nPostEnd /* = 0 */, LPCTSTR lpszFileHash /* = NULL */)
+BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x* pInt_Count, __int64x* pInt_LeftCount, int nPosStart /* = 0 */, int nPostEnd /* = 0 */, LPCTSTR lpszFileHash /* = NULL */, int nLimit /* = 0 */, XHANDLE xhToken /* = NULL */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -148,6 +147,12 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	if (NULL != lpszFileHash)
 	{
 		_tcscpy(st_Client.tszFileHash, lpszFileHash);
+	}
+	//设置限制
+	if (nLimit > 0)
+	{
+		st_Client.nLimit = nLimit;
+		st_Client.xhToken = xhToken;
 	}
 	//填充下载信息
 	st_Client.pSt_File = _tfopen(lpszFileDir, _T("rb"));
@@ -329,17 +334,12 @@ BOOL CSession_DLStroage::Session_DLStroage_GetCount(int* pInt_ListCount)
   类型：整数型
   可空：N
   意思：输入文件位置
- 参数.三：bError
-  In/Out：In
-  类型：逻辑型
-  可空：Y
-  意思：是否有由错误引起的
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError /* = TRUE */)
+BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -352,21 +352,9 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
-	if (stl_MapIterator->second.nErrorTime > m_nTryTime)
-	{
-		Session_IsErrorOccur = TRUE;
-		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_ERRORTIME;
-		st_Locker.unlock_shared();
-		return FALSE;
-	}
 	//移动文件指针
 	fseek(stl_MapIterator->second.pSt_File, nSeek, SEEK_CUR);
 	stl_MapIterator->second.ullRWLen += nSeek;
-
-	if (bError)
-	{
-		stl_MapIterator->second.nErrorTime++;
-	}
 	st_Locker.unlock_shared();
 	return TRUE;
 }

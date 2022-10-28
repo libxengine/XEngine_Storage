@@ -41,24 +41,24 @@ extern "C" BOOL Session_User_Destory()
 {
 	return m_User.Session_User_Destory();
 }
-extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass)
+extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* pInt_Limit)
 {
-	return m_User.Session_User_Exist(lpszUser, lpszPass);
+	return m_User.Session_User_Exist(lpszUser, lpszPass, pInt_Limit);
 }
 /************************************************************************/
 /*                        存储会话导出的函数                            */
 /************************************************************************/
-extern "C" BOOL Session_DLStroage_Init(int nTryTime)
+extern "C" BOOL Session_DLStroage_Init()
 {
-	return m_DLStorage.Session_DLStroage_Init(nTryTime);
+	return m_DLStorage.Session_DLStroage_Init();
 }
 extern "C" BOOL Session_DLStroage_Destory()
 {
 	return m_DLStorage.Session_DLStroage_Destory();
 }
-extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart, int nPostEnd, LPCTSTR lpszFileHash)
+extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart, int nPostEnd, LPCTSTR lpszFileHash, int nLimit, XHANDLE xhToken)
 {
-	return m_DLStorage.Session_DLStroage_Insert(lpszClientAddr, lpszBuckKey, lpszFileDir, pInt_Count, pInt_LeftCount, nPosStart, nPostEnd, lpszFileHash);
+	return m_DLStorage.Session_DLStroage_Insert(lpszClientAddr, lpszBuckKey, lpszFileDir, pInt_Count, pInt_LeftCount, nPosStart, nPostEnd, lpszFileHash, nLimit, xhToken);
 }
 extern "C" BOOL Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
@@ -72,9 +72,9 @@ extern "C" BOOL Session_DLStroage_GetCount(int* pInt_ListCount)
 {
 	return m_DLStorage.Session_DLStroage_GetCount(pInt_ListCount);
 }
-extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek, BOOL bError)
+extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek)
 {
-	return m_DLStorage.Session_DLStorage_SetSeek(lpszClientAddr, nSeek, bError);
+	return m_DLStorage.Session_DLStorage_SetSeek(lpszClientAddr, nSeek);
 }
 extern "C" BOOL Session_DLStorage_GetAll(SESSION_STORAGEINFO * **pppSt_StorageInfo, int* pInt_ListCount)
 {

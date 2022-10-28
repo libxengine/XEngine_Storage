@@ -3,17 +3,17 @@
 BOOL bIsRun = FALSE;
 XLOG xhLog = NULL;
 
-XHANDLE xhHBDownload = 0;
-XHANDLE xhHBUPLoader = 0;
-XHANDLE xhHBCenter = 0;
+XHANDLE xhHBDownload = NULL;
+XHANDLE xhHBUPLoader = NULL;
+XHANDLE xhHBCenter = NULL;
 
-XHANDLE xhNetDownload = 0;
-XHANDLE xhNetUPLoader = 0;
-XHANDLE xhNetCenter = 0;
+XHANDLE xhNetDownload = NULL;
+XHANDLE xhNetUPLoader = NULL;
+XHANDLE xhNetCenter = NULL;
 
-XNETHANDLE xhUPPool = 0;
-XNETHANDLE xhDLPool = 0;
-XNETHANDLE xhCTPool = 0;
+XHANDLE xhUPPool = NULL;
+XHANDLE xhDLPool = NULL;
+XHANDLE xhCTPool = NULL;
 
 XHANDLE xhDLSsl = NULL;
 XHANDLE xhUPSsl = NULL;
@@ -137,7 +137,7 @@ int main(int argc, char** argv)
 		memset(tszAddr, '\0', sizeof(tszAddr));
 
 		_stprintf(tszAddr, _T("Http://127.0.0.1:%d/Api/Manage/Config"), st_ServiceCfg.nCenterPort);
-		APIHelp_HttpRequest_Post(tszAddr);
+		APIHelp_HttpRequest_Custom(_T("POST"), tszAddr);
 		return 0;
 	}
 	st_XLogConfig.XLog_MaxBackupFile = st_ServiceCfg.st_XLog.nMaxCount;
@@ -234,12 +234,12 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP下载服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
 
-		if (!Session_DLStroage_Init(st_ServiceCfg.st_XLimit.nDLTry))
+		if (!Session_DLStroage_Init())
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载错误重试次数:%d"), st_ServiceCfg.st_XLimit.nDLTry);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载限速模式:%s"), st_ServiceCfg.st_XLimit.bLimitMode ? "开" : "关");
 
 		if (st_ServiceCfg.st_XCert.bDLEnable)
 		{
@@ -275,7 +275,8 @@ int main(int argc, char** argv)
 			ppSt_ListDLThread[i]->lParam = pInt_Pos;
 			ppSt_ListDLThread[i]->fpCall_ThreadsTask = XEngine_Download_HTTPThread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhDLPool, &ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread))
+		xhDLPool = ManagePool_Thread_NQCreate(&ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread);
+		if (NULL == xhDLPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP下载处理线程池失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
@@ -334,7 +335,8 @@ int main(int argc, char** argv)
 			ppSt_ListUPThread[i]->lParam = pInt_Pos;
 			ppSt_ListUPThread[i]->fpCall_ThreadsTask = XEngine_UPLoader_HTTPThread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhUPPool, &ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageDLThread))
+		xhUPPool = ManagePool_Thread_NQCreate(&ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageDLThread);
+		if (NULL == xhUPPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP上传处理线程池失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
@@ -386,7 +388,8 @@ int main(int argc, char** argv)
 			ppSt_ListCTThread[i]->lParam = pInt_Pos;
 			ppSt_ListCTThread[i]->fpCall_ThreadsTask = XEngine_Center_HTTPThread;
 		}
-		if (!ManagePool_Thread_NQCreate(&xhCTPool, &ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread))
+		xhCTPool = ManagePool_Thread_NQCreate(&ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread);
+		if (NULL == xhCTPool)
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动HTTP业务处理线程池失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
@@ -396,7 +399,7 @@ int main(int argc, char** argv)
 	//只有使用了数据库,才启用P2P
 	if (st_ServiceCfg.st_XSql.bEnable)
 	{
-		if (!NetCore_BroadCast_RecvInit(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
+		if (!NetCore_BroadCast_RVCreate(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
