@@ -399,12 +399,12 @@ int main(int argc, char** argv)
 	//只有使用了数据库,才启用P2P
 	if (st_ServiceCfg.st_XSql.bEnable)
 	{
-		if (!NetCore_BroadCast_Create(&hBroadSocket, st_ServiceCfg.st_P2xp.nPort))
+		if (!NetCore_BroadCast_Create(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务成功,端口:%d"), st_ServiceCfg.st_P2xp.nPort);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动P2P存储广播服务成功,端口:%d"), st_ServiceCfg.st_P2xp.nRVPort);
 		pSTDThread = make_shared<std::thread>(XEngine_Task_P2PThread);
 		if (!pSTDThread->joinable())
 		{

@@ -90,7 +90,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				return FALSE;
 			}
 			Protocol_StoragePacket_REQFile(tszSDBuffer, &nSDLen, NULL, tszFileHash);
-			NetCore_BroadCast_Create(&hSocket, st_ServiceCfg.st_P2xp.nPort, st_ServiceCfg.tszIPAddr);
+			NetCore_BroadCast_Create(&hSocket, st_ServiceCfg.st_P2xp.nSDPort, st_ServiceCfg.tszIPAddr);
 
 			if (!NetCore_BroadCast_Send(hSocket, tszSDBuffer, nSDLen))
 			{
