@@ -55,12 +55,17 @@ CProtocol_StoragePacket::~CProtocol_StoragePacket()
   类型：常量字符指针
   可空：Y
   意思：输入查询请求的结束时间
+ 参数.七：xhToken
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：输入返回的TOKEN,如果需要的话
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
+BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, XNETHANDLE xhToken /* = 0 */)
 {
     Protocol_IsErrorOccur = FALSE;
 
@@ -100,6 +105,10 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuf
     if (NULL != lpszTimeEnd)
     {
         st_JsonRoot["lpszTimeEnd"] = lpszTimeEnd;
+    }
+    if (0 != xhToken)
+    {
+        st_JsonRoot["xhToken"] = xhToken;
     }
     st_JsonRoot["Code"] = 0;
     st_JsonRoot["Msg"] = _T("ok");
@@ -421,12 +430,17 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer
   类型：常量字符指针
   可空：Y
   意思：输入要查询的文件MD5
+ 参数.五：xhToken
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：消息的TOKEN
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */)
+BOOL CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */, XNETHANDLE xhToken /* = 0 */)
 {
 	Protocol_IsErrorOccur = FALSE;
 
@@ -444,6 +458,10 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffe
 	if (NULL != lpszFileHash)
 	{
 		st_JsonRoot["lpszFileHash"] = lpszFileHash;
+	}
+	if (0 != xhToken)
+	{
+		st_JsonRoot["xhToken"] = xhToken;
 	}
 	st_JsonRoot["unOperatorType"] = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_STORAGE;
 	st_JsonRoot["unOperatorCode"] = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQQUERY;

@@ -57,15 +57,20 @@ CProtocol_StorageParse::~CProtocol_StorageParse()
   意思：查询的文件HASH
  参数.七：pInt_Mode
   In/Out：Out
-  类型：整数型
+  类型：整数型指针
   可空：Y
   意思：输出查询返回模式
+ 参数.八：pxhToken
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出TOKEN
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR* ptszTimeStart, TCHAR* ptszTimeEnd, TCHAR* ptszBuckKey /* = NULL */, TCHAR* ptszFileName /* = NULL */, TCHAR* ptszFileHash /* = NULL */, int* pInt_Mode /* = NULL */)
+BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuffer, TCHAR* ptszTimeStart, TCHAR* ptszTimeEnd, TCHAR* ptszBuckKey /* = NULL */, TCHAR* ptszFileName /* = NULL */, TCHAR* ptszFileHash /* = NULL */, int* pInt_Mode /* = NULL */, XNETHANDLE* pxhToken /* = NULL */)
 {
     Protocol_IsErrorOccur = FALSE;
 
@@ -131,6 +136,13 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuff
 		{
             *pInt_Mode = st_JsonRoot["nMode"].asInt();
 		}
+    }
+    if (NULL != pxhToken)
+    {
+        if (!st_JsonRoot["xhToken"].isNull())
+        {
+            *pxhToken = st_JsonRoot["xhToken"].asUInt64();
+        }
     }
     return TRUE;
 }
@@ -363,7 +375,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBu
 }
 /********************************************************************
 函数名称：Protocol_StorageParse_SpeedLimit
-函数功能：
+函数功能：速度限制请求解析函数
  参数.一：lpszMsgBuffer
   In/Out：In
   类型：常量字符指针
@@ -416,5 +428,62 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_SpeedLimit(LPCTSTR lpszMsgBuf
 
     *pInt_Code = st_JsonRoot["code"].asInt();
     *pInt_Limit = st_JsonRoot["nLimitSpeed"].asInt();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Protocol_StorageParse_P2PToken
+函数功能：P2P查找文件TOKEN匹配函数
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pxhToken
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出解析到的TOKEN
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CProtocol_StorageParse::Protocol_StorageParse_P2PToken(LPCTSTR lpszMsgBuffer, int nMsgLen, XNETHANDLE *pxhToken)
+{
+	Protocol_IsErrorOccur = FALSE;
+
+	if ((NULL == lpszMsgBuffer))
+	{
+		Protocol_IsErrorOccur = TRUE;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return FALSE;
+	}
+	Json::Value st_JsonRoot;
+	Json::CharReaderBuilder st_JsonBuild;
+	Json::CharReader* pSt_JsonReader(st_JsonBuild.newCharReader());
+
+	JSONCPP_STRING st_JsonError;
+	//解析JSON
+	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + _tcslen(lpszMsgBuffer), &st_JsonRoot, &st_JsonError))
+	{
+		Protocol_IsErrorOccur = TRUE;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
+		return FALSE;
+	}
+	delete pSt_JsonReader;
+	pSt_JsonReader = NULL;
+
+    if (st_JsonRoot["xhToken"].isNull())
+    {
+		Protocol_IsErrorOccur = TRUE;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_TOKEN;
+		return FALSE;
+    }
+    *pxhToken = st_JsonRoot["xhToken"].asUInt64();
 	return TRUE;
 }

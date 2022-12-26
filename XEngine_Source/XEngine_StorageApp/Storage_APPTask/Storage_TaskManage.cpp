@@ -77,6 +77,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		{
 			//开始广播请求文件
 			SOCKET hSocket;
+			XNETHANDLE xhToken = 0;
 			list<APIHELP_LBFILEINFO> stl_ListFile;
 
 			if (_tcslen(tszFileHash) <= 0)
@@ -89,7 +90,8 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,发送广播请求失败,因为查询文件HASH为空"), lpszClientAddr);
 				return FALSE;
 			}
-			Protocol_StoragePacket_REQFile(tszSDBuffer, &nSDLen, NULL, tszFileHash);
+			BaseLib_OperatorHandle_Create(&xhToken);
+			Protocol_StoragePacket_REQFile(tszSDBuffer, &nSDLen, NULL, tszFileHash, xhToken);
 			NetCore_BroadCast_Create(&hSocket, st_ServiceCfg.st_P2xp.nSDPort, st_ServiceCfg.tszIPAddr);
 
 			if (!NetCore_BroadCast_Send(hSocket, tszSDBuffer, nSDLen))
@@ -113,7 +115,17 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				st_FileInfo.nMsgLen = sizeof(st_FileInfo.tszMsgBuffer);
 				if (NetCore_BroadCast_Recv(hSocket, st_FileInfo.tszMsgBuffer, &st_FileInfo.nMsgLen))
 				{
-					stl_ListFile.push_back(st_FileInfo);
+					XNETHANDLE xhP2PToken = 0;
+					Protocol_StorageParse_P2PToken(st_FileInfo.tszMsgBuffer, st_FileInfo.nMsgLen, &xhP2PToken);
+					if (xhToken == xhP2PToken)
+					{
+						stl_ListFile.push_back(st_FileInfo);
+						XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,接受到P2P文件查询回复,TOKEN:%llu 一致"), lpszClientAddr, xhToken);
+					}
+					else
+					{
+						XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("业务客户端:%s,接受到P2P文件查询回复,请求TOKEN:%llu,回复TOKEN:%llu 不一致"), lpszClientAddr, xhToken, xhP2PToken);
+					}
 				}
 				time_t nTimeEnd = time(NULL);
 				if ((nTimeEnd - nTimeStart) > st_ServiceCfg.st_P2xp.nTime)
