@@ -76,8 +76,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 		else
 		{
 			//开始广播请求文件
-			SOCKET hSDSocket;
-			SOCKET hRVSocket;
+			SOCKET hSocket;
 			list<APIHELP_LBFILEINFO> stl_ListFile;
 
 			if (_tcslen(tszFileHash) <= 0)
@@ -91,18 +90,16 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				return FALSE;
 			}
 			Protocol_StoragePacket_REQFile(tszSDBuffer, &nSDLen, NULL, tszFileHash);
-			NetCore_BroadCast_SDCreate(&hSDSocket, st_ServiceCfg.st_P2xp.nRVPort, st_ServiceCfg.tszIPAddr);
-			NetCore_BroadCast_RVCreate(&hRVSocket, st_ServiceCfg.st_P2xp.nSDPort);
+			NetCore_BroadCast_Create(&hSocket, st_ServiceCfg.st_P2xp.nPort, st_ServiceCfg.tszIPAddr);
 
-			if (!NetCore_BroadCast_Send(hSDSocket, tszSDBuffer, nSDLen))
+			if (!NetCore_BroadCast_Send(hSocket, tszSDBuffer, nSDLen))
 			{
 				st_HDRParam.bIsClose = TRUE;
 				st_HDRParam.nHttpCode = 500;
 
 				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-				NetCore_BroadCast_Close(hSDSocket);
-				NetCore_BroadCast_Close(hRVSocket);
+				NetCore_BroadCast_Close(hSocket);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,发送广播请求失败,错误:%lX"), lpszClientAddr, NetCore_GetLastError());
 				return FALSE;
 			}
@@ -114,7 +111,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 				memset(&st_FileInfo, '\0', sizeof(APIHELP_LBFILEINFO));
 
 				st_FileInfo.nMsgLen = sizeof(st_FileInfo.tszMsgBuffer);
-				if (NetCore_BroadCast_Recv(hRVSocket, st_FileInfo.tszMsgBuffer, &st_FileInfo.nMsgLen))
+				if (NetCore_BroadCast_Recv(hSocket, st_FileInfo.tszMsgBuffer, &st_FileInfo.nMsgLen))
 				{
 					stl_ListFile.push_back(st_FileInfo);
 				}
@@ -125,8 +122,7 @@ BOOL XEngine_Task_Manage(LPCTSTR lpszAPIName, LPCTSTR lpszClientAddr, LPCTSTR lp
 					break;
 				}
 			}
-			NetCore_BroadCast_Close(hSDSocket);
-			NetCore_BroadCast_Close(hRVSocket);
+			NetCore_BroadCast_Close(hSocket);
 
 			if (stl_ListFile.empty())
 			{

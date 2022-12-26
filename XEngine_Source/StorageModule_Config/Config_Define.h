@@ -88,8 +88,7 @@ typedef struct tag_XEngine_ServerConfig
     struct  
     {
         int nTime;
-        int nSDPort;
-        int nRVPort;
+        int nPort;
     }st_P2xp;
     struct  
     {

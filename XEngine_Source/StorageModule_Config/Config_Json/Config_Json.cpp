@@ -180,7 +180,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XLimit.nMaxDNLoader = st_JsonXLimit["nMaxDNLoad"].asInt64();
 	pSt_ServerConfig->st_XLimit.nMaxUPLoader = st_JsonXLimit["nMaxUPLoad"].asInt64();
 
-	if (st_JsonRoot["XP2xp"].empty() || (3 != st_JsonRoot["XP2xp"].size()))
+	if (st_JsonRoot["XP2xp"].empty() || (2 != st_JsonRoot["XP2xp"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_P2XP;
@@ -188,8 +188,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	}
 	Json::Value st_JsonP2xp = st_JsonRoot["XP2xp"];
 	pSt_ServerConfig->st_P2xp.nTime = st_JsonP2xp["nTime"].asInt();
-	pSt_ServerConfig->st_P2xp.nRVPort = st_JsonP2xp["nRVPort"].asInt();
-	pSt_ServerConfig->st_P2xp.nSDPort = st_JsonP2xp["nSDPort"].asInt();
+	pSt_ServerConfig->st_P2xp.nPort = st_JsonP2xp["nPort"].asInt();
 
 	if (st_JsonRoot["XCert"].empty() || (6 != st_JsonRoot["XCert"].size()))
 	{

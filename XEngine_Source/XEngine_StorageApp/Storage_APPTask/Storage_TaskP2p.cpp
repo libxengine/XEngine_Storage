@@ -36,10 +36,10 @@ XHTHREAD XEngine_Task_P2PThread()
 					Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &pppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
 					BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
 
-					SOCKET hSDSocket;
-					NetCore_BroadCast_SDCreate(&hSDSocket, st_ServiceCfg.st_P2xp.nSDPort, st_ServiceCfg.tszIPAddr);
-					NetCore_BroadCast_Send(hSDSocket, tszMsgBuffer, nMsgLen);
-					NetCore_BroadCast_Close(hSDSocket);
+					SOCKET hSocket;
+					NetCore_BroadCast_Create(&hSocket, st_ServiceCfg.st_P2xp.nPort, st_ServiceCfg.tszIPAddr);
+					NetCore_BroadCast_Send(hSocket, tszMsgBuffer, nMsgLen);
+					NetCore_BroadCast_Close(hSocket);
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("广播端:%s,请求查询文件成功,列表个数:%d"), tszIPAddr, nListCount);
 				}
 			}
