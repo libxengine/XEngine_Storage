@@ -56,8 +56,8 @@
     },
     "XP2xp":{
         "nTime":2,
-        "nSDPort":15000,
-        "nRVPort":15001
+        "nRVPort":15000,
+        "nSDPort":15001
     },
     "XCert":{
         "bDLEnable":0,
@@ -68,6 +68,7 @@
         "tszCertKey":"./XEngine_Cert/2_www.xyry.org.key"
     },
     "XVer":[
+        "3.9.1.1001 Build20221227",
         "3.9.0.1001 Build20221028",
         "3.8.0.1001 Build20220727",
         "3.7.0.1001 Build20220624",
