@@ -318,7 +318,6 @@ BOOL CAPIHelp_Api::APIHelp_Api_UrlParse(TCHAR*** ppptszList, int nListCount, TCH
 
 	LPCTSTR lpszHDRFile = _T("filename");
 	LPCTSTR lpszHDRKey = _T("storeagekey");
-	LPCTSTR lpszHDRPath = _T("path");
 
 	for (int i = 0; i < nListCount; i++)
 	{

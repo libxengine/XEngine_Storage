@@ -399,7 +399,7 @@ int main(int argc, char** argv)
 	//只有使用了数据库,才启用P2P
 	if (st_ServiceCfg.st_XSql.bEnable)
 	{
-		if (!NetCore_BroadCast_RVCreate(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
+		if (!NetCore_BroadCast_Create(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
 			goto XENGINE_EXITAPP;

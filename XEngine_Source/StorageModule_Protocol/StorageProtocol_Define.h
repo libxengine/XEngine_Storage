@@ -79,27 +79,37 @@ extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMs
   类型：字符指针
   可空：N
   意思：查询结束时间
- 参数.四：ptszFileName
+ 参数.四：ptszBuckKey
   In/Out：Out
   类型：字符指针
-  可空：N
+  可空：Y
+  意思：输出文件所属BUCKET
+ 参数.五：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：Y
   意思：查询的文件名
- 参数.五：ptszFileMD5
+ 参数.六：ptszFileHash
   In/Out：Out
   类型：字符指针
-  可空：N
-  意思：查询的文件MD5
+  可空：Y
+  意思：查询的文件HASH
  参数.七：pInt_Mode
   In/Out：Out
-  类型：整数型
+  类型：整数型指针
   可空：Y
   意思：输出查询返回模式
+ 参数.八：pxhToken
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出TOKEN
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_QueryFile(LPCSTR lpszMsgBuffer, CHAR * ptszTimeStart, CHAR * ptszTimeEnd, CHAR * ptszBuckKey = NULL, CHAR * ptszFileName = NULL, CHAR * ptszFileHash = NULL, int* pInt_Mode = NULL);
+extern "C" BOOL Protocol_StorageParse_QueryFile(LPCSTR lpszMsgBuffer, CHAR * ptszTimeStart, CHAR * ptszTimeEnd, CHAR * ptszBuckKey = NULL, CHAR * ptszFileName = NULL, CHAR * ptszFileHash = NULL, int* pInt_Mode = NULL, XNETHANDLE * pxhToken = NULL);
 /********************************************************************
 函数名称：Protocol_StorageParse_ReportFile
 函数功能：解析文件报告协议
@@ -160,7 +170,7 @@ extern "C" BOOL Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuffer, int nMsg
 extern "C" BOOL Protocol_StorageParse_DirOperator(LPCSTR lpszMsgBuffer, CHAR * ptszUserDir, TCHAR * ptszBuckKey, int* pInt_Operator);
 /********************************************************************
 函数名称：Protocol_StorageParse_SpeedLimit
-函数功能：
+函数功能：速度限制请求解析函数
  参数.一：lpszMsgBuffer
   In/Out：In
   类型：常量字符指针
@@ -187,6 +197,30 @@ extern "C" BOOL Protocol_StorageParse_DirOperator(LPCSTR lpszMsgBuffer, CHAR * p
 备注：
 *********************************************************************/
 extern "C" BOOL Protocol_StorageParse_SpeedLimit(LPCTSTR lpszMsgBuffer, int nMsgLen, int* pInt_Code, int* pInt_Limit);
+/********************************************************************
+函数名称：Protocol_StorageParse_P2PToken
+函数功能：P2P查找文件TOKEN匹配函数
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pxhToken
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出解析到的TOKEN
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Protocol_StorageParse_P2PToken(LPCTSTR lpszMsgBuffer, int nMsgLen, XNETHANDLE* pxhToken);
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
@@ -316,12 +350,17 @@ extern "C" BOOL Protocol_StoragePacket_UPDown(TCHAR * ptszMsgBuffer, int* pInt_M
   类型：常量字符指针
   可空：Y
   意思：输入查询请求的结束时间
+ 参数.七：xhToken
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：输入返回的TOKEN,如果需要的话
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_QueryFile(CHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL);
+extern "C" BOOL Protocol_StoragePacket_QueryFile(CHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL, XNETHANDLE xhToken = 0);
 /********************************************************************
 函数名称：Protocol_StoragePacket_Info
 函数功能：返回信息获取请求打包函数
@@ -413,9 +452,14 @@ extern "C" BOOL Protocol_StoragePacket_DirOperator(CHAR * ptszMsgBuffer, int* pI
   类型：常量字符指针
   可空：Y
   意思：输入要查询的文件MD5
+ 参数.五：xhToken
+  In/Out：In
+  类型：句柄
+  可空：Y
+  意思：消息的TOKEN
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
+extern "C" BOOL Protocol_StoragePacket_REQFile(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL, XNETHANDLE xhToken = 0);

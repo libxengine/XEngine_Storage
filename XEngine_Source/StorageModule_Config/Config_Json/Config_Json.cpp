@@ -188,8 +188,8 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	}
 	Json::Value st_JsonP2xp = st_JsonRoot["XP2xp"];
 	pSt_ServerConfig->st_P2xp.nTime = st_JsonP2xp["nTime"].asInt();
-	pSt_ServerConfig->st_P2xp.nRVPort = st_JsonP2xp["nRVPort"].asInt();
 	pSt_ServerConfig->st_P2xp.nSDPort = st_JsonP2xp["nSDPort"].asInt();
+	pSt_ServerConfig->st_P2xp.nRVPort = st_JsonP2xp["nRVPort"].asInt();
 
 	if (st_JsonRoot["XCert"].empty() || (6 != st_JsonRoot["XCert"].size()))
 	{

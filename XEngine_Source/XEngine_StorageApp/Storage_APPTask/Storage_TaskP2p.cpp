@@ -23,8 +23,9 @@ XHTHREAD XEngine_Task_P2PThread()
 
 		if (NetCore_BroadCast_Recv(hBroadSocket, tszMsgBuffer, &nMsgLen, tszIPAddr))
 		{
+			XNETHANDLE xhToken = 0;
 			//收到文件查询请求
-			if (Protocol_StorageParse_QueryFile(tszMsgBuffer, tszTimeStart, tszTimeEnd, tszBuckKey, tszFileName, tszFileHash))
+			if (Protocol_StorageParse_QueryFile(tszMsgBuffer, tszTimeStart, tszTimeEnd, tszBuckKey, tszFileName, tszFileHash, NULL, &xhToken))
 			{
 				//查询文件是否存在数据库,不存在不关心
 				int nListCount = 0;
@@ -33,14 +34,14 @@ XHTHREAD XEngine_Task_P2PThread()
 				if (nListCount > 0)
 				{
 					_stprintf(pppSt_ListFile[0]->tszTableName, _T("%s:%d"), st_ServiceCfg.tszIPAddr, st_ServiceCfg.nStorageDLPort);
-					Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &pppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
+					Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &pppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd, xhToken);
 					BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
 
-					SOCKET hSDSocket;
-					NetCore_BroadCast_SDCreate(&hSDSocket, st_ServiceCfg.st_P2xp.nSDPort, st_ServiceCfg.tszIPAddr);
-					NetCore_BroadCast_Send(hSDSocket, tszMsgBuffer, nMsgLen);
-					NetCore_BroadCast_Close(hSDSocket);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("广播端:%s,请求查询文件成功,列表个数:%d"), tszIPAddr, nListCount);
+					SOCKET hSocket;
+					NetCore_BroadCast_Create(&hSocket, st_ServiceCfg.st_P2xp.nSDPort, st_ServiceCfg.tszIPAddr);
+					NetCore_BroadCast_Send(hSocket, tszMsgBuffer, nMsgLen);
+					NetCore_BroadCast_Close(hSocket);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("广播端:%s,请求查询文件成功,Token:%llu,列表个数:%d"), tszIPAddr, xhToken, nListCount);
 				}
 			}
 		}

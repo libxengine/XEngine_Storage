@@ -56,7 +56,7 @@ void CALLBACK XEngine_Download_CBSend(LPCSTR lpszClientAddr, SOCKET hSocket, LPV
 	{
 		__int64u nLimitTime = 0;
 		Algorithm_Calculation_GetSDFlow(st_StorageInfo.xhToken, &nLimitTime);
-		if (nLimitTime > st_StorageInfo.nLimit)
+		if (nLimitTime > (__int64u)st_StorageInfo.nLimit)
 		{
 			//当前平均速度大于限制速度,不做处理
 			NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend);

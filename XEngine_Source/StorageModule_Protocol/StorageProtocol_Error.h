@@ -12,3 +12,4 @@
 *********************************************************************/
 #define ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT 0xB0F1001
 #define ERROR_XENGINE_STORAGE_PROTOCOL_PARSE 0xB0F1002 
+#define ERROR_XENGINE_STORAGE_PROTOCOL_TOKEN 0xB0F1003
