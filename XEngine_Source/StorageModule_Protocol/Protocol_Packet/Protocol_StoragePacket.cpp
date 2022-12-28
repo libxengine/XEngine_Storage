@@ -108,7 +108,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuf
     }
     if (0 != xhToken)
     {
-        st_JsonRoot["xhToken"] = xhToken;
+        st_JsonRoot["xhToken"] = (Json::Value::UInt64)xhToken;
     }
     st_JsonRoot["Code"] = 0;
     st_JsonRoot["Msg"] = _T("ok");
@@ -461,7 +461,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffe
 	}
 	if (0 != xhToken)
 	{
-		st_JsonRoot["xhToken"] = xhToken;
+		st_JsonRoot["xhToken"] = (Json::Value::UInt64)xhToken;
 	}
 	st_JsonRoot["unOperatorType"] = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_STORAGE;
 	st_JsonRoot["unOperatorCode"] = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQQUERY;
