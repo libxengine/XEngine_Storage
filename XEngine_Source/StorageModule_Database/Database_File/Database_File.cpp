@@ -265,7 +265,7 @@ BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
         return FALSE;
     }
     //查询
-    XHDATA xhTable = 0;
+    XNETHANDLE xhTable = 0;
     __int64u nllLine = 0;
     __int64u nllRow = 0;
     list<XSTORAGECORE_DBFILE> stl_ListFile;

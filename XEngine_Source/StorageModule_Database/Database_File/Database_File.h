@@ -31,7 +31,7 @@ protected:
 private:
     BOOL bIsRun;
     int m_nTimeMonth;
-    XHDATA xhDBSQL;
+    XNETHANDLE xhDBSQL;
 private:
     shared_ptr<std::thread> pSTDThread;
 };
