@@ -13,9 +13,9 @@ int main(int argc, char** argv)
 	TCHAR* ptszMsgBuffer = NULL;
 	int nMsgLen = 0;
 
-	if (!APIHelp_HttpRequest_Custom(_T("GET"), lpszDownload, NULL, NULL, &ptszMsgBuffer, &nMsgLen))
+	if (!APIClient_Http_Request(_T("GET"), lpszDownload, NULL, NULL, &ptszMsgBuffer, &nMsgLen))
 	{
-		printf("APIHelp_HttpRequest_Custom:%lX\n", APIHelp_GetLastError());
+		printf("APIHelp_HttpRequest_Custom:%lX\n", APIClient_GetLastError());
 		return 0;
 	}
 	string m_StrDes;
@@ -72,26 +72,27 @@ int main(int argc, char** argv)
 	for (; stl_ListIterator != stl_ListUPDate.end(); stl_ListIterator++)
 	{
 		TCHAR tszPathFile[1024];
-		NETDOWNLOAD_TASKINFO st_TaskInfo;
+		NETHELP_FILEINFO st_TaskInfo;
 
 		memset(tszPathFile, '\0', sizeof(tszPathFile));
-		memset(&st_TaskInfo, '\0', sizeof(NETDOWNLOAD_TASKINFO));
+		memset(&st_TaskInfo, '\0', sizeof(NETHELP_FILEINFO));
 
 		_stprintf_s(tszPathFile, _T("%s%s"), stl_ListIterator->tszModulePath, stl_ListIterator->tszModuleName);
 		_tremove(tszPathFile);
-		XHANDLE xhDown = DownLoad_Http_Create(stl_ListIterator->tszModuleDownload, tszPathFile);
+		XHANDLE xhDown = APIClient_File_Create(stl_ListIterator->tszModuleDownload, tszPathFile);
+		APIClient_File_Start(xhDown);
 		while (TRUE)
 		{
-			if (!DownLoad_Http_Query(xhDown, &st_TaskInfo))
+			if (!APIClient_File_Query(xhDown, &st_TaskInfo))
 			{
 				break;
 			}
-			if (ENUM_XENGINE_DOWNLOAD_STATUS_DOWNLOADDING != st_TaskInfo.en_DownStatus)
+			if (ENUM_NETHELP_APICLIENT_FILE_STATUS_DOWNLOADDING != st_TaskInfo.en_DownStatus)
 			{
 				break;
 			}
 		}
-		DownLoad_Http_Delete(xhDown);
+		APIClient_File_Delete(xhDown);
 	}
 
 	if (!HelpModule_Api_Copy(&stl_ListUPDate))

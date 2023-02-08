@@ -3,7 +3,7 @@
 #include <tchar.h>
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient")
 #pragma comment(lib,"Ws2_32")
 #pragma comment(lib,"../../XEngine_Source/Debug/jsoncpp")
 #else
@@ -20,14 +20,14 @@
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
 #include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
 using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 debug 编译
-//linux::g++ -std=c++17 -Wall -g APPClient_UPDownload.cpp -o APPClient_UPDownload.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lXEngine_OPenSsl -lNetHelp_APIHelp -ljsoncpp
-//macos::g++ -std=c++17 -Wall -g APPClient_UPDownload.cpp -o APPClient_UPDownload.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lXEngine_OPenSsl -lNetHelp_APIHelp -ljsoncpp
+//linux::g++ -std=c++17 -Wall -g APPClient_UPDownload.cpp -o APPClient_UPDownload.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lXEngine_OPenSsl -lNetHelp_APIClient -ljsoncpp
+//macos::g++ -std=c++17 -Wall -g APPClient_UPDownload.cpp -o APPClient_UPDownload.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lXEngine_OPenSsl -lNetHelp_APIClient -ljsoncpp
 
 //上传文件
 void File_UPLoad()
@@ -48,9 +48,9 @@ void File_UPLoad()
 	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
 
 	_stprintf(tszHdrBuffer, _T("Range: bytes=0-5/10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, lpszMsgBuffer, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	if (!APIClient_Http_Request(_T("POST"), lpszUrl, lpszMsgBuffer, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
-		printf("upload failed:%lX\n", APIHelp_GetLastError());
+		printf("upload failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	JSONCPP_STRING st_JsonError;
@@ -69,9 +69,9 @@ void File_UPLoad()
 	nLen = 0;
 	memset(tszHdrBuffer, '\0', MAX_PATH);
 	_stprintf(tszHdrBuffer, _T("Range: bytes=5-9/10\r\nAuthorization: %s\r\nStorageKey: %s\r\n"), tszBaseBuffer, tszKeyBuffer);
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, lpszMsgBuffer2, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	if (!APIClient_Http_Request(_T("POST"), lpszUrl, lpszMsgBuffer2, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
-		printf("upload failed:%lX\n", APIHelp_GetLastError());
+		printf("upload failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	printf("upload:%d\n%s\n", nCode, ptszMsgBuffer);
@@ -92,9 +92,9 @@ void File_Download()
 	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
 
 	_stprintf(tszHdrBuffer, _T("Range: bytes=0-5\r\nAuthorization: %s\r\n"), tszBaseBuffer);
-	if (!APIHelp_HttpRequest_Custom(_T("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	if (!APIClient_Http_Request(_T("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
-		printf("download failed:%lX\n", APIHelp_GetLastError());
+		printf("download failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	printf("download:%d,%s\n", nLen, ptszMsgBuffer);
@@ -102,9 +102,9 @@ void File_Download()
 
 	memset(tszHdrBuffer, '\0', MAX_PATH);
 	_stprintf(tszHdrBuffer, _T("Range: bytes=5-10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
-	if (!APIHelp_HttpRequest_Custom(_T("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	if (!APIClient_Http_Request(_T("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
-		printf("download failed:%lX\n", APIHelp_GetLastError());
+		printf("download failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	printf("download:%d,%s\n", nLen, ptszMsgBuffer);

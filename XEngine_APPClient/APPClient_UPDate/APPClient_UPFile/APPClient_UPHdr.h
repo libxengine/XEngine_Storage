@@ -4,8 +4,7 @@
 #pragma comment(lib,"Ws2_32.lib")
 #pragma comment(lib,"../../../XEngine_Source/Debug/jsoncpp")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
-#pragma comment(lib,"XEngine_DownLoad/XEngine_DownLoad.lib")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #endif
 #include <stdio.h>
@@ -21,10 +20,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
-#include <XEngine_Include/XEngine_DownLoad/DownLoad_Define.h>
-#include <XEngine_Include/XEngine_DownLoad/DownLoad_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>

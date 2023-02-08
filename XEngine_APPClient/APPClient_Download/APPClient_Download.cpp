@@ -6,8 +6,7 @@
 #include <windows.h>
 #include <tchar.h>
 #pragma comment(lib,"x86/XEngine_BaseLib/XEngine_BaseLib")
-#pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIHelp")
-#pragma comment(lib,"x86/XEngine_DownLoad/XEngine_DownLoad")
+#pragma comment(lib,"x86/XEngine_NetHelp/NetHelp_APIClient")
 #pragma comment(lib,"x86/XEngine_SystemSdk/XEngine_SystemApi")
 #pragma comment(lib,"Ws2_32")
 #pragma comment(lib,"../../XEngine_Source/Debug/jsoncpp")
@@ -21,10 +20,8 @@
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
-#include <XEngine_Include/XEngine_DownLoad/DownLoad_Define.h>
-#include <XEngine_Include/XEngine_DownLoad/DownLoad_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
@@ -33,8 +30,8 @@ using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 debug 编译
-//linux::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_DownLoad -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIHelp -lXEngine_Download -lXEngine_SystemApi -ljsoncpp
-//macos::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIHelp -lXEngine_Download -lXEngine_SystemApi -ljsoncpp
+//linux::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
+//macos::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
 
 typedef struct 
 {
@@ -115,11 +112,12 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 			nPos += nPiece;
 			_stprintf(tszRange, _T("%lld-%lld"), pSt_P2PFile[i].nPosStart, pSt_P2PFile[i].nPosEnd);
 		}
-		pSt_P2PFile[i].xhToken = DownLoad_Http_Create(tszDLUrl, lpszFile, tszRange, NULL, NULL, NULL);
+		pSt_P2PFile[i].xhToken = APIClient_File_Create(tszDLUrl, lpszFile, TRUE, tszRange);
 		if (NULL == pSt_P2PFile[i].xhToken)
 		{
-			printf("create download task is failed:%X\n", Download_GetLastError());
+			printf("create download task is failed:%X\n", APIClient_GetLastError());
 		}
+		APIClient_File_Start(pSt_P2PFile[i].xhToken);
 	}
 	//直到所有完成
 	while (1)
@@ -127,11 +125,11 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 		BOOL bComplete = TRUE;
 		for (unsigned int i = 0; i < pStl_ListFile->size(); i++)
 		{
-			NETDOWNLOAD_TASKINFO st_TaskInfo;
-			memset(&st_TaskInfo, '\0', sizeof(NETDOWNLOAD_TASKINFO));
+			NETHELP_FILEINFO st_TaskInfo;
+			memset(&st_TaskInfo, '\0', sizeof(NETHELP_FILEINFO));
 
-			DownLoad_Http_Query(pSt_P2PFile[i].xhToken, &st_TaskInfo);
-			if (ENUM_XENGINE_DOWNLOAD_STATUS_COMPLETE != st_TaskInfo.en_DownStatus)
+			APIClient_File_Query(pSt_P2PFile[i].xhToken, &st_TaskInfo);
+			if (ENUM_NETHELP_APICLIENT_FILE_STATUS_COMPLETE != st_TaskInfo.en_DownStatus)
 			{
 				bComplete = FALSE;
 			}
@@ -146,7 +144,7 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 
 	for (unsigned int i = 0; i < pStl_ListFile->size(); i++)
 	{
-		DownLoad_Http_Delete(pSt_P2PFile[i].xhToken);
+		APIClient_File_Delete(pSt_P2PFile[i].xhToken);
 	}
 	delete[] pSt_P2PFile;
 	pSt_P2PFile = NULL;
@@ -172,7 +170,7 @@ int main()
 	//st_JsonRoot["lpszFileName"] = "qq.exe";
 	st_JsonRoot["lpszFileHash"] = "D41D8CD98F00B204E9801998ECF8427E";
 
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nHTTPCode, &ptszMsgBody, &nBodyLen))
+	if (!APIClient_Http_Request(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nHTTPCode, &ptszMsgBody, &nBodyLen))
 	{
 		return -1;
 	}

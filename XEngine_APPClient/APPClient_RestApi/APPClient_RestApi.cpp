@@ -3,7 +3,7 @@
 #include <tchar.h>
 #pragma comment(lib,"../../XEngine_Source/Debug/jsoncpp")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient")
 #pragma comment(lib,"Ws2_32")
 #endif
 #include <stdio.h>
@@ -16,15 +16,15 @@
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
 using namespace std;
 
-//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_NetHelp -lXEngine_BaseLib -lNetHelp_APIHelp -ljsoncpp -Wl,-rpath=../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib:../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_NetHelp,--disable-new-dtags
+//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_NetHelp -lXEngine_BaseLib -lNetHelp_APIClient -ljsoncpp -Wl,-rpath=../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib:../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_NetHelp,--disable-new-dtags
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 debug 编译
 //linux使用下面的命令编译
-//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIHelp -ljsoncpp
+//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -ljsoncpp
 
 //查询
 void API_Manage_Query()
@@ -38,9 +38,9 @@ void API_Manage_Query()
 	st_JsonRoot["lpszTimeEnd"];
 	st_JsonRoot["lpszBuckKey"] = "storagekey2";
 
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
-		printf("API_Manage_Query:%lX\n", APIHelp_GetLastError());
+		printf("API_Manage_Query:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	printf("API_Manage_Query:%d,%s\n", nCode, ptszMsgBuffer);
@@ -66,9 +66,9 @@ void API_Manage_Insert()
 	st_JsonRoot["List"] = st_JsonArray;
 	st_JsonRoot["Count"] = 1;
 
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
-		printf("API_Manage_Insert:%lX\n", APIHelp_GetLastError());
+		printf("API_Manage_Insert:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	printf("API_Manage_Insert:%d,%s\n", nCode, ptszMsgBuffer);
@@ -91,9 +91,9 @@ void API_Manage_Delete()
 	st_JsonRoot["List"] = st_JsonArray;
 	st_JsonRoot["Count"] = 1;
 
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
-		printf("API_Manage_Delete:%lX\n", APIHelp_GetLastError());
+		printf("API_Manage_Delete:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	printf("API_Manage_Delete:%d,%s\n", nCode, ptszMsgBuffer);
@@ -111,9 +111,9 @@ void API_Manage_Dir()
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
 	st_JsonRoot["lpszUserDir"] = "user";
 	st_JsonRoot["nOPerator"] = 1;
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
-		printf("API_Manage_Dir:%lX\n", APIHelp_GetLastError());
+		printf("API_Manage_Dir:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	printf("API_Manage_Dir:%d,%s\n", nCode, ptszMsgBuffer);
@@ -123,9 +123,9 @@ void API_Manage_Dir()
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
 	st_JsonRoot["lpszUserDir"];
 	st_JsonRoot["nOPerator"] = 0;
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
-		printf("API_Manage_Dir:%lX\n", APIHelp_GetLastError());
+		printf("API_Manage_Dir:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	printf("API_Manage_Dir:%d,%s\n", nCode, ptszMsgBuffer);
@@ -135,9 +135,9 @@ void API_Manage_Dir()
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
 	st_JsonRoot["lpszUserDir"] = "user";
 	st_JsonRoot["nOPerator"] = 2;
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
 	{
-		printf("API_Manage_Dir:%lX\n", APIHelp_GetLastError());
+		printf("API_Manage_Dir:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	printf("API_Manage_Dir:%d,%s\n", nCode, ptszMsgBuffer);
@@ -150,9 +150,9 @@ void API_Manage_Task()
 	int nLen = 0;
 	int nCode = 0;
 	TCHAR* ptszMsgBuffer = NULL;
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszUrl, NULL, &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_T("POST"), lpszUrl, NULL, &nCode, &ptszMsgBuffer, &nLen))
 	{
-		printf("API_Manage_Task:%lX\n", APIHelp_GetLastError());
+		printf("API_Manage_Task:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	printf("API_Manage_Task:%d,%s\n", nCode, ptszMsgBuffer);
