@@ -96,9 +96,9 @@ extern "C" BOOL Session_UPStroage_Destory()
 {
 	return m_UPStorage.Session_UPStroage_Destory();
 }
-extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart, int nPostEnd)
+extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, int nPosStart, int nPostEnd)
 {
-	return m_UPStorage.Session_UPStroage_Insert(lpszClientAddr, lpszBuckKey, lpszFileDir, nFileSize, nLeftCount, nPosStart, nPostEnd);
+	return m_UPStorage.Session_UPStroage_Insert(lpszClientAddr, lpszBuckKey, lpszFileDir, nFileSize, nPosStart, nPostEnd);
 }
 extern "C" BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO * pSt_StorageInfo)
 {

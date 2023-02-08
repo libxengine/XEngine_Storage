@@ -24,7 +24,7 @@ public:
 public:
     BOOL Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume = FALSE);
     BOOL Session_UPStroage_Destory();
-    BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart = 0, int nPostEnd = 0);
+    BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, int nPosStart = 0, int nPostEnd = 0);
     BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
     BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen);
     BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr);

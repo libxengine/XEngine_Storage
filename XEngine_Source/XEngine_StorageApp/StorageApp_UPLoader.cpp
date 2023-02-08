@@ -254,7 +254,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			}
 			SystemApi_File_CreateMutilFolder(tszTmpPath);
 		}
-		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, nPosCount, nRVCount, nPosStart, nPosEnd))
+		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, nPosCount, nPosStart, nPosEnd))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 404;

@@ -331,17 +331,12 @@ extern "C" BOOL Session_UPStroage_Destory();
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.五：nLeftCount
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入需要写入的大小
- 参数.六：nPosStart
+ 参数.五：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入起始位置
- 参数.七：nPostEnd
+ 参数.六：nPostEnd
   In/Out：In
   类型：整数型
   可空：Y
@@ -351,7 +346,7 @@ extern "C" BOOL Session_UPStroage_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart = 0, int nPostEnd = 0);
+extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, int nPosStart = 0, int nPostEnd = 0);
 /********************************************************************
 函数名称：Session_UPStroage_GetInfo
 函数功能：获取上传客户端信息

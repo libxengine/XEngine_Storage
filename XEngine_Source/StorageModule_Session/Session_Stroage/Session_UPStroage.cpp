@@ -87,17 +87,12 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.五：nLeftCount
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入需要写入的大小
- 参数.六：nPosStart
+ 参数.五：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入起始位置
- 参数.七：nPostEnd
+ 参数.六：nPostEnd
   In/Out：In
   类型：整数型
   可空：Y
@@ -107,7 +102,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
+BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -134,7 +129,6 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	//填充下载信息
 	st_Client.st_StorageInfo.ullPosStart = nPosStart;
 	st_Client.st_StorageInfo.ullPosEnd = nPostEnd;
-	st_Client.st_StorageInfo.ullRWCount = nLeftCount;
 	st_Client.st_StorageInfo.ullCount = nFileSize;
 	_tcscpy(st_Client.st_StorageInfo.tszBuckKey, lpszBuckKey);
 	_tcscpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
