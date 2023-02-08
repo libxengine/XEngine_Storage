@@ -235,6 +235,25 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 				return FALSE;
 			}
 		}
+		TCHAR tszTmpPath[MAX_PATH];
+		memset(tszTmpPath, '\0', MAX_PATH);
+
+		BaseLib_OperatorString_GetFileAndPath(tszFileDir, tszTmpPath);
+		if (0 != _taccess(tszTmpPath, 0))
+		{
+			//不存在,是否允许创建?
+			if (!st_StorageBucket.st_PermissionFlags.bCreateDir)
+			{
+				st_HDRParam.bIsClose = TRUE;
+				st_HDRParam.nHttpCode = 404;
+
+				RfcComponents_HttpServer_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("上传客户端:%s,请求上传文件失败,上传文件夹不存在,权限错误,文件:%s"), lpszClientAddr, tszFileDir);
+				return FALSE;
+			}
+			SystemApi_File_CreateMutilFolder(tszTmpPath);
+		}
 		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, nPosCount, nRVCount, nPosStart, nPosEnd))
 		{
 			st_HDRParam.bIsClose = TRUE;

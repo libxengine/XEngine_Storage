@@ -116,6 +116,10 @@ typedef struct
     TCHAR tszBuckSize[64];
     int nLevel;
     BOOL bEnable;
+    struct 
+    {
+        bool bCreateDir;
+    }st_PermissionFlags;
 }XENGINE_STORAGEBUCKET;
 typedef struct
 {

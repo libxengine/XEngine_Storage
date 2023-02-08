@@ -352,6 +352,8 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 		_tcscpy(st_Bucket.tszBuckKey, st_JsonBucket[i]["XEngine_Key"].asCString());
 		_tcscpy(st_Bucket.tszFilePath, st_JsonBucket[i]["XEngine_Path"].asCString());
 
+		Json::Value st_JsonPermission = st_JsonBucket[i]["PermissionFlags"];
+		st_Bucket.st_PermissionFlags.bCreateDir = st_JsonPermission["CreateDir"].asBool();
 		pSt_ServerConfig->st_LoadBalance.pStl_ListBucket->push_back(st_Bucket);
 	}
 	return TRUE;
