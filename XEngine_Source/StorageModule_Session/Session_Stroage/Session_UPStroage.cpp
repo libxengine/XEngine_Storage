@@ -461,7 +461,7 @@ BOOL CSession_UPStroage::Session_UPStroage_MaxConnect(LPCTSTR lpszClientAddr)
 	}
 	st_Locker.unlock_shared();
 
-	if (nExistNumber > m_nMaxConnect)
+	if (nExistNumber >= m_nMaxConnect)
 	{
 		Session_IsErrorOccur = TRUE;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_MAXCONNECT;

@@ -65,7 +65,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 	//连接数限制处理
 	if (st_ServiceCfg.st_XLimit.nMaxUPConnect > 0)
 	{
-		if (!Session_DLStroage_MaxConnect(lpszClientAddr))
+		if (!Session_UPStroage_MaxConnect(lpszClientAddr))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 503;
