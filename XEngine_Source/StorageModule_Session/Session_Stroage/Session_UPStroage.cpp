@@ -148,6 +148,12 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 			return FALSE;
 		}
+		//是不是覆写?
+		if (st_Client.st_StorageInfo.ullRWLen > nPosStart)
+		{
+			//是
+			st_Client.st_StorageInfo.ullRWLen -= (nPostEnd - nPosStart);
+		}
 		fseek(st_Client.st_StorageInfo.pSt_File, nPosStart, SEEK_SET);
 	}
 	else
