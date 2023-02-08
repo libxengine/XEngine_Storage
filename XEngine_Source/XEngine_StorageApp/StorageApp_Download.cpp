@@ -141,7 +141,21 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,发送的方法不支持"), lpszClientAddr);
 		return FALSE;
 	}
-	
+	//连接数限制处理
+	if (st_ServiceCfg.st_XLimit.nMaxDNConnect > 0)
+	{
+		if (!Session_DLStroage_MaxConnect(lpszClientAddr))
+		{
+			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.nHttpCode = 503;
+
+			RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,请求失败,连接数超过限制:%d,无法继续"), lpszClientAddr, st_ServiceCfg.st_XLimit.nMaxDNConnect);
+			return FALSE;
+		}
+	}
+	//验证用户
 	if (st_ServiceCfg.st_XProxy.st_XProxyAuth.bAuth)
 	{
 		TCHAR tszUserName[64];

@@ -84,6 +84,8 @@ typedef struct tag_XEngine_ServerConfig
 		BOOL bLimitMode;
         __int64x nMaxUPLoader;
         __int64x nMaxDNLoader;
+        int nMaxUPConnect;
+        int nMaxDNConnect;
 	}st_XLimit;
     struct  
     {

@@ -16,6 +16,7 @@ EXPORTS
 	Session_DLStorage_SetSeek
 	Session_DLStorage_GetAll
 	Session_DLStroage_Delete
+	Session_DLStroage_MaxConnect
 
 	Session_UPStroage_Init
 	Session_UPStroage_Destory

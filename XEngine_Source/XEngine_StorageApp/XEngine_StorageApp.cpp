@@ -234,12 +234,12 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP下载服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
 
-		if (!Session_DLStroage_Init())
+		if (!Session_DLStroage_Init(st_ServiceCfg.st_XLimit.nMaxDNConnect))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载限速模式:%s"), st_ServiceCfg.st_XLimit.bLimitMode ? "开" : "关");
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载限速模式:%s,连接数限制;%d"), st_ServiceCfg.st_XLimit.bLimitMode ? "开" : "关", st_ServiceCfg.st_XLimit.nMaxDNConnect);
 
 		if (st_ServiceCfg.st_XCert.bDLEnable)
 		{

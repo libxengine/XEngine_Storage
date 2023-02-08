@@ -169,7 +169,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	_tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyPass.tszDLPass, st_JsonXProxyPass["tszDLPass"].asCString());
 	_tcscpy(pSt_ServerConfig->st_XProxy.st_XProxyPass.tszUPPass, st_JsonXProxyPass["tszUPPass"].asCString());
 
-	if (st_JsonRoot["XLimit"].empty() || (3 != st_JsonRoot["XLimit"].size()))
+	if (st_JsonRoot["XLimit"].empty() || (5 != st_JsonRoot["XLimit"].size()))
 	{
 		Config_IsErrorOccur = TRUE;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
@@ -179,6 +179,8 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XLimit.bLimitMode = st_JsonXLimit["bLimitMode"].asBool();
 	pSt_ServerConfig->st_XLimit.nMaxDNLoader = st_JsonXLimit["nMaxDNLoad"].asInt64();
 	pSt_ServerConfig->st_XLimit.nMaxUPLoader = st_JsonXLimit["nMaxUPLoad"].asInt64();
+	pSt_ServerConfig->st_XLimit.nMaxUPConnect = st_JsonXLimit["nMaxUPConnect"].asInt();
+	pSt_ServerConfig->st_XLimit.nMaxDNConnect = st_JsonXLimit["nMaxDNConnect"].asInt();
 
 	if (st_JsonRoot["XP2xp"].empty() || (3 != st_JsonRoot["XP2xp"].size()))
 	{
