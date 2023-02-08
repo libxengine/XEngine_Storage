@@ -36,6 +36,7 @@ using namespace std;
 typedef struct 
 {
 	XENGINE_PROTOCOL_FILE st_ProtocolFile;
+	CHAR tszBuckKey[128];
 	CHAR tszIPAddr[64];                                     
 }P2PFILE_INFO;
 
@@ -69,6 +70,7 @@ void P2PParse_List(LPCTSTR lpszMsgBuffer, int nMsgLen, list<P2PFILE_INFO>* pStl_
 		_tcscpy(st_P2PFile.st_ProtocolFile.tszFileTime, st_JsonArray[i]["tszFileTime"].asCString());
 		_tcscpy(st_P2PFile.st_ProtocolFile.tszFileUser, st_JsonArray[i]["tszFileUser"].asCString());
 		_tcscpy(st_P2PFile.tszIPAddr, st_JsonArray[i]["tszTableName"].asCString());
+		_tcscpy(st_P2PFile.tszBuckKey, st_JsonArray[i]["tszBuckKey"].asCString());
 
 		pStl_ListFile->push_back(st_P2PFile);
 	}
@@ -84,9 +86,9 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 {
 	P2PFILE_PIECE* pSt_P2PFile = new P2PFILE_PIECE[pStl_ListFile->size()];
 
-	int nPos = 0;
+	__int64x nPos = 0;
 	//得到每个块大小
-	int nPiece = pStl_ListFile->front().st_ProtocolFile.nFileSize / pStl_ListFile->size();
+	__int64x nPiece = pStl_ListFile->front().st_ProtocolFile.nFileSize / pStl_ListFile->size();
 	//这是一个简单的分布式块算法示例.怎么做分布式,可以根据自己需求做算法拆解
 	list<P2PFILE_INFO>::const_iterator stl_ListIterator = pStl_ListFile->begin();
 	for (int i = 0; stl_ListIterator != pStl_ListFile->end(); stl_ListIterator++, i++)
@@ -97,7 +99,7 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCTSTR lpszFile)
 		memset(tszDLUrl, '\0', sizeof(tszDLUrl));
 		memset(tszRange, '\0', sizeof(tszRange));
 
-		_stprintf(tszDLUrl, _T("%s/%s/%s"), stl_ListIterator->tszIPAddr, stl_ListIterator->st_ProtocolFile.tszFilePath + 2, stl_ListIterator->st_ProtocolFile.tszFileName);
+		_stprintf(tszDLUrl, _T("%s/%s/%s"), stl_ListIterator->tszIPAddr, stl_ListIterator->tszBuckKey, stl_ListIterator->st_ProtocolFile.tszFileName);
 		//是否是最后一块
 		if ((int)pStl_ListFile->size() == (i + 1))
 		{
@@ -168,7 +170,7 @@ int main()
 	st_JsonRoot["nMode"] = 1;          //使用P2P下载
 	st_JsonRoot["lpszBuckKey"] = "storagekey2";
 	//st_JsonRoot["lpszFileName"] = "qq.exe";
-	st_JsonRoot["lpszFileHash"] = "D41D8CD98F00B204E9801998ECF8427E";
+	st_JsonRoot["lpszFileHash"] = "781E5E245D69B566979B86E28D23F2C7";
 
 	if (!APIClient_Http_Request(_T("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nHTTPCode, &ptszMsgBody, &nBodyLen))
 	{
