@@ -22,7 +22,7 @@ public:
     CSession_UPStroage();
     ~CSession_UPStroage();
 public:
-    BOOL Session_UPStroage_Init(BOOL bUPResume = FALSE);
+    BOOL Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume = FALSE);
     BOOL Session_UPStroage_Destory();
     BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart = 0, int nPostEnd = 0);
     BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
@@ -31,8 +31,10 @@ public:
     BOOL Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
     BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr);
     BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr);
+    BOOL Session_UPStroage_MaxConnect(LPCTSTR lpszClientAddr);
 private:
     BOOL m_bResume;
+    int m_nMaxConnect;
 private:
     shared_mutex st_Locker;
 private:

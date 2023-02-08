@@ -27,3 +27,4 @@ EXPORTS
 	Session_UPStorage_GetAll
 	Session_UPStroage_Delete
 	Session_UPStroage_Close
+	Session_UPStroage_MaxConnect

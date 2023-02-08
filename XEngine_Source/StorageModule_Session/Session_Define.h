@@ -283,7 +283,12 @@ extern "C" BOOL Session_DLStroage_MaxConnect(LPCTSTR lpszClientAddr);
 /********************************************************************
 函数名称：Session_UPStroage_Init
 函数功能：初始化上传会话管理器
- 参数.一：bUPResume
+ 参数.一：nMaxConnect
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入连接数限制
+ 参数.二：bUPResume
   In/Out：In
   类型：逻辑型
   可空：Y
@@ -293,7 +298,7 @@ extern "C" BOOL Session_DLStroage_MaxConnect(LPCTSTR lpszClientAddr);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Init(BOOL bUPResume = FALSE);
+extern "C" BOOL Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume = FALSE);
 /********************************************************************
 函数名称：Session_UPStroage_Destory
 函数功能：销毁下载管理器
@@ -451,3 +456,17 @@ extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr);
 备注：
 *********************************************************************/
 extern "C" BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr);
+/********************************************************************
+函数名称：Session_UPStroage_MaxConnect
+函数功能：判断一个地址是否超过连接数限制
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" BOOL Session_UPStroage_MaxConnect(LPCTSTR lpszClientAddr);

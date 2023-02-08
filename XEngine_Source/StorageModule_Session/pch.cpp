@@ -88,9 +88,9 @@ extern "C" BOOL Session_DLStroage_MaxConnect(LPCTSTR lpszClientAddr)
 {
 	return m_DLStorage.Session_DLStroage_MaxConnect(lpszClientAddr);
 }
-extern "C" BOOL Session_UPStroage_Init(BOOL bUPResume)
+extern "C" BOOL Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume)
 {
-	return m_UPStorage.Session_UPStroage_Init(bUPResume);
+	return m_UPStorage.Session_UPStroage_Init(nMaxConnect, bUPResume);
 }
 extern "C" BOOL Session_UPStroage_Destory()
 {
@@ -123,4 +123,8 @@ extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 extern "C" BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr)
 {
 	return m_UPStorage.Session_UPStroage_Close(lpszClientAddr);
+}
+extern "C" BOOL Session_UPStroage_MaxConnect(LPCTSTR lpszClientAddr)
+{
+	return m_UPStorage.Session_UPStroage_MaxConnect(lpszClientAddr);
 }
