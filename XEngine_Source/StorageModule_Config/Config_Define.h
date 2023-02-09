@@ -119,6 +119,7 @@ typedef struct
     struct 
     {
         bool bCreateDir;
+        bool bRewrite;
     }st_PermissionFlags;
 }XENGINE_STORAGEBUCKET;
 typedef struct

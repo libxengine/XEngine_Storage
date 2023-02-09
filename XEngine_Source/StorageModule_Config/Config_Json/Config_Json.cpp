@@ -354,6 +354,8 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 
 		Json::Value st_JsonPermission = st_JsonBucket[i]["PermissionFlags"];
 		st_Bucket.st_PermissionFlags.bCreateDir = st_JsonPermission["CreateDir"].asBool();
+		st_Bucket.st_PermissionFlags.bRewrite = st_JsonPermission["Rewrite"].asBool();
+
 		pSt_ServerConfig->st_LoadBalance.pStl_ListBucket->push_back(st_Bucket);
 	}
 	return TRUE;

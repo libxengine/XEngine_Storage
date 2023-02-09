@@ -87,12 +87,17 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.五：nPosStart
+ 参数.五：bRewrite
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：是否允许覆写
+ 参数.六：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入起始位置
- 参数.六：nPostEnd
+ 参数.七：nPostEnd
   In/Out：In
   类型：整数型
   可空：Y
@@ -102,7 +107,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
+BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, BOOL bRewrite, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -140,7 +145,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 		memset(&st_FStat, '\0', sizeof(struct _tstat64));
 		_tstat64(st_Client.st_StorageInfo.tszFileDir, &st_FStat);
 		st_Client.st_StorageInfo.ullRWLen = st_FStat.st_size;
-
+		//追加打开
 		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("rb+"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
@@ -151,7 +156,15 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 		//是不是覆写?
 		if (st_Client.st_StorageInfo.ullRWLen > nPosStart)
 		{
-			//是
+			//是否允许覆写
+			if (!bRewrite)
+			{
+				Session_IsErrorOccur = TRUE;
+				Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_REWRITE;
+				fclose(st_Client.st_StorageInfo.pSt_File);
+				return FALSE;
+			}
+			st_Client.st_StorageInfo.bRewrite = TRUE;
 			st_Client.st_StorageInfo.ullRWLen -= (nPostEnd - nPosStart);
 		}
 		fseek(st_Client.st_StorageInfo.pSt_File, nPosStart, SEEK_SET);

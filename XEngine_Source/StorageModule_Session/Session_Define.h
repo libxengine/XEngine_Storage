@@ -24,6 +24,7 @@ typedef struct
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
+	BOOL bRewrite;                                                        //是否为覆写
 
 	int nLimit;                                                           //限制工具
 	XHANDLE xhToken;
@@ -331,12 +332,17 @@ extern "C" BOOL Session_UPStroage_Destory();
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.五：nPosStart
+ 参数.五：bRewrite
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：是否允许覆写
+ 参数.六：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入起始位置
- 参数.六：nPostEnd
+ 参数.七：nPostEnd
   In/Out：In
   类型：整数型
   可空：Y
@@ -346,7 +352,7 @@ extern "C" BOOL Session_UPStroage_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, int nPosStart = 0, int nPostEnd = 0);
+extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, BOOL bRewrite, int nPosStart = 0, int nPostEnd = 0);
 /********************************************************************
 函数名称：Session_UPStroage_GetInfo
 函数功能：获取上传客户端信息
