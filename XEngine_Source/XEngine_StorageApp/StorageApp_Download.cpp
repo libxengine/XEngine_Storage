@@ -267,7 +267,10 @@ BOOL XEngine_Task_HttpDownload(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("下载客户端:%s,请求文件失败,可能BUCKET:%s 不正确,错误：%lX"), lpszClientAddr, pSt_HTTPParam->tszHttpUri, StorageHelp_GetLastError());
 		return FALSE;
 	}
+	int nPathType = 0;
 	_stprintf(tszFileDir, _T("%s%s"), st_StorageBucket.tszFilePath, st_StorageBucket.tszFileName);
+	BaseLib_OperatorString_GetPath(tszFileDir, &nPathType);
+	BaseLib_OperatorString_FixPath(tszFileDir, nPathType);
 
 	int nHashLen = 0;
 	UCHAR tszHashKey[MAX_PATH];

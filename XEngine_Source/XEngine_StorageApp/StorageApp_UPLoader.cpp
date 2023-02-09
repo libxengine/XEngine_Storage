@@ -203,7 +203,10 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			return FALSE;
 		}
 	}
+	int nPathType = 0;
 	_stprintf(tszFileDir, _T("%s/%s"), st_StorageBucket.tszFilePath, tszFileName);
+	BaseLib_OperatorString_GetPath(tszFileDir, &nPathType);
+	BaseLib_OperatorString_FixPath(tszFileDir, nPathType);
 
 	if (!Session_UPStroage_Exist(lpszClientAddr))
 	{
