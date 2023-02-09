@@ -26,10 +26,10 @@
     },
     "XSql":{
         "SQLEnable":false,
-        "SQLAddr":"192.168.1.12",
+        "SQLAddr":"192.168.1.10",
         "SQLPort":3306,
-        "SQLUser":"ruiyue",
-        "SQLPass":"123123Ruiyue"
+        "SQLUser":"root",
+        "SQLPass":"123123aa"
     },
     "XStorage":{
         "bResumable":1,
@@ -52,7 +52,9 @@
     "XLimit":{
         "bLimitMode":true,
         "nMaxUPLoad":4096000,
-        "nMaxDNLoad":4096000
+        "nMaxDNLoad":4096000,
+        "nMaxUPConnect":1,
+        "nMaxDNConnect":1
     },
     "XP2xp":{
         "nTime":2,
@@ -68,6 +70,7 @@
         "tszCertKey":"./XEngine_Cert/2_www.xyry.org.key"
     },
     "XVer":[
+        "3.10.0.1001 Build20230210",
         "3.9.1.1001 Build20221227",
         "3.9.0.1001 Build20221028",
         "3.8.0.1001 Build20220727",

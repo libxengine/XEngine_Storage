@@ -28,17 +28,23 @@
                 "nLevel":1,
                 "Size":"1024MB",
                 "XEngine_Key":"storagekey1",
-                "XEngine_Path":"./XEngine_File"
+                "XEngine_Path":"./XEngine_File",
+                "PermissionFlags":{
+                    "CreateDir":false,
+                    "Rewrite":false
+                }
             },
             {
                 "bEnable":1,
                 "nLevel":1,
                 "Size":"1024MB",
                 "XEngine_Key":"storagekey2",
-                "XEngine_Path":"./XEngine_File2"
+                "XEngine_Path":"./XEngine_File2",
+                "PermissionFlags":{
+                    "CreateDir":false,
+                    "Rewrite":false
+                }
             }
-
         ]
     }
-
 }
