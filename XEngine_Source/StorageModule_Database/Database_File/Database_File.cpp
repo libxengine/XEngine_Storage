@@ -130,7 +130,7 @@ BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
     }
     int nListCount = 0;
     XSTORAGECORE_DBFILE **ppSt_ListFile;
-    if (Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, pSt_DBFile->st_ProtocolFile.tszFileHash))
+    if (Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, pSt_DBFile->st_ProtocolFile.tszFileHash))
     {
         BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
         return TRUE;
