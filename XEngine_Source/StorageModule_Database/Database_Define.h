@@ -71,12 +71,17 @@ extern "C" BOOL Database_Help_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBFILE* 
   类型：常量字符指针
   可空：Y
   意思：输入BUCKET名
- 参数.四：lpszFileName
+ 参数.四：lpszFilePath
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入文件路径
+ 参数.五：lpszFileName
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入文件名称
- 参数.五：lpszFileHash
+ 参数.六：lpszFileHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -86,7 +91,7 @@ extern "C" BOOL Database_Help_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBFILE* 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Database_Help_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
+extern "C" BOOL Database_Help_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
 /********************************************************************
 函数名称：Database_Help_Query
 函数功能：数据库查询打包函数
@@ -180,12 +185,17 @@ extern "C" BOOL Database_File_Destory();
   类型：数据结构指针
   可空：N
   意思：要插入的数据信息
+ 参数.二：bRewrite
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：是否覆写数据
 返回值
   类型：逻辑型
   意思：是否成功
 备注：这个结构所有值都必须填充
 *********************************************************************/
-extern "C" BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage);
+extern "C" BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage, BOOL bRewrite = FALSE);
 /********************************************************************
 函数名称：Database_File_FileDelete
 函数功能：删除一个数据库文件信息
@@ -194,12 +204,17 @@ extern "C" BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage);
   类型：常量字符指针
   可空：Y
   意思：所属BUCK名称
- 参数.二：lpszFile
+ 参数.二：lpszFilePath
   In/Out：In
   类型：常量字符指针
   可空：Y
-  意思：要删除的文件全路径
- 参数.三：lpszHash
+  意思：要删除的文件路径
+ 参数.三：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要删除的文件名称
+ 参数.四：lpszHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -209,7 +224,7 @@ extern "C" BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage);
   意思：是否成功
 备注：参数不能全为空,不会删除文件
 *********************************************************************/
-extern "C" BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCSTR lpszFile = NULL, LPCSTR lpszHash = NULL);
+extern "C" BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCSTR lpszHash = NULL);
 /********************************************************************
 函数名称：Database_File_FileQuery
 函数功能：查询文件信息
@@ -238,17 +253,22 @@ extern "C" BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCSTR lpsz
   类型：常量字符指针
   可空：Y
   意思：查询的BUCK名
- 参数.六：lpszFile
+ 参数.六：lpszFilePath
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要查询的路径
+ 参数.七：lpszFileName
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要查询的名称
- 参数.七：lpszHash
+ 参数.八：lpszHash
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要查询的文件HASH
- 参数.八：lpszTableName
+ 参数.九：lpszTableName
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -258,4 +278,4 @@ extern "C" BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCSTR lpsz
   意思：是否成功
 备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszMD5不能全为空
 *********************************************************************/
-extern "C" BOOL Database_File_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL, LPCTSTR lpszBuckKey = NULL, LPCSTR lpszFile = NULL, LPCSTR lpszHash = NULL, LPCTSTR lpszTableName = NULL);
+extern "C" BOOL Database_File_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCSTR lpszHash = NULL, LPCTSTR lpszTableName = NULL);

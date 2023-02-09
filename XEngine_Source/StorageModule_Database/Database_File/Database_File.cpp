@@ -113,16 +113,21 @@ BOOL CDatabase_File::Database_File_Destory()
   类型：数据结构指针
   可空：N
   意思：要插入的数据信息
+ 参数.二：bRewrite
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：是否覆写数据
 返回值
   类型：逻辑型
   意思：是否成功
 备注：这个结构所有值都必须填充
 *********************************************************************/
-BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
+BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage, BOOL bRewrite /* = FALSE */)
 {
     Database_IsErrorOccur = FALSE;
 
-    if (NULL == pSt_DBFile)
+    if (NULL == pSt_DBManage)
     {
         Database_IsErrorOccur = TRUE;
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INSERTFILE_PARAMENT;
@@ -130,7 +135,7 @@ BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
     }
     int nListCount = 0;
     XSTORAGECORE_DBFILE **ppSt_ListFile;
-    if (Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, pSt_DBFile->st_ProtocolFile.tszFileHash))
+    if (Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, pSt_DBManage->st_ProtocolFile.tszFileHash))
     {
         BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
         return TRUE;
@@ -140,8 +145,11 @@ BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
 	TCHAR tszSQLStatement[2048];
 	memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
 
-    Database_Help_Insert(tszSQLStatement, pSt_DBFile);
-
+    if (bRewrite)
+    {
+        Database_File_FileDelete(pSt_DBManage->tszBuckKey, pSt_DBManage->st_ProtocolFile.tszFilePath, pSt_DBManage->st_ProtocolFile.tszFileName);
+    }
+    Database_Help_Insert(tszSQLStatement, pSt_DBManage);
     if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
     {
         Database_IsErrorOccur = TRUE;
@@ -158,11 +166,16 @@ BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
   类型：常量字符指针
   可空：Y
   意思：所属BUCK名称
- 参数.二：lpszFile
+ 参数.二：lpszFilePath
   In/Out：In
   类型：常量字符指针
   可空：Y
-  意思：要删除的文件全路径
+  意思：要删除的文件路径
+ 参数.三：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要删除的文件名称
  参数.三：lpszHash
   In/Out：In
   类型：常量字符指针
@@ -173,11 +186,11 @@ BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBFile)
   意思：是否成功
 备注：参数不能全为空,不会删除文件
 *********************************************************************/
-BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */)
+BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFilePath /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszHash /* = NULL */)
 {
     Database_IsErrorOccur = FALSE;
 
-    if ((NULL == lpszFile) && (NULL == lpszHash))
+    if ((NULL == lpszFileName) && (NULL == lpszHash))
     {
         Database_IsErrorOccur = TRUE;
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_DELETEFILE_PARAMENT;
@@ -185,7 +198,7 @@ BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, 
     }
     int nListCount = 0;
     XSTORAGECORE_DBFILE **ppSt_ListFile;
-    if (!Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, lpszBuckKey, lpszFile, lpszHash))
+    if (!Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, lpszBuckKey, lpszFilePath, lpszFileName, lpszHash))
     {
         return FALSE;
     }
@@ -194,7 +207,7 @@ BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, 
     {
 		TCHAR tszSQLStatement[1024];
 		memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-        Database_Help_Delete(tszSQLStatement, ppSt_ListFile[i]->tszTableName, lpszBuckKey, lpszFile, lpszHash);
+        Database_Help_Delete(tszSQLStatement, ppSt_ListFile[i]->tszTableName, lpszBuckKey, lpszFilePath, lpszFileName, lpszHash);
 
         if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
         {
@@ -234,17 +247,22 @@ BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, 
   类型：常量字符指针
   可空：Y
   意思：查询的BUCK名
- 参数.六：lpszFile
+ 参数.六：lpszFilePath
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要查询的路径
+ 参数.七：lpszFileName
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要查询的名称
- 参数.七：lpszHash
+ 参数.八：lpszHash
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：要查询的文件HASH
- 参数.八：lpszTableName
+ 参数.九：lpszTableName
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -254,11 +272,11 @@ BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, 
   意思：是否成功
 备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszHash不能全为空
 *********************************************************************/
-BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFile /* = NULL */, LPCTSTR lpszHash /* = NULL */, LPCTSTR lpszTableName /* = NULL */)
+BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFilePath /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszHash /* = NULL */, LPCTSTR lpszTableName /* = NULL */)
 {
     Database_IsErrorOccur = FALSE;
 
-    if ((NULL == lpszHash) && (NULL == lpszFile))
+    if ((NULL == lpszHash) && (NULL == lpszFileName))
     {
         Database_IsErrorOccur = TRUE;
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_PARAMENT;
@@ -310,7 +328,7 @@ BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
 			XNETHANDLE xhResult;
 			memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
 
-            Database_Help_Query(tszSQLStatement, pptszResult[0], lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
+            Database_Help_Query(tszSQLStatement, pptszResult[0], lpszBuckKey, lpszFilePath, lpszFileName, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
 			//查询文件
 			if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
 			{
@@ -361,7 +379,7 @@ BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
     }
     else
     {
-        Database_Help_Query(tszSQLStatement, lpszTableName, lpszBuckKey, NULL, lpszFile, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
+        Database_Help_Query(tszSQLStatement, lpszTableName, lpszBuckKey, lpszFilePath, lpszFileName, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
 		//查询文件
 		if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
 		{
@@ -562,7 +580,7 @@ BOOL CDatabase_File::Database_File_TimeDel()
                     //删除文件
                     int nListCount = 0;
                     XSTORAGECORE_DBFILE **ppSt_ListFile;
-                    Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, pptszResult[0]);
+                    Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, NULL, pptszResult[0]);
                     for (int i = 0; i < nListCount; i++)
                     {
                         //删除文件

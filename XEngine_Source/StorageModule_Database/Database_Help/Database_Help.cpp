@@ -80,12 +80,17 @@ BOOL CDatabase_Help::Database_Help_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBF
   类型：常量字符指针
   可空：Y
   意思：输入BUCKET名
- 参数.四：lpszFileName
+ 参数.四：lpszFilePath
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入文件路径
+ 参数.五：lpszFileName
   In/Out：In
   类型：常量字符指针
   可空：Y
   意思：输入文件名称
- 参数.五：lpszFileHash
+ 参数.六：lpszFileHash
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -95,14 +100,14 @@ BOOL CDatabase_Help::Database_Help_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBF
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CDatabase_Help::Database_Help_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */)
+BOOL CDatabase_Help::Database_Help_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFilePath /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */)
 {
 	Database_IsErrorOccur = FALSE;
 
 	TCHAR tszSQLQuery[1024];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
-	Database_Help_Packet(tszSQLQuery, lpszBuckKey, NULL, lpszFileName, lpszFileHash);
+	Database_Help_Packet(tszSQLQuery, lpszBuckKey, lpszFilePath, lpszFileName, lpszFileHash);
 	_stprintf(ptszSQLBuffer, _T("DELETE FROM `%s` %s"), lpszTableName, tszSQLQuery);
 	return TRUE;
 }

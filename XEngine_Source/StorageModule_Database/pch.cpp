@@ -35,9 +35,9 @@ extern "C" BOOL Database_Help_Insert(TCHAR * ptszSQLBuffer, XSTORAGECORE_DBFILE 
 {
 	return m_SQLHelp.Database_Help_Insert(ptszSQLBuffer, pSt_DBFile);
 }
-extern "C" BOOL Database_Help_Delete(TCHAR * ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszFileHash)
+extern "C" BOOL Database_Help_Delete(TCHAR * ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey, LPCTSTR lpszFilePath, LPCTSTR lpszFileName, LPCTSTR lpszFileHash)
 {
-	return m_SQLHelp.Database_Help_Delete(ptszSQLBuffer, lpszTableName, lpszBuckKey, lpszFileName, lpszFileHash);
+	return m_SQLHelp.Database_Help_Delete(ptszSQLBuffer, lpszTableName, lpszBuckKey, lpszFilePath, lpszFileName, lpszFileHash);
 }
 extern "C" BOOL Database_Help_Query(TCHAR * ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey, LPCTSTR lpszFilePath, LPCTSTR lpszFileName, LPCTSTR lpszFileHash, LPCTSTR lpszFileUser, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd)
 {
@@ -54,15 +54,15 @@ extern "C" BOOL Database_File_Destory()
 {
 	return m_SQLFile.Database_File_Destory();
 }
-extern "C" BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE * pSt_DBManage)
+extern "C" BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE * pSt_DBManage, BOOL bRewrite)
 {
-	return m_SQLFile.Database_File_FileInsert(pSt_DBManage);
+	return m_SQLFile.Database_File_FileInsert(pSt_DBManage, bRewrite);
 }
-extern "C" BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey, LPCTSTR lpszFile, LPCTSTR lpszHash)
+extern "C" BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey, LPCTSTR lpszFilePath, LPCTSTR lpszFileName, LPCTSTR lpszHash)
 {
-	return m_SQLFile.Database_File_FileDelete(lpszBuckKey, lpszFile, lpszHash);
+	return m_SQLFile.Database_File_FileDelete(lpszBuckKey, lpszFilePath, lpszFileName, lpszHash);
 }
-extern "C" BOOL Database_File_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszBuckKey, LPCTSTR lpszFile, LPCTSTR lpszHash, LPCTSTR lpszTableName)
+extern "C" BOOL Database_File_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart, LPCTSTR lpszTimeEnd, LPCTSTR lpszBuckKey, LPCTSTR lpszFilePath, LPCTSTR lpszFileName, LPCTSTR lpszHash, LPCTSTR lpszTableName)
 {
-	return m_SQLFile.Database_File_FileQuery(pppSt_ListFile, pInt_ListCount, lpszTimeStart, lpszTimeEnd, lpszBuckKey, lpszFile, lpszHash, lpszTableName);
+	return m_SQLFile.Database_File_FileQuery(pppSt_ListFile, pInt_ListCount, lpszTimeStart, lpszTimeEnd, lpszBuckKey, lpszFilePath, lpszFileName, lpszHash, lpszTableName);
 }

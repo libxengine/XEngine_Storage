@@ -257,7 +257,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 			}
 			SystemApi_File_CreateMutilFolder(tszTmpPath);
 		}
-		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, nPosCount, nPosStart, nPosEnd))
+		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, nPosCount, st_StorageBucket.st_PermissionFlags.bRewrite, nPosStart, nPosEnd))
 		{
 			st_HDRParam.bIsClose = TRUE;
 			st_HDRParam.nHttpCode = 404;
@@ -329,7 +329,7 @@ BOOL XEngine_Task_HttpUPLoader(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, in
 		Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullCount, FALSE, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		if (st_ServiceCfg.st_XSql.bEnable)
 		{
-			if (Database_File_FileInsert(&st_ProtocolFile))
+			if (Database_File_FileInsert(&st_ProtocolFile, st_StorageInfo.bRewrite))
 			{
 				st_HDRParam.bIsClose = TRUE;
 				st_HDRParam.nHttpCode = 200;
