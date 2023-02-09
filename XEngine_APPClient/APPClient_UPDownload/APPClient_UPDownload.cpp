@@ -68,7 +68,7 @@ void File_UPLoad()
 	//断点续传必须指定storagekey
 	nLen = 0;
 	memset(tszHdrBuffer, '\0', MAX_PATH);
-	_stprintf(tszHdrBuffer, _T("Range: bytes=5-9/10\r\nAuthorization: %s\r\nStorageKey: %s\r\n"), tszBaseBuffer, tszKeyBuffer);
+	_stprintf(tszHdrBuffer, _T("Range: bytes=5-10/10\r\nAuthorization: %s\r\nStorageKey: %s\r\n"), tszBaseBuffer, tszKeyBuffer);
 	if (!APIClient_Http_Request(_T("POST"), lpszUrl, lpszMsgBuffer2, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		printf("upload failed:%lX\n", APIClient_GetLastError());
