@@ -2,7 +2,7 @@ CC = g++ -Wall -std=c++17
 RELEASE = 0
 UNICODE = 0  
 LOADBIN = -L ../StorageModule_Database -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp -L ../StorageModule_Protocol -L ../XEngine_ThirdPart/jsoncpp                                       
-LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lXEngine_ProcFile -lXEngine_SystemApi -lHelpComponents_XLog -lHelpComponents_Packets -lRfcComponents_HttpServer -lNetHelp_APIHelp \
+LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lXEngine_ProcFile -lXEngine_SystemApi -lHelpComponents_XLog -lHelpComponents_Packets -lRfcComponents_HttpServer -lNetHelp_APIClient \
       -lStorageModule_Database -lStorageModule_Config -lStorageModule_Session -lStorageModule_APIHelp -lStorageModule_Protocol \
 	  -ljsoncpp
 LIBEX = -ldl -lpthread
