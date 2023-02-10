@@ -48,9 +48,9 @@ extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* pInt
 /************************************************************************/
 /*                        存储会话导出的函数                            */
 /************************************************************************/
-extern "C" BOOL Session_DLStroage_Init()
+extern "C" BOOL Session_DLStroage_Init(int nMaxConnect)
 {
-	return m_DLStorage.Session_DLStroage_Init();
+	return m_DLStorage.Session_DLStroage_Init(nMaxConnect);
 }
 extern "C" BOOL Session_DLStroage_Destory()
 {
@@ -84,17 +84,21 @@ extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 {
 	return m_DLStorage.Session_DLStroage_Delete(lpszClientAddr);
 }
-extern "C" BOOL Session_UPStroage_Init(BOOL bUPResume)
+extern "C" BOOL Session_DLStroage_MaxConnect(LPCTSTR lpszClientAddr)
 {
-	return m_UPStorage.Session_UPStroage_Init(bUPResume);
+	return m_DLStorage.Session_DLStroage_MaxConnect(lpszClientAddr);
+}
+extern "C" BOOL Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume)
+{
+	return m_UPStorage.Session_UPStroage_Init(nMaxConnect, bUPResume);
 }
 extern "C" BOOL Session_UPStroage_Destory()
 {
 	return m_UPStorage.Session_UPStroage_Destory();
 }
-extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart, int nPostEnd)
+extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, BOOL bRewrite, int nPosStart, int nPostEnd)
 {
-	return m_UPStorage.Session_UPStroage_Insert(lpszClientAddr, lpszBuckKey, lpszFileDir, nFileSize, nLeftCount, nPosStart, nPostEnd);
+	return m_UPStorage.Session_UPStroage_Insert(lpszClientAddr, lpszBuckKey, lpszFileDir, nFileSize, bRewrite, nPosStart, nPostEnd);
 }
 extern "C" BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO * pSt_StorageInfo)
 {
@@ -119,4 +123,8 @@ extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 extern "C" BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr)
 {
 	return m_UPStorage.Session_UPStroage_Close(lpszClientAddr);
+}
+extern "C" BOOL Session_UPStroage_MaxConnect(LPCTSTR lpszClientAddr)
+{
+	return m_UPStorage.Session_UPStroage_MaxConnect(lpszClientAddr);
 }

@@ -23,15 +23,26 @@ CSession_DLStroage::~CSession_DLStroage()
 /********************************************************************
 函数名称：Session_DLStroage_Init
 函数功能：初始化下载会话管理器
+ 参数.一：nMaxConnect
+  In/Out：
+  类型：
+  可空：
+  意思：
+ 参数.二：
+  In/Out：
+  类型：
+  可空：
+  意思：
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_DLStroage::Session_DLStroage_Init()
+BOOL CSession_DLStroage::Session_DLStroage_Init(int nMaxConnect)
 {
 	Session_IsErrorOccur = FALSE;
 
+	m_nMaxConnect = nMaxConnect;
 	return TRUE;
 }
 /********************************************************************
@@ -431,5 +442,54 @@ BOOL CSession_DLStroage::Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 		stl_MapStroage.erase(stl_MapIterator);
 	}
 	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_DLStroage_MaxConnect
+函数功能：判断一个地址是否超过连接数限制
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_DLStroage::Session_DLStroage_MaxConnect(LPCTSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = FALSE;
+
+	int nExistNumber = 0;
+	st_Locker.lock_shared();
+	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.begin();
+	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
+	{
+		TCHAR tszIPSource[128];
+		TCHAR tszIPDest[128];
+
+		memset(tszIPSource, '\0', sizeof(tszIPSource));
+		memset(tszIPDest, '\0', sizeof(tszIPDest));
+
+		_tcscpy(tszIPSource, stl_MapIterator->first.c_str());
+		_tcscpy(tszIPDest, lpszClientAddr);
+
+		BaseLib_OperatorIPAddr_SegAddr(tszIPSource);
+		BaseLib_OperatorIPAddr_SegAddr(tszIPDest);
+
+		if (0 == _tcscmp(tszIPSource, tszIPDest))
+		{
+			nExistNumber++;
+		}
+	}
+	st_Locker.unlock_shared();
+
+	if (nExistNumber >= m_nMaxConnect)
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_MAXCONNECT;
+		return FALSE;
+	}
 	return TRUE;
 }

@@ -23,7 +23,12 @@ CSession_UPStroage::~CSession_UPStroage()
 /********************************************************************
 函数名称：Session_UPStroage_Init
 函数功能：初始化上传会话管理器
- 参数.一：bUPResume
+ 参数.一：nMaxConnect
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入连接数限制
+ 参数.二：bUPResume
   In/Out：In
   类型：逻辑型
   可空：Y
@@ -33,11 +38,12 @@ CSession_UPStroage::~CSession_UPStroage()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Init(BOOL bUPResume)
+BOOL CSession_UPStroage::Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume /* = FALSE */)
 {
 	Session_IsErrorOccur = FALSE;
 
 	m_bResume = bUPResume;
+	m_nMaxConnect = nMaxConnect;
 	return TRUE;
 }
 /********************************************************************
@@ -81,11 +87,11 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.五：nLeftCount
+ 参数.五：bRewrite
   In/Out：In
   类型：整数型
   可空：N
-  意思：输入需要写入的大小
+  意思：是否允许覆写
  参数.六：nPosStart
   In/Out：In
   类型：整数型
@@ -101,7 +107,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, __int64x nLeftCount, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
+BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, BOOL bRewrite, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
 {
 	Session_IsErrorOccur = FALSE;
 
@@ -128,7 +134,6 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	//填充下载信息
 	st_Client.st_StorageInfo.ullPosStart = nPosStart;
 	st_Client.st_StorageInfo.ullPosEnd = nPostEnd;
-	st_Client.st_StorageInfo.ullRWCount = nLeftCount;
 	st_Client.st_StorageInfo.ullCount = nFileSize;
 	_tcscpy(st_Client.st_StorageInfo.tszBuckKey, lpszBuckKey);
 	_tcscpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
@@ -140,13 +145,27 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 		memset(&st_FStat, '\0', sizeof(struct _tstat64));
 		_tstat64(st_Client.st_StorageInfo.tszFileDir, &st_FStat);
 		st_Client.st_StorageInfo.ullRWLen = st_FStat.st_size;
-
+		//追加打开
 		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("rb+"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
 			Session_IsErrorOccur = TRUE;
 			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 			return FALSE;
+		}
+		//是不是覆写?
+		if (st_Client.st_StorageInfo.ullRWLen > nPosStart)
+		{
+			//是否允许覆写
+			if (!bRewrite)
+			{
+				Session_IsErrorOccur = TRUE;
+				Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_REWRITE;
+				fclose(st_Client.st_StorageInfo.pSt_File);
+				return FALSE;
+			}
+			st_Client.st_StorageInfo.bRewrite = TRUE;
+			st_Client.st_StorageInfo.ullRWLen -= (nPostEnd - nPosStart);
 		}
 		fseek(st_Client.st_StorageInfo.pSt_File, nPosStart, SEEK_SET);
 	}
@@ -412,5 +431,54 @@ BOOL CSession_UPStroage::Session_UPStroage_Close(LPCTSTR lpszClientAddr)
 		}
 	}
 	st_Locker.unlock_shared();
+	return TRUE;
+}
+/********************************************************************
+函数名称：Session_UPStroage_MaxConnect
+函数功能：判断一个地址是否超过连接数限制
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+BOOL CSession_UPStroage::Session_UPStroage_MaxConnect(LPCTSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = FALSE;
+
+	int nExistNumber = 0;
+	st_Locker.lock_shared();
+	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.begin();
+	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
+	{
+		TCHAR tszIPSource[128];
+		TCHAR tszIPDest[128];
+
+		memset(tszIPSource, '\0', sizeof(tszIPSource));
+		memset(tszIPDest, '\0', sizeof(tszIPDest));
+
+		_tcscpy(tszIPSource, stl_MapIterator->first.c_str());
+		_tcscpy(tszIPDest, lpszClientAddr);
+
+		BaseLib_OperatorIPAddr_SegAddr(tszIPSource);
+		BaseLib_OperatorIPAddr_SegAddr(tszIPDest);
+
+		if (0 == _tcscmp(tszIPSource, tszIPDest))
+		{
+			nExistNumber++;
+		}
+	}
+	st_Locker.unlock_shared();
+
+	if (nExistNumber >= m_nMaxConnect)
+	{
+		Session_IsErrorOccur = TRUE;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_MAXCONNECT;
+		return FALSE;
+	}
 	return TRUE;
 }

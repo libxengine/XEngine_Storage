@@ -137,7 +137,7 @@ int main(int argc, char** argv)
 		memset(tszAddr, '\0', sizeof(tszAddr));
 
 		_stprintf(tszAddr, _T("Http://127.0.0.1:%d/Api/Manage/Config"), st_ServiceCfg.nCenterPort);
-		APIHelp_HttpRequest_Custom(_T("POST"), tszAddr);
+		APIClient_Http_Request(_T("POST"), tszAddr);
 		return 0;
 	}
 	st_XLogConfig.XLog_MaxBackupFile = st_ServiceCfg.st_XLog.nMaxCount;
@@ -234,12 +234,12 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP下载服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
 
-		if (!Session_DLStroage_Init())
+		if (!Session_DLStroage_Init(st_ServiceCfg.st_XLimit.nMaxDNConnect))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动下载会话服务失败，错误：%lX"), Session_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载限速模式:%s"), st_ServiceCfg.st_XLimit.bLimitMode ? "开" : "关");
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动下载会话服务成功,下载限速模式:%s,连接数限制;%d"), st_ServiceCfg.st_XLimit.bLimitMode ? "开" : "关", st_ServiceCfg.st_XLimit.nMaxDNConnect);
 
 		if (st_ServiceCfg.st_XCert.bDLEnable)
 		{
@@ -294,12 +294,12 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP上传服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageUPThread);
 
-		if (!Session_UPStroage_Init(st_ServiceCfg.st_XStorage.bResumable))
+		if (!Session_UPStroage_Init(st_ServiceCfg.st_XLimit.nMaxUPConnect, st_ServiceCfg.st_XStorage.bResumable))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，启动上传会话服务失败，错误：%lX"), Session_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传会话服务成功"));
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，启动上传会话服务成功,连接数限制;%d"), st_ServiceCfg.st_XLimit.nMaxUPConnect);
 
 		if (st_ServiceCfg.st_XCert.bUPEnable)
 		{

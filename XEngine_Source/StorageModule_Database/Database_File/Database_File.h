@@ -19,9 +19,9 @@ public:
 public:
     BOOL Database_File_Init(DATABASE_MYSQL_CONNECTINFO* pSt_DBConnector, int nTimeMonth = 1);
     BOOL Database_File_Destory();
-    BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage);
-    BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFile = NULL, LPCTSTR lpszHash = NULL);
-    BOOL Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFile = NULL, LPCTSTR lpszHash = NULL, LPCTSTR lpszTableName = NULL);
+    BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage, BOOL bRewrite = FALSE);
+    BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszHash = NULL);
+    BOOL Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszHash = NULL, LPCTSTR lpszTableName = NULL);
 protected:
     BOOL Database_File_CreateTable();
     BOOL Database_File_TimeMonth(LPCTSTR lpszStartTime, int* pInt_Month);
@@ -31,7 +31,7 @@ protected:
 private:
     BOOL bIsRun;
     int m_nTimeMonth;
-    XHDATA xhDBSQL;
+    XNETHANDLE xhDBSQL;
 private:
     shared_ptr<std::thread> pSTDThread;
 };

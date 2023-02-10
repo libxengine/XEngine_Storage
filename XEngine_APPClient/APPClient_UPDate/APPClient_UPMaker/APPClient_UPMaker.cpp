@@ -6,7 +6,7 @@
 #pragma comment(lib,"../../../XEngine_Source/Debug/jsoncpp")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIHelp.lib")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient.lib")
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,8 +24,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIHelp_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
 
 typedef struct 
 {
@@ -203,7 +203,7 @@ int main(int argc, char** argv)
 	}
 	SystemApi_File_SaveBuffToFile(lpszLocalFile, ptszLocalBuffer, nLocalLen);
 	//如果服务器支持,可以直接把更新数据提交到服务器
-	if (!APIHelp_HttpRequest_Custom(_T("POST"), lpszPostFile, ptszRemoteBuffer, NULL, NULL, &nRemoteLen))
+	if (!APIClient_Http_Request(_T("POST"), lpszPostFile, ptszRemoteBuffer, NULL, NULL, &nRemoteLen))
 	{
 		printf("erron\n");
 	}

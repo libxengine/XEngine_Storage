@@ -30,6 +30,8 @@ feature list:
 13. support second pass and Resumable   
 14. support upload and download Redirect  
 15. support full speed and limit speed
+16. permission control
+17. upload file rewrite
 
 ## install
 
@@ -94,12 +96,20 @@ Download File: curl -X GET "http://192.168.1.8:5101/storagekey1/hello.txt"
 ## now task
 P2P WAN file search and download support  
 
+## Installation Instructions
+#### Install
+Modify the configuration file to what you need, and then run the service directly  
+Advanced functions require the support of MYSQL. After installing MYSQL, import XEngine_SQLFile/XStorage_Create.sql and then import XEngine_Storage.sql.
+#### upgrade
+If it is an upgrade installation, after downloading the new version and modifying the configuration file, it can be run directly  
+If you use a database, you need to open the database matching fields and tables are consistent
+
 ## other problems   
 You can refer to the document under the docment directory. It contains API protocol and service description.  
 When the jsoncpp module is used, the compilation runtime library selection must be consistent  
 
 ## Test Service
-Address:app.xyry.org or 159.75.200.173  
+Address:app.xyry.org  
 Port:HTTP Center Port 5100,Download 5101,UPLoad 5102  
 
 ## Participate in contribution

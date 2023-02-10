@@ -1,3 +1,23 @@
+XEngine_Storage V3.10.0.1001
+
+增加:上传文件覆写功能
+增加:上传文件可以对不存在的文件夹设置是否创建的权限标记了
+增加:下载和上传连接限制功能
+优化:Session_UPStroage_Insert的多余参数
+修改:匹配XEngineV7.48版本
+修正:storagehelp的获取最后错误码不正确的问题
+修正:广播查询文件不正确的问题
+修正:没有响应消息当存储的bucket名称不存在时
+
+added:rewrite file choice support
+added:upload file can be set permission when path not exist
+added:download and upload connect limit
+improved:Session_UPStroage_Insert function parament
+modify:match xengine v7.48
+fixed:storeagehelp get last error is incorrent
+fixed:broadcast query file is incorrent
+fixed:does not reply http message when storeage key notfound
+======================================================================================
 XEngine_Storage V3.9.1.1001
 
 修改:p2p广播的每个请求都可以被区分了

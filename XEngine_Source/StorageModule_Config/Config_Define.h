@@ -84,6 +84,8 @@ typedef struct tag_XEngine_ServerConfig
 		BOOL bLimitMode;
         __int64x nMaxUPLoader;
         __int64x nMaxDNLoader;
+        int nMaxUPConnect;
+        int nMaxDNConnect;
 	}st_XLimit;
     struct  
     {
@@ -114,6 +116,11 @@ typedef struct
     TCHAR tszBuckSize[64];
     int nLevel;
     BOOL bEnable;
+    struct 
+    {
+        bool bCreateDir;
+        bool bRewrite;
+    }st_PermissionFlags;
 }XENGINE_STORAGEBUCKET;
 typedef struct
 {
