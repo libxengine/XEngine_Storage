@@ -26,6 +26,7 @@
 #include <list>
 #include <memory>
 #include <thread>
+#include <algorithm>
 #include <inttypes.h>
 #include <shared_mutex>
 #include <unordered_map>

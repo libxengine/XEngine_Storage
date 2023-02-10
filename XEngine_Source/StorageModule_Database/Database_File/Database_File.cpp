@@ -140,17 +140,32 @@ BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage,
         BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
         return TRUE;
     }
-    BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
-
-	TCHAR tszSQLStatement[2048];
-	memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
+	TCHAR tszSQLQuery[2048];
+	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
     if (bRewrite)
     {
         Database_File_FileDelete(pSt_DBManage->tszBuckKey, pSt_DBManage->st_ProtocolFile.tszFilePath, pSt_DBManage->st_ProtocolFile.tszFileName);
     }
-    Database_Help_Insert(tszSQLStatement, pSt_DBManage);
-    if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
+    Database_Help_Insert(tszSQLQuery, pSt_DBManage);
+
+	int nType = 0;
+    std::string m_StrSQL = tszSQLQuery;
+    BaseLib_OperatorString_GetPath(pSt_DBManage->st_ProtocolFile.tszFilePath, &nType);
+    if (1 == nType)
+    {
+		std::string m_StrSource = "\\";
+		std::string m_StrDest = "\\\\";
+		
+		size_t nStartPos = 0;
+		while ((nStartPos = m_StrSQL.find(m_StrSource, nStartPos)) != std::string::npos)
+		{
+			m_StrSQL.replace(nStartPos, m_StrSource.length(), m_StrDest);
+			nStartPos += m_StrDest.length();
+		}
+    }
+    
+    if (!DataBase_MySQL_Execute(xhDBSQL, m_StrSQL.c_str()))
     {
         Database_IsErrorOccur = TRUE;
         Database_dwErrorCode = DataBase_GetLastError();
