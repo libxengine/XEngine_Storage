@@ -54,8 +54,8 @@ using namespace std;
 //    Purpose:     公有头文件
 //    History:
 *********************************************************************/
-extern BOOL APIHelp_IsErrorOccur;
-extern DWORD APIHelp_dwErrorCode;
+extern bool APIHelp_IsErrorOccur;
+extern XLONG APIHelp_dwErrorCode;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")

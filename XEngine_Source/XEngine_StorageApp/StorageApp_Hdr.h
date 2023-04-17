@@ -6,11 +6,12 @@
 #include <signal.h>
 #include <errno.h>
 #include <thread>
+#include <memory>
 #include <list>
 #include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 #include <windows.h>
 #include <tchar.h>
 #include <io.h>
@@ -66,7 +67,7 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPDOWNLOAD 2
 #define STORAGE_NETTYPE_HTTPCENTER 3
 
-extern BOOL bIsRun;
+extern bool bIsRun;
 extern XHANDLE xhLog;
 
 extern XHANDLE xhHBDownload;
@@ -89,7 +90,7 @@ extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
 
-extern SOCKET hBroadSocket;
+extern XSOCKET hBroadSocket;
 extern shared_ptr<std::thread> pSTDThread;
 
 extern XENGINE_SERVERCONFIG st_ServiceCfg;

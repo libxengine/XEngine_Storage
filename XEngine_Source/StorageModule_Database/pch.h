@@ -52,8 +52,8 @@ using namespace std;
 //    Purpose:     公用头文件
 //    History:
 *********************************************************************/
-extern BOOL Database_IsErrorOccur;
-extern DWORD Database_dwErrorCode;
+extern bool Database_IsErrorOccur;
+extern XLONG Database_dwErrorCode;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")

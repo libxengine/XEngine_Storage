@@ -38,11 +38,11 @@ CDatabase_Help::~CDatabase_Help()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CDatabase_Help::Database_Help_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBFILE* pSt_DBFile)
+bool CDatabase_Help::Database_Help_Insert(XCHAR* ptszSQLBuffer, XSTORAGECORE_DBFILE* pSt_DBFile)
 {
-	Database_IsErrorOccur = FALSE;
+	Database_IsErrorOccur = false;
 
-	TCHAR tszTableName[64];
+	XCHAR tszTableName[64];
 	XENGINE_LIBTIMER st_LibTimer;
 
 	memset(tszTableName, '\0', sizeof(tszTableName));
@@ -50,16 +50,16 @@ BOOL CDatabase_Help::Database_Help_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBF
 	//获得插入日期表
 	BaseLib_OperatorTime_GetSysTime(&st_LibTimer);
 
-	if (_tcslen(pSt_DBFile->tszTableName) > 0)
+	if (_tcsxlen(pSt_DBFile->tszTableName) > 0)
 	{
-		_tcscpy(tszTableName, pSt_DBFile->tszTableName);
+		_tcsxcpy(tszTableName, pSt_DBFile->tszTableName);
 	}
 	else
 	{
-		_stprintf(tszTableName, _T("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
+		_xstprintf(tszTableName, _X("%04d%02d"), st_LibTimer.wYear, st_LibTimer.wMonth);
 	}
 
-	_stprintf(ptszSQLBuffer, _T("INSERT INTO `%s` (BuckKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,'%04d-%02d-%02d %02d:%02d:%02d')"), tszTableName, pSt_DBFile->tszBuckKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize, st_LibTimer.wYear, st_LibTimer.wMonth, st_LibTimer.wDay, st_LibTimer.wHour, st_LibTimer.wMinute, st_LibTimer.wSecond);
+	_xstprintf(ptszSQLBuffer, _X("INSERT INTO `%s` (BuckKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,'%04d-%02d-%02d %02d:%02d:%02d')"), tszTableName, pSt_DBFile->tszBuckKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize, st_LibTimer.wYear, st_LibTimer.wMonth, st_LibTimer.wDay, st_LibTimer.wHour, st_LibTimer.wMinute, st_LibTimer.wSecond);
 	return true;
 }
 /********************************************************************
@@ -100,15 +100,15 @@ BOOL CDatabase_Help::Database_Help_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBF
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CDatabase_Help::Database_Help_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFilePath /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */)
+bool CDatabase_Help::Database_Help_Delete(XCHAR* ptszSQLBuffer, LPCXSTR lpszTableName, LPCXSTR lpszBuckKey /* = NULL */, LPCXSTR lpszFilePath /* = NULL */, LPCXSTR lpszFileName /* = NULL */, LPCXSTR lpszFileHash /* = NULL */)
 {
-	Database_IsErrorOccur = FALSE;
+	Database_IsErrorOccur = false;
 
-	TCHAR tszSQLQuery[1024];
+	XCHAR tszSQLQuery[1024];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
 	Database_Help_Packet(tszSQLQuery, lpszBuckKey, lpszFilePath, lpszFileName, lpszFileHash);
-	_stprintf(ptszSQLBuffer, _T("DELETE FROM `%s` %s"), lpszTableName, tszSQLQuery);
+	_xstprintf(ptszSQLBuffer, _X("DELETE FROM `%s` %s"), lpszTableName, tszSQLQuery);
 	return true;
 }
 /********************************************************************
@@ -164,16 +164,16 @@ BOOL CDatabase_Help::Database_Help_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTabl
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CDatabase_Help::Database_Help_Query(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFilePath /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */, LPCTSTR lpszFileUser /* = NULL */, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */)
+bool CDatabase_Help::Database_Help_Query(XCHAR* ptszSQLBuffer, LPCXSTR lpszTableName, LPCXSTR lpszBuckKey /* = NULL */, LPCXSTR lpszFilePath /* = NULL */, LPCXSTR lpszFileName /* = NULL */, LPCXSTR lpszFileHash /* = NULL */, LPCXSTR lpszFileUser /* = NULL */, LPCXSTR lpszTimeStart /* = NULL */, LPCXSTR lpszTimeEnd /* = NULL */)
 {
-	Database_IsErrorOccur = FALSE;
+	Database_IsErrorOccur = false;
 
-	TCHAR tszSQLQuery[1024];
+	XCHAR tszSQLQuery[1024];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
-	_stprintf(ptszSQLBuffer, _T("SELECT * FROM `%s`"), lpszTableName);
+	_xstprintf(ptszSQLBuffer, _X("SELECT * FROM `%s`"), lpszTableName);
 	Database_Help_Packet(tszSQLQuery, lpszBuckKey, lpszFilePath, lpszFileName, lpszFileHash, lpszFileUser, lpszTimeStart, lpszTimeEnd);
-	_tcscat(ptszSQLBuffer, tszSQLQuery);
+	_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -227,124 +227,124 @@ BOOL CDatabase_Help::Database_Help_Query(TCHAR* ptszSQLBuffer, LPCTSTR lpszTable
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CDatabase_Help::Database_Help_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuckKey /* = NULL */, LPCTSTR lpszFilePath /* = NULL */, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */, LPCTSTR lpszFileUser /* = NULL */, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */)
+bool CDatabase_Help::Database_Help_Packet(XCHAR* ptszSQLBuffer, LPCXSTR lpszBuckKey /* = NULL */, LPCXSTR lpszFilePath /* = NULL */, LPCXSTR lpszFileName /* = NULL */, LPCXSTR lpszFileHash /* = NULL */, LPCXSTR lpszFileUser /* = NULL */, LPCXSTR lpszTimeStart /* = NULL */, LPCXSTR lpszTimeEnd /* = NULL */)
 {
-	Database_IsErrorOccur = FALSE;
+	Database_IsErrorOccur = false;
 
-	BOOL bInit = FALSE;
-	TCHAR tszSQLQuery[MAX_PATH];
+	bool bInit = false;
+	XCHAR tszSQLQuery[MAX_PATH];
 	memset(tszSQLQuery, '\0', MAX_PATH);
 	//文件所属BUCKET
 	if (NULL != lpszBuckKey)
 	{
-		if (_tcslen(lpszBuckKey) > 0)
+		if (_tcsxlen(lpszBuckKey) > 0)
 		{
 			if (bInit)
 			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
+				_tcsxcat(ptszSQLBuffer, _X(" AND "));
 			}
 			else
 			{
-				_tcscat(ptszSQLBuffer, _T(" WHERE "));
+				_tcsxcat(ptszSQLBuffer, _X(" WHERE "));
 			}
 			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("BuckKey = '%s'"), lpszBuckKey);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			_xstprintf(tszSQLQuery, _X("BuckKey = '%s'"), lpszBuckKey);
+			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
 		}
 	}
 	//文件路径
 	if (NULL != lpszFilePath)
 	{
-		if (_tcslen(lpszFilePath) > 0)
+		if (_tcsxlen(lpszFilePath) > 0)
 		{
 			if (bInit)
 			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
+				_tcsxcat(ptszSQLBuffer, _X(" AND "));
 			}
 			else
 			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
+				_tcsxcat(ptszSQLBuffer, _X("WHERE "));
 			}
 			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("FilePath = '%s'"), lpszFilePath);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			_xstprintf(tszSQLQuery, _X("FilePath = '%s'"), lpszFilePath);
+			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
 		}
 	}
 	//文件名称
 	if (NULL != lpszFileName)
 	{
-		if (_tcslen(lpszFileName) > 0)
+		if (_tcsxlen(lpszFileName) > 0)
 		{
 			if (bInit)
 			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
+				_tcsxcat(ptszSQLBuffer, _X(" AND "));
 			}
 			else
 			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
+				_tcsxcat(ptszSQLBuffer, _X("WHERE "));
 			}
 			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("FileName = '%s'"), lpszFileName);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			_xstprintf(tszSQLQuery, _X("FileName = '%s'"), lpszFileName);
+			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
 		}
 	}
 	//文件HASH
 	if (NULL != lpszFileHash)
 	{
-		if (_tcslen(lpszFileHash) > 0)
+		if (_tcsxlen(lpszFileHash) > 0)
 		{
 			if (bInit)
 			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
+				_tcsxcat(ptszSQLBuffer, _X(" AND "));
 			}
 			else
 			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
+				_tcsxcat(ptszSQLBuffer, _X("WHERE "));
 			}
 			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("FileHash = '%s'"), lpszFileHash);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			_xstprintf(tszSQLQuery, _X("FileHash = '%s'"), lpszFileHash);
+			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
 		}
 	}
 	//文件所属用户
 	if (NULL != lpszFileUser)
 	{
-		if (_tcslen(lpszFileUser) > 0)
+		if (_tcsxlen(lpszFileUser) > 0)
 		{
 			if (bInit)
 			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
+				_tcsxcat(ptszSQLBuffer, _X(" AND "));
 			}
 			else
 			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
+				_tcsxcat(ptszSQLBuffer, _X("WHERE "));
 			}
 			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("FileUser = '%s'"), lpszFileUser);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			_xstprintf(tszSQLQuery, _X("FileUser = '%s'"), lpszFileUser);
+			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
 		}
 	}
 	//时间范围
 	if ((NULL != lpszTimeStart) && (NULL != lpszTimeEnd))
 	{
-		if ((_tcslen(lpszTimeStart) > 0) && (_tcslen(lpszTimeEnd) > 0))
+		if ((_tcsxlen(lpszTimeStart) > 0) && (_tcsxlen(lpszTimeEnd) > 0))
 		{
 			if (bInit)
 			{
-				_tcscat(ptszSQLBuffer, _T(" AND "));
+				_tcsxcat(ptszSQLBuffer, _X(" AND "));
 			}
 			else
 			{
-				_tcscat(ptszSQLBuffer, _T("WHERE "));
+				_tcsxcat(ptszSQLBuffer, _X("WHERE "));
 			}
 			memset(tszSQLQuery, '\0', MAX_PATH);
-			_stprintf(tszSQLQuery, _T("BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
-			_tcscat(ptszSQLBuffer, tszSQLQuery);
+			_xstprintf(tszSQLQuery, _X("BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
+			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
 		}
 	}

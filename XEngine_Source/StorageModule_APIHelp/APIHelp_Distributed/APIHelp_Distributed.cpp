@@ -48,22 +48,22 @@ CAPIHelp_Distributed::~CAPIHelp_Distributed()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr, int nMode)
+bool CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, XCHAR* ptszAddr, int nMode)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
 	if (!pStl_ListAddr->empty())
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
-		return FALSE;
+		return false;
 	}
 
-	BOOL bFound = FALSE;
+	bool bFound = false;
 	if (1 == nMode)
 	{
 		XNETHANDLE xhToken = 0;
-		BaseLib_OperatorHandle_Create(&xhToken, 0, pStl_ListAddr->size(), FALSE);
+		BaseLib_OperatorHandle_Create(&xhToken, 0, pStl_ListAddr->size(), false);
 		if (xhToken == pStl_ListAddr->size())
 		{
 			xhToken--;
@@ -74,7 +74,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 			if (xhToken == i)
 			{
 				bFound = true;
-				_tcscpy(ptszAddr, stl_ListIterator->c_str());
+				_tcsxcpy(ptszAddr, stl_ListIterator->c_str());
 				break;
 			}
 		}
@@ -91,7 +91,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 			if (nRandomFront == i)
 			{
 				bFound = true;
-				_tcscpy(ptszAddr, stl_ListIterator->c_str());
+				_tcsxcpy(ptszAddr, stl_ListIterator->c_str());
 				break;
 			}
 		}
@@ -108,7 +108,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 			if (nRandomBack == i)
 			{
 				bFound = true;
-				_tcscpy(ptszAddr, stl_ListIterator->c_str());
+				_tcsxcpy(ptszAddr, stl_ListIterator->c_str());
 				break;
 			}
 		}
@@ -118,7 +118,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
-		return FALSE;
+		return false;
 	}
 	return true;
 }
@@ -145,15 +145,15 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>* pStl_ListParse, XSTORAGECORE_DBFILE*** pppSt_ListPacket, int* pInt_ListCount)
+bool CAPIHelp_Distributed::APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>* pStl_ListParse, XSTORAGECORE_DBFILE*** pppSt_ListPacket, int* pInt_ListCount)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
 	if ((NULL == pStl_ListParse) || (NULL == pppSt_ListPacket))
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
-		return FALSE;
+		return false;
 	}
 
 	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ListPacket, pStl_ListParse->size(), sizeof(XSTORAGECORE_DBFILE));
@@ -188,22 +188,22 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket)
+bool CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
 	if ((NULL == lpszMsgBuffer) || (NULL == pSt_StorageBucket))
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
-		return FALSE;
+		return false;
 	}
-	BOOL bFound = FALSE;
-	TCHAR tszKeyStr[128];
+	bool bFound = false;
+	XCHAR tszKeyStr[128];
 	memset(tszKeyStr, '\0', sizeof(tszKeyStr));
 	//获得key
 	int i = 1;
-	int nLen = _tcslen(lpszMsgBuffer);
+	int nLen = _tcsxlen(lpszMsgBuffer);
 	for (; i < nLen; i++)
 	{
 		if ('/' == lpszMsgBuffer[i])
@@ -217,13 +217,13 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
-		return FALSE;
+		return false;
 	}
-	bFound = FALSE;
+	bFound = false;
 	//获得对应存储
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
-		if (0 == _tcsncmp(tszKeyStr, stl_ListIterator->tszBuckKey, _tcslen(tszKeyStr)))
+		if (0 == _tcsxncmp(tszKeyStr, stl_ListIterator->tszBuckKey, _tcsxlen(tszKeyStr)))
 		{
 			bFound = true;
 			*pSt_StorageBucket = *stl_ListIterator;
@@ -234,9 +234,9 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
-		return FALSE;
+		return false;
 	}
-	_tcscpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + i);
+	_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + i);
 	return true;
 }
 /********************************************************************
@@ -262,24 +262,24 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, 
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode)
+bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
 	if ((NULL == pStl_ListBucket) || (NULL == pSt_StorageBucket))
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	if (4 == nMode)
 	{
-		BOOL bFound = FALSE;
+		bool bFound = false;
 		//上传专用,由用户指定
 		list<XENGINE_STORAGEBUCKET>::const_iterator stl_ListIterator = pStl_ListBucket->begin();
 		for (; stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 		{
-			if (0 == _tcsnicmp(pSt_StorageBucket->tszBuckKey, stl_ListIterator->tszBuckKey, _tcslen(pSt_StorageBucket->tszBuckKey)))
+			if (0 == _tcsxnicmp(pSt_StorageBucket->tszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(pSt_StorageBucket->tszBuckKey)))
 			{
 				bFound = true;
 				*pSt_StorageBucket = *stl_ListIterator;
@@ -290,7 +290,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 		{
 			APIHelp_IsErrorOccur = true;
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
-			return FALSE;
+			return false;
 		}
 	}
 	else
@@ -320,31 +320,31 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 				{
 					int nListCount = 0;
 					__int64u nDirCount = 0;   //当前目录大小
-					CHAR** ppListFile;
+					XCHAR** ppListFile;
 					//处理路径是否有通配符
-					TCHAR tszFilePath[MAX_PATH];
+					XCHAR tszFilePath[MAX_PATH];
 					memset(tszFilePath, '\0', MAX_PATH);
 
-					_tcscpy(tszFilePath, pSt_StorageBucket->tszFilePath);
-					if (tszFilePath[_tcslen(tszFilePath) - 1] != '*')
+					_tcsxcpy(tszFilePath, pSt_StorageBucket->tszFilePath);
+					if (tszFilePath[_tcsxlen(tszFilePath) - 1] != '*')
 					{
 						int nPathType = 0;
 						BaseLib_OperatorString_GetPath(tszFilePath, &nPathType);
 						//判断是绝对路径还是相对路径
 						if (1 == nPathType)
 						{
-							_tcscat(tszFilePath, _T("\\*"));
+							_tcsxcat(tszFilePath, _X("\\*"));
 						}
 						else if (2 == nPathType)
 						{
-							_tcscat(tszFilePath, _T("/*"));
+							_tcsxcat(tszFilePath, _X("/*"));
 						}
 					}
 					SystemApi_File_EnumFile(tszFilePath, &ppListFile, &nListCount, NULL, NULL, true, 1);
 					for (int j = 0; j < nListCount; j++)
 					{
-						struct _tstat64 st_FStat;
-						_tstat64(ppListFile[j], &st_FStat);
+						struct _xtstat st_FStat;
+						_xtstat(ppListFile[j], &st_FStat);
 						nDirCount += st_FStat.st_size;
 					}
 					BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
@@ -362,14 +362,14 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 		{
 			APIHelp_IsErrorOccur = true;
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
-			return FALSE;
+			return false;
 		}
 
-		BOOL bFound = FALSE;
+		bool bFound = false;
 		if (1 == nMode)
 		{
 			XNETHANDLE xhToken = 0;
-			BaseLib_OperatorHandle_Create(&xhToken, 0, stl_BuckSelect.size(), FALSE);
+			BaseLib_OperatorHandle_Create(&xhToken, 0, stl_BuckSelect.size(), false);
 			if (xhToken == stl_BuckSelect.size())
 			{
 				xhToken--;
@@ -424,7 +424,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 		{
 			APIHelp_IsErrorOccur = true;
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -453,22 +453,22 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCTSTR lpszBuckKey, TCHAR* ptszFilePath)
+bool CAPIHelp_Distributed::APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCXSTR lpszBuckKey, XCHAR* ptszFilePath)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
 	if ((NULL == pStl_ListBucket) || (NULL == lpszBuckKey) || (NULL == ptszFilePath))
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
-		return FALSE;
+		return false;
 	}
-	BOOL bFound = FALSE;
+	bool bFound = false;
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
-		if (0 == _tcsncmp(lpszBuckKey, stl_ListIterator->tszBuckKey, _tcslen(lpszBuckKey)))
+		if (0 == _tcsxncmp(lpszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(lpszBuckKey)))
 		{
-			_tcscpy(ptszFilePath, stl_ListIterator->tszFilePath);
+			_tcsxcpy(ptszFilePath, stl_ListIterator->tszFilePath);
 			bFound = true;
 			break;
 		}
@@ -477,7 +477,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBU
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
-		return FALSE;
+		return false;
 	}
 	return true;
 }
@@ -507,9 +507,9 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBU
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileListParse(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE *pSt_DBFile)
+bool CAPIHelp_Distributed::APIHelp_Distributed_FileListParse(LPCXSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE *pSt_DBFile)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
 	Json::Value st_JsonRoot;
 	JSONCPP_STRING st_JsonError;
@@ -520,7 +520,7 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileListParse(LPCTSTR lpszMsgBuff
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARSE;
-		return FALSE;
+		return false;
 	}
 	//查找文件列表,一般只有一个
 	int nCount = st_JsonRoot["Count"].asInt();
@@ -529,13 +529,13 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileListParse(LPCTSTR lpszMsgBuff
 	for (int i = 0; i < nCount; i++)
 	{
 		pSt_DBFile->st_ProtocolFile.nFileSize = st_JsonArray[i]["nFileSize"].asInt64();
-		_tcscpy(pSt_DBFile->tszTableName, st_JsonArray[i]["tszTableName"].asCString());
-		_tcscpy(pSt_DBFile->tszBuckKey, st_JsonArray[i]["tszBuckKey"].asCString());
-		_tcscpy(pSt_DBFile->st_ProtocolFile.tszFileUser, st_JsonArray[i]["tszFileUser"].asCString());
-		_tcscpy(pSt_DBFile->st_ProtocolFile.tszFileHash, st_JsonArray[i]["tszFileHash"].asCString());
-		_tcscpy(pSt_DBFile->st_ProtocolFile.tszFileName, st_JsonArray[i]["tszFileName"].asCString());
-		_tcscpy(pSt_DBFile->st_ProtocolFile.tszFilePath, st_JsonArray[i]["tszFilePath"].asCString());
-		_tcscpy(pSt_DBFile->st_ProtocolFile.tszFileTime, st_JsonArray[i]["tszFileTime"].asCString());
+		_tcsxcpy(pSt_DBFile->tszTableName, st_JsonArray[i]["tszTableName"].asCString());
+		_tcsxcpy(pSt_DBFile->tszBuckKey, st_JsonArray[i]["tszBuckKey"].asCString());
+		_tcsxcpy(pSt_DBFile->st_ProtocolFile.tszFileUser, st_JsonArray[i]["tszFileUser"].asCString());
+		_tcsxcpy(pSt_DBFile->st_ProtocolFile.tszFileHash, st_JsonArray[i]["tszFileHash"].asCString());
+		_tcsxcpy(pSt_DBFile->st_ProtocolFile.tszFileName, st_JsonArray[i]["tszFileName"].asCString());
+		_tcsxcpy(pSt_DBFile->st_ProtocolFile.tszFilePath, st_JsonArray[i]["tszFilePath"].asCString());
+		_tcsxcpy(pSt_DBFile->st_ProtocolFile.tszFileTime, st_JsonArray[i]["tszFileTime"].asCString());
 		
 		break;
 	}
@@ -554,31 +554,31 @@ BOOL CAPIHelp_Distributed::APIHelp_Distributed_FileListParse(LPCTSTR lpszMsgBuff
   意思：获取到的大小字节
 备注：
 *********************************************************************/
-__int64u CAPIHelp_Distributed::APIHelp_Distributed_GetSize(LPCTSTR lpszMsgBuffer)
+__int64u CAPIHelp_Distributed::APIHelp_Distributed_GetSize(LPCXSTR lpszMsgBuffer)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
-	TCHAR tszSizeStr[64];
-	TCHAR tszUnitStr[4];
+	XCHAR tszSizeStr[64];
+	XCHAR tszUnitStr[4];
 
 	memset(tszSizeStr, '\0', sizeof(tszSizeStr));
 	memset(tszUnitStr, '\0', sizeof(tszUnitStr));
 	//分别得到数字和单位
-	memcpy(tszSizeStr, lpszMsgBuffer, _tcslen(lpszMsgBuffer) - 2);
-	tszUnitStr[0] = lpszMsgBuffer[_tcslen(lpszMsgBuffer) - 2];
-	tszUnitStr[1] = lpszMsgBuffer[_tcslen(lpszMsgBuffer) - 1];
+	memcpy(tszSizeStr, lpszMsgBuffer, _tcsxlen(lpszMsgBuffer) - 2);
+	tszUnitStr[0] = lpszMsgBuffer[_tcsxlen(lpszMsgBuffer) - 2];
+	tszUnitStr[1] = lpszMsgBuffer[_tcsxlen(lpszMsgBuffer) - 1];
 
-	__int64u nllSize = _ttoi64(tszSizeStr);
+	__int64u nllSize = _ttxoll(tszSizeStr);
 	//得到单位大小
-	if (0 == _tcsncmp(tszUnitStr, _T("KB"), 2))
+	if (0 == _tcsxncmp(tszUnitStr, _X("KB"), 2))
 	{
 		nllSize = nllSize * 1024;
 	}
-	else if (0 == _tcsncmp(tszUnitStr, _T("MB"), 2))
+	else if (0 == _tcsxncmp(tszUnitStr, _X("MB"), 2))
 	{
 		nllSize = nllSize * 1024 * 1024;
 	}
-	else if (0 == _tcsncmp(tszUnitStr, _T("GB"), 2))
+	else if (0 == _tcsxncmp(tszUnitStr, _X("GB"), 2))
 	{
 		nllSize = nllSize * 1024 * 1024 * 1024;
 	}

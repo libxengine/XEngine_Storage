@@ -15,15 +15,15 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct tag_XEngine_ServerConfig
 {
-    TCHAR tszIPAddr[128];
-    BOOL bDeamon;
-    BOOL bReuseraddr;
+    XCHAR tszIPAddr[128];
+    bool bDeamon;
+    bool bReuseraddr;
     int nCenterPort;
     int nStorageDLPort;
     int nStorageUPPort;
     struct 
     {
-        BOOL bReload;
+        bool bReload;
     }st_Memory;
     struct
     {
@@ -36,7 +36,7 @@ typedef struct tag_XEngine_ServerConfig
     }st_XMax;
     struct
     {
-        BOOL bHBTime;
+        bool bHBTime;
         int nDBMonth;
         int nTimeCheck;
         int nCenterTimeOut;
@@ -50,38 +50,38 @@ typedef struct tag_XEngine_ServerConfig
     }st_XLog;
     struct
     {
-        TCHAR tszSQLAddr[128];
-        TCHAR tszSQLUser[128];
-        TCHAR tszSQLPass[128];
-        TCHAR tszDBName[128];                                         
+        XCHAR tszSQLAddr[128];
+        XCHAR tszSQLUser[128];
+        XCHAR tszSQLPass[128];
+        XCHAR tszDBName[128];                                         
         int nSQLPort;
-        BOOL bEnable;
+        bool bEnable;
     }st_XSql;
     struct  
 	{
-        BOOL bResumable;
-        BOOL bUPHash;
+        bool bResumable;
+        bool bUPHash;
         int nHashMode;
     }st_XStorage;
     struct  
     {
         struct  
         {
-            BOOL bAuth;
-            TCHAR tszAuthProxy[MAX_PATH];
-            TCHAR tszUserList[MAX_PATH];
+            bool bAuth;
+            XCHAR tszAuthProxy[MAX_PATH];
+            XCHAR tszUserList[MAX_PATH];
         }st_XProxyAuth;
         struct  
         {
-            BOOL bUPPass;
-            BOOL bDLPass;
-            TCHAR tszUPPass[MAX_PATH];
-            TCHAR tszDLPass[MAX_PATH];
+            bool bUPPass;
+            bool bDLPass;
+            XCHAR tszUPPass[MAX_PATH];
+            XCHAR tszDLPass[MAX_PATH];
         }st_XProxyPass;
     }st_XProxy;
 	struct
 	{
-		BOOL bLimitMode;
+		bool bLimitMode;
         __int64x nMaxUPLoader;
         __int64x nMaxDNLoader;
         int nMaxUPConnect;
@@ -95,12 +95,12 @@ typedef struct tag_XEngine_ServerConfig
     }st_P2xp;
     struct  
     {
-        TCHAR tszCertChain[MAX_PATH];
-        TCHAR tszCertKey[MAX_PATH];
+        XCHAR tszCertChain[MAX_PATH];
+        XCHAR tszCertKey[MAX_PATH];
         int nSslType;
-        BOOL bDLEnable;
-        BOOL bUPEnable;
-        BOOL bCHEnable;
+        bool bDLEnable;
+        bool bUPEnable;
+        bool bCHEnable;
     }st_XCert;
     struct
     {
@@ -110,12 +110,12 @@ typedef struct tag_XEngine_ServerConfig
 
 typedef struct  
 {
-    TCHAR tszFilePath[MAX_PATH];
-    TCHAR tszFileName[MAX_PATH];
-    TCHAR tszBuckKey[128];
-    TCHAR tszBuckSize[64];
+    XCHAR tszFilePath[MAX_PATH];
+    XCHAR tszFileName[MAX_PATH];
+    XCHAR tszBuckKey[128];
+    XCHAR tszBuckSize[64];
     int nLevel;
-    BOOL bEnable;
+    bool bEnable;
     struct 
     {
         bool bCreateDir;
@@ -124,7 +124,7 @@ typedef struct
 }XENGINE_STORAGEBUCKET;
 typedef struct
 {
-	BOOL bDistributed;
+	bool bDistributed;
     struct  
     {
         int nCenterMode;
@@ -150,7 +150,7 @@ typedef struct
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD Config_GetLastError(int *pInt_ErrorCode = NULL);
+extern "C" XLONG Config_GetLastError(int *pInt_ErrorCode = NULL);
 /************************************************************************/
 /*                        文件配置读取                                  */
 /************************************************************************/
@@ -172,7 +172,7 @@ extern "C" DWORD Config_GetLastError(int *pInt_ErrorCode = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG * pSt_ServerConfig);
+extern "C" bool Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG * pSt_ServerConfig);
 /********************************************************************
 函数名称：Config_Json_LoadBalance
 函数功能：读取负载均衡配置文件
@@ -191,4 +191,4 @@ extern "C" BOOL Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG * 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCONFIG * pSt_ServerConfig);
+extern "C" bool Config_Json_LoadBalance(LPCXSTR lpszConfigFile, XENGINE_LBCONFIG * pSt_ServerConfig);

@@ -38,9 +38,9 @@ CSession_UPStroage::~CSession_UPStroage()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume /* = FALSE */)
+bool CSession_UPStroage::Session_UPStroage_Init(int nMaxConnect, bool bUPResume /* = false */)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	m_bResume = bUPResume;
 	m_nMaxConnect = nMaxConnect;
@@ -54,9 +54,9 @@ BOOL CSession_UPStroage::Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume 
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Destory()
+bool CSession_UPStroage::Session_UPStroage_Destory()
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	st_Locker.lock();
 	stl_MapStroage.clear();
@@ -107,15 +107,15 @@ BOOL CSession_UPStroage::Session_UPStroage_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, BOOL bRewrite, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
+bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, __int64x nFileSize, bool bRewrite, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	if ((NULL == lpszClientAddr) || (NULL == lpszFileDir))
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	//禁止一个客户端启动多个下载会话
 	st_Locker.lock_shared();
@@ -125,7 +125,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_EXIST;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return false;
 	}
 	st_Locker.unlock_shared();
 
@@ -135,23 +135,23 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	st_Client.st_StorageInfo.ullPosStart = nPosStart;
 	st_Client.st_StorageInfo.ullPosEnd = nPostEnd;
 	st_Client.st_StorageInfo.ullCount = nFileSize;
-	_tcscpy(st_Client.st_StorageInfo.tszBuckKey, lpszBuckKey);
-	_tcscpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
-	_tcscpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
+	_tcsxcpy(st_Client.st_StorageInfo.tszBuckKey, lpszBuckKey);
+	_tcsxcpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
+	_tcsxcpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
 	//文件是否存在
-	if ((m_bResume) && ((0 != nPosStart) || (0 != nPostEnd)) && (0 == _taccess(lpszFileDir, 0)))
+	if ((m_bResume) && ((0 != nPosStart) || (0 != nPostEnd)) && (0 == _xtaccess(lpszFileDir, 0)))
 	{
-		struct _tstat64 st_FStat;
-		memset(&st_FStat, '\0', sizeof(struct _tstat64));
-		_tstat64(st_Client.st_StorageInfo.tszFileDir, &st_FStat);
+		struct _xtstat st_FStat;
+		memset(&st_FStat, '\0', sizeof(struct _xtstat));
+		_xtstat(st_Client.st_StorageInfo.tszFileDir, &st_FStat);
 		st_Client.st_StorageInfo.ullRWLen = st_FStat.st_size;
 		//追加打开
-		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("rb+"));
+		st_Client.st_StorageInfo.pSt_File = _xtfopen(lpszFileDir, _X("rb+"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
 			Session_IsErrorOccur = true;
 			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
-			return FALSE;
+			return false;
 		}
 		//是不是覆写?
 		if (st_Client.st_StorageInfo.ullRWLen > nPosStart)
@@ -162,7 +162,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 				Session_IsErrorOccur = true;
 				Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_REWRITE;
 				fclose(st_Client.st_StorageInfo.pSt_File);
-				return FALSE;
+				return false;
 			}
 			st_Client.st_StorageInfo.bRewrite = true;
 			st_Client.st_StorageInfo.ullRWLen -= (nPostEnd - nPosStart);
@@ -171,12 +171,12 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	}
 	else
 	{
-		st_Client.st_StorageInfo.pSt_File = _tfopen(lpszFileDir, _T("wb"));
+		st_Client.st_StorageInfo.pSt_File = _xtfopen(lpszFileDir, _X("wb"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
 			Session_IsErrorOccur = true;
 			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
-			return FALSE;
+			return false;
 		}
 	}
 	st_Locker.lock();
@@ -202,15 +202,15 @@ BOOL CSession_UPStroage::Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo)
+bool CSession_UPStroage::Session_UPStroage_GetInfo(LPCXSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	if ((NULL == lpszClientAddr) || (NULL == pSt_StorageInfo))
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
-		return FALSE;
+		return false;
 	}
 
 	st_Locker.lock_shared();
@@ -220,7 +220,7 @@ BOOL CSession_UPStroage::Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSI
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return false;
 	}
 	*pSt_StorageInfo = stl_MapIterator->second.st_StorageInfo;
 	st_Locker.unlock_shared();
@@ -249,15 +249,15 @@ BOOL CSession_UPStroage::Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSI
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen)
+bool CSession_UPStroage::Session_UPStroage_Write(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	if ((NULL == lpszClientAddr) || (NULL == lpszMsgBuffer))
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
-		return FALSE;
+		return false;
 	}
 
 	st_Locker.lock_shared();
@@ -267,7 +267,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return false;
 	}
 	int nCount = nMsgLen;
 	int nWLen = 0;
@@ -298,16 +298,16 @@ BOOL CSession_UPStroage::Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Exist(LPCTSTR lpszClientAddr)
+bool CSession_UPStroage::Session_UPStroage_Exist(LPCXSTR lpszClientAddr)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
-	BOOL bRet = FALSE;
+	bool bRet = false;
 	st_Locker.lock();
 	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator == stl_MapStroage.end())
 	{
-		bRet = FALSE;
+		bRet = false;
 	}
 	else
 	{
@@ -334,15 +334,15 @@ BOOL CSession_UPStroage::Session_UPStroage_Exist(LPCTSTR lpszClientAddr)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount)
+bool CSession_UPStroage::Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	if (NULL == pInt_ListCount)
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
-		return FALSE;
+		return false;
 	}
 
 	if (NULL == pppSt_StorageInfo)
@@ -365,7 +365,7 @@ BOOL CSession_UPStroage::Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_S
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_EMPTY;
-		return FALSE;
+		return false;
 	}
 	return true;
 }
@@ -382,9 +382,9 @@ BOOL CSession_UPStroage::Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_S
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
+bool CSession_UPStroage::Session_UPStroage_Delete(LPCXSTR lpszClientAddr)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	st_Locker.lock();
 	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
@@ -397,7 +397,7 @@ BOOL CSession_UPStroage::Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
 		//大小是否足够
 		if ((stl_MapIterator->second.st_StorageInfo.ullCount != stl_MapIterator->second.st_StorageInfo.ullRWLen) && !m_bResume)
 		{
-			_tremove(stl_MapIterator->second.st_StorageInfo.tszFileDir);
+			_xtremove(stl_MapIterator->second.st_StorageInfo.tszFileDir);
 		}
 		stl_MapStroage.erase(stl_MapIterator);
 	}
@@ -417,9 +417,9 @@ BOOL CSession_UPStroage::Session_UPStroage_Delete(LPCTSTR lpszClientAddr)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_Close(LPCTSTR lpszClientAddr)
+bool CSession_UPStroage::Session_UPStroage_Close(LPCXSTR lpszClientAddr)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	st_Locker.lock_shared();
 	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
@@ -446,28 +446,28 @@ BOOL CSession_UPStroage::Session_UPStroage_Close(LPCTSTR lpszClientAddr)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_UPStroage::Session_UPStroage_MaxConnect(LPCTSTR lpszClientAddr)
+bool CSession_UPStroage::Session_UPStroage_MaxConnect(LPCXSTR lpszClientAddr)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	int nExistNumber = 0;
 	st_Locker.lock_shared();
 	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.begin();
 	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
 	{
-		TCHAR tszIPSource[128];
-		TCHAR tszIPDest[128];
+		XCHAR tszIPSource[128];
+		XCHAR tszIPDest[128];
 
 		memset(tszIPSource, '\0', sizeof(tszIPSource));
 		memset(tszIPDest, '\0', sizeof(tszIPDest));
 
-		_tcscpy(tszIPSource, stl_MapIterator->first.c_str());
-		_tcscpy(tszIPDest, lpszClientAddr);
+		_tcsxcpy(tszIPSource, stl_MapIterator->first.c_str());
+		_tcsxcpy(tszIPDest, lpszClientAddr);
 
 		BaseLib_OperatorIPAddr_SegAddr(tszIPSource);
 		BaseLib_OperatorIPAddr_SegAddr(tszIPDest);
 
-		if (0 == _tcscmp(tszIPSource, tszIPDest))
+		if (0 == _tcsxcmp(tszIPSource, tszIPDest))
 		{
 			nExistNumber++;
 		}
@@ -478,7 +478,7 @@ BOOL CSession_UPStroage::Session_UPStroage_MaxConnect(LPCTSTR lpszClientAddr)
 	{
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_MAXCONNECT;
-		return FALSE;
+		return false;
 	}
 	return true;
 }

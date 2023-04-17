@@ -1,31 +1,23 @@
 CC = g++ -Wall -std=c++17 -fPIC
-SHAREFLAG = -shared
-SHAREDLL = so
+PLATFORM = linux
+PLATVER = 
+PLATDIR = 
+FILEEXT = 
+LIBFLAG = 
 RELEASE = 0
 UNICODE = 0
-INCLUDE = -I ./ -I ../XEngine_ThirdPart/jsoncpp
-FILECENTOS = /etc/redhat-release
-LOADBIN = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L ../XEngine_ThirdPart/jsoncpp
+LOADHDR = -I ./ -I ../XEngine_ThirdPart/jsoncpp
+LOADSO = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L ../XEngine_ThirdPart/jsoncpp
 LIB = -lXEngine_BaseLib -ljsoncpp
-LIBEX = -ldl 
-LOADSO = -Wl,-rpath=./,--disable-new-dtags
-LIBINCLUDE = Protocol_StoragePacket.o Protocol_StorageParse.o pch.o
-
-ifeq ($(shell uname),Darwin)
-	SHAREDLL = dylib
-	SHAREFLAG = -dynamiclib
-	LOADSO = 
-else
-	SHAREDLL = so
-	SHAREFLAG = -shared
-endif
+LIBEX = 
+OBJECTS = Protocol_StoragePacket.o Protocol_StorageParse.o pch.o
 
 ifeq ($(RELEASE),1)
-FLAGS = -c -O2 
+FLAGS = -c 
 DEBUG = 
 else
-FLAGS = -c 
-DEBUG = -g
+FLAGS = -c -lc_p
+DEBUG = -g -pg 
 endif
 
 ifeq ($(UNICODE),1)
@@ -34,31 +26,47 @@ else
 UNICODE = 
 endif
 
-ifeq ($(FILECENTOS), $(wildcard $(FILECENTOS)))
-	UNICODE = -D _CENTOS
-else
-	UNICODE = -D _UBUNTU
+ifeq ($(PLATFORM),linux)
+	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
+		PLATVER = -D __CENTOS__
+		PLATDIR = XEngine_Linux/Centos
+	else
+		PLATVER = -D __UBUNTU__
+		PLATDIR = XEngine_Linux/Ubuntu
+	endif
+	FILEEXT = so
+	LIBFLAG = -shared
+	LIBEX = -lpthread -lrt -ldl
+	LOADBIN = -Wl,-rpath=./,--disable-new-dtags
+else ifeq ($(PLATFORM),mac)
+	CC += -Wno-deprecated-declarations
+	PLATVER = -D __MACOS__
+	PLATDIR = XEngine_Mac
+	FILEEXT = dylib
+	LIBFLAG = -dynamiclib
+	LIBEX = -lpthread -ldl
+	LOADBIN = -Wl,-rpath,@loader_path/./
 endif
 
-all:$(LIBINCLUDE)
-	$(CC) $(DEBUG) $(LIBINCLUDE)  -o libStorageModule_Protocol.$(SHAREDLL) $(SHAREFLAG) $(LOADBIN) $(LIB) $(LIBEX) $(LOADSO)
+all:$(OBJECTS)
+	$(CC) $(DEBUG) $(OBJECTS)  -o libStorageModule_Protocol.$(FILEEXT) $(LIBFLAG) $(LIB) $(LIBEX) $(LOADSO) $(LOADBIN)
 
 Protocol_StoragePacket.o:./Protocol_Packet/Protocol_StoragePacket.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Protocol_Packet/Protocol_StoragePacket.cpp 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Protocol_Packet/Protocol_StoragePacket.cpp 
 Protocol_StorageParse.o:./Protocol_Parse/Protocol_StorageParse.cpp                                 
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) ./Protocol_Parse/Protocol_StorageParse.cpp 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Protocol_Parse/Protocol_StorageParse.cpp 
 	
 pch.o:pch.cpp             
-	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(INCLUDE) pch.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) pch.cpp
 
 
 InstallAll:InstallSo 
-InstallSo:./libStorageModule_Protocol.$(SHAREDLL)
-	cp ./libStorageModule_Protocol.$(SHAREDLL) ../../XEngine_Release/libStorageModule_Protocol.$(SHAREDLL)
+InstallSo:./libStorageModule_Protocol.$(FILEEXT)
+	cp ./libStorageModule_Protocol.$(FILEEXT) ../../XEngine_Release/libStorageModule_Protocol.$(FILEEXT)
 
 
 CleanAll:CleanObj CleanMk
 CleanObj:
 	rm *.o                                           
 CleanMk:
-	rm *.$(SHAREDLL)    
+	rm *.$(FILEEXT)    

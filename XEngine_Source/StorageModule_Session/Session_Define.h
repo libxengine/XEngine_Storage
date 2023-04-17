@@ -15,16 +15,16 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct
 {
-	TCHAR tszFileDir[MAX_PATH];                                           //文件地址
-	TCHAR tszClientAddr[128];                                             //操作的用户地址
-	TCHAR tszFileHash[128];                                               //文件HASH值
-	TCHAR tszBuckKey[128];                                                //BUCKKey
+	XCHAR tszFileDir[MAX_PATH];                                           //文件地址
+	XCHAR tszClientAddr[128];                                             //操作的用户地址
+	XCHAR tszFileHash[128];                                               //文件HASH值
+	XCHAR tszBuckKey[128];                                                //BUCKKey
 	__int64x ullCount;                                                    //总大小
 	__int64x ullRWCount;                                                  //需要读取(写入)总大小
 	__int64x ullRWLen;                                                    //已经读取(写入)的大小
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
-	BOOL bRewrite;                                                        //是否为覆写
+	bool bRewrite;                                                        //是否为覆写
 
 	int nLimit;                                                           //限制工具
 	XHANDLE xhToken;
@@ -33,7 +33,7 @@ typedef struct
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD Session_GetLastError(int *pInt_SysError = NULL);
+extern "C" XLONG Session_GetLastError(int *pInt_SysError = NULL);
 /************************************************************************/
 /*                        用户管理导出的函数                            */
 /************************************************************************/
@@ -50,7 +50,7 @@ extern "C" DWORD Session_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_User_Init(LPCTSTR lpszUserFile);
+extern "C" bool Session_User_Init(LPCXSTR lpszUserFile);
 /********************************************************************
 函数名称：Session_User_Destory
 函数功能：销毁管理器
@@ -59,7 +59,7 @@ extern "C" BOOL Session_User_Init(LPCTSTR lpszUserFile);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_User_Destory();
+extern "C" bool Session_User_Destory();
 /********************************************************************
 函数名称：Session_User_Exist
 函数功能：用户名和密码是否存在
@@ -83,7 +83,7 @@ extern "C" BOOL Session_User_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* pInt_Limit = NULL);
+extern "C" bool Session_User_Exist(LPCXSTR lpszUser, LPCXSTR lpszPass, int* pInt_Limit = NULL);
 /************************************************************************/
 /*                        存储会话导出的函数                            */
 /************************************************************************/
@@ -95,7 +95,7 @@ extern "C" BOOL Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* pInt
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Init(int nMaxConnect);
+extern "C" bool Session_DLStroage_Init(int nMaxConnect);
 /********************************************************************
 函数名称：Session_DLStroage_Destory
 函数功能：销毁下载管理器
@@ -104,7 +104,7 @@ extern "C" BOOL Session_DLStroage_Init(int nMaxConnect);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Destory();
+extern "C" bool Session_DLStroage_Destory();
 /********************************************************************
 函数名称：Session_DLStroage_Insert
 函数功能：插入一个会话到下载器
@@ -158,7 +158,7 @@ extern "C" BOOL Session_DLStroage_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0, LPCTSTR lpszFileHash = NULL, int nLimit = 0, XHANDLE xhToken = NULL);
+extern "C" bool Session_DLStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, __int64x * pInt_Count, __int64x * pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0, LPCXSTR lpszFileHash = NULL, int nLimit = 0, XHANDLE xhToken = NULL);
 /********************************************************************
 函数名称：Session_DLStroage_GetBuffer
 函数功能：获得下载器中指定缓冲区
@@ -181,7 +181,7 @@ extern "C" BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuc
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCHAR * ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" bool Session_DLStroage_GetBuffer(LPCXSTR lpszClientAddr, XCHAR * ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：Session_DLStroage_GetInfo
 函数功能：获取下载信息
@@ -200,7 +200,7 @@ extern "C" BOOL Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCHAR * ptsz
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
+extern "C" bool Session_DLStroage_GetInfo(LPCXSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
 /********************************************************************
 函数名称：Session_DLStroage_GetCount
 函数功能：获取队列拥有的个数
@@ -214,7 +214,7 @@ extern "C" BOOL Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAG
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_GetCount(int* pInt_ListCount);
+extern "C" bool Session_DLStroage_GetCount(int* pInt_ListCount);
 /********************************************************************
 函数名称：Session_DLStorage_SetSeek
 函数功能：移动文件指针
@@ -233,7 +233,7 @@ extern "C" BOOL Session_DLStroage_GetCount(int* pInt_ListCount);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek);
+extern "C" bool Session_DLStorage_SetSeek(LPCXSTR lpszClientAddr, int nSeek);
 /********************************************************************
 函数名称：Session_DLStorage_GetAll
 函数功能：获取下载池的任务列表
@@ -252,7 +252,7 @@ extern "C" BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
+extern "C" bool Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
 /********************************************************************
 函数名称：Session_DLStroage_Delete
 函数功能：删除一个队列
@@ -266,7 +266,7 @@ extern "C" BOOL Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInf
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr);
+extern "C" bool Session_DLStroage_Delete(LPCXSTR lpszClientAddr);
 /********************************************************************
 函数名称：Session_DLStroage_MaxConnect
 函数功能：判断一个地址是否超过连接数限制
@@ -280,7 +280,7 @@ extern "C" BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_DLStroage_MaxConnect(LPCTSTR lpszClientAddr);
+extern "C" bool Session_DLStroage_MaxConnect(LPCXSTR lpszClientAddr);
 /********************************************************************
 函数名称：Session_UPStroage_Init
 函数功能：初始化上传会话管理器
@@ -299,7 +299,7 @@ extern "C" BOOL Session_DLStroage_MaxConnect(LPCTSTR lpszClientAddr);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume = FALSE);
+extern "C" bool Session_UPStroage_Init(int nMaxConnect, bool bUPResume = false);
 /********************************************************************
 函数名称：Session_UPStroage_Destory
 函数功能：销毁下载管理器
@@ -308,7 +308,7 @@ extern "C" BOOL Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume = FALSE);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Destory();
+extern "C" bool Session_UPStroage_Destory();
 /********************************************************************
 函数名称：Session_UPStroage_Insert
 函数功能：插入一个会话到下载器
@@ -352,7 +352,7 @@ extern "C" BOOL Session_UPStroage_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, BOOL bRewrite, int nPosStart = 0, int nPostEnd = 0);
+extern "C" bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, __int64x nFileSize, bool bRewrite, int nPosStart = 0, int nPostEnd = 0);
 /********************************************************************
 函数名称：Session_UPStroage_GetInfo
 函数功能：获取上传客户端信息
@@ -371,7 +371,7 @@ extern "C" BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuc
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
+extern "C" bool Session_UPStroage_GetInfo(LPCXSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
 /********************************************************************
 函数名称：Session_UPStroage_Write
 函数功能：写入数据到文件
@@ -395,7 +395,7 @@ extern "C" BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAG
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen);
+extern "C" bool Session_UPStroage_Write(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
 /********************************************************************
 函数名称：Session_UPStroage_Exist
 函数功能：客户端是否存在
@@ -409,7 +409,7 @@ extern "C" BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgB
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr);
+extern "C" bool Session_UPStroage_Exist(LPCXSTR lpszClientAddr);
 /********************************************************************
 函数名称：Session_UPStorage_GetAll
 函数功能：获取所有上传信息
@@ -428,7 +428,7 @@ extern "C" BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
+extern "C" bool Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
 /********************************************************************
 函数名称：Session_UPStroage_Delete
 函数功能：删除上传会话
@@ -442,7 +442,7 @@ extern "C" BOOL Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInf
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr);
+extern "C" bool Session_UPStroage_Delete(LPCXSTR lpszClientAddr);
 /********************************************************************
 函数名称：Session_UPStroage_Close
 函数功能：关闭读写文件句柄
@@ -456,7 +456,7 @@ extern "C" BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr);
+extern "C" bool Session_UPStroage_Close(LPCXSTR lpszClientAddr);
 /********************************************************************
 函数名称：Session_UPStroage_MaxConnect
 函数功能：判断一个地址是否超过连接数限制
@@ -470,4 +470,4 @@ extern "C" BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Session_UPStroage_MaxConnect(LPCTSTR lpszClientAddr);
+extern "C" bool Session_UPStroage_MaxConnect(LPCXSTR lpszClientAddr);

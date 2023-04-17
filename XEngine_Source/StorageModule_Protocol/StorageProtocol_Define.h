@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD Protocol_GetLastError(int *pInt_ErrorCode = NULL);
+extern "C" XLONG Protocol_GetLastError(int *pInt_ErrorCode = NULL);
 /************************************************************************/
 /*                        解析协议导出                                  */
 /************************************************************************/
@@ -60,7 +60,7 @@ extern "C" DWORD Protocol_GetLastError(int *pInt_ErrorCode = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMsgLen, TCHAR * ptszClientAddr, TCHAR * ptszBuckKey, TCHAR * ptszFileName, TCHAR * ptszFileHash, __int64x * pInt_FileSize);
+extern "C" bool Protocol_StorageParse_ProxyNotify(LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR * ptszClientAddr, XCHAR * ptszBuckKey, XCHAR * ptszFileName, XCHAR * ptszFileHash, __int64x * pInt_FileSize);
 /********************************************************************
 函数名称：Protocol_StorageParse_QueryFile
 函数功能：文件查询请求解析函数
@@ -109,7 +109,7 @@ extern "C" BOOL Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBuffer, int nMs
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_QueryFile(LPCSTR lpszMsgBuffer, CHAR * ptszTimeStart, CHAR * ptszTimeEnd, CHAR * ptszBuckKey = NULL, CHAR * ptszFileName = NULL, CHAR * ptszFileHash = NULL, int* pInt_Mode = NULL, XNETHANDLE * pxhToken = NULL);
+extern "C" bool Protocol_StorageParse_QueryFile(LPCXSTR lpszMsgBuffer, XCHAR * ptszTimeStart, XCHAR * ptszTimeEnd, XCHAR * ptszBuckKey = NULL, XCHAR * ptszFileName = NULL, XCHAR * ptszFileHash = NULL, int* pInt_Mode = NULL, XNETHANDLE * pxhToken = NULL);
 /********************************************************************
 函数名称：Protocol_StorageParse_ReportFile
 函数功能：解析文件报告协议
@@ -138,7 +138,7 @@ extern "C" BOOL Protocol_StorageParse_QueryFile(LPCSTR lpszMsgBuffer, CHAR * pts
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int* pInt_ListCount);
+extern "C" bool Protocol_StorageParse_ReportFile(LPCXSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int* pInt_ListCount);
 /********************************************************************
 函数名称：Protocol_StorageParse_DirOperator
 函数功能：文件夹操作协议
@@ -167,7 +167,7 @@ extern "C" BOOL Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuffer, int nMsg
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_DirOperator(LPCSTR lpszMsgBuffer, CHAR * ptszUserDir, TCHAR * ptszBuckKey, int* pInt_Operator);
+extern "C" bool Protocol_StorageParse_DirOperator(LPCXSTR lpszMsgBuffer, XCHAR * ptszUserDir, XCHAR * ptszBuckKey, int* pInt_Operator);
 /********************************************************************
 函数名称：Protocol_StorageParse_SpeedLimit
 函数功能：速度限制请求解析函数
@@ -196,7 +196,7 @@ extern "C" BOOL Protocol_StorageParse_DirOperator(LPCSTR lpszMsgBuffer, CHAR * p
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_SpeedLimit(LPCTSTR lpszMsgBuffer, int nMsgLen, int* pInt_Code, int* pInt_Limit);
+extern "C" bool Protocol_StorageParse_SpeedLimit(LPCXSTR lpszMsgBuffer, int nMsgLen, int* pInt_Code, int* pInt_Limit);
 /********************************************************************
 函数名称：Protocol_StorageParse_P2PToken
 函数功能：P2P查找文件TOKEN匹配函数
@@ -220,7 +220,7 @@ extern "C" BOOL Protocol_StorageParse_SpeedLimit(LPCTSTR lpszMsgBuffer, int nMsg
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StorageParse_P2PToken(LPCTSTR lpszMsgBuffer, int nMsgLen, XNETHANDLE* pxhToken);
+extern "C" bool Protocol_StorageParse_P2PToken(LPCXSTR lpszMsgBuffer, int nMsgLen, XNETHANDLE* pxhToken);
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
@@ -267,7 +267,7 @@ extern "C" BOOL Protocol_StorageParse_P2PToken(LPCTSTR lpszMsgBuffer, int nMsgLe
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMethod, LPCTSTR lpszPostUrl, LPCTSTR lpszClientAddr, LPCTSTR lpszUser, LPCTSTR lpszPass, TCHAR * ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" bool Protocol_StoragePacket_BasicAuth(LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR * ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：Protocol_StoragePacket_UPDown
 函数功能：上传下载完成代理通知协议
@@ -316,7 +316,7 @@ extern "C" BOOL Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMethod, LPCTSTR lps
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_UPDown(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, BOOL bDown, LPCTSTR lpszFileHash = NULL);
+extern "C" bool Protocol_StoragePacket_UPDown(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszBuckKey, LPCXSTR lpszFileName, LPCXSTR lpszClientAddr, __int64x nFileSize, bool bDown, LPCXSTR lpszFileHash = NULL);
 /********************************************************************
 函数名称：Protocol_StorageParse_QueryFile
 函数功能：查询回复打包协议
@@ -360,7 +360,7 @@ extern "C" BOOL Protocol_StoragePacket_UPDown(TCHAR * ptszMsgBuffer, int* pInt_M
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_QueryFile(CHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL, XNETHANDLE xhToken = 0);
+extern "C" bool Protocol_StoragePacket_QueryFile(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE * **pppSt_DBFile, int nListCount, LPCXSTR lpszTimeStart = NULL, LPCXSTR lpszTimeEnd = NULL, XNETHANDLE xhToken = 0);
 /********************************************************************
 函数名称：Protocol_StoragePacket_Info
 函数功能：返回信息获取请求打包函数
@@ -399,7 +399,7 @@ extern "C" BOOL Protocol_StoragePacket_QueryFile(CHAR * ptszMsgBuffer, int* pInt
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_Info(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO * **pppSt_DLInfo, SESSION_STORAGEINFO * **pppSt_UPInfo, int nDLCount, int nUPCount);
+extern "C" bool Protocol_StoragePacket_Info(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO * **pppSt_DLInfo, SESSION_STORAGEINFO * **pppSt_UPInfo, int nDLCount, int nUPCount);
 /********************************************************************
 函数名称：Protocol_StoragePacket_DirOperator
 函数功能：查询用户目录
@@ -428,7 +428,7 @@ extern "C" BOOL Protocol_StoragePacket_Info(TCHAR * ptszMsgBuffer, int* pInt_Msg
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_DirOperator(CHAR * ptszMsgBuffer, int* pInt_MsgLen, CHAR * **pppszListEnum, int nListCount);
+extern "C" bool Protocol_StoragePacket_DirOperator(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XCHAR * **pppszListEnum, int nListCount);
 /********************************************************************
 函数名称：Protocol_StoragePacket_REQFile
 函数功能：查询文件请求函数
@@ -462,4 +462,4 @@ extern "C" BOOL Protocol_StoragePacket_DirOperator(CHAR * ptszMsgBuffer, int* pI
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Protocol_StoragePacket_REQFile(TCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL, XNETHANDLE xhToken = 0);
+extern "C" bool Protocol_StoragePacket_REQFile(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName = NULL, LPCXSTR lpszFileHash = NULL, XNETHANDLE xhToken = 0);

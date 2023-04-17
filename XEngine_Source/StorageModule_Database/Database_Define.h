@@ -16,8 +16,8 @@
 typedef struct
 {
     XENGINE_PROTOCOL_FILE st_ProtocolFile;
-    CHAR tszBuckKey[MAX_PATH];                                             //路径的关键字
-    CHAR tszTableName[64];                                                 //日期表名称,插入:表示自定义插入日期表,获取:表示导出这个文件所属日期表
+    XCHAR tszBuckKey[MAX_PATH];                                             //路径的关键字
+    XCHAR tszTableName[64];                                                 //日期表名称,插入:表示自定义插入日期表,获取:表示导出这个文件所属日期表
 }XSTORAGECORE_DBFILE, *LPXSTORAGECORE_DBFILE;
 typedef struct
 {
@@ -25,12 +25,12 @@ typedef struct
     __int64x nFileCount;                                                   //拥有的文件个数
     __int64x nFileSize;                                                    //文件占用大小
     XNETHANDLE xhToken;                                                    //用户临时会话句柄
-    CHAR tszIPAddr[64];                                                    //最后登录IP地址
+    XCHAR tszIPAddr[64];                                                    //最后登录IP地址
 }XSTORAGECORE_USERINFO, *LPXSTORAGECORE_USERINFO;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD Database_GetLastError(int *pInt_SysError = NULL);
+extern "C" XLONG Database_GetLastError(int *pInt_SysError = NULL);
 /************************************************************************/
 /*                         导出的数据库帮助函数                         */
 /************************************************************************/
@@ -52,7 +52,7 @@ extern "C" DWORD Database_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Database_Help_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBFILE* pSt_DBFile);
+extern "C" bool Database_Help_Insert(XCHAR* ptszSQLBuffer, XSTORAGECORE_DBFILE* pSt_DBFile);
 /********************************************************************
 函数名称：Database_Help_Delete
 函数功能：删除语句
@@ -91,7 +91,7 @@ extern "C" BOOL Database_Help_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBFILE* 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Database_Help_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL);
+extern "C" bool Database_Help_Delete(XCHAR* ptszSQLBuffer, LPCXSTR lpszTableName, LPCXSTR lpszBuckKey = NULL, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszFileHash = NULL);
 /********************************************************************
 函数名称：Database_Help_Query
 函数功能：数据库查询打包函数
@@ -145,7 +145,7 @@ extern "C" BOOL Database_Help_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Database_Help_Query(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL, LPCTSTR lpszFileUser = NULL, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL);
+extern "C" bool Database_Help_Query(XCHAR* ptszSQLBuffer, LPCXSTR lpszTableName, LPCXSTR lpszBuckKey = NULL, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszFileHash = NULL, LPCXSTR lpszFileUser = NULL, LPCXSTR lpszTimeStart = NULL, LPCXSTR lpszTimeEnd = NULL);
 /************************************************************************/
 /*                         导出的数据库操作函数                         */
 /************************************************************************/
@@ -167,7 +167,7 @@ extern "C" BOOL Database_Help_Query(TCHAR* ptszSQLBuffer, LPCTSTR lpszTableName,
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Database_File_Init(DATABASE_MYSQL_CONNECTINFO * pSt_DBConnector, int nTimeMonth = 1);
+extern "C" bool Database_File_Init(DATABASE_MYSQL_CONNECTINFO * pSt_DBConnector, int nTimeMonth = 1);
 /********************************************************************
 函数名称：Database_File_Destory
 函数功能：销毁数据库管理器
@@ -176,7 +176,7 @@ extern "C" BOOL Database_File_Init(DATABASE_MYSQL_CONNECTINFO * pSt_DBConnector,
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL Database_File_Destory();
+extern "C" bool Database_File_Destory();
 /********************************************************************
 函数名称：Database_File_FileInsert
 函数功能：插入一个文件数据到数据库中
@@ -195,7 +195,7 @@ extern "C" BOOL Database_File_Destory();
   意思：是否成功
 备注：这个结构所有值都必须填充
 *********************************************************************/
-extern "C" BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage, BOOL bRewrite = FALSE);
+extern "C" bool Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage, bool bRewrite = false);
 /********************************************************************
 函数名称：Database_File_FileDelete
 函数功能：删除一个数据库文件信息
@@ -224,7 +224,7 @@ extern "C" BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage, BOOL
   意思：是否成功
 备注：参数不能全为空,不会删除文件
 *********************************************************************/
-extern "C" BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCSTR lpszHash = NULL);
+extern "C" bool Database_File_FileDelete(LPCXSTR lpszBuckKey = NULL, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszHash = NULL);
 /********************************************************************
 函数名称：Database_File_FileQuery
 函数功能：查询文件信息
@@ -278,4 +278,4 @@ extern "C" BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCTSTR lps
   意思：是否成功
 备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszMD5不能全为空
 *********************************************************************/
-extern "C" BOOL Database_File_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCSTR lpszTimeStart = NULL, LPCSTR lpszTimeEnd = NULL, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCSTR lpszHash = NULL, LPCTSTR lpszTableName = NULL);
+extern "C" bool Database_File_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszTimeStart = NULL, LPCXSTR lpszTimeEnd = NULL, LPCXSTR lpszBuckKey = NULL, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszHash = NULL, LPCXSTR lpszTableName = NULL);

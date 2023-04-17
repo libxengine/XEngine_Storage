@@ -46,8 +46,8 @@ using namespace std;
 //    Purpose:     会话公用头文件
 //    History:
 *********************************************************************/
-extern BOOL Session_IsErrorOccur;
-extern DWORD Session_dwErrorCode;
+extern bool Session_IsErrorOccur;
+extern XLONG Session_dwErrorCode;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")

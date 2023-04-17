@@ -65,15 +65,15 @@ CProtocol_StoragePacket::~CProtocol_StoragePacket()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart /* = NULL */, LPCTSTR lpszTimeEnd /* = NULL */, XNETHANDLE xhToken /* = 0 */)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCXSTR lpszTimeStart /* = NULL */, LPCXSTR lpszTimeEnd /* = NULL */, XNETHANDLE xhToken /* = 0 */)
 {
-    Protocol_IsErrorOccur = FALSE;
+    Protocol_IsErrorOccur = false;
 
     if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen) || (NULL == pppSt_DBFile))
     {
         Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
-        return FALSE;
+        return false;
     }
     Json::Value st_JsonRoot;
     Json::Value st_JsonArray;
@@ -90,7 +90,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuf
         st_JsonObject["tszFileTime"] = (*pppSt_DBFile)[i]->st_ProtocolFile.tszFileTime;
         st_JsonObject["nFileSize"] = (Json::Value::Int64)(*pppSt_DBFile)[i]->st_ProtocolFile.nFileSize;
         //只有在P2P下取文件列表才有效
-        if (_tcslen((*pppSt_DBFile)[i]->tszTableName) > 0)
+        if (_tcsxlen((*pppSt_DBFile)[i]->tszTableName) > 0)
         {
             st_JsonObject["tszTableName"] = (*pppSt_DBFile)[i]->tszTableName;
         }
@@ -111,7 +111,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuf
         st_JsonRoot["xhToken"] = (Json::Value::UInt64)xhToken;
     }
     st_JsonRoot["Code"] = 0;
-    st_JsonRoot["Msg"] = _T("ok");
+    st_JsonRoot["Msg"] = _X("ok");
     //打包输出信息
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
@@ -155,15 +155,15 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuf
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_Info(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, int nDLCount, int nUPCount)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, int nDLCount, int nUPCount)
 {
-	Protocol_IsErrorOccur = FALSE;
+	Protocol_IsErrorOccur = false;
 
 	if ((NULL == pppSt_DLInfo) || (NULL == pppSt_UPInfo))
 	{
 		Protocol_IsErrorOccur = true;
 		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	Json::Value st_JsonRoot;
 	Json::Value st_JsonDLArray;
@@ -202,7 +202,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_Info(TCHAR* ptszMsgBuffer, 
     st_JsonRoot["UPList"] = st_JsonUPArray;
 
 	st_JsonRoot["Code"] = 0;
-	st_JsonRoot["Msg"] = _T("ok");
+	st_JsonRoot["Msg"] = _X("ok");
 	//打包输出信息
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
 	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
@@ -236,15 +236,15 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_Info(TCHAR* ptszMsgBuffer, 
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, TCHAR*** pppszListEnum, int nListCount)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** pppszListEnum, int nListCount)
 {
-    Protocol_IsErrorOccur = FALSE;
+    Protocol_IsErrorOccur = false;
 
     if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
     {
         Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
-        return FALSE;
+        return false;
     }
     Json::Value st_JsonRoot;
     Json::Value st_JsonArray;
@@ -258,7 +258,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(TCHAR* ptszMsgB
     st_JsonRoot["Count"] = st_JsonArray.size();
     st_JsonRoot["List"] = st_JsonArray;
     st_JsonRoot["Code"] = 0;
-    st_JsonRoot["Msg"] = _T("ok");
+    st_JsonRoot["Msg"] = _X("ok");
     //打包输出信息
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
@@ -307,15 +307,15 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(TCHAR* ptszMsgB
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMethod, LPCTSTR lpszPostUrl, LPCTSTR lpszClientAddr, LPCTSTR lpszUser, LPCTSTR lpszPass, TCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
-    Protocol_IsErrorOccur = FALSE;
+    Protocol_IsErrorOccur = false;
 
     if ((NULL == lpszUser) || (NULL == lpszPass))
     {
         Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
-        return FALSE;
+        return false;
     }
     Json::Value st_JsonRoot;
 
@@ -326,7 +326,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMetho
     st_JsonRoot["lpszPass"] = lpszPass;
 
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
-    _tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
+    _tcsxcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
     return true;
 }
 /********************************************************************
@@ -377,15 +377,15 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMetho
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, BOOL bDown, LPCTSTR lpszFileHash /* = NULL */)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszBuckKey, LPCXSTR lpszFileName, LPCXSTR lpszClientAddr, __int64x nFileSize, bool bDown, LPCXSTR lpszFileHash /* = NULL */)
 {
-    Protocol_IsErrorOccur = FALSE;
+    Protocol_IsErrorOccur = false;
 
     if ((NULL == lpszFileName) || (NULL == lpszClientAddr))
     {
         Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
-        return FALSE;
+        return false;
     }
     Json::Value st_JsonRoot;
 
@@ -404,7 +404,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer
     }
 
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
-    _tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
+    _tcsxcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
     return true;
 }
 /********************************************************************
@@ -440,15 +440,15 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName /* = NULL */, LPCTSTR lpszFileHash /* = NULL */, XNETHANDLE xhToken /* = 0 */)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName /* = NULL */, LPCXSTR lpszFileHash /* = NULL */, XNETHANDLE xhToken /* = 0 */)
 {
-	Protocol_IsErrorOccur = FALSE;
+	Protocol_IsErrorOccur = false;
 
 	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
 		Protocol_IsErrorOccur = true;
 		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
-		return FALSE;
+		return false;
 	}
 	Json::Value st_JsonRoot;
 	if (NULL != lpszFileName)
