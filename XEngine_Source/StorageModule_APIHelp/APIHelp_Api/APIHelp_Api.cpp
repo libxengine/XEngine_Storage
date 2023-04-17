@@ -63,21 +63,21 @@ BOOL CAPIHelp_Api::APIHelp_Api_ProxyAuth(TCHAR* ptszUser, TCHAR* ptszPass, TCHAR
 	memset(tszAuthStr, '\0', MAX_PATH);
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 	//是否有验证信息
-	if (!RfcComponents_HttpHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
+	if (!HttpProtocol_ServerHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTAUTH;
 		return FALSE;
 	}
 	//是否是BASIC
 	if (1 != nAuthType)
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTSUPPORT;
 		return FALSE;
 	}
 	OPenSsl_Help_BasicDecoder(tszAuthStr, ptszUser, ptszPass);
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：APIHelp_Api_RangeFile
@@ -127,7 +127,7 @@ BOOL CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64
 	memset(tszValueStr, '\0', sizeof(tszValueStr));
 	memset(tszFieldStr, '\0', sizeof(tszFieldStr));
 	//是否有范围
-	if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszRangeStr, tszFieldStr))
+	if (HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, lpszRangeStr, tszFieldStr))
 	{
 		//是否没有找到
 		int nBPos = 0;  //某些时候有个BYTE   
@@ -137,7 +137,7 @@ BOOL CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64
 		}
 		if (!BaseLib_OperatorString_GetKeyValue(tszFieldStr + nBPos, "-", tszKeyStr, tszValueStr))
 		{
-			APIHelp_IsErrorOccur = TRUE;
+			APIHelp_IsErrorOccur = true;
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARSELEN;
 			return FALSE;
 		}
@@ -158,26 +158,26 @@ BOOL CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64
 			*pInt_SPos = _ttoi(tszKeyStr);
 			*pInt_EPos = _ttoi(tszValueStr);
 		}
-		bFound = TRUE;
+		bFound = true;
 	}
 
 	if (0 == *pInt_Count)
 	{
-		if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszLengthStr, tszFieldStr))
+		if (HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, lpszLengthStr, tszFieldStr))
 		{
 			*pInt_Count = _ttoi64(tszFieldStr);
-			bFound = TRUE;
+			bFound = true;
 		}
 	}
 	
 	if (!bFound)
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTLENGTH;
 		return FALSE;
 	}
 	
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：APIHelp_Api_VerHash
@@ -210,19 +210,19 @@ BOOL CAPIHelp_Api::APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHd
 	TCHAR tszValueStr[MAX_PATH];
 	memset(tszValueStr, '\0', MAX_PATH);
 
-	if (!RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszKeyStr, tszValueStr))
+	if (!HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, lpszKeyStr, tszValueStr))
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTHASH;
 		return FALSE;
 	}
 	if (0 != _tcsnicmp(lpszFileHash, tszValueStr, _tcslen(lpszFileHash)))
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTMATCH;
 		return FALSE;
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：APIHelp_Api_GetIPInfo
@@ -258,14 +258,14 @@ BOOL CAPIHelp_Api::APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XEN
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
 	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARSE;
 		return FALSE;
 	}
 	//是否获取成功
 	if (0 != st_JsonRoot["code"].asInt())
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_CODE;
 		return FALSE;
 	}
@@ -282,7 +282,7 @@ BOOL CAPIHelp_Api::APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XEN
 	_tcscpy(pSt_IPAddrInfo->tszIPISP, st_JsonObject["tszIPISP"].asCString());
 	_tcscpy(pSt_IPAddrInfo->tszIPTime, st_JsonObject["tszIPTime"].asCString());
 
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：APIHelp_Api_UrlParse
@@ -349,5 +349,5 @@ BOOL CAPIHelp_Api::APIHelp_Api_UrlParse(TCHAR*** ppptszList, int nListCount, TCH
 			_tcscpy(ptszKeyName, tszValue);
 		}
 	}
-	return TRUE;
+	return true;
 }

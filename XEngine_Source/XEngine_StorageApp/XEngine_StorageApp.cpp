@@ -1,7 +1,7 @@
 ﻿#include "StorageApp_Hdr.h"
 
 BOOL bIsRun = FALSE;
-XLOG xhLog = NULL;
+XHANDLE xhLog = NULL;
 
 XHANDLE xhHBDownload = NULL;
 XHANDLE xhHBUPLoader = NULL;
@@ -36,9 +36,9 @@ void ServiceApp_Stop(int signo)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _T("存储中心服务器退出..."));
 		bIsRun = FALSE;
 
-		RfcComponents_HttpServer_DestroyEx(xhUPHttp);
-		RfcComponents_HttpServer_DestroyEx(xhDLHttp);
-		RfcComponents_HttpServer_DestroyEx(xhCenterHttp);
+		HttpProtocol_Server_DestroyEx(xhUPHttp);
+		HttpProtocol_Server_DestroyEx(xhDLHttp);
+		HttpProtocol_Server_DestroyEx(xhCenterHttp);
 
 		OPenSsl_Server_StopEx(xhDLSsl);
 		OPenSsl_Server_StopEx(xhUPSsl);
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
-	bIsRun = TRUE;
+	bIsRun = true;
 	string m_StrVersion;
 	LPCTSTR lpszHTTPMime = _T("./XEngine_Config/HttpMime.types");
 	LPCTSTR lpszHTTPCode = _T("./XEngine_Config/HttpCode.types");
@@ -226,10 +226,10 @@ int main(int argc, char** argv)
 	//启动下载服务
 	if (st_ServiceCfg.nStorageDLPort > 0)
 	{
-		xhDLHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageDLThread);
+		xhDLHttp = HttpProtocol_Server_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageDLThread);
 		if (NULL == xhDLHttp)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化HTTP下载服务失败，错误：%lX"), HttpServer_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化HTTP下载服务失败，错误：%lX"), HttpProtocol_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP下载服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageDLThread);
@@ -286,10 +286,10 @@ int main(int argc, char** argv)
 	//启动上传服务
 	if (st_ServiceCfg.nStorageUPPort > 0)
 	{
-		xhUPHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageUPThread);
+		xhUPHttp = HttpProtocol_Server_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nStorageUPThread);
 		if (NULL == xhDLHttp)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化HTTP上传服务失败，错误：%lX"), HttpServer_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化HTTP上传服务失败，错误：%lX"), HttpProtocol_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP上传服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nStorageUPThread);
@@ -346,10 +346,10 @@ int main(int argc, char** argv)
 	//启动接口服务
 	if (st_ServiceCfg.nCenterPort > 0)
 	{
-		xhCenterHttp = RfcComponents_HttpServer_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nCenterThread);
+		xhCenterHttp = HttpProtocol_Server_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nCenterThread);
 		if (NULL == xhCenterHttp)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化HTTP业务服务失败，错误：%lX"), HttpServer_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("启动服务中，初始化HTTP业务服务失败，错误：%lX"), HttpProtocol_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("启动服务中，初始化HTTP业务服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
@@ -420,7 +420,7 @@ int main(int argc, char** argv)
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,XEngine版本:%s 当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), BaseLib_OperatorVer_XGetStr(), st_ServiceCfg.st_XVer.pStl_ListStorage->front().c_str());
 
-	while (TRUE)
+	while (true)
 	{
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
@@ -432,9 +432,9 @@ XENGINE_EXITAPP:
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("存储中心服务关闭，服务器退出..."));
 		bIsRun = FALSE;
 
-		RfcComponents_HttpServer_DestroyEx(xhUPHttp);
-		RfcComponents_HttpServer_DestroyEx(xhDLHttp);
-		RfcComponents_HttpServer_DestroyEx(xhCenterHttp);
+		HttpProtocol_Server_DestroyEx(xhUPHttp);
+		HttpProtocol_Server_DestroyEx(xhDLHttp);
+		HttpProtocol_Server_DestroyEx(xhCenterHttp);
 
 		OPenSsl_Server_StopEx(xhDLSsl);
 		OPenSsl_Server_StopEx(xhUPSsl);

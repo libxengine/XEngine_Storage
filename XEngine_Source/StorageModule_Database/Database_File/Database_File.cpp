@@ -48,7 +48,7 @@ BOOL CDatabase_File::Database_File_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConnec
 
     if (NULL == pSt_DBConnector)
     {
-        Database_IsErrorOccur = TRUE;
+        Database_IsErrorOccur = true;
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INIT_PARAMENT;
         return FALSE;
     }
@@ -60,22 +60,22 @@ BOOL CDatabase_File::Database_File_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConnec
 #endif
     //连接数据库
     _tcscpy(pSt_DBConnector->tszDBName, _T("XEngine_Storage"));
-    if (!DataBase_MySQL_Connect(&xhDBSQL, pSt_DBConnector, 5, TRUE, lpszStrCharset))
+    if (!DataBase_MySQL_Connect(&xhDBSQL, pSt_DBConnector, 5, true, lpszStrCharset))
     {
-        Database_IsErrorOccur = TRUE;
+        Database_IsErrorOccur = true;
         Database_dwErrorCode = DataBase_GetLastError();
         return FALSE;
     }
-    bIsRun = TRUE;
+    bIsRun = true;
    
     pSTDThread = make_shared<std::thread>(Database_File_Thread, this);
     if (!pSTDThread->joinable())
     {
-        Database_IsErrorOccur = TRUE;
+        Database_IsErrorOccur = true;
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INIT_THREAD;
         return FALSE;
     }
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Database_File_Destory
@@ -91,7 +91,7 @@ BOOL CDatabase_File::Database_File_Destory()
 
     if (!bIsRun)
     {
-        return TRUE;
+        return true;
     }
     bIsRun = FALSE;
 
@@ -103,7 +103,7 @@ BOOL CDatabase_File::Database_File_Destory()
         }
     }
     DataBase_MySQL_Close(xhDBSQL);
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Database_File_FileInsert
@@ -129,7 +129,7 @@ BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage,
 
     if (NULL == pSt_DBManage)
     {
-        Database_IsErrorOccur = TRUE;
+        Database_IsErrorOccur = true;
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INSERTFILE_PARAMENT;
         return FALSE;
     }
@@ -138,7 +138,7 @@ BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage,
     if (Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, pSt_DBManage->st_ProtocolFile.tszFileHash))
     {
         BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
-        return TRUE;
+        return true;
     }
 	TCHAR tszSQLQuery[2048];
 	memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
@@ -167,11 +167,11 @@ BOOL CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage,
     
     if (!DataBase_MySQL_Execute(xhDBSQL, m_StrSQL.c_str()))
     {
-        Database_IsErrorOccur = TRUE;
+        Database_IsErrorOccur = true;
         Database_dwErrorCode = DataBase_GetLastError();
         return FALSE;
     }
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Database_File_FileDelete
@@ -207,7 +207,7 @@ BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, 
 
     if ((NULL == lpszFileName) && (NULL == lpszHash))
     {
-        Database_IsErrorOccur = TRUE;
+        Database_IsErrorOccur = true;
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_DELETEFILE_PARAMENT;
         return FALSE;
     }
@@ -226,13 +226,13 @@ BOOL CDatabase_File::Database_File_FileDelete(LPCTSTR lpszBuckKey /* = NULL */, 
 
         if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLStatement))
         {
-            Database_IsErrorOccur = TRUE;
+            Database_IsErrorOccur = true;
             Database_dwErrorCode = DataBase_GetLastError();
             return FALSE;
         }
     }
 
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Database_File_FileQuery
@@ -293,7 +293,7 @@ BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
 
     if ((NULL == lpszHash) && (NULL == lpszFileName))
     {
-        Database_IsErrorOccur = TRUE;
+        Database_IsErrorOccur = true;
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_PARAMENT;
         return FALSE;
     }
@@ -326,7 +326,7 @@ BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
 		}
 		if (!DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
 		{
-			Database_IsErrorOccur = TRUE;
+			Database_IsErrorOccur = true;
 			Database_dwErrorCode = DataBase_GetLastError();
 			return FALSE;
 		}
@@ -444,7 +444,7 @@ BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
     //是否为空
     if (stl_ListFile.empty())
     {
-        Database_IsErrorOccur = TRUE;
+        Database_IsErrorOccur = true;
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_EMPTY;
         return FALSE;
     }
@@ -457,7 +457,7 @@ BOOL CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
     }
     *pInt_ListCount = stl_ListFile.size();
     stl_ListFile.clear();
-    return TRUE;
+    return true;
 }
 //////////////////////////////////////////////////////////////////////////
 //                    保护函数
@@ -511,12 +511,12 @@ BOOL CDatabase_File::Database_File_CreateTable()
 
 		if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery))
 		{
-			Database_IsErrorOccur = TRUE;
+			Database_IsErrorOccur = true;
 			Database_dwErrorCode = DataBase_GetLastError();
 			return FALSE;
 		}
     }
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Database_File_TimeDay
@@ -556,7 +556,7 @@ BOOL CDatabase_File::Database_File_TimeMonth(LPCTSTR lpszStartTime, int* pInt_Mo
         *pInt_Month = nEndTime - nStartTime;
     }
     
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Database_File_TimeDel
@@ -615,7 +615,7 @@ BOOL CDatabase_File::Database_File_TimeDel()
         }
     }
     DataBase_MySQL_FreeResult(xhDBSQL, xhTableResult);
-    return TRUE;
+    return true;
 }
 //////////////////////////////////////////////////////////////////////////
 //                      线程函数

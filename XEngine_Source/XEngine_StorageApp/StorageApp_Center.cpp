@@ -8,12 +8,12 @@ XHTHREAD CALLBACK XEngine_Center_HTTPThread(LPVOID lParam)
 	while (bIsRun)
 	{
 		//等待指定线程事件触发
-		if (RfcComponents_HttpServer_EventWaitEx(xhCenterHttp, nThreadPos))
+		if (HttpProtocol_Server_EventWaitEx(xhCenterHttp, nThreadPos))
 		{
 			int nListCount = 0;
 			RFCCOMPONENTS_HTTP_PKTCLIENT** ppSt_PKTClient;
 			//获取当前队列池中所有触发上传客户端
-			RfcComponents_HttpServer_GetPoolEx(xhCenterHttp, nThreadPos, &ppSt_PKTClient, &nListCount);
+			HttpProtocol_Server_GetPoolEx(xhCenterHttp, nThreadPos, &ppSt_PKTClient, &nListCount);
 			for (int i = 0; i < nListCount; i++)
 			{
 				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
@@ -26,7 +26,7 @@ XHTHREAD CALLBACK XEngine_Center_HTTPThread(LPVOID lParam)
 
 					memset(&st_HTTPParam, '\0', sizeof(RFCCOMPONENTS_HTTP_REQPARAM));
 					//获得指定上传客户端触发信息
-					if (RfcComponents_HttpServer_GetMemoryEx(xhCenterHttp, ppSt_PKTClient[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
+					if (HttpProtocol_Server_GetMemoryEx(xhCenterHttp, ppSt_PKTClient[i]->tszClientAddr, &ptszMsgBuffer, &nMsgLen, &st_HTTPParam, &ppszListHdr, &nHdrCount))
 					{
 						XEngine_Task_HttpCenter(ppSt_PKTClient[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
@@ -67,11 +67,11 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		memset(tszUserPass, '\0', sizeof(tszUserPass));
 		if (!APIHelp_Api_ProxyAuth(tszUserName, tszUserPass, pptszListHdr, nHdrCount))
 		{
-			st_HDRParam.bIsClose = TRUE;
-			st_HDRParam.bAuth = TRUE;
+			st_HDRParam.bIsClose = true;
+			st_HDRParam.bAuth = true;
 			st_HDRParam.nHttpCode = 401;
 
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,用户验证失败,错误:%lX"), lpszClientAddr, StorageHelp_GetLastError());
 			return FALSE;
@@ -86,11 +86,11 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 			APIClient_Http_Request(_T("POST"), st_ServiceCfg.st_XProxy.st_XProxyAuth.tszAuthProxy, tszSDBuffer, &nResponseCode, &ptszBody, &nBLen);
 			if (200 != nResponseCode)
 			{
-				st_HDRParam.bIsClose = TRUE;
-				st_HDRParam.bAuth = TRUE;
+				st_HDRParam.bIsClose = true;
+				st_HDRParam.bAuth = true;
 				st_HDRParam.nHttpCode = nResponseCode;
 
-				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 			}
@@ -101,18 +101,18 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 		{
 			if (!Session_User_Exist(tszUserName, tszUserPass))
 			{
-				st_HDRParam.bIsClose = TRUE;
-				st_HDRParam.bAuth = TRUE;
+				st_HDRParam.bIsClose = true;
+				st_HDRParam.bAuth = true;
 				st_HDRParam.nHttpCode = 401;
 
-				RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,验证用户失败,无法继续"), lpszClientAddr);
 				return FALSE;
 			}
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,本地验证用户验证通过,用户名:%s,密码:%s"), lpszClientAddr, tszUserName, tszUserPass);
 		}
-		st_HDRParam.bAuth = TRUE;
+		st_HDRParam.bAuth = true;
 	}
 
 	if (0 == _tcsnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodPost)))
@@ -126,24 +126,24 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 			memset(tszHdrBuffer, '\0', sizeof(tszHdrBuffer));
 			memset(tszStorageAddr, '\0', sizeof(tszStorageAddr));
 
-			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.bIsClose = true;
 			st_HDRParam.nHttpCode = 302;
 
 			APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter, tszStorageAddr, st_LoadbalanceCfg.st_LBDistributed.nCenterMode);
 			_stprintf(tszHdrBuffer, _T("Location: %s%s\r\n"), tszStorageAddr, pSt_HTTPParam->tszHttpUri);
 
-			RfcComponents_HttpServer_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
+			HttpProtocol_Server_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求的函数被要求重定向到:%s%s"), lpszClientAddr, tszStorageAddr, pSt_HTTPParam->tszHttpUri);
-			return TRUE;
+			return true;
 		}
 
-		if (!RfcComponents_HttpHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIVersion, tszAPIMethod, tszAPIName))
+		if (!HttpProtocol_ServerHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIVersion, tszAPIMethod, tszAPIName))
 		{
-			st_HDRParam.bIsClose = TRUE;
+			st_HDRParam.bIsClose = true;
 			st_HDRParam.nHttpCode = 404;
 
-			RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,请求的API不支持"), lpszClientAddr);
 			return FALSE;
@@ -161,23 +161,23 @@ BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int 
 	else if (0 == _tcsnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcslen(lpszMethodOption)))
 	{
 		//用于心跳
-		st_HDRParam.bIsClose = TRUE;
+		st_HDRParam.bIsClose = true;
 		st_HDRParam.nHttpCode = 200;
 		LPCTSTR lpszHdrBuffer = _T("Allow: POST GET PUT OPTIONS\r\n");
-		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
+		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("业务客户端:%s,请求OPTIONS心跳方法成功"), lpszClientAddr);
 	}
 	else
 	{
-		st_HDRParam.bIsClose = TRUE;
+		st_HDRParam.bIsClose = true;
 		st_HDRParam.nHttpCode = 405;
 
-		RfcComponents_HttpServer_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _T("业务客户端:%s,发送的方法不支持"), lpszClientAddr);
 		return FALSE;
 	}
 	
-	return TRUE;
+	return true;
 }

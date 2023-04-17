@@ -46,7 +46,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if ((NULL == lpszConfigFile) || (NULL == pSt_ServerConfig))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARAMENT;
 		return FALSE;
 	}
@@ -57,7 +57,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	FILE* pSt_File = _tfopen(lpszConfigFile, _T("rb"));
 	if (NULL == pSt_File)
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARAMENT;
 		return FALSE;
 	}
@@ -77,7 +77,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
 	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nCount, &st_JsonRoot, &st_JsonError))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARSE;
 		return FALSE;
 	}
@@ -89,7 +89,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if (st_JsonRoot["XMax"].empty() || (6 != st_JsonRoot["XMax"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XMAX;
 		return FALSE;
 	}
@@ -103,7 +103,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if (st_JsonRoot["XTime"].empty() || (5 != st_JsonRoot["XTime"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XTIME;
 		return FALSE;
 	}
@@ -116,7 +116,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if (st_JsonRoot["XLog"].empty() || (3 != st_JsonRoot["XLog"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XLOG;
 		return FALSE;
 	}
@@ -127,7 +127,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if (st_JsonRoot["XSql"].empty() || (5 != st_JsonRoot["XSql"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSQL;
 		return FALSE;
 	}
@@ -141,7 +141,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if (st_JsonRoot["XStorage"].empty() || (3 != st_JsonRoot["XStorage"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
 		return FALSE;
 	}
@@ -152,7 +152,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if (st_JsonRoot["XProxy"].empty() || (2 != st_JsonRoot["XProxy"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XPROXY;
 		return FALSE;
 	}
@@ -171,7 +171,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if (st_JsonRoot["XLimit"].empty() || (5 != st_JsonRoot["XLimit"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
 		return FALSE;
 	}
@@ -184,7 +184,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if (st_JsonRoot["XP2xp"].empty() || (3 != st_JsonRoot["XP2xp"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_P2XP;
 		return FALSE;
 	}
@@ -195,7 +195,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if (st_JsonRoot["XCert"].empty() || (6 != st_JsonRoot["XCert"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_CERT;
 		return FALSE;
 	}
@@ -215,7 +215,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 
 	if (st_JsonRoot["XVer"].empty())
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XVER;
 		return FALSE;
 	}
@@ -226,7 +226,7 @@ BOOL CConfig_Json::Config_Json_File(LPCTSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	{
 		pSt_ServerConfig->st_XVer.pStl_ListStorage->push_back(st_JsonXVer[i].asCString());
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Config_Json_LoadBalance
@@ -252,7 +252,7 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 
 	if ((NULL == lpszConfigFile) || (NULL == pSt_ServerConfig))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARAMENT;
 		return FALSE;
 	}
@@ -263,7 +263,7 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 	FILE* pSt_File = _tfopen(lpszConfigFile, _T("rb"));
 	if (NULL == pSt_File)
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARAMENT;
 		return FALSE;
 	}
@@ -283,7 +283,7 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
 	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nCount, &st_JsonRoot, &st_JsonError))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARSE;
 		return FALSE;
 	}
@@ -291,7 +291,7 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 
 	if (st_JsonRoot["LBDistributed"].empty() || (4 != st_JsonRoot["LBDistributed"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LBDISTRIBUTED;
 		return FALSE;
 	}
@@ -303,7 +303,7 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 
 	if (st_JsonRoot["LBLocation"].empty() || (4 != st_JsonRoot["LBLocation"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LBLOCATION;
 		return FALSE;
 	}
@@ -315,7 +315,7 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 
 	if (st_JsonRoot["LoadBalance"].empty() || (4 != st_JsonRoot["LoadBalance"].size()))
 	{
-		Config_IsErrorOccur = TRUE;
+		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LAODBALANCE;
 		return FALSE;
 	}
@@ -358,5 +358,5 @@ BOOL CConfig_Json::Config_Json_LoadBalance(LPCTSTR lpszConfigFile, XENGINE_LBCON
 
 		pSt_ServerConfig->st_LoadBalance.pStl_ListBucket->push_back(st_Bucket);
 	}
-	return TRUE;
+	return true;
 }

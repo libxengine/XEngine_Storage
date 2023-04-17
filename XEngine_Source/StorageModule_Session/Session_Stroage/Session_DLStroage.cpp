@@ -43,7 +43,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Init(int nMaxConnect)
 	Session_IsErrorOccur = FALSE;
 
 	m_nMaxConnect = nMaxConnect;
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_DLStroage_Destory
@@ -61,7 +61,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Destory()
 	stl_MapStroage.clear();
 	st_Locker.unlock();
 
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_DLStroage_Insert
@@ -122,7 +122,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 
 	if ((NULL == lpszClientAddr) || (NULL == lpszFileDir))
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
@@ -131,7 +131,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator != stl_MapStroage.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_EXIST;
 		st_Locker.unlock_shared();
 		return FALSE;
@@ -145,7 +145,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	int nRet = _tstat64(lpszFileDir, &st_FStat);
 	if (-1 == nRet)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 		return FALSE;
 	}
@@ -169,7 +169,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	st_Client.pSt_File = _tfopen(lpszFileDir, _T("rb"));
 	if (NULL == st_Client.pSt_File)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 		return FALSE;
 	}
@@ -202,7 +202,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTST
 	st_Locker.lock();
 	stl_MapStroage.insert(make_pair(lpszClientAddr, st_Client));
 	st_Locker.unlock();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_DLStroage_GetBuffer
@@ -232,7 +232,7 @@ BOOL CSession_DLStroage::Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCH
 
 	if ((NULL == lpszClientAddr) || (NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
@@ -241,7 +241,7 @@ BOOL CSession_DLStroage::Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCH
 	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator == stl_MapStroage.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
 		st_Locker.unlock_shared();
 		return FALSE;
@@ -260,7 +260,7 @@ BOOL CSession_DLStroage::Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCH
 		stl_MapIterator->second.ullRWLen += *pInt_MsgLen;
 	}
 	st_Locker.unlock_shared();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_DLStroage_GetInfo
@@ -286,7 +286,7 @@ BOOL CSession_DLStroage::Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSI
 
 	if ((NULL == pSt_StorageInfo))
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
@@ -295,14 +295,14 @@ BOOL CSession_DLStroage::Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSI
 	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator == stl_MapStroage.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
 	*pSt_StorageInfo = stl_MapIterator->second;
 	st_Locker.unlock_shared();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_DLStroage_GetCount
@@ -323,14 +323,14 @@ BOOL CSession_DLStroage::Session_DLStroage_GetCount(int* pInt_ListCount)
 
 	if (NULL == pInt_ListCount)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
 	st_Locker.lock_shared();
 	*pInt_ListCount = stl_MapStroage.size();
 	st_Locker.unlock_shared();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_DLStorage_SetSeek
@@ -358,7 +358,7 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
 	if (stl_MapIterator == stl_MapStroage.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
 		st_Locker.unlock_shared();
 		return FALSE;
@@ -367,7 +367,7 @@ BOOL CSession_DLStroage::Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int n
 	fseek(stl_MapIterator->second.pSt_File, nSeek, SEEK_CUR);
 	stl_MapIterator->second.ullRWLen += nSeek;
 	st_Locker.unlock_shared();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_DLStorage_GetAll
@@ -393,7 +393,7 @@ BOOL CSession_DLStroage::Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_S
 
 	if ((NULL == pppSt_StorageInfo) || (NULL == pInt_ListCount))
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
 		return FALSE;
 	}
@@ -411,11 +411,11 @@ BOOL CSession_DLStroage::Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_S
 
 	if (*pInt_ListCount <= 0)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_EMPTY;
 		return FALSE;
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_DLStroage_Delete
@@ -442,7 +442,7 @@ BOOL CSession_DLStroage::Session_DLStroage_Delete(LPCTSTR lpszClientAddr)
 		stl_MapStroage.erase(stl_MapIterator);
 	}
 	st_Locker.unlock_shared();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_DLStroage_MaxConnect
@@ -487,9 +487,9 @@ BOOL CSession_DLStroage::Session_DLStroage_MaxConnect(LPCTSTR lpszClientAddr)
 
 	if (nExistNumber >= m_nMaxConnect)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_MAXCONNECT;
 		return FALSE;
 	}
-	return TRUE;
+	return true;
 }

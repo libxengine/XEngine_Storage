@@ -39,15 +39,15 @@ BOOL StorageApp_Config_Parament(int argc,char **argv)
         }
 		else if (0 == _tcscmp("-r", argv[i]))
 		{
-            st_ServiceCfg.st_Memory.bReload = TRUE;
+            st_ServiceCfg.st_Memory.bReload = true;
 		}
 		else if (0 == _tcscmp("-u", argv[i]))
 		{
-			st_ServiceCfg.bReuseraddr = TRUE;
+			st_ServiceCfg.bReuseraddr = true;
 		}
     }
 
-    return TRUE;
+    return true;
 }
 
 void StorageApp_Config_ParamentHelp()

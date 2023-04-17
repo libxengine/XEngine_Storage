@@ -40,7 +40,7 @@ BOOL CSession_User::Session_User_Init(LPCTSTR lpszUserFile)
 	FILE* pSt_File = _tfopen(lpszUserFile, _T("rb"));
 	if (NULL == pSt_File)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 		return FALSE;
 	}
@@ -48,7 +48,7 @@ BOOL CSession_User::Session_User_Init(LPCTSTR lpszUserFile)
 	TCHAR tszMsgBuffer[4096];
 	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 
-	while (TRUE)
+	while (true)
 	{
 		int nRet = fread(tszMsgBuffer + nCount, 1, 1024, pSt_File);
 		if (nRet <= 0)
@@ -75,7 +75,7 @@ BOOL CSession_User::Session_User_Init(LPCTSTR lpszUserFile)
 
 		ptszTokStr = _tcstok(NULL, lpszLineStr);
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_User_Destory
@@ -93,7 +93,7 @@ BOOL CSession_User::Session_User_Destory()
 	stl_MapUser.clear();
 	st_Locker.unlock();
 
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_User_Exist
@@ -126,7 +126,7 @@ BOOL CSession_User::Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* 
 	unordered_map<string, SESSION_USERINFO>::const_iterator stl_MapIterator = stl_MapUser.find(lpszUser);
 	if (stl_MapIterator == stl_MapUser.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
 		st_Locker.unlock_shared();
 		return FALSE;
@@ -134,14 +134,14 @@ BOOL CSession_User::Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* 
 	
 	if (_tcslen(lpszPass) != _tcslen(stl_MapIterator->second.tszUserPass))
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PASSWORD;
 		st_Locker.unlock_shared();
 		return FALSE;
 	}
 	if (0 != _tcsncmp(lpszPass, stl_MapIterator->second.tszUserPass, _tcslen(lpszPass)))
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PASSWORD;
 		st_Locker.unlock_shared();
 		return FALSE;
@@ -151,5 +151,5 @@ BOOL CSession_User::Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* 
 		*pInt_Limit = _ttoi(stl_MapIterator->second.tszUserLimit);
 	}
 	st_Locker.unlock_shared();
-	return TRUE;
+	return true;
 }

@@ -36,8 +36,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
-#include <XEngine_Include/XEngine_RfcComponents/HttpServer_Define.h>
-#include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
+#include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Define.h>
+#include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
 #include "../XStorage_Protocol.h"
 #include "../StorageModule_Config/Config_Define.h"
 #include "../StorageModule_Database/Database_Define.h"
@@ -60,7 +60,7 @@ extern DWORD APIHelp_dwErrorCode;
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
-#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpServer")
+#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #ifdef _DEBUG
 #ifdef _WIN64

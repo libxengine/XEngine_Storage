@@ -71,7 +71,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuf
 
     if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen) || (NULL == pppSt_DBFile))
     {
-        Protocol_IsErrorOccur = TRUE;
+        Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
@@ -115,7 +115,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuf
     //打包输出信息
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Protocol_StoragePacket_Info
@@ -161,7 +161,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_Info(TCHAR* ptszMsgBuffer, 
 
 	if ((NULL == pppSt_DLInfo) || (NULL == pppSt_UPInfo))
 	{
-		Protocol_IsErrorOccur = TRUE;
+		Protocol_IsErrorOccur = true;
 		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
 		return FALSE;
 	}
@@ -206,7 +206,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_Info(TCHAR* ptszMsgBuffer, 
 	//打包输出信息
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
 	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：XStorageProtocol_Core_REPQueryDir
@@ -242,7 +242,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(TCHAR* ptszMsgB
 
     if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
     {
-        Protocol_IsErrorOccur = TRUE;
+        Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
@@ -262,7 +262,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(TCHAR* ptszMsgB
     //打包输出信息
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Protocol_StoragePacket_BasicAuth
@@ -313,7 +313,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMetho
 
     if ((NULL == lpszUser) || (NULL == lpszPass))
     {
-        Protocol_IsErrorOccur = TRUE;
+        Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
@@ -327,7 +327,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMetho
 
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     _tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Protocol_StoragePacket_UPDown
@@ -383,7 +383,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer
 
     if ((NULL == lpszFileName) || (NULL == lpszClientAddr))
     {
-        Protocol_IsErrorOccur = TRUE;
+        Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
@@ -405,7 +405,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer
 
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     _tcscpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Protocol_StoragePacket_REQFile
@@ -446,7 +446,7 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffe
 
 	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
 	{
-		Protocol_IsErrorOccur = TRUE;
+		Protocol_IsErrorOccur = true;
 		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
 		return FALSE;
 	}
@@ -468,5 +468,5 @@ BOOL CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffe
 	//打包输出信息
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
 	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
-	return TRUE;
+	return true;
 }

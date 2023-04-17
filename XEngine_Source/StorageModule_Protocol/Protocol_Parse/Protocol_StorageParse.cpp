@@ -76,7 +76,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuff
 
     if (NULL == lpszMsgBuffer)
     {
-        Protocol_IsErrorOccur = TRUE;
+        Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
@@ -88,7 +88,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuff
     //解析JSON
     if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + _tcslen(lpszMsgBuffer), &st_JsonRoot, &st_JsonError))
     {
-        Protocol_IsErrorOccur = TRUE;
+        Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
         return FALSE;
     }
@@ -144,7 +144,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_QueryFile(LPCTSTR lpszMsgBuff
             *pxhToken = st_JsonRoot["xhToken"].asUInt64();
         }
     }
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Protocol_StorageParse_ReportFile
@@ -186,7 +186,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuf
 	//解析JSON
 	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
 	{
-		Protocol_IsErrorOccur = TRUE;
+		Protocol_IsErrorOccur = true;
 		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
 		return FALSE;
 	}
@@ -234,7 +234,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ReportFile(LPCTSTR lpszMsgBuf
         }
     }
     *pInt_ListCount = nCount;
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Protocol_StorageParse_DirOperator
@@ -270,7 +270,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBu
 
     if ((NULL == lpszMsgBuffer) || (NULL == ptszUserDir))
     {
-        Protocol_IsErrorOccur = TRUE;
+        Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
@@ -282,7 +282,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBu
     //解析JSON
     if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + _tcslen(lpszMsgBuffer), &st_JsonRoot, &st_JsonError))
     {
-        Protocol_IsErrorOccur = TRUE;
+        Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
         return FALSE;
     }
@@ -295,7 +295,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCTSTR lpszMsgBu
     {
         _tcscpy(ptszUserDir, st_JsonRoot["lpszUserDir"].asCString());
     }
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Protocol_StorageParse_ProxyNotify
@@ -346,7 +346,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBu
 
     if ((NULL == lpszMsgBuffer) || (NULL == ptszClientAddr))
     {
-        Protocol_IsErrorOccur = TRUE;
+        Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
         return FALSE;
     }
@@ -358,7 +358,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBu
     //解析JSON
     if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + _tcslen(lpszMsgBuffer), &st_JsonRoot, &st_JsonError))
     {
-        Protocol_IsErrorOccur = TRUE;
+        Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
         return FALSE;
     }
@@ -371,7 +371,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_ProxyNotify(LPCTSTR lpszMsgBu
     _tcscpy(ptszBuckKey, st_JsonRoot["lpszBuckKey"].asCString());
     *pInt_FileSize = st_JsonRoot["nFileSize"].asInt64();
 
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：Protocol_StorageParse_SpeedLimit
@@ -407,7 +407,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_SpeedLimit(LPCTSTR lpszMsgBuf
 
 	if ((NULL == lpszMsgBuffer) || (NULL == pInt_Limit))
 	{
-		Protocol_IsErrorOccur = TRUE;
+		Protocol_IsErrorOccur = true;
 		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
 		return FALSE;
 	}
@@ -419,7 +419,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_SpeedLimit(LPCTSTR lpszMsgBuf
 	//解析JSON
 	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + _tcslen(lpszMsgBuffer), &st_JsonRoot, &st_JsonError))
 	{
-		Protocol_IsErrorOccur = TRUE;
+		Protocol_IsErrorOccur = true;
 		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
 		return FALSE;
 	}
@@ -428,7 +428,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_SpeedLimit(LPCTSTR lpszMsgBuf
 
     *pInt_Code = st_JsonRoot["code"].asInt();
     *pInt_Limit = st_JsonRoot["nLimitSpeed"].asInt();
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Protocol_StorageParse_P2PToken
@@ -459,7 +459,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_P2PToken(LPCTSTR lpszMsgBuffe
 
 	if ((NULL == lpszMsgBuffer))
 	{
-		Protocol_IsErrorOccur = TRUE;
+		Protocol_IsErrorOccur = true;
 		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
 		return FALSE;
 	}
@@ -471,7 +471,7 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_P2PToken(LPCTSTR lpszMsgBuffe
 	//解析JSON
 	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + _tcslen(lpszMsgBuffer), &st_JsonRoot, &st_JsonError))
 	{
-		Protocol_IsErrorOccur = TRUE;
+		Protocol_IsErrorOccur = true;
 		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
 		return FALSE;
 	}
@@ -480,10 +480,10 @@ BOOL CProtocol_StorageParse::Protocol_StorageParse_P2PToken(LPCTSTR lpszMsgBuffe
 
     if (st_JsonRoot["xhToken"].isNull())
     {
-		Protocol_IsErrorOccur = TRUE;
+		Protocol_IsErrorOccur = true;
 		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_TOKEN;
 		return FALSE;
     }
     *pxhToken = st_JsonRoot["xhToken"].asUInt64();
-	return TRUE;
+	return true;
 }

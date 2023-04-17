@@ -60,7 +60,7 @@ BOOL CDatabase_Help::Database_Help_Insert(TCHAR* ptszSQLBuffer, XSTORAGECORE_DBF
 	}
 
 	_stprintf(ptszSQLBuffer, _T("INSERT INTO `%s` (BuckKey,FilePath,FileName,FileHash,FileUser,FileSize,FileTime) VALUES('%s','%s','%s','%s','%s',%lld,'%04d-%02d-%02d %02d:%02d:%02d')"), tszTableName, pSt_DBFile->tszBuckKey, pSt_DBFile->st_ProtocolFile.tszFilePath, pSt_DBFile->st_ProtocolFile.tszFileName, pSt_DBFile->st_ProtocolFile.tszFileHash, pSt_DBFile->st_ProtocolFile.tszFileUser, pSt_DBFile->st_ProtocolFile.nFileSize, st_LibTimer.wYear, st_LibTimer.wMonth, st_LibTimer.wDay, st_LibTimer.wHour, st_LibTimer.wMinute, st_LibTimer.wSecond);
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Database_Help_Delete
@@ -109,7 +109,7 @@ BOOL CDatabase_Help::Database_Help_Delete(TCHAR* ptszSQLBuffer, LPCTSTR lpszTabl
 
 	Database_Help_Packet(tszSQLQuery, lpszBuckKey, lpszFilePath, lpszFileName, lpszFileHash);
 	_stprintf(ptszSQLBuffer, _T("DELETE FROM `%s` %s"), lpszTableName, tszSQLQuery);
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Database_Help_Query
@@ -174,7 +174,7 @@ BOOL CDatabase_Help::Database_Help_Query(TCHAR* ptszSQLBuffer, LPCTSTR lpszTable
 	_stprintf(ptszSQLBuffer, _T("SELECT * FROM `%s`"), lpszTableName);
 	Database_Help_Packet(tszSQLQuery, lpszBuckKey, lpszFilePath, lpszFileName, lpszFileHash, lpszFileUser, lpszTimeStart, lpszTimeEnd);
 	_tcscat(ptszSQLBuffer, tszSQLQuery);
-	return TRUE;
+	return true;
 }
 //////////////////////////////////////////////////////////////////////////
 //                          保护函数
@@ -250,7 +250,7 @@ BOOL CDatabase_Help::Database_Help_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuck
 			memset(tszSQLQuery, '\0', MAX_PATH);
 			_stprintf(tszSQLQuery, _T("BuckKey = '%s'"), lpszBuckKey);
 			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
+			bInit = true;
 		}
 	}
 	//文件路径
@@ -269,7 +269,7 @@ BOOL CDatabase_Help::Database_Help_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuck
 			memset(tszSQLQuery, '\0', MAX_PATH);
 			_stprintf(tszSQLQuery, _T("FilePath = '%s'"), lpszFilePath);
 			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
+			bInit = true;
 		}
 	}
 	//文件名称
@@ -288,7 +288,7 @@ BOOL CDatabase_Help::Database_Help_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuck
 			memset(tszSQLQuery, '\0', MAX_PATH);
 			_stprintf(tszSQLQuery, _T("FileName = '%s'"), lpszFileName);
 			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
+			bInit = true;
 		}
 	}
 	//文件HASH
@@ -307,7 +307,7 @@ BOOL CDatabase_Help::Database_Help_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuck
 			memset(tszSQLQuery, '\0', MAX_PATH);
 			_stprintf(tszSQLQuery, _T("FileHash = '%s'"), lpszFileHash);
 			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
+			bInit = true;
 		}
 	}
 	//文件所属用户
@@ -326,7 +326,7 @@ BOOL CDatabase_Help::Database_Help_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuck
 			memset(tszSQLQuery, '\0', MAX_PATH);
 			_stprintf(tszSQLQuery, _T("FileUser = '%s'"), lpszFileUser);
 			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
+			bInit = true;
 		}
 	}
 	//时间范围
@@ -345,9 +345,9 @@ BOOL CDatabase_Help::Database_Help_Packet(TCHAR* ptszSQLBuffer, LPCTSTR lpszBuck
 			memset(tszSQLQuery, '\0', MAX_PATH);
 			_stprintf(tszSQLQuery, _T("BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
 			_tcscat(ptszSQLBuffer, tszSQLQuery);
-			bInit = TRUE;
+			bInit = true;
 		}
 	}
 
-	return TRUE;
+	return true;
 }
