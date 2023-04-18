@@ -53,14 +53,9 @@ bool CDatabase_File::Database_File_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConnec
         return false;
     }
     m_nTimeMonth = nTimeDay;
-#ifdef _WINDOWS
-    LPCXSTR lpszStrCharset = _X("gbk");
-#else
-    LPCXSTR lpszStrCharset = _X("utf8");
-#endif
     //连接数据库
     _tcsxcpy(pSt_DBConnector->tszDBName, _X("XEngine_Storage"));
-    if (!DataBase_MySQL_Connect(&xhDBSQL, pSt_DBConnector, 5, true, lpszStrCharset))
+    if (!DataBase_MySQL_Connect(&xhDBSQL, pSt_DBConnector, 5, true, _X("utf8")))
     {
         Database_IsErrorOccur = true;
         Database_dwErrorCode = DataBase_GetLastError();
