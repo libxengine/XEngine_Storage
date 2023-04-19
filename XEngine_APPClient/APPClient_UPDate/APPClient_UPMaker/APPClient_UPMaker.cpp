@@ -144,7 +144,7 @@ BOOL HelpModule_Api_BuildVer(TCHAR* ptszLocalBuffer, TCHAR* ptszRemoteBuffer, in
 			_tcscpy(tszSubPath, stl_ListIterator->tszFilePath);
 
 			tszDelPath[_tcslen(tszDelPath) - 2] = '\0';
-			BaseLib_OperatorString_DelLastForChar(tszDelPath, '\\');
+			BaseLib_OperatorString_DelSub(tszDelPath, "\\");
 			_tcscat(tszDelPath, "\\");
 
 			BaseLib_OperatorString_DelSub(tszSubPath, tszDelPath);
