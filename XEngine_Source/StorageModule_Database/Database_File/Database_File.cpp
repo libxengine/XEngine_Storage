@@ -55,7 +55,7 @@ bool CDatabase_File::Database_File_Init(DATABASE_MYSQL_CONNECTINFO *pSt_DBConnec
     m_nTimeMonth = nTimeDay;
     //连接数据库
     _tcsxcpy(pSt_DBConnector->tszDBName, _X("XEngine_Storage"));
-    if (!DataBase_MySQL_Connect(&xhDBSQL, pSt_DBConnector, 5, true, _X("utf8")))
+    if (!DataBase_MySQL_Connect(&xhDBSQL, pSt_DBConnector))
     {
         Database_IsErrorOccur = true;
         Database_dwErrorCode = DataBase_GetLastError();
@@ -493,18 +493,25 @@ bool CDatabase_File::Database_File_CreateTable()
 
 		_xstprintf(tszSQLQuery, _X("CREATE TABLE IF NOT EXISTS `%s` ("
 			"`ID` int NOT NULL AUTO_INCREMENT COMMENT 'ID序号',"
-            "`BuckKey` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '路径KEY',"
-			"`FilePath` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件路径',"
-			"`FileName` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件名称',"
-			"`FileHash` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件HASH',"
-			"`FileUser` varchar(260) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件所属用户',"
+			"`BuckKey` varchar(260) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '路径KEY',"
+			"`FilePath` varchar(260) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件路径',"
+			"`FileName` varchar(260) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件名称',"
+			"`FileHash` varchar(260) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '文件HASH',"
+			"`FileUser` varchar(260) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '文件所属用户',"
 			"`FileSize` bigint NOT NULL COMMENT '文件大小',"
 			"`FileTime` datetime NOT NULL COMMENT '插入时间',"
 			"PRIMARY KEY (`ID`) USING BTREE"
-			") ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;"
+			") ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;"
 		), tszTableName);
-
-		if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery))
+#ifdef _MSC_BUILD
+        int nUTFLen = 0;
+        XCHAR tszUTFBuffer[2048];
+        memset(tszUTFBuffer, '\0', sizeof(tszUTFBuffer));
+        BaseLib_OperatorCharset_AnsiToUTF(tszSQLQuery, tszUTFBuffer, &nUTFLen);
+        if (!DataBase_MySQL_Execute(xhDBSQL, tszUTFBuffer))
+#else
+        if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery))
+#endif
 		{
 			Database_IsErrorOccur = true;
 			Database_dwErrorCode = DataBase_GetLastError();
