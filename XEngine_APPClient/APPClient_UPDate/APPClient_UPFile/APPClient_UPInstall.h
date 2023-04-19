@@ -37,7 +37,7 @@
   意思：是否获取成功
 备注：
 *********************************************************************/
-BOOL FileParser_ReadVer_GetRemote(LPCTSTR lpszJsonMsg, int nMsgLen, FILEPARSER_VERSIONINFO*** pppSt_FileList, int* pInt_Count, __int64x* pInt_Version, string* pStrDes)
+bool FileParser_ReadVer_GetRemote(LPCXSTR lpszJsonMsg, int nMsgLen, FILEPARSER_VERSIONINFO*** pppSt_FileList, int* pInt_Count, __int64x* pInt_Version, string* pStrDes)
 {
 	Json::Value st_JsonRoot;
 	Json::Value st_JsonArray;
@@ -76,15 +76,15 @@ BOOL FileParser_ReadVer_GetRemote(LPCTSTR lpszJsonMsg, int nMsgLen, FILEPARSER_V
 		//开始读取文件列表内容
 		(*pppSt_FileList)[i]->bIsRun = st_JsonArray[i]["ModuleRun"].asBool();
 		(*pppSt_FileList)[i]->nModuleVersion = st_JsonArray[i]["ModuleVersion"].asInt64();
-		_tcscpy((*pppSt_FileList)[i]->tszModuleCode, st_JsonArray[i]["ModuleCode"].asCString());
+		_tcsxcpy((*pppSt_FileList)[i]->tszModuleCode, st_JsonArray[i]["ModuleCode"].asCString());
 		if (!st_JsonArray[i]["ModulePath"].isNull())
 		{
-			_tcscpy((*pppSt_FileList)[i]->tszModulePath, st_JsonArray[i]["ModulePath"].asCString());
+			_tcsxcpy((*pppSt_FileList)[i]->tszModulePath, st_JsonArray[i]["ModulePath"].asCString());
 		}
-		_tcscpy((*pppSt_FileList)[i]->tszModuleName, st_JsonArray[i]["ModuleName"].asCString());
-		_tcscpy((*pppSt_FileList)[i]->tszModuleDownload, st_JsonArray[i]["ModuleDownload"].asCString());
+		_tcsxcpy((*pppSt_FileList)[i]->tszModuleName, st_JsonArray[i]["ModuleName"].asCString());
+		_tcsxcpy((*pppSt_FileList)[i]->tszModuleDownload, st_JsonArray[i]["ModuleDownload"].asCString());
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：FileParser_ReadVer_GetLocal
@@ -114,33 +114,33 @@ BOOL FileParser_ReadVer_GetRemote(LPCTSTR lpszJsonMsg, int nMsgLen, FILEPARSER_V
   意思：是否获取成功
 备注：
 *********************************************************************/
-BOOL FileParser_ReadVer_GetLocal(LPCTSTR lpszFileList, FILEPARSER_VERSIONINFO*** pppSt_FileList, int* pInt_Count, __int64x* pInt_Version /* = NULL */)
+bool FileParser_ReadVer_GetLocal(LPCXSTR lpszFileList, FILEPARSER_VERSIONINFO*** pppSt_FileList, int* pInt_Count, __int64x* pInt_Version /* = NULL */)
 {
 	int nCount = 0;
-	TCHAR* ptszJsonFile = (TCHAR*)malloc(1024 * 1024 * 10);
+	XCHAR* ptszJsonFile = (XCHAR*)malloc(1024 * 1024 * 10);
 	if (NULL == ptszJsonFile)
 	{
 		return FALSE;
 	}
 	memset(ptszJsonFile, '\0', 1024 * 1024 * 10);
-	FILE* pSt_File = _tfopen(lpszFileList, _T("rb"));
+	FILE* pSt_File = _xtfopen(lpszFileList, _X("rb"));
 	if (NULL == pSt_File)
 	{
 		free(ptszJsonFile);
 		ptszJsonFile = NULL;
 		return FALSE;
 	}
-	while (TRUE)
+	while (true)
 	{
-		TCHAR tszJsonMsg[2048];
+		XCHAR tszJsonMsg[2048];
 		memset(tszJsonMsg, '\0', sizeof(tszJsonMsg));
-		int nRet = fread(tszJsonMsg, sizeof(TCHAR), sizeof(tszJsonMsg), pSt_File);
+		size_t nRet = fread(tszJsonMsg, sizeof(XCHAR), sizeof(tszJsonMsg), pSt_File);
 		if (nRet <= 0)
 		{
 			break;
 		}
 		memcpy(ptszJsonFile + nCount, tszJsonMsg, nRet);
-		nCount += nRet;
+		nCount += (int)nRet;
 	}
 	fclose(pSt_File);
 
@@ -173,11 +173,11 @@ BOOL FileParser_ReadVer_GetLocal(LPCTSTR lpszFileList, FILEPARSER_VERSIONINFO***
 	for (unsigned int i = 0; i < st_JsonArray.size(); i++)
 	{
 		(*pppSt_FileList)[i]->st_LocalVersion.nModuleVersion = st_JsonArray[i]["ModuleVersion"].asInt64();
-		_tcscpy((*pppSt_FileList)[i]->st_LocalVersion.tszMoudelCode, st_JsonArray[i]["ModuleCode"].asCString());
-		_tcscpy((*pppSt_FileList)[i]->st_LocalVersion.tszMoudelName, st_JsonArray[i]["ModuleName"].asCString());
-		_tcscpy((*pppSt_FileList)[i]->st_LocalVersion.tszMoudelPath, st_JsonArray[i]["ModulePath"].asCString());
+		_tcsxcpy((*pppSt_FileList)[i]->st_LocalVersion.tszMoudelCode, st_JsonArray[i]["ModuleCode"].asCString());
+		_tcsxcpy((*pppSt_FileList)[i]->st_LocalVersion.tszMoudelName, st_JsonArray[i]["ModuleName"].asCString());
+		_tcsxcpy((*pppSt_FileList)[i]->st_LocalVersion.tszMoudelPath, st_JsonArray[i]["ModulePath"].asCString());
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：FileParser_Match_Start
@@ -212,14 +212,14 @@ BOOL FileParser_ReadVer_GetLocal(LPCTSTR lpszFileList, FILEPARSER_VERSIONINFO***
   意思：是否有新版本
 备注：
 *********************************************************************/
-BOOL FileParser_Match_Start(FILEPARSER_VERSIONINFO*** pppSt_ListRemote, int nRemoteCount, FILEPARSER_VERSIONINFO*** pppSt_ListLocal, int nLocalCount, list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate)
+bool FileParser_Match_Start(FILEPARSER_VERSIONINFO*** pppSt_ListRemote, int nRemoteCount, FILEPARSER_VERSIONINFO*** pppSt_ListLocal, int nLocalCount, list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate)
 {
 	for (int i = 0; i < nRemoteCount; i++)
 	{
 		//版本比较
 		for (int j = 0; j < nLocalCount; j++)
 		{
-			if (0 == _tcsncmp((*pppSt_ListLocal)[j]->st_LocalVersion.tszMoudelCode, (*pppSt_ListRemote)[i]->tszModuleCode, _tcslen((*pppSt_ListRemote)[i]->tszModuleCode)))
+			if (0 == _tcsxncmp((*pppSt_ListLocal)[j]->st_LocalVersion.tszMoudelCode, (*pppSt_ListRemote)[i]->tszModuleCode, _tcsxlen((*pppSt_ListRemote)[i]->tszModuleCode)))
 			{
 				if ((*pppSt_ListRemote)[i]->nModuleVersion > (*pppSt_ListLocal)[j]->st_LocalVersion.nModuleVersion)
 				{
@@ -234,5 +234,5 @@ BOOL FileParser_Match_Start(FILEPARSER_VERSIONINFO*** pppSt_ListRemote, int nRem
 			}
 		}
 	}
-	return TRUE;
+	return true;
 }

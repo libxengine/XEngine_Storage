@@ -3,10 +3,14 @@
 #include <Windows.h>
 #include <tchar.h>
 #pragma comment(lib,"Ws2_32.lib")
-#pragma comment(lib,"../../../XEngine_Source/Debug/jsoncpp")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient.lib")
+#ifdef _WIN64
+#pragma comment(lib,"../../../XEngine_Source/x64/Debug/jsoncpp")
+#else
+#pragma comment(lib,"../../../XEngine_Source/Debug/jsoncpp")
+#endif
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,8 +33,8 @@ using namespace std;
 
 typedef struct 
 {
-	TCHAR tszFilePath[MAX_PATH];
-	TCHAR tszFileName[MAX_PATH];
+	XCHAR tszFilePath[MAX_PATH];
+	XCHAR tszFileName[MAX_PATH];
 }HELPMODULE_FILELIST, * LPHELPMODULE_FILELIST;
 /********************************************************************
 函数名称：HelpModule_Api_BuildVer
@@ -65,10 +69,10 @@ typedef struct
   意思：是否构建成功
 备注：次函数可以帮助你快速构建一个可更新的文件列表，方便你快速使用我们的更新SDK
 *********************************************************************/
-BOOL HelpModule_Api_BuildVer(TCHAR* ptszLocalBuffer, TCHAR* ptszRemoteBuffer, int* pInt_LocalLen, int* pInt_RemoteLen, LPCTSTR lpszPath, LPCTSTR lpszDlUrl, BOOL bSubDir = TRUE)
+bool HelpModule_Api_BuildVer(XCHAR* ptszLocalBuffer, XCHAR* ptszRemoteBuffer, int* pInt_LocalLen, int* pInt_RemoteLen, LPCXSTR lpszPath, LPCXSTR lpszDlUrl, bool bSubDir = true)
 {
 	int nListCount;
-	CHAR** ppszListDir;
+	XCHAR** ppszListDir;
 	list<HELPMODULE_FILELIST> stl_ListFile;
 	//枚举文件
 	if (!SystemApi_File_EnumFile(lpszPath, &ppszListDir, &nListCount, NULL, NULL, bSubDir, 1))
@@ -98,62 +102,62 @@ BOOL HelpModule_Api_BuildVer(TCHAR* ptszLocalBuffer, TCHAR* ptszRemoteBuffer, in
 	Json::Value st_JsonRemoteOPtion;
 	Json::StreamWriterBuilder st_JsonBuilder;
 	//判断是否是自定义版本
-	TCHAR tszTimer[64];
+	XCHAR tszTimer[64];
 	XENGINE_LIBTIMER st_Timer;
 
 	memset(tszTimer, '\0', sizeof(tszTimer));
 	memset(&st_Timer, '\0', sizeof(XENGINE_LIBTIMER));
 
 	BaseLib_OperatorTime_GetSysTime(&st_Timer);
-	_stprintf_s(tszTimer, _T("%04d%02d%02d%02d%02d%02d"), st_Timer.wYear, st_Timer.wMonth, st_Timer.wDay, st_Timer.wHour, st_Timer.wMinute, st_Timer.wSecond);
-	__int64x m_nFileVer = _ttoi64(tszTimer);
+	_xstprintf(tszTimer, _X("%04d%02d%02d%02d%02d%02d"), st_Timer.wYear, st_Timer.wMonth, st_Timer.wDay, st_Timer.wHour, st_Timer.wMinute, st_Timer.wSecond);
+	__int64x m_nFileVer = _ttxoll(tszTimer);
 
 	st_JsonLocalRoot["MainVersion"] = (Json::UInt64)m_nFileVer;
 
 	st_JsonRemoteOPtion["st_JsonRemoteOPtion"] = 0;
 	st_JsonRemoteRoot["MainVersion"] = (Json::UInt64)m_nFileVer;
-	st_JsonRemoteRoot["MainDescription"] = _T("File UPData Des!");
+	st_JsonRemoteRoot["MainDescription"] = _X("File UPData Des!");
 	st_JsonRemoteRoot["FileVerOPtion"] = st_JsonRemoteOPtion;
 	//开始构架JSON文件列表
 	list<HELPMODULE_FILELIST>::const_iterator stl_ListIterator = stl_ListFile.begin();
 	for (unsigned int i = 1; stl_ListIterator != stl_ListFile.end(); stl_ListIterator++, i++)
 	{
-		TCHAR tszFileCode[64];
+		XCHAR tszFileCode[64];
 		memset(tszFileCode, '\0', sizeof(tszFileCode));
 
-		_stprintf_s(tszFileCode, _T("XYRYUPVERCODE%d"), i);
+		_xstprintf(tszFileCode, _X("XYRYUPVERCODE%d"), i);
 
 		st_JsonLocalObject["ModuleVersion"] = (Json::UInt64)m_nFileVer;
 		st_JsonLocalObject["ModuleCode"] = tszFileCode;
 		st_JsonLocalObject["ModuleName"] = stl_ListIterator->tszFileName;
 		st_JsonLocalObject["ModulePath"] = stl_ListIterator->tszFilePath;
-		TCHAR tszDlPath[1024];
+		XCHAR tszDlPath[1024];
 		memset(tszDlPath, '\0', sizeof(tszDlPath));
 		//删除指定字符串
 		int nPathType = 0;
 		BaseLib_OperatorString_GetPath(stl_ListIterator->tszFilePath, &nPathType);
 		if (1 == nPathType)
 		{
-			TCHAR tszDelPath[MAX_PATH];
-			TCHAR tszSubPath[MAX_PATH];
+			XCHAR tszDelPath[MAX_PATH];
+			XCHAR tszSubPath[MAX_PATH];
 
 			memset(tszDelPath, '\0', MAX_PATH);
 			memset(tszSubPath, '\0', MAX_PATH);
 
-			_tcscpy(tszDelPath, lpszPath);
-			_tcscpy(tszSubPath, stl_ListIterator->tszFilePath);
+			_tcsxcpy(tszDelPath, lpszPath);
+			_tcsxcpy(tszSubPath, stl_ListIterator->tszFilePath);
 
-			tszDelPath[_tcslen(tszDelPath) - 2] = '\0';
+			tszDelPath[_tcsxlen(tszDelPath) - 2] = '\0';
 			BaseLib_OperatorString_DelSub(tszDelPath, "\\");
-			_tcscat(tszDelPath, "\\");
+			_tcsxcat(tszDelPath, "\\");
 
 			BaseLib_OperatorString_DelSub(tszSubPath, tszDelPath);
 			BaseLib_OperatorString_FixPath(tszSubPath, 2);
-			_stprintf_s(tszDlPath, _T("%s%s%s"), lpszDlUrl, tszSubPath, stl_ListIterator->tszFileName);
+			_xstprintf(tszDlPath, _X("%s%s%s"), lpszDlUrl, tszSubPath, stl_ListIterator->tszFileName);
 		}
 		else
 		{
-			_stprintf_s(tszDlPath, _T("%s%s%s"), lpszDlUrl, stl_ListIterator->tszFilePath + 2, stl_ListIterator->tszFileName);
+			_xstprintf(tszDlPath, _X("%s%s%s"), lpszDlUrl, stl_ListIterator->tszFilePath + 2, stl_ListIterator->tszFileName);
 		}
 		st_JsonRemoteObject["ModuleRun"] = false;
 		st_JsonRemoteObject["ModuleVersion"] = (Json::UInt64)m_nFileVer;
@@ -175,7 +179,7 @@ BOOL HelpModule_Api_BuildVer(TCHAR* ptszLocalBuffer, TCHAR* ptszRemoteBuffer, in
 	memcpy(ptszLocalBuffer, Json::writeString(st_JsonBuilder, st_JsonLocalRoot).c_str(), *pInt_LocalLen);
 	memcpy(ptszRemoteBuffer, Json::writeString(st_JsonBuilder, st_JsonRemoteRoot).c_str(), *pInt_RemoteLen);
 
-	return TRUE;
+	return true;
 }
 
 int main(int argc, char** argv)
@@ -184,28 +188,28 @@ int main(int argc, char** argv)
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
-	LPCTSTR lpszPath = _T("D:\\libxengine\\*");
-	LPCTSTR lpszLocalFile = _T("D:\\XEngine_Storage\\XEngine_APPClient\\Debug\\LocalFile.txt");
-	LPCTSTR lpszPostFile = _T("http://192.168.1.8:5102/api?filename=xengine/upfile.txt&storeagekey=storagekey1");
-	LPCTSTR lpszDownload = _T("http://192.168.1.8:5101/storagekey1/xengine/");
+	LPCXSTR lpszPath = _X("D:\\libxengine\\*");
+	LPCXSTR lpszLocalFile = _X("D:\\XEngine_Storage\\XEngine_APPClient\\Debug\\LocalFile.txt");
+	LPCXSTR lpszPostFile = _X("http://192.168.1.8:5102/api?filename=xengine/upfile.txt&storeagekey=storagekey1");
+	LPCXSTR lpszDownload = _X("http://192.168.1.8:5101/storagekey1/xengine/");
 	int nLocalLen = 1024 * 1024 * 10;
 	int nRemoteLen = 1024 * 1024 * 10;
-	TCHAR* ptszLocalBuffer = (TCHAR*)malloc(nLocalLen);
-	TCHAR* ptszRemoteBuffer = (TCHAR*)malloc(nRemoteLen);
+	XCHAR* ptszLocalBuffer = (XCHAR*)malloc(nLocalLen);
+	XCHAR* ptszRemoteBuffer = (XCHAR*)malloc(nRemoteLen);
 
 	memset(ptszLocalBuffer, '\0', nLocalLen);
 	memset(ptszRemoteBuffer, '\0', nRemoteLen);
 
 	if (!HelpModule_Api_BuildVer(ptszLocalBuffer, ptszRemoteBuffer, &nLocalLen, &nRemoteLen, lpszPath, lpszDownload))
 	{
-		printf("erron\n");
+		_xtprintf("erron\n");
 		return 0;
 	}
 	SystemApi_File_SaveBuffToFile(lpszLocalFile, ptszLocalBuffer, nLocalLen);
 	//如果服务器支持,可以直接把更新数据提交到服务器
-	if (!APIClient_Http_Request(_T("POST"), lpszPostFile, ptszRemoteBuffer, NULL, NULL, &nRemoteLen))
+	if (!APIClient_Http_Request(_X("POST"), lpszPostFile, ptszRemoteBuffer, NULL, NULL, &nRemoteLen))
 	{
-		printf("erron\n");
+		_xtprintf("erron\n");
 	}
 #ifdef _MSC_BUILD
 	WSACleanup();
