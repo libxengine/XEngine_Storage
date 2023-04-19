@@ -63,21 +63,21 @@ typedef struct tag_XEngine_ServerConfig
         bool bUPHash;
         int nHashMode;
     }st_XStorage;
+	struct
+	{
+		bool bUPAuth;
+        bool bDLAuth;
+        bool bCHAuth;
+		XCHAR tszUserList[MAX_PATH];
+	}st_XAuth;
     struct  
     {
-        struct  
-        {
-            bool bAuth;
-            XCHAR tszAuthProxy[MAX_PATH];
-            XCHAR tszUserList[MAX_PATH];
-        }st_XProxyAuth;
-        struct  
-        {
-            bool bUPPass;
-            bool bDLPass;
-            XCHAR tszUPPass[MAX_PATH];
-            XCHAR tszDLPass[MAX_PATH];
-        }st_XProxyPass;
+		bool bUPPass;
+		bool bDLPass;
+        bool bAuthPass;
+		XCHAR tszUPPass[MAX_PATH];
+		XCHAR tszDLPass[MAX_PATH];
+        XCHAR tszAuthPass[MAX_PATH];
     }st_XProxy;
 	struct
 	{

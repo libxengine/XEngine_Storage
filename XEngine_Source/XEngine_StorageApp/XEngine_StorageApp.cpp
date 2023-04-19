@@ -217,7 +217,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，初始化数据库失败,数据库被设置为禁用,相关功能已经被禁止使用!"));
 	}
 
-	if (!Session_User_Init(st_ServiceCfg.st_XProxy.st_XProxyAuth.tszUserList))
+	if (!Session_User_Init(st_ServiceCfg.st_XAuth.tszUserList))
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动用户管理服务失败，错误：%lX"), Session_GetLastError());
 		goto XENGINE_EXITAPP;

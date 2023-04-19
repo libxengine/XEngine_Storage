@@ -150,24 +150,31 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XStorage.bUPHash = st_JsonXStorage["bUPHash"].asInt();
 	pSt_ServerConfig->st_XStorage.bResumable = st_JsonXStorage["bResumable"].asInt();
 
-	if (st_JsonRoot["XProxy"].empty() || (2 != st_JsonRoot["XProxy"].size()))
+	if (st_JsonRoot["XProxy"].empty() || (6 != st_JsonRoot["XProxy"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XPROXY;
 		return false;
 	}
 	Json::Value st_JsonXProxy = st_JsonRoot["XProxy"];
-	Json::Value st_JsonXProxyAuth = st_JsonXProxy["XProxyAuth"];
-	Json::Value st_JsonXProxyPass = st_JsonXProxy["XProxyPass"];
+	pSt_ServerConfig->st_XProxy.bDLPass = st_JsonXProxy["bDLPass"].asBool();
+	pSt_ServerConfig->st_XProxy.bUPPass = st_JsonXProxy["bUPPass"].asBool();
+	pSt_ServerConfig->st_XProxy.bAuthPass = st_JsonXProxy["bAuthPass"].asBool();
+	_tcsxcpy(pSt_ServerConfig->st_XProxy.tszDLPass, st_JsonXProxy["tszDLPass"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XProxy.tszUPPass, st_JsonXProxy["tszUPPass"].asCString());
+	_tcsxcpy(pSt_ServerConfig->st_XProxy.tszAuthPass, st_JsonXProxy["tszAuthPass"].asCString());
 
-	pSt_ServerConfig->st_XProxy.st_XProxyAuth.bAuth = st_JsonXProxyAuth["bAuth"].asInt();
-	_tcsxcpy(pSt_ServerConfig->st_XProxy.st_XProxyAuth.tszAuthProxy, st_JsonXProxyAuth["tszAuthProxy"].asCString());
-	_tcsxcpy(pSt_ServerConfig->st_XProxy.st_XProxyAuth.tszUserList, st_JsonXProxyAuth["tszUserList"].asCString());
-
-	pSt_ServerConfig->st_XProxy.st_XProxyPass.bDLPass = st_JsonXProxyPass["bDLGet"].asInt();
-	pSt_ServerConfig->st_XProxy.st_XProxyPass.bUPPass = st_JsonXProxyPass["bUPGet"].asInt();
-	_tcsxcpy(pSt_ServerConfig->st_XProxy.st_XProxyPass.tszDLPass, st_JsonXProxyPass["tszDLPass"].asCString());
-	_tcsxcpy(pSt_ServerConfig->st_XProxy.st_XProxyPass.tszUPPass, st_JsonXProxyPass["tszUPPass"].asCString());
+	if (st_JsonRoot["XAuth"].empty() || (4 != st_JsonRoot["XAuth"].size()))
+	{
+		Config_IsErrorOccur = true;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XAUTH;
+		return false;
+	}
+	Json::Value st_JsonXAuth = st_JsonRoot["XAuth"];
+	pSt_ServerConfig->st_XAuth.bUPAuth = st_JsonXAuth["bUPAuth"].asInt();
+	pSt_ServerConfig->st_XAuth.bDLAuth = st_JsonXAuth["bDLAuth"].asInt();
+	pSt_ServerConfig->st_XAuth.bCHAuth = st_JsonXAuth["bCHAuth"].asInt();
+	_tcsxcpy(pSt_ServerConfig->st_XAuth.tszUserList, st_JsonXAuth["tszUserList"].asCString());
 
 	if (st_JsonRoot["XLimit"].empty() || (5 != st_JsonRoot["XLimit"].size()))
 	{
