@@ -8,8 +8,8 @@ int main(int argc, char** argv)
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
-	LPCXSTR lpszLocalFile = _X("D:\\XEngine_Storage\\XEngine_APPClient\\Debug\\LocalFile.txt");
-	LPCXSTR lpszDownload = _X("http://192.168.1.8:5101/storagekey1/xengine/upfile.txt");
+	LPCXSTR lpszLocalFile = _X("D:\\XEngine_Storage\\XEngine_APPClient\\Debug\\LocalFile.json");
+	LPCXSTR lpszDownload = _X("http://127.0.0.1:5101/storagekey1/xengine/upfile.json");
 	XCHAR* ptszMsgBuffer = NULL;
 	int nMsgLen = 0;
 

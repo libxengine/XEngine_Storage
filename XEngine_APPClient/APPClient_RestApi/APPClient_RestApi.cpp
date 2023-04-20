@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <tchar.h>
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
+#pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient")
 #pragma comment(lib,"Ws2_32")
 #ifdef _WIN64
@@ -20,29 +21,34 @@
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
+#include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
+#include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
 #include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
 #include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
 using namespace std;
 
-//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_NetHelp -lXEngine_BaseLib -lNetHelp_APIClient -ljsoncpp -Wl,-rpath=../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib:../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_NetHelp,--disable-new-dtags
+//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L ../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_NetHelp -lXEngine_BaseLib -lNetHelp_APIClient -ljsoncpp -Wl,-rpath=../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_BaseLib:../../../XEngine/XEngine_Release/XEngine_Linux/Ubuntu/XEngine_NetHelp,--disable-new-dtags
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
 //linux使用下面的命令编译
-//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -ljsoncpp
+//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -ljsoncpp
 
+XCHAR tszBaseBuffer[MAX_PATH];
+XCHAR tszHdrBuffer[MAX_PATH];
 //查询
 void API_Manage_Query()
 {
-	LPCXSTR lpszUrl = _X("http://192.168.1.8:5100/Api/Manage/QueryFile");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/QueryFile");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
 	Json::Value st_JsonRoot;
+
 	st_JsonRoot["lpszTimeStart"];
 	st_JsonRoot["lpszTimeEnd"];
 	st_JsonRoot["lpszBuckKey"] = "storagekey2";
 
-	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("API_Manage_Query:%lX\n", APIClient_GetLastError());
 		return;
@@ -53,7 +59,7 @@ void API_Manage_Query()
 //插入
 void API_Manage_Insert()
 {
-	LPCXSTR lpszUrl = _X("http://192.168.1.8:5100/Api/Manage/Insert");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Insert");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
@@ -70,7 +76,7 @@ void API_Manage_Insert()
 	st_JsonRoot["List"] = st_JsonArray;
 	st_JsonRoot["Count"] = 1;
 
-	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("API_Manage_Insert:%lX\n", APIClient_GetLastError());
 		return;
@@ -81,7 +87,7 @@ void API_Manage_Insert()
 //删除
 void API_Manage_Delete()
 {
-	LPCXSTR lpszUrl = _X("http://192.168.1.8:5100/Api/Manage/Delete");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Delete");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
@@ -95,7 +101,7 @@ void API_Manage_Delete()
 	st_JsonRoot["List"] = st_JsonArray;
 	st_JsonRoot["Count"] = 1;
 
-	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("API_Manage_Delete:%lX\n", APIClient_GetLastError());
 		return;
@@ -106,7 +112,7 @@ void API_Manage_Delete()
 //文件夹
 void API_Manage_Dir()
 {
-	LPCXSTR lpszUrl = _X("http://192.168.1.8:5100/Api/Manage/Dir");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Dir");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
@@ -115,7 +121,7 @@ void API_Manage_Dir()
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
 	st_JsonRoot["lpszUserDir"] = "user";
 	st_JsonRoot["nOPerator"] = 1;
-	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("API_Manage_Dir:%lX\n", APIClient_GetLastError());
 		return;
@@ -127,7 +133,7 @@ void API_Manage_Dir()
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
 	st_JsonRoot["lpszUserDir"];
 	st_JsonRoot["nOPerator"] = 0;
-	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("API_Manage_Dir:%lX\n", APIClient_GetLastError());
 		return;
@@ -139,7 +145,7 @@ void API_Manage_Dir()
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
 	st_JsonRoot["lpszUserDir"] = "user";
 	st_JsonRoot["nOPerator"] = 2;
-	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("API_Manage_Dir:%lX\n", APIClient_GetLastError());
 		return;
@@ -150,11 +156,11 @@ void API_Manage_Dir()
 //任务管理
 void API_Manage_Task()
 {
-	LPCXSTR lpszUrl = _X("http://192.168.1.8:5100/Api/Manage/Task");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Task");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
-	if (!APIClient_Http_Request(_X("POST"), lpszUrl, NULL, &nCode, &ptszMsgBuffer, &nLen))
+	if (!APIClient_Http_Request(_X("POST"), lpszUrl, NULL, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("API_Manage_Task:%lX\n", APIClient_GetLastError());
 		return;
@@ -169,6 +175,10 @@ int main()
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
+	memset(tszBaseBuffer, '\0', MAX_PATH);
+	memset(tszHdrBuffer, '\0', MAX_PATH);
+	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
+	_xstprintf(tszHdrBuffer, _X("Authorization: %s\r\n"), tszBaseBuffer);
 
 	API_Manage_Query();
 	API_Manage_Insert();

@@ -147,9 +147,7 @@ bool HelpModule_Api_BuildVer(XCHAR* ptszLocalBuffer, XCHAR* ptszRemoteBuffer, in
 			_tcsxcpy(tszDelPath, lpszPath);
 			_tcsxcpy(tszSubPath, stl_ListIterator->tszFilePath);
 
-			tszDelPath[_tcsxlen(tszDelPath) - 2] = '\0';
-			BaseLib_OperatorString_DelSub(tszDelPath, "\\");
-			_tcsxcat(tszDelPath, "\\");
+			tszDelPath[_tcsxlen(tszDelPath) - 1] = '\0';
 
 			BaseLib_OperatorString_DelSub(tszSubPath, tszDelPath);
 			BaseLib_OperatorString_FixPath(tszSubPath, 2);
@@ -188,10 +186,15 @@ int main(int argc, char** argv)
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
-	LPCXSTR lpszPath = _X("D:\\libxengine\\*");
-	LPCXSTR lpszLocalFile = _X("D:\\XEngine_Storage\\XEngine_APPClient\\Debug\\LocalFile.txt");
-	LPCXSTR lpszPostFile = _X("http://192.168.1.8:5102/api?filename=xengine/upfile.txt&storeagekey=storagekey1");
-	LPCXSTR lpszDownload = _X("http://192.168.1.8:5101/storagekey1/xengine/");
+	//要更新的目录
+	LPCXSTR lpszPath = _X("D:\\libxengine\\*");  
+	//更新列表
+	LPCXSTR lpszLocalFile = _X("D:\\XEngine_Storage\\XEngine_APPClient\\Debug\\LocalFile.json");
+	//更新文件下载地址
+	LPCXSTR lpszDownload = _X("http://127.0.0.1:5101/storagekey1/xengine/");
+	//自动提交到我们的服务器
+	LPCXSTR lpszPostFile = _X("http://127.0.0.1:5102/api?filename=xengine/xengine.json&storeagekey=storagekey1");
+
 	int nLocalLen = 1024 * 1024 * 10;
 	int nRemoteLen = 1024 * 1024 * 10;
 	XCHAR* ptszLocalBuffer = (XCHAR*)malloc(nLocalLen);

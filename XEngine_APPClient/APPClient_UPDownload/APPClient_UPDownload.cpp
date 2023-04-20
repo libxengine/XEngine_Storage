@@ -51,7 +51,7 @@ void File_UPLoad()
 	memset(tszKeyBuffer, '\0', MAX_PATH);
 	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
 
-	_xtprintf(tszHdrBuffer, _X("Range: bytes=0-5/10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
+	_xstprintf(tszHdrBuffer, _X("Range: bytes=0-5/10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
 	if (!APIClient_Http_Request(_X("POST"), lpszUrl, lpszMsgBuffer, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("upload failed:%lX\n", APIClient_GetLastError());
@@ -84,7 +84,7 @@ void File_UPLoad()
 //下载文件
 void File_Download()
 {
-	LPCXSTR lpszUrl = _X("http://192.168.1.8:5101/storagekey2/newfile4.txt");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5101/storagekey2/newfile4.txt");
 
 	int nLen = 0;
 	XCHAR* ptszMsgBuffer = NULL;
