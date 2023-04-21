@@ -1,6 +1,8 @@
 # APPClient_UPDate
 此例子演示了如何使用软件更新程序  
+此软件更新代码支持更新列表,更新说明,文件同步,更新完毕执行指定操作(删除,执行)  
 This example demonstrates how to use the software updater  
+the software update code support update list,update note,After the update is complete, perform the specified operation(delete,execution)  
 
 
 ## APPClient_UPMaker
