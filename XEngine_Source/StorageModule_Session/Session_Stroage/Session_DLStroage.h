@@ -17,16 +17,16 @@ public:
     CSession_DLStroage();
     ~CSession_DLStroage();
 public:
-    BOOL Session_DLStroage_Init(int nMaxConnect);
-    BOOL Session_DLStroage_Destory();
-    BOOL Session_DLStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x* pInt_Count, __int64x* pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0, LPCTSTR lpszFileHash = NULL, int nLimit = 0, XHANDLE xhToken = NULL);
-    BOOL Session_DLStroage_GetBuffer(LPCTSTR lpszClientAddr, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
-    BOOL Session_DLStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
-    BOOL Session_DLStroage_GetCount(int* pInt_ListCount);
-    BOOL Session_DLStorage_SetSeek(LPCTSTR lpszClientAddr, int nSeek);
-    BOOL Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
-    BOOL Session_DLStroage_Delete(LPCTSTR lpszClientAddr);
-    BOOL Session_DLStroage_MaxConnect(LPCTSTR lpszClientAddr);
+    bool Session_DLStroage_Init(int nMaxConnect);
+    bool Session_DLStroage_Destory();
+    bool Session_DLStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, __int64x* pInt_Count, __int64x* pInt_LeftCount, int nPosStart = 0, int nPostEnd = 0, LPCXSTR lpszFileHash = NULL, int nLimit = 0, XHANDLE xhToken = NULL);
+    bool Session_DLStroage_GetBuffer(LPCXSTR lpszClientAddr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+    bool Session_DLStroage_GetInfo(LPCXSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
+    bool Session_DLStroage_GetCount(int* pInt_ListCount);
+    bool Session_DLStorage_SetSeek(LPCXSTR lpszClientAddr, int nSeek);
+    bool Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
+    bool Session_DLStroage_Delete(LPCXSTR lpszClientAddr);
+    bool Session_DLStroage_MaxConnect(LPCXSTR lpszClientAddr);
 private:
     int m_nMaxConnect;
     shared_mutex st_Locker;

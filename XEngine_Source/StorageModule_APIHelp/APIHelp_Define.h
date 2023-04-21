@@ -12,13 +12,13 @@
 *********************************************************************/
 typedef struct  
 {
-	TCHAR tszMsgBuffer[4096];
+	XCHAR tszMsgBuffer[4096];
 	int nMsgLen;
 }APIHELP_LBFILEINFO;
 //////////////////////////////////////////////////////////////////////////
 //                       导出函数
 //////////////////////////////////////////////////////////////////////////
-extern "C" DWORD StorageHelp_GetLastError(int* pInt_SysError = NULL);
+extern "C" XLONG StorageHelp_GetLastError(int* pInt_SysError = NULL);
 /************************************************************************/
 /*                       分布式函数                                     */
 /************************************************************************/
@@ -45,7 +45,7 @@ extern "C" DWORD StorageHelp_GetLastError(int* pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr, int nMode);
+extern "C" bool APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, XCHAR* ptszAddr, int nMode);
 /********************************************************************
 函数名称：APIHelp_Distributed_FileList
 函数功能：解析所有解析到的内容并且打包成指定结构
@@ -69,7 +69,7 @@ extern "C" BOOL APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHA
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>* pStl_ListParse, XSTORAGECORE_DBFILE*** pppSt_ListPacket, int* pInt_ListCount);
+extern "C" bool APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>* pStl_ListParse, XSTORAGECORE_DBFILE*** pppSt_ListPacket, int* pInt_ListCount);
 /********************************************************************
 函数名称：APIHelp_Distributed_DLStorage
 函数功能：通过URLKEY得到一个对应下载地址
@@ -93,7 +93,7 @@ extern "C" BOOL APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>* pStl_List
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket);
+extern "C" bool APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket);
 /********************************************************************
 函数名称：APIHelp_Distributed_UPStorage
 函数功能：通过分布式存储列表获得一个存储地址
@@ -117,7 +117,7 @@ extern "C" BOOL APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGIN
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode);
+extern "C" bool APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode);
 /********************************************************************
 函数名称：APIHelp_Distributed_GetPathKey
 函数功能：通过BUCKET名称查找对应路径
@@ -141,7 +141,7 @@ extern "C" BOOL APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCTSTR lpszBuckKey, TCHAR* ptszFilePath);
+extern "C" bool APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCXSTR lpszBuckKey, XCHAR* ptszFilePath);
 /************************************************************************/
 /*                       帮助函数                                       */
 /************************************************************************/
@@ -173,7 +173,7 @@ extern "C" BOOL APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Api_ProxyAuth(TCHAR* ptszUser, TCHAR* ptszPass, TCHAR** pptszListHdr, int nHdrCount);
+extern "C" bool APIHelp_Api_ProxyAuth(XCHAR* ptszUser, XCHAR* ptszPass, XCHAR** pptszListHdr, int nHdrCount);
 /********************************************************************
 函数名称：APIHelp_Api_RangeFile
 函数功能：获取HTTP的范围
@@ -207,7 +207,7 @@ extern "C" BOOL APIHelp_Api_ProxyAuth(TCHAR* ptszUser, TCHAR* ptszPass, TCHAR** 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64x* pInt_Count, TCHAR** pptszListHdr, int nHdrCount);
+extern "C" bool APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64x* pInt_Count, XCHAR** pptszListHdr, int nHdrCount);
 /********************************************************************
 函数名称：APIHelp_Api_VerHash
 函数功能：验证HASH值
@@ -231,7 +231,7 @@ extern "C" BOOL APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64x* 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount);
+extern "C" bool APIHelp_Api_VerHash(LPCXSTR lpszFileHash, XCHAR** pptszListHdr, int nHdrCount);
 /********************************************************************
 函数名称：APIHelp_Api_GetIPInfo
 函数功能：获取IP信息
@@ -255,7 +255,7 @@ extern "C" BOOL APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHdr, 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_IPADDRINFO* pSt_IPAddrInfo);
+extern "C" bool APIHelp_Api_GetIPInfo(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_IPADDRINFO* pSt_IPAddrInfo);
 /********************************************************************
 函数名称：APIHelp_Api_UrlParse
 函数功能：URL参数解析函数
@@ -284,4 +284,4 @@ extern "C" BOOL APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGIN
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" BOOL APIHelp_Api_UrlParse(TCHAR*** ppptszList, int nListCount, TCHAR* ptszFileName, TCHAR* ptszKeyName);
+extern "C" bool APIHelp_Api_UrlParse(XCHAR*** ppptszList, int nListCount, XCHAR* ptszFileName, XCHAR* ptszKeyName);

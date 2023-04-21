@@ -1,11 +1,11 @@
 ﻿#pragma once
-#define XENGINE_STORAGE_APP_TASK_PASS  _T("Pass")
-#define XENGINE_STORAGE_APP_TASK_MANAGE  _T("Manage")
+#define XENGINE_STORAGE_APP_TASK_PASS  _X("Pass")
+#define XENGINE_STORAGE_APP_TASK_MANAGE  _X("Manage")
 
-#define XENGINE_STORAGE_APP_METHOD_CONFIG  _T("Config")
-#define XENGINE_STORAGE_APP_METHOD_UPFILE  _T("UPFile")
-#define XENGINE_STORAGE_APP_METHOD_DLFILE  _T("DLFile")
+#define XENGINE_STORAGE_APP_METHOD_CONFIG  _X("Config")
+#define XENGINE_STORAGE_APP_METHOD_UPFILE  _X("UPFile")
+#define XENGINE_STORAGE_APP_METHOD_DLFILE  _X("DLFile")
 
-XHTHREAD CALLBACK XEngine_Center_HTTPThread(LPVOID lParam);
-BOOL XEngine_Task_HttpCenter_APIList(LPCTSTR lpszUrlName, TCHAR* ptszAPIVersion, TCHAR* ptszAPIMethod, TCHAR* ptszAPIName);
-BOOL XEngine_Task_HttpCenter(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, TCHAR** pptszListHdr, int nHdrCount);
+XHTHREAD CALLBACK XEngine_Center_HTTPThread(XPVOID lParam);
+bool XEngine_Task_HttpCenter_APIList(LPCXSTR lpszUrlName, XCHAR* ptszAPIVersion, XCHAR* ptszAPIMethod, XCHAR* ptszAPIName);
+bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount);

@@ -17,10 +17,10 @@ public:
     CProtocol_StoragePacket();
     ~CProtocol_StoragePacket();
 public:
-    BOOL Protocol_StoragePacket_QueryFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL, XNETHANDLE xhToken = 0);
-    BOOL Protocol_StoragePacket_Info(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, int nDLCount, int nUPCount);
-	BOOL Protocol_StoragePacket_DirOperator(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, TCHAR*** pppszListEnum, int nListCount);
-	BOOL Protocol_StoragePacket_BasicAuth(LPCTSTR lpszMethod, LPCTSTR lpszPostUrl, LPCTSTR lpszClientAddr, LPCTSTR lpszUser, LPCTSTR lpszPass, TCHAR* ptszMsgBuffer, int* pInt_MsgLen);
-    BOOL Protocol_StoragePacket_UPDown(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszBuckKey, LPCTSTR lpszFileName, LPCTSTR lpszClientAddr, __int64x nFileSize, BOOL bDown, LPCTSTR lpszFileHash = NULL);
-    BOOL Protocol_StoragePacket_REQFile(TCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCTSTR lpszFileName = NULL, LPCTSTR lpszFileHash = NULL, XNETHANDLE xhToken = 0);
+    bool Protocol_StoragePacket_QueryFile(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCXSTR lpszTimeStart = NULL, LPCXSTR lpszTimeEnd = NULL, XNETHANDLE xhToken = 0);
+    bool Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, int nDLCount, int nUPCount);
+	bool Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** pppszListEnum, int nListCount);
+	bool Protocol_StoragePacket_BasicAuth(LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszMsgBuffer, int* pInt_MsgLen);
+    bool Protocol_StoragePacket_UPDown(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszBuckKey, LPCXSTR lpszFileName, LPCXSTR lpszClientAddr, __int64x nFileSize, bool bDown, LPCXSTR lpszFileHash = NULL);
+    bool Protocol_StoragePacket_REQFile(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName = NULL, LPCXSTR lpszFileHash = NULL, XNETHANDLE xhToken = 0);
 };

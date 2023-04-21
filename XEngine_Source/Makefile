@@ -1,7 +1,7 @@
 RELEASE = 0
 UNICODE = 0
-
-FLAGS = RELEASE=$(RELEASE)
+PLATFORM=linux
+FLAGS= 
 
 THIRD_JSONCPP_PATH = ./XEngine_ThirdPart/jsoncpp
 
@@ -13,35 +13,26 @@ BASE_PROTOCOL_PATH = ./StorageModule_Protocol
 
 APPSERVICE_STORAGE_PATH = ./XEngine_StorageApp
 
-NETENGINE_LIB = libjsoncpp.so                                                          \
+XENGINE_MODULES = libjsoncpp.so                                                          \
                 libStorageModule_Database.so libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so libStorageModule_Protocol.so         \
 		 		XEngine_StorageApp.exe 
 
 .PHONY:MakeAll 
-MakeAll:$(NETENGINE_LIB)
+MakeAll:$(XENGINE_MODULES)
 	
 libjsoncpp.so:
-	make -C $(THIRD_JSONCPP_PATH) $(FLAGS)
+	make -C $(THIRD_JSONCPP_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 
 libStorageModule_Database.so:
-	make -C $(BASE_SQL_PATH) $(FLAGS)
+	make -C $(BASE_SQL_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libStorageModule_Config.so:
-	make -C $(BASE_CONFIG_PATH) $(FLAGS)
+	make -C $(BASE_CONFIG_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libStorageModule_Session.so:
-	make -C $(BASE_SESSION_PATH) $(FLAGS)
+	make -C $(BASE_SESSION_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libStorageModule_APIHelp.so:
-	make -C $(BASE_APIHELP_PATH) $(FLAGS)
+	make -C $(BASE_APIHELP_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libStorageModule_Protocol.so:
-	make -C $(BASE_PROTOCOL_PATH) $(FLAGS)
+	make -C $(BASE_PROTOCOL_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 	
 XEngine_StorageApp.exe:
-	make -C $(APPSERVICE_STORAGE_PATH) $(FLAGS)
-
-
-SetFlags_Install:
-	export FLAGS=InstallAll
-InstallAll:SetFlags_Install $(NETENGINE_LIB) 
- 
-SetFlags_Clean:
-	export FLAGS=CleanAll
-CleanAll:SetFlags_Clean $(NETENGINE_LIB) 
+	make -C $(APPSERVICE_STORAGE_PATH) PLATFORM=$(PLATFORM) $(FLAGS)

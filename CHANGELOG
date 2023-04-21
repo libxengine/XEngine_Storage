@@ -1,3 +1,21 @@
+XEngine_Storage V3.11.0.1001
+
+更新:匹配XEngine V8.x版本
+更新:linux和macos的编译脚本
+修改:现在数据库连接都使用utf8版本字符集了
+修改:数据库字符集使用utf8mb4_unicode_ci
+修改:分离了验证和代理配置
+修改:下载和上传以及验证支持单独验证开关了
+修正:无法创建数据库表的问题
+
+update:match xengine v8.10
+update:linux and macos build makefile
+modify:database connect used to utf charset
+modify:charset to utf8mb4_unicode_ci
+modify:detach auth and proxy configure
+modify:download and upload and center support both verification switch
+fixed:can't create table of file
+======================================================================================
 XEngine_Storage V3.10.0.1001
 
 增加:上传文件覆写功能

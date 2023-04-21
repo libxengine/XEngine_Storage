@@ -2,13 +2,13 @@
 
 XHTHREAD XEngine_Task_P2PThread()
 {
-	TCHAR tszMsgBuffer[2048];
-	TCHAR tszIPAddr[128];
-	TCHAR tszTimeStart[64];
-	TCHAR tszTimeEnd[64];
-	TCHAR tszBuckKey[MAX_PATH];
-	TCHAR tszFileName[MAX_PATH];
-	TCHAR tszFileHash[MAX_PATH];
+	XCHAR tszMsgBuffer[2048];
+	XCHAR tszIPAddr[128];
+	XCHAR tszTimeStart[64];
+	XCHAR tszTimeEnd[64];
+	XCHAR tszBuckKey[MAX_PATH];
+	XCHAR tszFileName[MAX_PATH];
+	XCHAR tszFileHash[MAX_PATH];
 
 	while (bIsRun)
 	{
@@ -33,15 +33,15 @@ XHTHREAD XEngine_Task_P2PThread()
 				Database_File_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBuckKey, NULL, tszFileName, tszFileHash);
 				if (nListCount > 0)
 				{
-					_stprintf(pppSt_ListFile[0]->tszTableName, _T("%s:%d"), st_ServiceCfg.tszIPAddr, st_ServiceCfg.nStorageDLPort);
+					_xstprintf(pppSt_ListFile[0]->tszTableName, _X("%s:%d"), st_ServiceCfg.tszIPAddr, st_ServiceCfg.nStorageDLPort);
 					Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &pppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd, xhToken);
 					BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
 
-					SOCKET hSocket;
+					XSOCKET hSocket;
 					NetCore_BroadCast_Create(&hSocket, st_ServiceCfg.st_P2xp.nSDPort, st_ServiceCfg.tszIPAddr);
 					NetCore_BroadCast_Send(hSocket, tszMsgBuffer, nMsgLen);
 					NetCore_BroadCast_Close(hSocket);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _T("广播端:%s,请求查询文件成功,Token:%llu,列表个数:%d"), tszIPAddr, xhToken, nListCount);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("广播端:%s,请求查询文件成功,Token:%llu,列表个数:%d"), tszIPAddr, xhToken, nListCount);
 				}
 			}
 		}

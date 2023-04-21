@@ -37,8 +37,8 @@ using namespace std;
 //    Purpose:     公用头文件
 //    History:
 *********************************************************************/
-extern BOOL Config_IsErrorOccur;
-extern DWORD Config_dwErrorCode;
+extern bool Config_IsErrorOccur;
+extern XLONG Config_dwErrorCode;
 
 #ifdef _WINDOWS
 #ifdef _DEBUG

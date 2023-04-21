@@ -18,14 +18,14 @@ public:
 	CAPIHelp_Distributed();
 	~CAPIHelp_Distributed();
 public:
-	BOOL APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, TCHAR* ptszAddr, int nMode);
-	BOOL APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>* pStl_ListParse, XSTORAGECORE_DBFILE*** pppSt_ListPacket, int* pInt_ListCount);
-	BOOL APIHelp_Distributed_DLStorage(LPCTSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket);
-	BOOL APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode);
-	BOOL APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCTSTR lpszBuckKey, TCHAR* ptszFilePath);
+	bool APIHelp_Distributed_RandomAddr(list<string>* pStl_ListAddr, XCHAR* ptszAddr, int nMode);
+	bool APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>* pStl_ListParse, XSTORAGECORE_DBFILE*** pppSt_ListPacket, int* pInt_ListCount);
+	bool APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket);
+	bool APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket, int nMode);
+	bool APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCXSTR lpszBuckKey, XCHAR* ptszFilePath);
 protected:
-	BOOL APIHelp_Distributed_FileListParse(LPCTSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE* pSt_DBFile);
-	__int64u APIHelp_Distributed_GetSize(LPCTSTR lpszMsgBuffer);
+	bool APIHelp_Distributed_FileListParse(LPCXSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE* pSt_DBFile);
+	__int64u APIHelp_Distributed_GetSize(LPCXSTR lpszMsgBuffer);
 private:
 	unsigned int nRandomFront;
 	unsigned int nRandomBack;

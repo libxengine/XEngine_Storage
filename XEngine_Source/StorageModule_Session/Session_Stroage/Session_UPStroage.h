@@ -22,18 +22,18 @@ public:
     CSession_UPStroage();
     ~CSession_UPStroage();
 public:
-    BOOL Session_UPStroage_Init(int nMaxConnect, BOOL bUPResume = FALSE);
-    BOOL Session_UPStroage_Destory();
-    BOOL Session_UPStroage_Insert(LPCTSTR lpszClientAddr, LPCTSTR lpszBuckKey, LPCTSTR lpszFileDir, __int64x nFileSize, BOOL bRewrite, int nPosStart = 0, int nPostEnd = 0);
-    BOOL Session_UPStroage_GetInfo(LPCTSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
-    BOOL Session_UPStroage_Write(LPCTSTR lpszClientAddr, LPCTSTR lpszMsgBuffer, int nMsgLen);
-    BOOL Session_UPStroage_Exist(LPCTSTR lpszClientAddr);
-    BOOL Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
-    BOOL Session_UPStroage_Delete(LPCTSTR lpszClientAddr);
-    BOOL Session_UPStroage_Close(LPCTSTR lpszClientAddr);
-    BOOL Session_UPStroage_MaxConnect(LPCTSTR lpszClientAddr);
+    bool Session_UPStroage_Init(int nMaxConnect, bool bUPResume = false);
+    bool Session_UPStroage_Destory();
+    bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, __int64x nFileSize, bool bRewrite, int nPosStart = 0, int nPostEnd = 0);
+    bool Session_UPStroage_GetInfo(LPCXSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
+    bool Session_UPStroage_Write(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
+    bool Session_UPStroage_Exist(LPCXSTR lpszClientAddr);
+    bool Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);
+    bool Session_UPStroage_Delete(LPCXSTR lpszClientAddr);
+    bool Session_UPStroage_Close(LPCXSTR lpszClientAddr);
+    bool Session_UPStroage_MaxConnect(LPCXSTR lpszClientAddr);
 private:
-    BOOL m_bResume;
+    bool m_bResume;
     int m_nMaxConnect;
 private:
     shared_mutex st_Locker;

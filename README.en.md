@@ -8,7 +8,7 @@ c c++ 存储服务 c c++ 文件存储服务
 c c++ file storage service  
 This is an api gateway for uploading and downloading.  
 The service is for users who have business needs for upload and download services (such as developers who need to upload and download servers).  
-This server is more inclined to storestorage transfer and API Manage interface  
+This server is more inclined to storestorage transfer and API Manage interface,the service can be used upload and download management and network file shared and software update service.  
 best storage service for http,batter than nginx and more convenient to manage,more concise code. On going maintenance  
 
 ## Software feature
@@ -36,7 +36,7 @@ feature list:
 ## install
 
 #### XEngine Evn
-you must install XEngine,need V7.38 or above,install XEngine can be refer to xengine Readme docment  
+you must install XEngine,need V8.10 or above,install XEngine can be refer to xengine Readme docment  
 GITEE:https://gitee.com/xyry/libxengine  
 GITHUB:https://github.com/libxengine/xengine
 
@@ -51,11 +51,11 @@ use vs open and compile,suport windows 7sp1 and above
 Just Run it,use XEngine_AuthorizeApp
 
 #### Linux
-use makefile compile,UBUNTU20.04 x64 or CENTOS8 x64  
+use makefile compile,UBUNTU22.04 x64 or RockyLinux9 x64  
 Run it on the terminal
 
 #### Macos
-use makefile compile,mac 12 and above  
+use makefile compile,mac 13 and above  
 Run it on the terminal
 
 ##### complie
@@ -86,7 +86,7 @@ P2P distributed download is the same as the hyper-threaded download of other dow
 - XEngine_Docment   docment directory
 - XEngine_Release   install directory
 - XEngine_Source    code    directory  
-- XEngine_APPClient client  code dir  
+- XEngine_APPClient client  code dir(APPClient_UPDate is software update example of client)  
 - XEngine_SQLFile   database sql file
 
 ## Example

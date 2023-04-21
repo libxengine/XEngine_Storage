@@ -9,4 +9,4 @@ copy /y "D:\XEngine\XEngine_SourceCode\Debug\NetHelp_APIClient.dll" "./"
 
 copy /y "D:\XEngine\XEngine_SourceCode\Debug\HelpComponents_DataBase.dll" "./"
 copy /y "D:\XEngine\XEngine_SourceCode\Debug\HelpComponents_XLog.dll" "./"
-copy /y "D:\XEngine\XEngine_SourceCode\Debug\RfcComponents_HttpServer.dll" "./"
+copy /y "D:\XEngine\XEngine_SourceCode\Debug\RfcComponents_HttpProtocol.dll" "./"

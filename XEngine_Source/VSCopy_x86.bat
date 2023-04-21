@@ -9,7 +9,7 @@ copy /y "%XEngine_Lib32%\XEngine_NetHelp\NetHelp_APIClient.dll" "./"
 
 copy /y "%XEngine_Lib32%\XEngine_HelpComponents\HelpComponents_DataBase.dll" "./"
 copy /y "%XEngine_Lib32%\XEngine_HelpComponents\HelpComponents_XLog.dll" "./"
-copy /y "%XEngine_Lib32%\XEngine_RfcComponents\RfcComponents_HttpServer.dll" "./"
+copy /y "%XEngine_Lib32%\XEngine_RfcComponents\RfcComponents_HttpProtocol.dll" "./"
 
 copy /y "%XEngine_Lib32%\XEngine_HelpComponents\bson-1.0.dll" "./"
 copy /y "%XEngine_Lib32%\XEngine_HelpComponents\mongoc-1.0.dll" "./"

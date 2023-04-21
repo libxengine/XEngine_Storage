@@ -8,7 +8,7 @@ c c++ 存储服务 c c++ 文件存储服务
 c c++ file storage service  
 这是一个上传下载服务API网关,不是文件同步服务,也不是云存储.  
 这个服务的主要目的是为了给有上传下载服务业务需求的用户使用(比如需要开发上传下载服务的开发人员).  
-此服务器更偏向于存储传输与API接口管理.  
+此服务器更偏向于存储传输与API接口管理,此服务可以用于上传下载的管理,网络文件共享或者软件更新服务.  
 目前最好的HTTP存储服务,比NGINX更优秀,更方便管理,代码更简洁.持续维护中...  
 
 ## 软件特性
@@ -35,7 +35,7 @@ c c++ file storage service
 ## 安装教程
 
 #### XEngine环境
-必须安装XEngine,版本需要V7.38或者以上版本,安装XEngine可以参考其Readme文档  
+必须安装XEngine,版本需要V8.10或者以上版本,安装XEngine可以参考其Readme文档  
 GITEE:https://gitee.com/xyry/libxengine  
 GITHUB:https://github.com/libxengine/xengine
 
@@ -50,11 +50,11 @@ macos执行:./XEngine_LINEnv.sh -i 3
 直接运行即可,使用XEngine_AuthorizeApp
 
 #### Linux
-Linux使用Makefile编译,UBUNTU20.04 x64或者CENTOS8 x64  
+Linux使用Makefile编译,UBUNTU22.04 x64或者RockyLinux x64  
 在控制台运行
 
 #### Macos
-使用makefile编译,控制台运行,需要mac 12以及以上版本  
+使用makefile编译,控制台运行,需要mac 13以及以上版本  
 在控制台运行
 
 ##### 编译命令
@@ -76,7 +76,7 @@ make FLAGS=CleanAll 清理编译
 - XEngine_Docment    文档目录结构  
 - XEngine_Release    安装目录结构  
 - XEngine_Source     源代目录结构  
-- XEngine_APPClient  客户端演示代码  
+- XEngine_APPClient  客户端演示代码(APPClient_UPDate为软件更新演示客户端)  
 - XEngine_SQLFile    数据库脚本文件
   
 ## 示例

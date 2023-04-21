@@ -33,22 +33,22 @@ CSession_User::~CSession_User()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_User::Session_User_Init(LPCTSTR lpszUserFile)
+bool CSession_User::Session_User_Init(LPCXSTR lpszUserFile)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
-	FILE* pSt_File = _tfopen(lpszUserFile, _T("rb"));
+	FILE* pSt_File = _xtfopen(lpszUserFile, _X("rb"));
 	if (NULL == pSt_File)
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
-		return FALSE;
+		return false;
 	}
 	int nCount = 0;
-	TCHAR tszMsgBuffer[4096];
+	XCHAR tszMsgBuffer[4096];
 	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 
-	while (TRUE)
+	while (true)
 	{
 		int nRet = fread(tszMsgBuffer + nCount, 1, 1024, pSt_File);
 		if (nRet <= 0)
@@ -59,8 +59,8 @@ BOOL CSession_User::Session_User_Init(LPCTSTR lpszUserFile)
 	}
 	fclose(pSt_File);
 	
-	LPCTSTR lpszLineStr = _T("\r\n");
-	TCHAR* ptszTokStr = _tcstok(tszMsgBuffer, lpszLineStr);
+	LPCXSTR lpszLineStr = _X("\r\n");
+	XCHAR* ptszTokStr = _tcsxtok(tszMsgBuffer, lpszLineStr);
 	while (1)
 	{
 		if (NULL == ptszTokStr)
@@ -70,12 +70,12 @@ BOOL CSession_User::Session_User_Init(LPCTSTR lpszUserFile)
 		SESSION_USERINFO st_UserInfo;
 		memset(&st_UserInfo, '\0', sizeof(SESSION_USERINFO));
 
-		_stscanf(ptszTokStr, _T("%s %s %s"), st_UserInfo.tszUserName, st_UserInfo.tszUserPass, st_UserInfo.tszUserLimit);
+		_stxscanf(ptszTokStr, _X("%s %s %s"), st_UserInfo.tszUserName, st_UserInfo.tszUserPass, st_UserInfo.tszUserLimit);
 		stl_MapUser.insert(make_pair(st_UserInfo.tszUserName, st_UserInfo));
 
-		ptszTokStr = _tcstok(NULL, lpszLineStr);
+		ptszTokStr = _tcsxtok(NULL, lpszLineStr);
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_User_Destory
@@ -85,15 +85,15 @@ BOOL CSession_User::Session_User_Init(LPCTSTR lpszUserFile)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_User::Session_User_Destory()
+bool CSession_User::Session_User_Destory()
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	st_Locker.lock();
 	stl_MapUser.clear();
 	st_Locker.unlock();
 
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：Session_User_Exist
@@ -118,38 +118,38 @@ BOOL CSession_User::Session_User_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CSession_User::Session_User_Exist(LPCTSTR lpszUser, LPCTSTR lpszPass, int* pInt_Limit /* = NULL */)
+bool CSession_User::Session_User_Exist(LPCXSTR lpszUser, LPCXSTR lpszPass, int* pInt_Limit /* = NULL */)
 {
-	Session_IsErrorOccur = FALSE;
+	Session_IsErrorOccur = false;
 
 	st_Locker.lock_shared();
 	unordered_map<string, SESSION_USERINFO>::const_iterator stl_MapIterator = stl_MapUser.find(lpszUser);
 	if (stl_MapIterator == stl_MapUser.end())
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return false;
 	}
 	
-	if (_tcslen(lpszPass) != _tcslen(stl_MapIterator->second.tszUserPass))
+	if (_tcsxlen(lpszPass) != _tcsxlen(stl_MapIterator->second.tszUserPass))
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PASSWORD;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return false;
 	}
-	if (0 != _tcsncmp(lpszPass, stl_MapIterator->second.tszUserPass, _tcslen(lpszPass)))
+	if (0 != _tcsxncmp(lpszPass, stl_MapIterator->second.tszUserPass, _tcsxlen(lpszPass)))
 	{
-		Session_IsErrorOccur = TRUE;
+		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PASSWORD;
 		st_Locker.unlock_shared();
-		return FALSE;
+		return false;
 	}
 	if (NULL != pInt_Limit)
 	{
-		*pInt_Limit = _ttoi(stl_MapIterator->second.tszUserLimit);
+		*pInt_Limit = _ttxoi(stl_MapIterator->second.tszUserLimit);
 	}
 	st_Locker.unlock_shared();
-	return TRUE;
+	return true;
 }

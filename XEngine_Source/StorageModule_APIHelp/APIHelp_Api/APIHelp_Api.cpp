@@ -50,34 +50,34 @@ CAPIHelp_Api::~CAPIHelp_Api()
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Api::APIHelp_Api_ProxyAuth(TCHAR* ptszUser, TCHAR* ptszPass, TCHAR** pptszListHdr, int nHdrCount)
+bool CAPIHelp_Api::APIHelp_Api_ProxyAuth(XCHAR* ptszUser, XCHAR* ptszPass, XCHAR** pptszListHdr, int nHdrCount)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
 	int nAuthType = 0;
 	int nAuthLen = MAX_PATH;
 
-	TCHAR tszAuthStr[MAX_PATH];
-	TCHAR tszSDBuffer[1024];
+	XCHAR tszAuthStr[MAX_PATH];
+	XCHAR tszSDBuffer[1024];
 
 	memset(tszAuthStr, '\0', MAX_PATH);
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 	//是否有验证信息
-	if (!RfcComponents_HttpHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
+	if (!HttpProtocol_ServerHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTAUTH;
-		return FALSE;
+		return false;
 	}
 	//是否是BASIC
 	if (1 != nAuthType)
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTSUPPORT;
-		return FALSE;
+		return false;
 	}
 	OPenSsl_Help_BasicDecoder(tszAuthStr, ptszUser, ptszPass);
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：APIHelp_Api_RangeFile
@@ -112,72 +112,72 @@ BOOL CAPIHelp_Api::APIHelp_Api_ProxyAuth(TCHAR* ptszUser, TCHAR* ptszPass, TCHAR
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64x* pInt_Count, TCHAR** pptszListHdr, int nHdrCount)
+bool CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64x* pInt_Count, XCHAR** pptszListHdr, int nHdrCount)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
-	BOOL bFound = FALSE;
-	LPCTSTR lpszRangeStr = _T("Range");
-	LPCTSTR lpszLengthStr = _T("Content-Length");
-	TCHAR tszKeyStr[128];
-	TCHAR tszValueStr[128];
-	TCHAR tszFieldStr[128];
+	bool bFound = false;
+	LPCXSTR lpszRangeStr = _X("Range");
+	LPCXSTR lpszLengthStr = _X("Content-Length");
+	XCHAR tszKeyStr[128];
+	XCHAR tszValueStr[128];
+	XCHAR tszFieldStr[128];
 
 	memset(tszKeyStr, '\0', sizeof(tszKeyStr));
 	memset(tszValueStr, '\0', sizeof(tszValueStr));
 	memset(tszFieldStr, '\0', sizeof(tszFieldStr));
 	//是否有范围
-	if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszRangeStr, tszFieldStr))
+	if (HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, lpszRangeStr, tszFieldStr))
 	{
 		//是否没有找到
 		int nBPos = 0;  //某些时候有个BYTE   
-		if (NULL != _tcsstr(tszFieldStr, _T("bytes=")))
+		if (NULL != _tcsxstr(tszFieldStr, _X("bytes=")))
 		{
 			nBPos = 6;
 		}
 		if (!BaseLib_OperatorString_GetKeyValue(tszFieldStr + nBPos, "-", tszKeyStr, tszValueStr))
 		{
-			APIHelp_IsErrorOccur = TRUE;
+			APIHelp_IsErrorOccur = true;
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARSELEN;
-			return FALSE;
+			return false;
 		}
 		//得到 1/2 如果有的话
-		TCHAR tszRangeEnd[128];
-		TCHAR tszRangeCount[128];
+		XCHAR tszRangeEnd[128];
+		XCHAR tszRangeCount[128];
 
 		memset(tszRangeEnd, '\0', sizeof(tszRangeEnd));
 		memset(tszRangeCount, '\0', sizeof(tszRangeCount));
 		if (BaseLib_OperatorString_GetKeyValue(tszValueStr, "/", tszRangeEnd, tszRangeCount))
 		{
-			*pInt_SPos = _ttoi(tszKeyStr);
-			*pInt_EPos = _ttoi(tszRangeEnd);
-			*pInt_Count = _ttoi64(tszRangeCount);
+			*pInt_SPos = _ttxoi(tszKeyStr);
+			*pInt_EPos = _ttxoi(tszRangeEnd);
+			*pInt_Count = _ttxoll(tszRangeCount);
 		}
 		else
 		{
-			*pInt_SPos = _ttoi(tszKeyStr);
-			*pInt_EPos = _ttoi(tszValueStr);
+			*pInt_SPos = _ttxoi(tszKeyStr);
+			*pInt_EPos = _ttxoi(tszValueStr);
 		}
-		bFound = TRUE;
+		bFound = true;
 	}
 
 	if (0 == *pInt_Count)
 	{
-		if (RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszLengthStr, tszFieldStr))
+		if (HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, lpszLengthStr, tszFieldStr))
 		{
-			*pInt_Count = _ttoi64(tszFieldStr);
-			bFound = TRUE;
+			*pInt_Count = _ttxoll(tszFieldStr);
+			bFound = true;
 		}
 	}
 	
 	if (!bFound)
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTLENGTH;
-		return FALSE;
+		return false;
 	}
 	
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：APIHelp_Api_VerHash
@@ -202,27 +202,27 @@ BOOL CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Api::APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHdr, int nHdrCount)
+bool CAPIHelp_Api::APIHelp_Api_VerHash(LPCXSTR lpszFileHash, XCHAR** pptszListHdr, int nHdrCount)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
-	LPCTSTR lpszKeyStr = _T("FileHash");
-	TCHAR tszValueStr[MAX_PATH];
+	LPCXSTR lpszKeyStr = _X("FileHash");
+	XCHAR tszValueStr[MAX_PATH];
 	memset(tszValueStr, '\0', MAX_PATH);
 
-	if (!RfcComponents_HttpHelp_GetField(&pptszListHdr, nHdrCount, lpszKeyStr, tszValueStr))
+	if (!HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, lpszKeyStr, tszValueStr))
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTHASH;
-		return FALSE;
+		return false;
 	}
-	if (0 != _tcsnicmp(lpszFileHash, tszValueStr, _tcslen(lpszFileHash)))
+	if (0 != _tcsxnicmp(lpszFileHash, tszValueStr, _tcsxlen(lpszFileHash)))
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTMATCH;
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：APIHelp_Api_GetIPInfo
@@ -247,9 +247,9 @@ BOOL CAPIHelp_Api::APIHelp_Api_VerHash(LPCTSTR lpszFileHash, TCHAR** pptszListHd
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Api::APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XENGINE_IPADDRINFO* pSt_IPAddrInfo)
+bool CAPIHelp_Api::APIHelp_Api_GetIPInfo(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_IPADDRINFO* pSt_IPAddrInfo)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
 	Json::Value st_JsonRoot;
 	JSONCPP_STRING st_JsonError;
@@ -258,31 +258,31 @@ BOOL CAPIHelp_Api::APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XEN
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
 	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARSE;
-		return FALSE;
+		return false;
 	}
 	//是否获取成功
 	if (0 != st_JsonRoot["code"].asInt())
 	{
-		APIHelp_IsErrorOccur = TRUE;
+		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_CODE;
-		return FALSE;
+		return false;
 	}
 	Json::Value st_JsonObject = st_JsonRoot["data"];
 
-	_tcscpy(pSt_IPAddrInfo->tszIPStart, st_JsonObject["tszIPStart"].asCString());
-	_tcscpy(pSt_IPAddrInfo->tszIPEnd, st_JsonObject["tszIPEnd"].asCString());
-	_tcscpy(pSt_IPAddrInfo->tszIPAddress, st_JsonObject["tszIPAddress"].asCString());
-	_tcscpy(pSt_IPAddrInfo->tszIPAddr, st_JsonObject["tszIPAddr"].asCString());
-	_tcscpy(pSt_IPAddrInfo->tszIPCity, st_JsonObject["tszIPCity"].asCString());
-	_tcscpy(pSt_IPAddrInfo->tszIPCountry, st_JsonObject["tszIPCountry"].asCString());
-	_tcscpy(pSt_IPAddrInfo->tszIPCounty, st_JsonObject["tszIPCounty"].asCString());
-	_tcscpy(pSt_IPAddrInfo->tszIPProvince, st_JsonObject["tszIPProvince"].asCString());
-	_tcscpy(pSt_IPAddrInfo->tszIPISP, st_JsonObject["tszIPISP"].asCString());
-	_tcscpy(pSt_IPAddrInfo->tszIPTime, st_JsonObject["tszIPTime"].asCString());
+	_tcsxcpy(pSt_IPAddrInfo->tszIPStart, st_JsonObject["tszIPStart"].asCString());
+	_tcsxcpy(pSt_IPAddrInfo->tszIPEnd, st_JsonObject["tszIPEnd"].asCString());
+	_tcsxcpy(pSt_IPAddrInfo->tszIPAddress, st_JsonObject["tszIPAddress"].asCString());
+	_tcsxcpy(pSt_IPAddrInfo->tszIPAddr, st_JsonObject["tszIPAddr"].asCString());
+	_tcsxcpy(pSt_IPAddrInfo->tszIPCity, st_JsonObject["tszIPCity"].asCString());
+	_tcsxcpy(pSt_IPAddrInfo->tszIPCountry, st_JsonObject["tszIPCountry"].asCString());
+	_tcsxcpy(pSt_IPAddrInfo->tszIPCounty, st_JsonObject["tszIPCounty"].asCString());
+	_tcsxcpy(pSt_IPAddrInfo->tszIPProvince, st_JsonObject["tszIPProvince"].asCString());
+	_tcsxcpy(pSt_IPAddrInfo->tszIPISP, st_JsonObject["tszIPISP"].asCString());
+	_tcsxcpy(pSt_IPAddrInfo->tszIPTime, st_JsonObject["tszIPTime"].asCString());
 
-	return TRUE;
+	return true;
 }
 /********************************************************************
 函数名称：APIHelp_Api_UrlParse
@@ -312,42 +312,42 @@ BOOL CAPIHelp_Api::APIHelp_Api_GetIPInfo(LPCTSTR lpszMsgBuffer, int nMsgLen, XEN
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL CAPIHelp_Api::APIHelp_Api_UrlParse(TCHAR*** ppptszList, int nListCount, TCHAR* ptszFileName, TCHAR* ptszKeyName)
+bool CAPIHelp_Api::APIHelp_Api_UrlParse(XCHAR*** ppptszList, int nListCount, XCHAR* ptszFileName, XCHAR* ptszKeyName)
 {
-	APIHelp_IsErrorOccur = FALSE;
+	APIHelp_IsErrorOccur = false;
 
-	LPCTSTR lpszHDRFile = _T("filename");
-	LPCTSTR lpszHDRKey = _T("storeagekey");
+	LPCXSTR lpszHDRFile = _X("filename");
+	LPCXSTR lpszHDRKey = _X("storeagekey");
 
 	for (int i = 0; i < nListCount; i++)
 	{
-		TCHAR tszKey[MAX_PATH];
-		TCHAR tszValue[MAX_PATH];
+		XCHAR tszKey[MAX_PATH];
+		XCHAR tszValue[MAX_PATH];
 
 		memset(tszKey, '\0', MAX_PATH);
 		memset(tszValue, '\0', MAX_PATH);
 
-		BaseLib_OperatorString_GetKeyValue((*ppptszList)[i], _T("="), tszKey, tszValue);
+		BaseLib_OperatorString_GetKeyValue((*ppptszList)[i], _X("="), tszKey, tszValue);
 
-		if (0 == _tcsnicmp(lpszHDRFile, tszKey, _tcslen(lpszHDRFile)))
+		if (0 == _tcsxnicmp(lpszHDRFile, tszKey, _tcsxlen(lpszHDRFile)))
 		{
 			//编码格式是utf8,需要转为ansi
 #ifdef _MSC_BUILD
-			TCHAR tszFileName[MAX_PATH];
+			XCHAR tszFileName[MAX_PATH];
 			memset(tszFileName, '\0', MAX_PATH);
 
-			OPenSsl_Codec_UrlDeCodec(tszValue, _tcslen(tszValue), tszFileName);
+			OPenSsl_Codec_UrlDeCodec(tszValue, _tcsxlen(tszValue), tszFileName);
 
-			int nLen = _tcslen(tszFileName);
+			int nLen = _tcsxlen(tszFileName);
 			BaseLib_OperatorCharset_UTFToAnsi(tszFileName, ptszFileName, &nLen);
 #else
-			OPenSsl_Codec_UrlDeCodec(tszValue, _tcslen(tszValue), ptszFileName);
+			OPenSsl_Codec_UrlDeCodec(tszValue, _tcsxlen(tszValue), ptszFileName);
 #endif
 		}
-		else if (0 == _tcsnicmp(lpszHDRKey, tszKey, _tcslen(lpszHDRKey)))
+		else if (0 == _tcsxnicmp(lpszHDRKey, tszKey, _tcsxlen(lpszHDRKey)))
 		{
-			_tcscpy(ptszKeyName, tszValue);
+			_tcsxcpy(ptszKeyName, tszValue);
 		}
 	}
-	return TRUE;
+	return true;
 }

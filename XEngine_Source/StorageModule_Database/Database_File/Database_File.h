@@ -17,19 +17,19 @@ public:
     CDatabase_File();
     ~CDatabase_File();
 public:
-    BOOL Database_File_Init(DATABASE_MYSQL_CONNECTINFO* pSt_DBConnector, int nTimeMonth = 1);
-    BOOL Database_File_Destory();
-    BOOL Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage, BOOL bRewrite = FALSE);
-    BOOL Database_File_FileDelete(LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszHash = NULL);
-    BOOL Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCTSTR lpszTimeStart = NULL, LPCTSTR lpszTimeEnd = NULL, LPCTSTR lpszBuckKey = NULL, LPCTSTR lpszFilePath = NULL, LPCTSTR lpszFileName = NULL, LPCTSTR lpszHash = NULL, LPCTSTR lpszTableName = NULL);
+    bool Database_File_Init(DATABASE_MYSQL_CONNECTINFO* pSt_DBConnector, int nTimeMonth = 1);
+    bool Database_File_Destory();
+    bool Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage, bool bRewrite = false);
+    bool Database_File_FileDelete(LPCXSTR lpszBuckKey = NULL, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszHash = NULL);
+    bool Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszTimeStart = NULL, LPCXSTR lpszTimeEnd = NULL, LPCXSTR lpszBuckKey = NULL, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszHash = NULL, LPCXSTR lpszTableName = NULL);
 protected:
-    BOOL Database_File_CreateTable();
-    BOOL Database_File_TimeMonth(LPCTSTR lpszStartTime, int* pInt_Month);
-    BOOL Database_File_TimeDel();
+    bool Database_File_CreateTable();
+    bool Database_File_TimeMonth(LPCXSTR lpszStartTime, int* pInt_Month);
+    bool Database_File_TimeDel();
 protected:
-    static XHTHREAD Database_File_Thread(LPVOID lParam);
+    static XHTHREAD Database_File_Thread(XPVOID lParam);
 private:
-    BOOL bIsRun;
+    bool bIsRun;
     int m_nTimeMonth;
     XNETHANDLE xhDBSQL;
 private:

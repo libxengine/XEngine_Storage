@@ -1,4 +1,4 @@
-﻿#ifdef _WINDOWS
+﻿#ifdef _MSC_BUILD
 #include <windows.h>
 #include <tchar.h>
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
@@ -6,7 +6,11 @@
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient")
 #pragma comment(lib,"Ws2_32")
 #pragma comment(lib,"../../XEngine_Source/Debug/jsoncpp")
+#ifdef _WIN64
+#pragma comment(lib,"../../XEngine_Source/x64/Debug/jsoncpp")
 #else
+#pragma comment(lib,"../../XEngine_Source/Debug/jsoncpp")
+#endif
 #endif
 #include <stdio.h>
 #include <string.h>
@@ -25,32 +29,32 @@
 using namespace std;
 
 //需要优先配置XEngine
-//WINDOWS使用VS2022 x86 debug 编译
+//WINDOWS使用VS2022 x86 或者 x64 debug 编译
 //linux::g++ -std=c++17 -Wall -g APPClient_UPDownload.cpp -o APPClient_UPDownload.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_Core -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lXEngine_OPenSsl -lNetHelp_APIClient -ljsoncpp
 //macos::g++ -std=c++17 -Wall -g APPClient_UPDownload.cpp -o APPClient_UPDownload.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lXEngine_OPenSsl -lNetHelp_APIClient -ljsoncpp
 
 //上传文件
 void File_UPLoad()
 {
-	LPCTSTR lpszUrl = _T("http://127.0.0.1:5102/api?filename=newfile4.txt&storeagekey=storagekey2");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5102/api?filename=newfile4.txt&storeagekey=storagekey2");
 	int nLen = 0;
 	int nCode = 0;
-	TCHAR* ptszMsgBuffer = NULL;
-	TCHAR tszBaseBuffer[128];
-	TCHAR tszHdrBuffer[MAX_PATH];
-	TCHAR tszKeyBuffer[MAX_PATH];
-	LPCTSTR lpszMsgBuffer = _T("01234");
-	LPCTSTR lpszMsgBuffer2 = _T("56789");
+	XCHAR* ptszMsgBuffer = NULL;
+	XCHAR tszBaseBuffer[128];
+	XCHAR tszHdrBuffer[MAX_PATH];
+	XCHAR tszKeyBuffer[MAX_PATH];
+	LPCXSTR lpszMsgBuffer = _X("01234");
+	LPCXSTR lpszMsgBuffer2 = _X("56789");
 
 	memset(tszBaseBuffer, '\0', sizeof(tszBaseBuffer));
 	memset(tszHdrBuffer, '\0', MAX_PATH);
 	memset(tszKeyBuffer, '\0', MAX_PATH);
 	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
 
-	_stprintf(tszHdrBuffer, _T("Range: bytes=0-5/10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
-	if (!APIClient_Http_Request(_T("POST"), lpszUrl, lpszMsgBuffer, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	_xstprintf(tszHdrBuffer, _X("Range: bytes=0-5/10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
+	if (!APIClient_Http_Request(_X("POST"), lpszUrl, lpszMsgBuffer, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
-		printf("upload failed:%lX\n", APIClient_GetLastError());
+		_xtprintf("upload failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	JSONCPP_STRING st_JsonError;
@@ -61,59 +65,59 @@ void File_UPLoad()
 	{
 		return;
 	}
-	_tcscpy(tszKeyBuffer, st_JsonRoot["lpszBuckKey"].asCString());
+	_tcsxcpy(tszKeyBuffer, st_JsonRoot["lpszBuckKey"].asCString());
 
-	printf("upload:%d\n", nCode);
+	_xtprintf("upload:%d\n", nCode);
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	//断点续传必须指定storagekey
 	nLen = 0;
 	memset(tszHdrBuffer, '\0', MAX_PATH);
-	_stprintf(tszHdrBuffer, _T("Range: bytes=5-10/10\r\nAuthorization: %s\r\nStorageKey: %s\r\n"), tszBaseBuffer, tszKeyBuffer);
-	if (!APIClient_Http_Request(_T("POST"), lpszUrl, lpszMsgBuffer2, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	_xstprintf(tszHdrBuffer, _X("Range: bytes=5-10/10\r\nAuthorization: %s\r\nStorageKey: %s\r\n"), tszBaseBuffer, tszKeyBuffer);
+	if (!APIClient_Http_Request(_X("POST"), lpszUrl, lpszMsgBuffer2, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
-		printf("upload failed:%lX\n", APIClient_GetLastError());
+		_xtprintf("upload failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
-	printf("upload:%d\n%s\n", nCode, ptszMsgBuffer);
+	_xtprintf("upload:%d\n%s\n", nCode, ptszMsgBuffer);
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
 //下载文件
 void File_Download()
 {
-	LPCTSTR lpszUrl = _T("http://192.168.1.8:5101/storagekey2/newfile4.txt");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5101/storagekey2/newfile4.txt");
 
 	int nLen = 0;
-	TCHAR* ptszMsgBuffer = NULL;
-	TCHAR tszBaseBuffer[128];
-	TCHAR tszHdrBuffer[MAX_PATH];
+	XCHAR* ptszMsgBuffer = NULL;
+	XCHAR tszBaseBuffer[128];
+	XCHAR tszHdrBuffer[MAX_PATH];
 
 	memset(tszBaseBuffer, '\0', sizeof(tszBaseBuffer));
 	memset(tszHdrBuffer, '\0', MAX_PATH);
 	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
 
-	_stprintf(tszHdrBuffer, _T("Range: bytes=0-5\r\nAuthorization: %s\r\n"), tszBaseBuffer);
-	if (!APIClient_Http_Request(_T("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	_xstprintf(tszHdrBuffer, _X("Range: bytes=0-5\r\nAuthorization: %s\r\n"), tszBaseBuffer);
+	if (!APIClient_Http_Request(_X("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
-		printf("download failed:%lX\n", APIClient_GetLastError());
+		_xtprintf("download failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
-	printf("download:%d,%s\n", nLen, ptszMsgBuffer);
+	_xtprintf("download:%d,%s\n", nLen, ptszMsgBuffer);
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 
 	memset(tszHdrBuffer, '\0', MAX_PATH);
-	_stprintf(tszHdrBuffer, _T("Range: bytes=5-10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
-	if (!APIClient_Http_Request(_T("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	_xstprintf(tszHdrBuffer, _X("Range: bytes=5-10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
+	if (!APIClient_Http_Request(_X("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
-		printf("download failed:%lX\n", APIClient_GetLastError());
+		_xtprintf("download failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
-	printf("download:%d,%s\n", nLen, ptszMsgBuffer);
+	_xtprintf("download:%d,%s\n", nLen, ptszMsgBuffer);
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
 
 int main()
 {
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif

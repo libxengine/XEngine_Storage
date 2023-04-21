@@ -6,11 +6,12 @@
 #include <signal.h>
 #include <errno.h>
 #include <thread>
+#include <memory>
 #include <list>
 #include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 #include <windows.h>
 #include <tchar.h>
 #include <io.h>
@@ -38,8 +39,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Error.h>
-#include <XEngine_Include/XEngine_RfcComponents/HttpServer_Define.h>
-#include <XEngine_Include/XEngine_RfcComponents/HttpServer_Error.h>
+#include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Define.h>
+#include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
 #include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
 #include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
@@ -66,8 +67,8 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPDOWNLOAD 2
 #define STORAGE_NETTYPE_HTTPCENTER 3
 
-extern BOOL bIsRun;
-extern XLOG xhLog;
+extern bool bIsRun;
+extern XHANDLE xhLog;
 
 extern XHANDLE xhHBDownload;
 extern XHANDLE xhHBUPLoader;
@@ -89,7 +90,7 @@ extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
 
-extern SOCKET hBroadSocket;
+extern XSOCKET hBroadSocket;
 extern shared_ptr<std::thread> pSTDThread;
 
 extern XENGINE_SERVERCONFIG st_ServiceCfg;
@@ -113,7 +114,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets.lib")
-#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpServer.lib")
+#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #ifdef _WIN64

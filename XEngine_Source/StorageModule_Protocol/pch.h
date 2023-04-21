@@ -51,8 +51,8 @@ using namespace std;
 //    Purpose:     协议模块公用头
 //    History:
 *********************************************************************/
-extern BOOL Protocol_IsErrorOccur;
-extern DWORD Protocol_dwErrorCode;
+extern bool Protocol_IsErrorOccur;
+extern XLONG Protocol_dwErrorCode;
 
 #ifdef _WINDOWS
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")

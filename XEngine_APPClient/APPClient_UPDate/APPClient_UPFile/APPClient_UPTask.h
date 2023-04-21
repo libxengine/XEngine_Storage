@@ -22,10 +22,10 @@
   意思：是否拷贝成功
 备注：
 *********************************************************************/
-BOOL HelpModule_Api_Copy(list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate, LPCTSTR lpszDlPath = NULL, BOOL bDelFile = TRUE)
+bool HelpModule_Api_Copy(list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate, LPCXSTR lpszDlPath = NULL, bool bDelFile = true)
 {
-    TCHAR tszDlPath[1024];
-    TCHAR tszCpPath[1024];
+    XCHAR tszDlPath[1024];
+    XCHAR tszCpPath[1024];
     if ((NULL == pStl_ListUPDate))
     {
         return FALSE;
@@ -38,19 +38,19 @@ BOOL HelpModule_Api_Copy(list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate, LPCTSTR 
         //获取下载的文件路径和名称 组合成可以拷贝的路径地址
         if (NULL != lpszDlPath)
         {
-            _stprintf_s(tszDlPath, _T("%s%s"), lpszDlPath, stl_ListIterator->tszModuleName);
+            _xstprintf(tszDlPath, _X("%s%s"), lpszDlPath, stl_ListIterator->tszModuleName);
         }
         else
         {
-            _tcscpy(tszDlPath, stl_ListIterator->tszModuleName);
+            _tcsxcpy(tszDlPath, stl_ListIterator->tszModuleName);
         }
         if (0 == stl_ListIterator->st_LocalVersion.nModuleVersion)
         {
-            _stprintf_s(tszCpPath, _T("%s%s"), stl_ListIterator->tszModulePath, stl_ListIterator->tszModuleName);
+            _xstprintf(tszCpPath, _X("%s%s"), stl_ListIterator->tszModulePath, stl_ListIterator->tszModuleName);
         }
         else
         {
-            _stprintf_s(tszCpPath, _T("%s%s"), stl_ListIterator->st_LocalVersion.tszMoudelPath, stl_ListIterator->st_LocalVersion.tszMoudelName);
+            _xstprintf(tszCpPath, _X("%s%s"), stl_ListIterator->st_LocalVersion.tszMoudelPath, stl_ListIterator->st_LocalVersion.tszMoudelName);
         }
         if (!SystemApi_File_CreateMutilFolder(stl_ListIterator->st_LocalVersion.tszMoudelPath))
         {
@@ -63,13 +63,13 @@ BOOL HelpModule_Api_Copy(list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate, LPCTSTR 
         if (bDelFile)
         {
             //删除原始下载的文件
-            if (0 != _tremove(tszDlPath))
+            if (0 != _xtremove(tszDlPath))
             {
                 return FALSE;
             }
         }
     }
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：HelpModule_Api_SetVersion
@@ -94,7 +94,7 @@ BOOL HelpModule_Api_Copy(list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate, LPCTSTR 
   意思：是否设置成功
 备注：
 *********************************************************************/
-BOOL HelpModule_Api_SetVersion(LPCTSTR lpszLocalFile, LPCTSTR lpszMsgBuffer, int nMsgLen)
+bool HelpModule_Api_SetVersion(LPCXSTR lpszLocalFile, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
     //文件JSON
     Json::Value st_JsonRoot;
@@ -119,25 +119,25 @@ BOOL HelpModule_Api_SetVersion(LPCTSTR lpszLocalFile, LPCTSTR lpszMsgBuffer, int
     delete pSt_JsonRemoteReader;
     pSt_JsonRemoteReader = NULL;
 
-    int nCount = 0;
-    TCHAR* ptszJsonFile = new TCHAR[1024 * 1024 * 10];
+    size_t nCount = 0;
+    XCHAR* ptszJsonFile = new XCHAR[1024 * 1024 * 10];
     if (NULL == ptszJsonFile)
     {
         return FALSE;
     }
     memset(ptszJsonFile, '\0', 1024 * 1024 * 10);
-    FILE* pSt_File = _tfopen(lpszLocalFile, _T("rb"));
+    FILE* pSt_File = _xtfopen(lpszLocalFile, _X("rb"));
     if (NULL == pSt_File)
     {
         delete[]ptszJsonFile;
         ptszJsonFile = NULL;
         return FALSE;
     }
-    while (TRUE)
+    while (true)
     {
-        TCHAR tszJsonMsg[2048];
+        XCHAR tszJsonMsg[2048];
         memset(tszJsonMsg, '\0', sizeof(tszJsonMsg));
-        int nRet = fread(tszJsonMsg, sizeof(TCHAR), 2048, pSt_File);
+        size_t nRet = fread(tszJsonMsg, sizeof(XCHAR), 2048, pSt_File);
         if (nRet <= 0)
         {
             break;
@@ -161,11 +161,11 @@ BOOL HelpModule_Api_SetVersion(LPCTSTR lpszLocalFile, LPCTSTR lpszMsgBuffer, int
     st_JsonLocalArray = st_JsonLocalRoot["FileList"];
     for (unsigned int i = 0; i < st_JsonLocalArray.size(); i++)
     {
-        BOOL bIsFound = FALSE;
+        bool bIsFound = FALSE;
         Json::Value st_JsonRemoteArray = st_JsonRemoteRoot["UPList"];
         for (unsigned int j = 0; j < st_JsonRemoteArray.size(); j++)
         {
-            if (0 == _tcscmp(st_JsonLocalArray[i]["ModuleCode"].asCString(), st_JsonRemoteArray[j]["ModuleCode"].asCString()))
+            if (0 == _tcsxcmp(st_JsonLocalArray[i]["ModuleCode"].asCString(), st_JsonRemoteArray[j]["ModuleCode"].asCString()))
             {
                 Json::Value st_JsonObject;
                 st_JsonObject["ModuleVersion"] = st_JsonRemoteArray[j]["ModuleVersion"].asUInt64();
@@ -173,22 +173,22 @@ BOOL HelpModule_Api_SetVersion(LPCTSTR lpszLocalFile, LPCTSTR lpszMsgBuffer, int
                 st_JsonObject["ModuleName"] = st_JsonLocalArray[i]["ModuleName"].asCString();
                 st_JsonObject["ModulePath"] = st_JsonLocalArray[i]["ModulePath"].asCString();
                 st_JsonArray.append(st_JsonObject);
-                bIsFound = TRUE;
+                bIsFound = true;
                 break;
             }
         }
         if (!bIsFound)
         {
             //没有找到更新的文件
-            BOOL bIsDelFound = FALSE;
+            bool bIsDelFound = FALSE;
             Json::Value st_JsonDelArray;
             st_JsonDelArray = st_JsonRemoteRoot["DelList"];
             //查找是否有删除的文件内容
             for (unsigned int k = 0; k < st_JsonDelArray.size(); k++)
             {
-                if (0 == _tcscmp(st_JsonLocalArray[i]["ModuleName"].asCString(), st_JsonDelArray[k]["ModuleName"].asCString()))
+                if (0 == _tcsxcmp(st_JsonLocalArray[i]["ModuleName"].asCString(), st_JsonDelArray[k]["ModuleName"].asCString()))
                 {
-                    bIsDelFound = TRUE;
+                    bIsDelFound = true;
                     break;
                 }
             }
@@ -208,14 +208,14 @@ BOOL HelpModule_Api_SetVersion(LPCTSTR lpszLocalFile, LPCTSTR lpszMsgBuffer, int
     st_JsonRemoteArray = st_JsonRemoteRoot["UPList"];
     for (unsigned int i = 0; i < st_JsonRemoteArray.size(); i++)
     {
-        BOOL bIsFound = FALSE;
+        bool bIsFound = FALSE;
         Json::Value st_JsonLocalArray = st_JsonLocalRoot["FileList"];
         //查找远程元素是否在本地存在
         for (unsigned int j = 0; j < st_JsonLocalArray.size(); j++)
         {
-            if (0 == _tcscmp(st_JsonRemoteArray[i]["ModuleCode"].asCString(), st_JsonLocalArray[j]["ModuleCode"].asCString()))
+            if (0 == _tcsxcmp(st_JsonRemoteArray[i]["ModuleCode"].asCString(), st_JsonLocalArray[j]["ModuleCode"].asCString()))
             {
-                bIsFound = TRUE;
+                bIsFound = true;
                 break;
             }
         }
@@ -233,7 +233,7 @@ BOOL HelpModule_Api_SetVersion(LPCTSTR lpszLocalFile, LPCTSTR lpszMsgBuffer, int
     st_JsonRoot["MainVersion"] = st_JsonRemoteRoot["MainVersion"].asInt64();
     st_JsonRoot["FileList"] = st_JsonArray;
 
-    if (0 != _tremove(lpszLocalFile))
+    if (0 != _xtremove(lpszLocalFile))
     {
         return FALSE;
     }
@@ -242,7 +242,7 @@ BOOL HelpModule_Api_SetVersion(LPCTSTR lpszLocalFile, LPCTSTR lpszMsgBuffer, int
         return FALSE;
     }
 
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：HelpModule_Api_RunExec
@@ -257,7 +257,7 @@ BOOL HelpModule_Api_SetVersion(LPCTSTR lpszLocalFile, LPCTSTR lpszMsgBuffer, int
   意思：是否执行成功
 备注：
 *********************************************************************/
-BOOL HelpModule_Api_RunExec(list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate)
+bool HelpModule_Api_RunExec(list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate)
 {
     list<FILEPARSER_VERSIONINFO>::const_iterator stl_ListIterator = pStl_ListUPDate->begin();
     for (; stl_ListIterator != pStl_ListUPDate->end(); stl_ListIterator++)
@@ -266,17 +266,17 @@ BOOL HelpModule_Api_RunExec(list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate)
         if (stl_ListIterator->bIsRun)
         {
             DWORD dwProcessID = 0;
-            TCHAR tszPath[1024];
+            XCHAR tszPath[1024];
             memset(tszPath, '\0', sizeof(tszPath));
             //判断目录时候需要改变
-            _stprintf_s(tszPath, _T("%s%s"), stl_ListIterator->st_LocalVersion.tszMoudelPath, stl_ListIterator->st_LocalVersion.tszMoudelName);
+            _xstprintf(tszPath, _X("%s%s"), stl_ListIterator->st_LocalVersion.tszMoudelPath, stl_ListIterator->st_LocalVersion.tszMoudelName);
             if (!SystemApi_Process_CreateProcess(&dwProcessID, tszPath))
             {
                 return FALSE;
             }
         }
     }
-    return TRUE;
+    return true;
 }
 /********************************************************************
 函数名称：HelpModule_Api_Clear
@@ -296,7 +296,7 @@ BOOL HelpModule_Api_RunExec(list<FILEPARSER_VERSIONINFO>* pStl_ListUPDate)
   意思：是否成功
 备注：
 *********************************************************************/
-BOOL HelpModule_Api_Clear(LPCTSTR lpszRemoteJson, int nMsgLen)
+bool HelpModule_Api_Clear(LPCXSTR lpszRemoteJson, int nMsgLen)
 {
     Json::Value st_JsonRoot;
     Json::Value st_JsonArray;
@@ -315,10 +315,10 @@ BOOL HelpModule_Api_Clear(LPCTSTR lpszRemoteJson, int nMsgLen)
     st_JsonArray = st_JsonRoot["DelList"];
     for (unsigned int i = 0; i < st_JsonArray.size(); i++)
     {
-        if (0 != _tremove(st_JsonArray[i].asCString()))
+        if (0 != _xtremove(st_JsonArray[i].asCString()))
         {
             return FALSE;
         }
     }
-    return TRUE;
+    return true;
 }
