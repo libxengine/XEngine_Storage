@@ -36,25 +36,26 @@
         "bUPHash":0,
         "nHashMode":2
     },
+    "XAuth":{
+        "bUPAuth":false,
+        "bDLAuth":false,
+        "bCHAuth":true,
+        "tszUserList":"./XEngine_Config/UserList.txt"
+    },
     "XProxy":{
-        "XProxyAuth":{
-            "bAuth":false,
-            "tszUserList":"./XEngine_Config/UserList.txt",
-            "tszAuthProxy":""
-        },
-        "XProxyPass":{
-            "bUPGet":0,
-            "bDLGet":0,
-            "tszUPPass":"http://192.168.1.7:5200/Api/Pass/UPFile",
-            "tszDLPass":"http://192.168.1.7:5200/Api/Pass/UPFile"
-        }
+        "bUPPass":false,
+        "bDLPass":false,
+        "bAuthPass":false,
+        "tszUPPass":"http://192.168.1.7:5200/Api/Pass/UPFile",
+        "tszDLPass":"http://192.168.1.7:5200/Api/Pass/UPFile",
+        "tszAuthPass":""
     },
     "XLimit":{
         "bLimitMode":true,
         "nMaxUPLoad":4096000,
         "nMaxDNLoad":4096000,
-        "nMaxUPConnect":1,
-        "nMaxDNConnect":1
+        "nMaxUPConnect":2,
+        "nMaxDNConnect":2
     },
     "XP2xp":{
         "nTime":2,
@@ -70,6 +71,7 @@
         "tszCertKey":"./XEngine_Cert/2_www.xyry.org.key"
     },
     "XVer":[
+        "3.11.0.1001 Build20230421",
         "3.10.0.1001 Build20230210",
         "3.9.1.1001 Build20221227",
         "3.9.0.1001 Build20221028",
