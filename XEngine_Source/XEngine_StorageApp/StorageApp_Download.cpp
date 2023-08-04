@@ -11,7 +11,7 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(XPVOID lParam)
 		if (HttpProtocol_Server_EventWaitEx(xhDLHttp, nThreadPos))
 		{
 			int nListCount = 0;
-			RFCCOMPONENTS_HTTP_PKTCLIENT** ppSt_PKTClient;
+			XENGINE_MANAGEPOOL_TASKEVENT** ppSt_PKTClient;
 			//获取当前队列池中所有触发下载客户端
 			HttpProtocol_Server_GetPoolEx(xhDLHttp, nThreadPos, &ppSt_PKTClient, &nListCount);
 			for (int i = 0; i < nListCount; i++)
