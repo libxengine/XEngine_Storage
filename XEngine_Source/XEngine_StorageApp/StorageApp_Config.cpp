@@ -5,7 +5,6 @@ bool StorageApp_Config_Parament(int argc,char **argv)
     LPCXSTR lpszBaseCfg = _X("./XEngine_Config/XEngine_Config.json");
     LPCXSTR lpszLoadCfg = _X("./XEngine_Config/XEngine_LBConfig.json");
 
-
     if (NULL != st_ServiceCfg.st_XVer.pStl_ListStorage)
     {
         delete st_ServiceCfg.st_XVer.pStl_ListStorage;
