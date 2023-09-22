@@ -5,6 +5,36 @@ bool StorageApp_Config_Parament(int argc,char **argv)
     LPCXSTR lpszBaseCfg = _X("./XEngine_Config/XEngine_Config.json");
     LPCXSTR lpszLoadCfg = _X("./XEngine_Config/XEngine_LBConfig.json");
 
+
+    if (NULL != st_ServiceCfg.st_XVer.pStl_ListStorage)
+    {
+        delete st_ServiceCfg.st_XVer.pStl_ListStorage;
+        st_ServiceCfg.st_XVer.pStl_ListStorage = NULL;
+    }
+	if (NULL != st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket)
+	{
+		delete st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket;
+        st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket = NULL;
+	}
+	if (NULL != st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter)
+	{
+		delete st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter;
+        st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter = NULL;
+	}
+	if (NULL != st_LoadbalanceCfg.st_LoadBalance.pStl_ListDownload)
+	{
+		delete st_LoadbalanceCfg.st_LoadBalance.pStl_ListDownload;
+        st_LoadbalanceCfg.st_LoadBalance.pStl_ListDownload = NULL;
+	}
+	if (NULL != st_LoadbalanceCfg.st_LoadBalance.pStl_ListUPLoader)
+	{
+		delete  st_LoadbalanceCfg.st_LoadBalance.pStl_ListUPLoader;
+        st_LoadbalanceCfg.st_LoadBalance.pStl_ListUPLoader = NULL;
+	}
+
+    memset(&st_ServiceCfg, '\0', sizeof(XENGINE_SERVERCONFIG));
+    memset(&st_LoadbalanceCfg, '\0', sizeof(XENGINE_LBCONFIG));
+
     if (!Config_Json_File(lpszBaseCfg, &st_ServiceCfg))
     {
         printf("解析配置文件失败,Config_Json_File:%lX\n",Config_GetLastError());
