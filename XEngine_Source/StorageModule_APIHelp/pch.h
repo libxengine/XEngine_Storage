@@ -7,7 +7,7 @@
 #ifndef PCH_H
 #define PCH_H
 
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 // 添加要在此处预编译的标头
 #include "framework.h"
 #include <tchar.h>
@@ -59,7 +59,7 @@ using namespace std;
 extern bool APIHelp_IsErrorOccur;
 extern XLONG APIHelp_dwErrorCode;
 
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
 #pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol")

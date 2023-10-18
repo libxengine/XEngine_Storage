@@ -7,7 +7,7 @@
 #ifndef PCH_H
 #define PCH_H
 
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 // 添加要在此处预编译的标头
 #include "framework.h"
 #include <stdlib.h>
@@ -54,7 +54,7 @@ using namespace std;
 extern bool Protocol_IsErrorOccur;
 extern XLONG Protocol_dwErrorCode;
 
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #ifdef _DEBUG
 #ifdef _WIN64

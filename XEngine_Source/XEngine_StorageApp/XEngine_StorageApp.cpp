@@ -74,7 +74,7 @@ void ServiceApp_Stop(int signo)
 }
 static int ServiceApp_Deamon(int wait)
 {
-#ifndef _WINDOWS
+#ifndef _MSC_BUILD
 	pid_t pid = 0;
 	int status;
 	pid = fork();
@@ -105,10 +105,7 @@ static int ServiceApp_Deamon(int wait)
 
 int main(int argc, char** argv)
 {
-#if (XENGINE_VERSION_KERNEL < 7) && (XENGINE_VERSION_MAIN < 24)
-	printf("XEngine版本过低,无法继续\n");
-#endif
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
@@ -466,7 +463,7 @@ XENGINE_EXITAPP:
 			pSTDThread->join();
 		}
 	}
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 	WSACleanup();
 #endif
 	return 0;
