@@ -15,11 +15,6 @@ bool StorageApp_Config_Parament(int argc,char **argv)
 		delete st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket;
         st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket = NULL;
 	}
-	if (NULL != st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter)
-	{
-		delete st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter;
-        st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter = NULL;
-	}
 	if (NULL != st_LoadbalanceCfg.st_LoadBalance.pStl_ListDownload)
 	{
 		delete st_LoadbalanceCfg.st_LoadBalance.pStl_ListDownload;

@@ -127,21 +127,18 @@ typedef struct
 	bool bDistributed;
     struct  
     {
-        int nCenterMode;
         int nUPLoadMode;
         int nDownldMode;
         int nStorageMode;
     }st_LBDistributed;
 	struct
 	{
-		int nCenterMode;
 		int nUPLoadMode;
 		int nDownldMode;
 		int nStorageMode;
 	}st_LBLocation;
 	struct
 	{
-        list<string>* pStl_ListCenter;
 		list<string>* pStl_ListDownload;
 		list<string>* pStl_ListUPLoader;
         list<XENGINE_STORAGEBUCKET>* pStl_ListBucket;

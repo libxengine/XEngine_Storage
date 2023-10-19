@@ -116,27 +116,6 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 
 	if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
 	{
-		//使用重定向?
-		if (st_LoadbalanceCfg.st_LBDistributed.nCenterMode > 0)
-		{
-			XCHAR tszHdrBuffer[1024];
-			XCHAR tszStorageAddr[128];
-
-			memset(tszHdrBuffer, '\0', sizeof(tszHdrBuffer));
-			memset(tszStorageAddr, '\0', sizeof(tszStorageAddr));
-
-			st_HDRParam.bIsClose = true;
-			st_HDRParam.nHttpCode = 302;
-
-			APIHelp_Distributed_RandomAddr(st_LoadbalanceCfg.st_LoadBalance.pStl_ListCenter, tszStorageAddr, st_LoadbalanceCfg.st_LBDistributed.nCenterMode);
-			_xstprintf(tszHdrBuffer, _X("Location: %s%s\r\n"), tszStorageAddr, pSt_HTTPParam->tszHttpUri);
-
-			HttpProtocol_Server_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHdrBuffer);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求的函数被要求重定向到:%s%s"), lpszClientAddr, tszStorageAddr, pSt_HTTPParam->tszHttpUri);
-			return true;
-		}
-
 		if (!HttpProtocol_ServerHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIVersion, tszAPIMethod, tszAPIName))
 		{
 			st_HDRParam.bIsClose = true;
