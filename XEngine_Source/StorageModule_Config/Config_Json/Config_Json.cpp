@@ -294,7 +294,6 @@ bool CConfig_Json::Config_Json_LoadBalance(LPCXSTR lpszConfigFile, XENGINE_LBCON
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARSE;
 		return false;
 	}
-	pSt_ServerConfig->bDistributed = st_JsonRoot["bDistributed"].asInt();
 
 	if (st_JsonRoot["LBDistributed"].empty() || (3 != st_JsonRoot["LBDistributed"].size()))
 	{

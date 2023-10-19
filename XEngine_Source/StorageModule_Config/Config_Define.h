@@ -124,7 +124,6 @@ typedef struct
 }XENGINE_STORAGEBUCKET;
 typedef struct
 {
-	bool bDistributed;
     struct  
     {
         int nUPLoadMode;
