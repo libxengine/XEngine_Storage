@@ -78,12 +78,11 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		}
 		if (st_ServiceCfg.st_XProxy.bAuthPass)
 		{
-			int nBLen = 0;
 			int nResponseCode = 0;
 			XCHAR* ptszBody = NULL;
 
 			Protocol_StoragePacket_BasicAuth(pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
-			APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszAuthPass, tszSDBuffer, &nResponseCode, &ptszBody, &nBLen);
+			APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszAuthPass, tszSDBuffer, &nResponseCode, &ptszBody, &nSDLen);
 			if (200 != nResponseCode)
 			{
 				st_HDRParam.bIsClose = true;
