@@ -306,7 +306,7 @@ XHTHREAD CDatabase_Memory::Database_Memory_Thread(XPVOID lParam)
     CDatabase_Memory *pClass_This = (CDatabase_Memory *)lParam;
     time_t nTimeStart = time(NULL);
     time_t nTimeEnd = 0;
-    int nTime = 60;
+    int nTime = 60 * 60 * 12;
 
 	while (pClass_This->m_bIsRun)
 	{
@@ -316,7 +316,7 @@ XHTHREAD CDatabase_Memory::Database_Memory_Thread(XPVOID lParam)
             nTimeStart = nTimeEnd;
 			pClass_This->Database_Memory_Flush();
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
     return 0;
 }
