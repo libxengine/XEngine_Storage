@@ -120,7 +120,10 @@ jsoncpp模块在使用的时候编译运行时库选择必须一致.否则会崩
 4.  新建 Pull Request  
 
 ## 关注我们
-如果你觉得这个软件对你有帮助,请你给我们一个START吧
+  
+如果你觉得这个软件对你有帮助,请你给我们一个START吧  
+也可以通过微信关注我们  
+![qrcode](https://www.xyry.org/qrcode.jpg)
 
 ## 提交问题
 

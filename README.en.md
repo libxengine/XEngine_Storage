@@ -120,7 +120,9 @@ Port:HTTP Center Port 5100,Download 5101,UPLoad 5102
 4. New Pull Request
 
 ## Follow us
-If you think this software is helpful to you, please give us a START
+If you think this software is helpful to you, please give us a START  
+and wechat qr scan to follow us 
+![qrcode](https://www.xyry.org/qrcode.jpg)
 
 ## post issues
 
