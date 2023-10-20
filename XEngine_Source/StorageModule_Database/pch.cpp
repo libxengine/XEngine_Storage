@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Database_Help/Database_Help.h"
 #include "Database_File/Database_File.h"
+#include "Database_Memory/Database_Memory.h"
 /********************************************************************
 //    Created:     2022/03/29  14:22:29
 //    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_Database\pch.cpp
@@ -17,6 +18,7 @@ XLONG Database_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CDatabase_Help m_SQLHelp;
 CDatabase_File m_SQLFile;
+CDatabase_Memory m_SQLMemory;
 //////////////////////////////////////////////////////////////////////////
 ///                        导出的函数
 //////////////////////////////////////////////////////////////////////////
@@ -65,4 +67,27 @@ extern "C" bool Database_File_FileDelete(LPCXSTR lpszBuckKey, LPCXSTR lpszFilePa
 extern "C" bool Database_File_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszTimeStart, LPCXSTR lpszTimeEnd, LPCXSTR lpszBuckKey, LPCXSTR lpszFilePath, LPCXSTR lpszFileName, LPCXSTR lpszHash, LPCXSTR lpszTableName)
 {
 	return m_SQLFile.Database_File_FileQuery(pppSt_ListFile, pInt_ListCount, lpszTimeStart, lpszTimeEnd, lpszBuckKey, lpszFilePath, lpszFileName, lpszHash, lpszTableName);
+}
+/************************************************************************/
+/*                         导出的内存数据库函数                         */
+/************************************************************************/
+extern "C" bool Database_Memory_Init(list<XENGINE_STORAGEBUCKET>*pStl_ListBucket, int nHashMode)
+{
+	return m_SQLMemory.Database_Memory_Init(pStl_ListBucket, nHashMode);
+}
+extern "C" bool Database_Memory_Destory()
+{
+	return m_SQLMemory.Database_Memory_Destory();
+}
+extern "C" bool Database_Memory_FileInsert(XSTORAGECORE_DBFILE * pSt_DBManage)
+{
+	return m_SQLMemory.Database_Memory_FileInsert(pSt_DBManage);
+}
+extern "C" bool Database_Memory_FileDelete(LPCXSTR lpszFilePath, LPCXSTR lpszFileName, LPCXSTR lpszHash)
+{
+	return m_SQLMemory.Database_Memory_FileDelete(lpszFilePath, lpszFileName, lpszHash);
+}
+extern "C" bool Database_Memory_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszFilePath, LPCXSTR lpszFileName, LPCXSTR lpszHash)
+{
+	return m_SQLMemory.Database_Memory_FileQuery(pppSt_ListFile, pInt_ListCount, lpszFilePath, lpszFileName, lpszHash);
 }

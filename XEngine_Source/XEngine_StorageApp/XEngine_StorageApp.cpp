@@ -63,6 +63,7 @@ void ServiceApp_Stop(int signo)
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		Database_File_Destory();
+		Database_Memory_Destory();
 
 		if (NULL != pSTDThread)
 		{
@@ -396,6 +397,13 @@ int main(int argc, char** argv)
 	//只有使用了数据库,才启用P2P
 	if (st_ServiceCfg.st_P2xp.bEnable)
 	{
+		if (!Database_Memory_Init(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, st_ServiceCfg.st_XStorage.nHashMode))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动P2P内存数据库失败，错误：%lX"), Database_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动P2P内存数据库成功"));
+
 		if (!NetCore_BroadCast_Create(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
@@ -456,6 +464,7 @@ XENGINE_EXITAPP:
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		Database_File_Destory();
+		Database_Memory_Destory();
 
 		if (NULL != pSTDThread)
 		{

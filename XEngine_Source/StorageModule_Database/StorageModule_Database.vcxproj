@@ -167,12 +167,14 @@
     <ClInclude Include="Database_Error.h" />
     <ClInclude Include="Database_File\Database_File.h" />
     <ClInclude Include="Database_Help\Database_Help.h" />
+    <ClInclude Include="Database_Memory\Database_Memory.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Database_File\Database_File.cpp" />
     <ClCompile Include="Database_Help\Database_Help.cpp" />
+    <ClCompile Include="Database_Memory\Database_Memory.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

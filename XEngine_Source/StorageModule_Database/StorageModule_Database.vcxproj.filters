@@ -25,6 +25,12 @@
     <Filter Include="源文件\Database_Help">
       <UniqueIdentifier>{ebe3a727-0fc0-47ee-bcfe-c5de217ca9a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Database_Memory">
+      <UniqueIdentifier>{73acae46-9b4e-49e4-8d3a-b82e4fdb28b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Database_Memory">
+      <UniqueIdentifier>{cc364565-bd16-4d4a-97ce-205b348d3145}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -45,6 +51,9 @@
     <ClInclude Include="Database_Help\Database_Help.h">
       <Filter>头文件\Database_Help</Filter>
     </ClInclude>
+    <ClInclude Include="Database_Memory\Database_Memory.h">
+      <Filter>头文件\Database_Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -58,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="Database_Help\Database_Help.cpp">
       <Filter>源文件\Database_Help</Filter>
+    </ClCompile>
+    <ClCompile Include="Database_Memory\Database_Memory.cpp">
+      <Filter>源文件\Database_Memory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

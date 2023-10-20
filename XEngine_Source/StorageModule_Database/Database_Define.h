@@ -279,3 +279,106 @@ extern "C" bool Database_File_FileDelete(LPCXSTR lpszBuckKey = NULL, LPCXSTR lps
 备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszMD5不能全为空
 *********************************************************************/
 extern "C" bool Database_File_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszTimeStart = NULL, LPCXSTR lpszTimeEnd = NULL, LPCXSTR lpszBuckKey = NULL, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszHash = NULL, LPCXSTR lpszTableName = NULL);
+/************************************************************************/
+/*                         导出的内存数据库函数                         */
+/************************************************************************/
+/********************************************************************
+函数名称：Database_Memory_Init
+函数功能：初始化存储服务数据库管理器
+ 参数.一：pStl_ListBucket
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：BUCKET列表
+ 参数.二：nHashMode
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：文件HASH方法
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Database_Memory_Init(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, int nHashMode);
+/********************************************************************
+函数名称：Database_Memory_Destory
+函数功能：销毁数据库管理器
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Database_Memory_Destory();
+/********************************************************************
+函数名称：Database_Memory_FileInsert
+函数功能：插入一个文件数据到数据库中
+ 参数.一：pSt_DBManage
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：要插入的数据信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：这个结构所有值都必须填充
+*********************************************************************/
+extern "C" bool Database_Memory_FileInsert(XSTORAGECORE_DBFILE* pSt_DBManage);
+/********************************************************************
+函数名称：Database_Memory_FileDelete
+函数功能：删除一个数据库文件信息
+ 参数.一：lpszFilePath
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要删除的文件路径
+ 参数.二：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要删除的文件名称
+ 参数.三：lpszHash
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要删除的文件HASH
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：参数不能全为空,不会删除文件
+*********************************************************************/
+extern "C" bool Database_Memory_FileDelete(LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszHash = NULL);
+/********************************************************************
+函数名称：Database_Memory_FileQuery
+函数功能：查询文件信息
+ 参数.一：pppSt_ListFile
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：导出查询到的文件列表,此函数需要调用基础库的内存释放函数
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：导出文件个数
+ 参数.三：lpszFilePath
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要查询的路径
+ 参数.四：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要查询的名称
+ 参数.五：lpszHash
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：要查询的文件HASH
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszHash不能全为空
+*********************************************************************/
+extern "C" bool Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszHash = NULL);

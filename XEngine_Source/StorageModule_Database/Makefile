@@ -10,7 +10,7 @@ LOADHDR = -I ./ -I ../XEngine_ThirdPart/jsoncpp
 LOADSO = -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_HelpComponents
 LIB = -lXEngine_BaseLib -lHelpComponents_DataBase
 LIBEX = 
-OBJECTS = Database_File.o Database_Help.o pch.o
+OBJECTS = Database_File.o Database_Memory.o Database_Help.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 
@@ -53,6 +53,8 @@ all:$(OBJECTS)
 
 Database_File.o:./Database_File/Database_File.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Database_File/Database_File.cpp
+Database_Memory.o:./Database_Memory/Database_Memory.cpp                                 
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Database_Memory/Database_Memory.cpp
 Database_Help.o:./Database_Help/Database_Help.cpp                                 
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Database_Help/Database_Help.cpp
 

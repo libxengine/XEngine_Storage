@@ -12,3 +12,9 @@ EXPORTS
 	Database_File_FileInsert
 	Database_File_FileDelete
 	Database_File_FileQuery
+
+	Database_Memory_Init
+	Database_Memory_Destory
+	Database_Memory_FileInsert
+	Database_Memory_FileDelete
+	Database_Memory_FileQuery

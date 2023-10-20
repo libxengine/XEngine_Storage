@@ -36,6 +36,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
 #include "../XStorage_Protocol.h"
+#include "../StorageModule_Config/Config_Define.h"
+#include "../StorageModule_Config/Config_Error.h"
 #include "../StorageModule_Session/Session_Define.h"
 #include "../StorageModule_Database/Database_Define.h"
 #include "StorageProtocol_Define.h"
