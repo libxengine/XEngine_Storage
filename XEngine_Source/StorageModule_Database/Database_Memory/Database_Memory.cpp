@@ -51,6 +51,7 @@ bool CDatabase_Memory::Database_Memory_Init(list<XENGINE_STORAGEBUCKET>* pStl_Li
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_INIT_THREAD;
         return false;
     }
+    m_nHashMode = nHashMode;
 	stl_ListBucket = *pStl_ListBucket;
     return true;
 }
@@ -256,11 +257,19 @@ bool CDatabase_Memory::Database_Memory_Flush()
 {
     Database_IsErrorOccur = false;
 
+    st_Locker->lock();
+    stl_ListFile.clear();
 	for (auto stl_ListIterator = stl_ListBucket.begin(); stl_ListIterator != stl_ListBucket.end(); stl_ListIterator++)
 	{
 		int nListCount = 0;
 		XCHAR** pptszListFile;
-		SystemApi_File_EnumFile(stl_ListIterator->tszFilePath, &pptszListFile, &nListCount, NULL, NULL, true, 1);
+        XCHAR tszFoundDir[MAX_PATH];
+
+        memset(tszFoundDir, '\0', MAX_PATH);
+        _tcsxcpy(tszFoundDir, stl_ListIterator->tszFilePath);
+        _tcsxcat(tszFoundDir, _T("/*"));
+
+		SystemApi_File_EnumFile(tszFoundDir, &pptszListFile, &nListCount, NULL, NULL, true, 1);
 		for (int i = 0; i < nListCount; i++)
 		{
 			int nHashLen = 0;
@@ -272,17 +281,21 @@ bool CDatabase_Memory::Database_Memory_Flush()
 			memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
             _xtstat(pptszListFile[i], &st_FileStatus);
-			st_DBFile.st_ProtocolFile.nFileSize = st_FileStatus.st_size;
+			
+            if (st_FileStatus.st_size > 0)
+            {
+                st_DBFile.st_ProtocolFile.nFileSize = st_FileStatus.st_size;
+				OPenSsl_Api_Digest(pptszListFile[i], tszHashStr, &nHashLen, true, m_nHashMode);
+				BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, st_DBFile.st_ProtocolFile.tszFileHash);
+				BaseLib_OperatorString_GetFileAndPath(pptszListFile[i], st_DBFile.st_ProtocolFile.tszFilePath, st_DBFile.st_ProtocolFile.tszFileName);
+				_tcsxcpy(st_DBFile.tszBuckKey, stl_ListIterator->tszBuckKey);
 
-			OPenSsl_Api_Digest(pptszListFile[i], tszHashStr, &nHashLen, true, m_nHashMode);
-			BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, st_DBFile.st_ProtocolFile.tszFileHash);
-			BaseLib_OperatorString_GetFileAndPath(pptszListFile[i], st_DBFile.st_ProtocolFile.tszFilePath, st_DBFile.st_ProtocolFile.tszFileName);
-			_tcsxcpy(st_DBFile.tszBuckKey, stl_ListIterator->tszBuckKey);
-
-            stl_ListFile.push_back(st_DBFile);
+				stl_ListFile.push_back(st_DBFile);
+            }
 		}
         BaseLib_OperatorMemory_Free((XPPPMEM)&pptszListFile, nListCount);
 	}
+    st_Locker->unlock();
     return true;
 }
 //////////////////////////////////////////////////////////////////////////
@@ -293,15 +306,16 @@ XHTHREAD CDatabase_Memory::Database_Memory_Thread(XPVOID lParam)
     CDatabase_Memory *pClass_This = (CDatabase_Memory *)lParam;
     time_t nTimeStart = time(NULL);
     time_t nTimeEnd = 0;
-    int nTime = 60 * 60 * 12;
+    int nTime = 60;
 
 	while (pClass_This->m_bIsRun)
 	{
+        nTimeEnd = time(NULL);
 		if ((nTimeEnd - nTimeStart) > nTime)
 		{
+            nTimeStart = nTimeEnd;
 			pClass_This->Database_Memory_Flush();
 		}
-		nTimeEnd = time(NULL);
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
     return 0;
