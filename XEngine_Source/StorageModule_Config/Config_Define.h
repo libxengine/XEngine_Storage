@@ -89,6 +89,7 @@ typedef struct tag_XEngine_ServerConfig
 	}st_XLimit;
     struct  
     {
+        bool bEnable;
         int nTime;
         int nSDPort;
         int nRVPort;

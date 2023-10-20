@@ -189,13 +189,15 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XLimit.nMaxUPConnect = st_JsonXLimit["nMaxUPConnect"].asInt();
 	pSt_ServerConfig->st_XLimit.nMaxDNConnect = st_JsonXLimit["nMaxDNConnect"].asInt();
 
-	if (st_JsonRoot["XP2xp"].empty() || (3 != st_JsonRoot["XP2xp"].size()))
+	if (st_JsonRoot["XP2xp"].empty() || (4 != st_JsonRoot["XP2xp"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_P2XP;
 		return false;
 	}
 	Json::Value st_JsonP2xp = st_JsonRoot["XP2xp"];
+
+	pSt_ServerConfig->st_P2xp.bEnable = st_JsonP2xp["bEnable"].asBool();
 	pSt_ServerConfig->st_P2xp.nTime = st_JsonP2xp["nTime"].asInt();
 	pSt_ServerConfig->st_P2xp.nSDPort = st_JsonP2xp["nSDPort"].asInt();
 	pSt_ServerConfig->st_P2xp.nRVPort = st_JsonP2xp["nRVPort"].asInt();

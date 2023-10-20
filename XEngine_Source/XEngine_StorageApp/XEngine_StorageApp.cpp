@@ -394,7 +394,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动HTTP业务任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
 	}
 	//只有使用了数据库,才启用P2P
-	if (st_ServiceCfg.st_XSql.bEnable)
+	if (st_ServiceCfg.st_P2xp.bEnable)
 	{
 		if (!NetCore_BroadCast_Create(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 		{
