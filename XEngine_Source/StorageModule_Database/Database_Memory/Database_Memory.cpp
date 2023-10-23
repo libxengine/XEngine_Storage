@@ -236,10 +236,13 @@ bool CDatabase_Memory::Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
     }
     st_Locker->unlock_shared();
 
-    *pInt_ListCount = 1;
-    BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ListFile, 1, sizeof(XSTORAGECORE_DBFILE));
+    if (bFound)
+    {
+		*pInt_ListCount = 1;
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ListFile, 1, sizeof(XSTORAGECORE_DBFILE));
 
-    *(*pppSt_ListFile)[0] = *stl_ListIterator;
+		*(*pppSt_ListFile)[0] = *stl_ListIterator;
+    }
     return true;
 }
 //////////////////////////////////////////////////////////////////////////
