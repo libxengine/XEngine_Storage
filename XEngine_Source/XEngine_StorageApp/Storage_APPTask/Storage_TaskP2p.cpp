@@ -30,7 +30,7 @@ XHTHREAD XEngine_Task_P2PThread()
 				//查询文件是否存在数据库,不存在不关心
 				int nListCount = 0;
 				XSTORAGECORE_DBFILE** pppSt_ListFile;
-				Database_File_FileQuery(&pppSt_ListFile, &nListCount, tszTimeStart, tszTimeEnd, tszBuckKey, NULL, tszFileName, tszFileHash);
+				Database_Memory_FileQuery(&pppSt_ListFile, &nListCount, tszBuckKey, tszFileName, tszFileHash);
 				if (nListCount > 0)
 				{
 					_xstprintf(pppSt_ListFile[0]->tszTableName, _X("%s:%d"), st_ServiceCfg.tszIPAddr, st_ServiceCfg.nStorageDLPort);

@@ -223,6 +223,11 @@ bool CDatabase_Memory::Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
 						break;
                     }
                 }
+                else
+                {
+					bFound = true;
+					break;
+                }
 			}
         }
         else if (_tcsxlen(lpszFileName) > 0)
@@ -237,7 +242,11 @@ bool CDatabase_Memory::Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
 						break;
 					}
 				}
-				break;
+				else
+				{
+					bFound = true;
+					break;
+				}
 			}
         }
     }
@@ -268,7 +277,7 @@ bool CDatabase_Memory::Database_Memory_Flush()
     Database_IsErrorOccur = false;
 
     st_Locker->lock();
-    stl_ListFile.clear();
+    stl_ListFile.clear();  //fixme:improved find
 	for (auto stl_ListIterator = stl_ListBucket.begin(); stl_ListIterator != stl_ListBucket.end(); stl_ListIterator++)
 	{
 		int nListCount = 0;
@@ -316,7 +325,9 @@ XHTHREAD CDatabase_Memory::Database_Memory_Thread(XPVOID lParam)
     CDatabase_Memory *pClass_This = (CDatabase_Memory *)lParam;
     time_t nTimeStart = time(NULL);
     time_t nTimeEnd = 0;
-    int nTime = 60;
+    int nTime = 60 * 60;
+
+    pClass_This->Database_Memory_Flush();//优先刷新
 
 	while (pClass_This->m_bIsRun)
 	{
