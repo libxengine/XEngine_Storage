@@ -361,24 +361,24 @@ extern "C" bool Database_Memory_FileDelete(LPCXSTR lpszFilePath = NULL, LPCXSTR 
   类型：三级指针
   可空：N
   意思：导出文件个数
- 参数.三：lpszFilePath
+ 参数.三：lpszBucketName
   In/Out：In
   类型：常量字符指针
-  可空：Y
-  意思：要查询的路径
+  可空：N
+  意思：要查询的BUCKET名称
  参数.四：lpszFileName
   In/Out：In
   类型：常量字符指针
-  可空：Y
+  可空：N
   意思：要查询的名称
  参数.五：lpszHash
   In/Out：In
   类型：常量字符指针
-  可空：Y
+  可空：N
   意思：要查询的文件HASH
 返回值
   类型：逻辑型
   意思：是否成功
-备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszHash不能全为空
+备注：
 *********************************************************************/
-extern "C" bool Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszHash = NULL);
+extern "C" bool Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszBucketName, LPCXSTR lpszFileName, LPCXSTR lpszHash);

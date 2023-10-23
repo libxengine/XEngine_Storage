@@ -21,7 +21,7 @@ public:
     bool Database_Memory_Destory();
     bool Database_Memory_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage);
     bool Database_Memory_FileDelete(LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszHash = NULL);
-    bool Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszFileName = NULL, LPCXSTR lpszHash = NULL);
+    bool Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszBucketName, LPCXSTR lpszFileName, LPCXSTR lpszHash);
 protected:
     bool Database_Memory_Flush();
 protected:

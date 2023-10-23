@@ -87,7 +87,7 @@ extern "C" bool Database_Memory_FileDelete(LPCXSTR lpszFilePath, LPCXSTR lpszFil
 {
 	return m_SQLMemory.Database_Memory_FileDelete(lpszFilePath, lpszFileName, lpszHash);
 }
-extern "C" bool Database_Memory_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszFilePath, LPCXSTR lpszFileName, LPCXSTR lpszHash)
+extern "C" bool Database_Memory_FileQuery(XSTORAGECORE_DBFILE * **pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszBucketName, LPCXSTR lpszFileName, LPCXSTR lpszHash)
 {
-	return m_SQLMemory.Database_Memory_FileQuery(pppSt_ListFile, pInt_ListCount, lpszFilePath, lpszFileName, lpszHash);
+	return m_SQLMemory.Database_Memory_FileQuery(pppSt_ListFile, pInt_ListCount, lpszBucketName, lpszFileName, lpszHash);
 }

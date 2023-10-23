@@ -182,54 +182,61 @@ bool CDatabase_Memory::Database_Memory_FileDelete(LPCXSTR lpszFilePath /* = NULL
   类型：三级指针
   可空：N
   意思：导出文件个数
- 参数.三：lpszFilePath
+ 参数.三：lpszBucketName
   In/Out：In
   类型：常量字符指针
-  可空：Y
-  意思：要查询的路径
+  可空：N
+  意思：要查询的BUCKET名称
  参数.四：lpszFileName
   In/Out：In
   类型：常量字符指针
-  可空：Y
+  可空：N
   意思：要查询的名称
  参数.五：lpszHash
   In/Out：In
   类型：常量字符指针
-  可空：Y
+  可空：N
   意思：要查询的文件HASH
 返回值
   类型：逻辑型
   意思：是否成功
-备注：返回假可能没有查找到,这条记录不存在.参数lpszFile和lpszHash不能全为空
+备注：
 *********************************************************************/
-bool CDatabase_Memory::Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszFilePath /* = NULL */, LPCXSTR lpszFileName /* = NULL */, LPCXSTR lpszHash /* = NULL */)
+bool CDatabase_Memory::Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFile, int* pInt_ListCount, LPCXSTR lpszBucketName, LPCXSTR lpszFileName, LPCXSTR lpszHash)
 {
     Database_IsErrorOccur = false;
 
-    if ((NULL == lpszHash) && (NULL == lpszFileName))
-    {
-        Database_IsErrorOccur = true;
-        Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_PARAMENT;
-        return false;
-    }
     bool bFound = false;
     st_Locker->lock_shared();
     auto stl_ListIterator = stl_ListFile.begin();
     for (; stl_ListIterator != stl_ListFile.end(); stl_ListIterator++)
     {
-        if (NULL != lpszHash)
+        if (_tcsxlen(lpszHash) > 0)
         {
 			if (0 == _tcsxnicmp(lpszHash, stl_ListIterator->st_ProtocolFile.tszFileHash, _tcsxlen(lpszHash)))
 			{
-				bFound = true;
-				break;
+                if (_tcsxlen(lpszBucketName) > 0)
+                {
+                    if (0 == _tcsxnicmp(lpszBucketName, stl_ListIterator->tszBuckKey, _tcsxlen(lpszBucketName)))
+                    {
+						bFound = true;
+						break;
+                    }
+                }
 			}
         }
-        else if (NULL != lpszFileName)
+        else if (_tcsxlen(lpszFileName) > 0)
         {
-			if (0 == _tcsxnicmp(lpszFilePath, stl_ListIterator->st_ProtocolFile.tszFilePath, _tcsxlen(lpszFilePath)) && 0 == _tcsxnicmp(lpszFileName, stl_ListIterator->st_ProtocolFile.tszFileName, _tcsxlen(lpszFileName)))
+			if (0 == _tcsxnicmp(lpszFileName, stl_ListIterator->st_ProtocolFile.tszFileName, _tcsxlen(lpszFileName)))
 			{
-				bFound = true;
+				if (_tcsxlen(lpszBucketName) > 0)
+				{
+					if (0 == _tcsxnicmp(lpszBucketName, stl_ListIterator->tszBuckKey, _tcsxlen(lpszBucketName)))
+					{
+						bFound = true;
+						break;
+					}
+				}
 				break;
 			}
         }
@@ -309,7 +316,7 @@ XHTHREAD CDatabase_Memory::Database_Memory_Thread(XPVOID lParam)
     CDatabase_Memory *pClass_This = (CDatabase_Memory *)lParam;
     time_t nTimeStart = time(NULL);
     time_t nTimeEnd = 0;
-    int nTime = 60 * 60 * 12;
+    int nTime = 60;
 
 	while (pClass_This->m_bIsRun)
 	{
