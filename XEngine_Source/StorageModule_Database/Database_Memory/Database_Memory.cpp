@@ -286,13 +286,14 @@ bool CDatabase_Memory::Database_Memory_Flush()
 
         memset(tszFoundDir, '\0', MAX_PATH);
         _tcsxcpy(tszFoundDir, stl_ListIterator->tszFilePath);
-        _tcsxcat(tszFoundDir, _T("/*"));
+        _tcsxcat(tszFoundDir, _X("/*"));
 
 		SystemApi_File_EnumFile(tszFoundDir, &pptszListFile, &nListCount, NULL, NULL, true, 1);
 		for (int i = 0; i < nListCount; i++)
 		{
 			int nHashLen = 0;
 			struct _xtstat st_FileStatus;
+
 			XBYTE tszHashStr[MAX_PATH];
 			XSTORAGECORE_DBFILE st_DBFile;
 
@@ -300,7 +301,6 @@ bool CDatabase_Memory::Database_Memory_Flush()
 			memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
             _xtstat(pptszListFile[i], &st_FileStatus);
-			
             if (st_FileStatus.st_size > 0)
             {
                 st_DBFile.st_ProtocolFile.nFileSize = st_FileStatus.st_size;

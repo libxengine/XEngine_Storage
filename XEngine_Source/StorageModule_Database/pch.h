@@ -16,13 +16,16 @@
 #include <time.h>
 #include <WinSock2.h>
 #else
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <pthread.h>
+#endif
+#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <pthread.h>
-#endif
-#endif //PCH_H
 #include <list>
 #include <memory>
 #include <thread>
