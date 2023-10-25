@@ -7,7 +7,7 @@
 #ifndef PCH_H
 #define PCH_H
 
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 // 添加要在此处预编译的标头
 #include "framework.h"
 #include <stdlib.h>
@@ -36,6 +36,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
 #include "../XStorage_Protocol.h"
+#include "../StorageModule_Config/Config_Define.h"
+#include "../StorageModule_Config/Config_Error.h"
 #include "../StorageModule_Session/Session_Define.h"
 #include "../StorageModule_Database/Database_Define.h"
 #include "StorageProtocol_Define.h"
@@ -54,7 +56,7 @@ using namespace std;
 extern bool Protocol_IsErrorOccur;
 extern XLONG Protocol_dwErrorCode;
 
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #ifdef _DEBUG
 #ifdef _WIN64

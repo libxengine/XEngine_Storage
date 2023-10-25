@@ -1,3 +1,23 @@
+XEngine_Storage V3.12.0.1001
+
+增加:为P2P启用内存数据库支持
+修改:为P2P功能单独启用配置选项
+修改:http验证回调发送数据字段被填充了
+修改:WINDOWS宏定义
+修正:重载配置的错误
+修正:数据库时间处理不正确
+删除:业务分布式功能被删除
+删除:没有使用的配置代码
+
+added:memory database supported for p2p
+modify:The configuration for enabling P2P is set up as a separate project.
+modify:http authorize callback send len is useful
+modify:windows macro define name
+fixed:reload configure is incorrent
+fixed:database thread time is incorrent
+delete:center Distributed function,it is useless
+delete:unuse configure field
+======================================================================================
 XEngine_Storage V3.11.1.1001
 
 更新:匹配XEngine V8.15版本

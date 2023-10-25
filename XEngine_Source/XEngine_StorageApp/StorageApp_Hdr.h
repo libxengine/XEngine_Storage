@@ -48,14 +48,14 @@ using namespace std;
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 #include "../XStorage_Protocol.h"
+#include "../StorageModule_Config/Config_Define.h"
+#include "../StorageModule_Config/Config_Error.h"
 #include "../StorageModule_Session/Session_Define.h"
 #include "../StorageModule_Session/Session_Error.h"
 #include "../StorageModule_Database/Database_Define.h"
 #include "../StorageModule_Database/Database_Error.h"
 #include "../StorageModule_Protocol/StorageProtocol_Define.h"
 #include "../StorageModule_Protocol/StorageProtocol_Error.h"
-#include "../StorageModule_Config/Config_Define.h"
-#include "../StorageModule_Config/Config_Error.h"
 #include "../StorageModule_APIHelp/APIHelp_Define.h"
 #include "../StorageModule_APIHelp/APIHelp_Error.h"
 
@@ -105,7 +105,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "Storage_APPTask/Storage_TaskP2p.h"
 #include "Storage_APPTask/Storage_TaskManage.h"
 
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 #pragma comment(lib,"Ws2_32.lib")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_Algorithm.lib")

@@ -189,13 +189,15 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XLimit.nMaxUPConnect = st_JsonXLimit["nMaxUPConnect"].asInt();
 	pSt_ServerConfig->st_XLimit.nMaxDNConnect = st_JsonXLimit["nMaxDNConnect"].asInt();
 
-	if (st_JsonRoot["XP2xp"].empty() || (3 != st_JsonRoot["XP2xp"].size()))
+	if (st_JsonRoot["XP2xp"].empty() || (4 != st_JsonRoot["XP2xp"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_P2XP;
 		return false;
 	}
 	Json::Value st_JsonP2xp = st_JsonRoot["XP2xp"];
+
+	pSt_ServerConfig->st_P2xp.bEnable = st_JsonP2xp["bEnable"].asBool();
 	pSt_ServerConfig->st_P2xp.nTime = st_JsonP2xp["nTime"].asInt();
 	pSt_ServerConfig->st_P2xp.nSDPort = st_JsonP2xp["nSDPort"].asInt();
 	pSt_ServerConfig->st_P2xp.nRVPort = st_JsonP2xp["nRVPort"].asInt();
@@ -294,45 +296,36 @@ bool CConfig_Json::Config_Json_LoadBalance(LPCXSTR lpszConfigFile, XENGINE_LBCON
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARSE;
 		return false;
 	}
-	pSt_ServerConfig->bDistributed = st_JsonRoot["bDistributed"].asInt();
 
-	if (st_JsonRoot["LBDistributed"].empty() || (4 != st_JsonRoot["LBDistributed"].size()))
+	if (st_JsonRoot["LBDistributed"].empty() || (3 != st_JsonRoot["LBDistributed"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LBDISTRIBUTED;
 		return false;
 	}
 	Json::Value st_JsonLBDistributed = st_JsonRoot["LBDistributed"];
-	pSt_ServerConfig->st_LBDistributed.nCenterMode = st_JsonLBDistributed["nCenterMode"].asInt();
 	pSt_ServerConfig->st_LBDistributed.nUPLoadMode = st_JsonLBDistributed["nUPLoadMode"].asInt();
 	pSt_ServerConfig->st_LBDistributed.nDownldMode = st_JsonLBDistributed["nDownldMode"].asInt();
 	pSt_ServerConfig->st_LBDistributed.nStorageMode = st_JsonLBDistributed["nStorageMode"].asInt();
 
-	if (st_JsonRoot["LBLocation"].empty() || (4 != st_JsonRoot["LBLocation"].size()))
+	if (st_JsonRoot["LBLocation"].empty() || (3 != st_JsonRoot["LBLocation"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LBLOCATION;
 		return false;
 	}
 	Json::Value st_JsonLBLocation = st_JsonRoot["LBLocation"];
-	pSt_ServerConfig->st_LBLocation.nCenterMode = st_JsonLBLocation["nCenterMode"].asInt();
 	pSt_ServerConfig->st_LBLocation.nUPLoadMode = st_JsonLBLocation["nUPLoadMode"].asInt();
 	pSt_ServerConfig->st_LBLocation.nDownldMode = st_JsonLBLocation["nDownldMode"].asInt();
 	pSt_ServerConfig->st_LBLocation.nStorageMode = st_JsonLBLocation["nStorageMode"].asInt();
 
-	if (st_JsonRoot["LoadBalance"].empty() || (4 != st_JsonRoot["LoadBalance"].size()))
+	if (st_JsonRoot["LoadBalance"].empty() || (3 != st_JsonRoot["LoadBalance"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_LAODBALANCE;
 		return false;
 	}
 	Json::Value st_JsonLoadBalance = st_JsonRoot["LoadBalance"];
-
-	pSt_ServerConfig->st_LoadBalance.pStl_ListCenter = new list<string>;
-	for (unsigned int i = 0; i < st_JsonLoadBalance["CenterAddr"].size(); i++)
-	{
-		pSt_ServerConfig->st_LoadBalance.pStl_ListCenter->push_back(st_JsonLoadBalance["CenterAddr"][i].asCString());
-	}
 
 	pSt_ServerConfig->st_LoadBalance.pStl_ListDownload = new list<string>;
 	for (unsigned int i = 0; i < st_JsonLoadBalance["DownloadAddr"].size(); i++)

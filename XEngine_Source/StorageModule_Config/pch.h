@@ -7,7 +7,7 @@
 #ifndef PCH_H
 #define PCH_H
 
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 // 添加要在此处预编译的标头
 #include "framework.h"
 #include <tchar.h>
@@ -40,7 +40,7 @@ using namespace std;
 extern bool Config_IsErrorOccur;
 extern XLONG Config_dwErrorCode;
 
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 #ifdef _DEBUG
 #ifdef _WIN64
 #pragma comment(lib,"../x64/Debug/jsoncpp")

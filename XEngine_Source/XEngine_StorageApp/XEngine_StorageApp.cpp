@@ -63,6 +63,7 @@ void ServiceApp_Stop(int signo)
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		Database_File_Destory();
+		Database_Memory_Destory();
 
 		if (NULL != pSTDThread)
 		{
@@ -74,7 +75,7 @@ void ServiceApp_Stop(int signo)
 }
 static int ServiceApp_Deamon(int wait)
 {
-#ifndef _WINDOWS
+#ifndef _MSC_BUILD
 	pid_t pid = 0;
 	int status;
 	pid = fork();
@@ -105,10 +106,7 @@ static int ServiceApp_Deamon(int wait)
 
 int main(int argc, char** argv)
 {
-#if (XENGINE_VERSION_KERNEL < 7) && (XENGINE_VERSION_MAIN < 24)
-	printf("XEngine版本过低,无法继续\n");
-#endif
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
@@ -136,7 +134,7 @@ int main(int argc, char** argv)
 		XCHAR tszAddr[128];
 		memset(tszAddr, '\0', sizeof(tszAddr));
 
-		_xstprintf(tszAddr, _X("Http://127.0.0.1:%d/Api/Manage/Config"), st_ServiceCfg.nCenterPort);
+		_xstprintf(tszAddr, _X("http://127.0.0.1:%d/Api/Manage/Config"), st_ServiceCfg.nCenterPort);
 		APIClient_Http_Request(_X("POST"), tszAddr);
 		return 0;
 	}
@@ -397,8 +395,15 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动HTTP业务任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
 	}
 	//只有使用了数据库,才启用P2P
-	if (st_ServiceCfg.st_XSql.bEnable)
+	if (st_ServiceCfg.st_P2xp.bEnable)
 	{
+		if (!Database_Memory_Init(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, st_ServiceCfg.st_XStorage.nHashMode))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动P2P内存数据库失败，错误：%lX"), Database_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动P2P内存数据库成功"));
+
 		if (!NetCore_BroadCast_Create(&hBroadSocket, st_ServiceCfg.st_P2xp.nRVPort))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动P2P存储广播服务失败，错误：%d"), errno);
@@ -459,6 +464,7 @@ XENGINE_EXITAPP:
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		Database_File_Destory();
+		Database_Memory_Destory();
 
 		if (NULL != pSTDThread)
 		{
@@ -466,7 +472,7 @@ XENGINE_EXITAPP:
 			pSTDThread->join();
 		}
 	}
-#ifdef _WINDOWS
+#ifdef _MSC_BUILD
 	WSACleanup();
 #endif
 	return 0;

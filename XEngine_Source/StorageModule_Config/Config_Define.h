@@ -89,6 +89,7 @@ typedef struct tag_XEngine_ServerConfig
 	}st_XLimit;
     struct  
     {
+        bool bEnable;
         int nTime;
         int nSDPort;
         int nRVPort;
@@ -124,24 +125,20 @@ typedef struct
 }XENGINE_STORAGEBUCKET;
 typedef struct
 {
-	bool bDistributed;
     struct  
     {
-        int nCenterMode;
         int nUPLoadMode;
         int nDownldMode;
         int nStorageMode;
     }st_LBDistributed;
 	struct
 	{
-		int nCenterMode;
 		int nUPLoadMode;
 		int nDownldMode;
 		int nStorageMode;
 	}st_LBLocation;
 	struct
 	{
-        list<string>* pStl_ListCenter;
 		list<string>* pStl_ListDownload;
 		list<string>* pStl_ListUPLoader;
         list<XENGINE_STORAGEBUCKET>* pStl_ListBucket;
