@@ -9,7 +9,7 @@ c c++ file storage service
 This is an api gateway for uploading and downloading.  
 The service is for users who have business needs for upload and download services (such as developers who need to upload and download servers).  
 This server is more inclined to storestorage transfer and API Manage interface,the service can be used upload and download management and network file shared and software update service.  
-best storage service for http,batter than nginx and more convenient to manage,more concise code. On going maintenance  
+best storage service for http,more concise code. On going maintenance  
 
 ## Software feature
 The purpose of development and implementation based on libXEngine is a cross-platform network storage service  
