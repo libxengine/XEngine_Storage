@@ -48,17 +48,15 @@ typedef struct
 void P2PParse_List(LPCXSTR lpszMsgBuffer, int nMsgLen, list<P2PFILE_INFO>* pStl_ListFile)
 {
 	Json::Value st_JsonRoot;
-	Json::CharReaderBuilder st_JsonBuild;
-	Json::CharReader* pSt_JsonReader(st_JsonBuild.newCharReader());
-
 	JSONCPP_STRING st_JsonError;
+	Json::CharReaderBuilder st_JsonBuilder;
+
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
 	//解析JSON
 	if (!pSt_JsonReader->parse(lpszMsgBuffer, lpszMsgBuffer + nMsgLen, &st_JsonRoot, &st_JsonError))
 	{
 		return;
 	}
-	delete pSt_JsonReader;
-	pSt_JsonReader = NULL;
 
 	int nCount = st_JsonRoot["Count"].asInt();
 	Json::Value st_JsonArray = st_JsonRoot["List"];
@@ -174,7 +172,7 @@ int main()
 	st_JsonRoot["nMode"] = 1;          //使用P2P下载
 	st_JsonRoot["lpszBuckKey"] = "storagekey2";
 	//st_JsonRoot["lpszFileName"] = "qq.exe";
-	st_JsonRoot["lpszFileHash"] = "781E5E245D69B566979B86E28D23F2C7";
+	st_JsonRoot["lpszFileHash"] = "E50A10E2C9414F0397FF85393A6F68C9";
 
 	if (!APIClient_Http_Request(_X("POST"), lpszUrl, st_JsonRoot.toStyledString().c_str(), &nHTTPCode, &ptszMsgBody, &nBodyLen))
 	{
@@ -185,6 +183,10 @@ int main()
 	list<P2PFILE_INFO> stl_ListFile;
 	P2PParse_List(ptszMsgBody, nBodyLen, &stl_ListFile);
 
+	if (stl_ListFile.empty())
+	{
+		return -1;
+	}
 	//创建稀疏文件(一个空白的文件)
 	if (!SystemApi_File_CreateSparseFile(lpszFile, stl_ListFile.front().st_ProtocolFile.nFileSize))
 	{
