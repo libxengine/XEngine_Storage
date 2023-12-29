@@ -340,7 +340,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 							_tcsxcat(tszFilePath, _X("/*"));
 						}
 					}
-					SystemApi_File_EnumFile(tszFilePath, &ppListFile, &nListCount, NULL, NULL, true, 1);
+					SystemApi_File_EnumFile(tszFilePath, &ppListFile, &nListCount, true, 1);
 					for (int j = 0; j < nListCount; j++)
 					{
 						struct _xtstat st_FStat;
