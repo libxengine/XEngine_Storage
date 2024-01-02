@@ -324,8 +324,20 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 				return false;
 			}
 		}
-		
 		Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullCount, false, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+		//PASS代理
+		if (st_ServiceCfg.st_XProxy.bUPPass)
+		{
+			int nHttpCode = 0;
+			if (!APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszUPPass, tszPassNotify, &nHttpCode))
+			{
+				_xtremove(st_StorageInfo.tszFileDir);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,请求完成通知失败,可能服务器不正确:文件:%s,地址:%s"), lpszClientAddr, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.tszUPPass);
+				return false;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.tszUPPass);
+		}
+		//数据库写
 		if (st_ServiceCfg.st_XSql.bEnable)
 		{
 			if (Database_File_FileInsert(&st_ProtocolFile, st_StorageInfo.bRewrite))
@@ -340,6 +352,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			{
 				st_HDRParam.bIsClose = true;
 				st_HDRParam.nHttpCode = 403;
+				_xtremove(st_StorageInfo.tszFileDir);
 				HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszPassNotify, nPLen);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,请求上传文件失败,插入数据库失败:%s,错误:%lX"), lpszClientAddr, tszFileDir, Database_GetLastError());
@@ -352,19 +365,6 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszPassNotify, nPLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("上传客户端:%s,请求上传文件成功,文件名:%s,大小:%d,数据库没有启用,不插入数据库"), lpszClientAddr, tszFileDir, nRVCount);
-		}
-		//PASS代理
-		if (st_ServiceCfg.st_XProxy.bUPPass)
-		{
-			int nHttpCode = 0;
-			if (APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszUPPass, tszPassNotify, &nHttpCode))
-			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,请求完成通知返回值:%d,文件:%s,地址:%s"), lpszClientAddr, nHttpCode, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.tszUPPass);
-			}
-			else
-			{
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,请求完成通知失败,可能服务器不正确:文件:%s,地址:%s"), lpszClientAddr, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.tszUPPass);
-			}
 		}
 	}
 	else

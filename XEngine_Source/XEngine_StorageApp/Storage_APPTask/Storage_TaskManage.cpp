@@ -319,7 +319,7 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 					_tcsxcat(tszRealDir, _X("/*"));
 				}
 			}
-			if (!SystemApi_File_EnumFile(tszRealDir, &ppszListDir, &nListCount, NULL, NULL, true, 2))
+			if (!SystemApi_File_EnumFile(tszRealDir, &ppszListDir, &nListCount, true, 2))
 			{
 				st_HDRParam.bIsClose = true;
 				st_HDRParam.nHttpCode = 404;

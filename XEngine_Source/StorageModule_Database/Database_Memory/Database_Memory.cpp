@@ -288,7 +288,7 @@ bool CDatabase_Memory::Database_Memory_Flush()
         _tcsxcpy(tszFoundDir, stl_ListIterator->tszFilePath);
         _tcsxcat(tszFoundDir, _X("/*"));
 
-		SystemApi_File_EnumFile(tszFoundDir, &pptszListFile, &nListCount, NULL, NULL, true, 1);
+		SystemApi_File_EnumFile(tszFoundDir, &pptszListFile, &nListCount, true, 1);
 		for (int i = 0; i < nListCount; i++)
 		{
 			int nHashLen = 0;
