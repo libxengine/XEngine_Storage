@@ -1,3 +1,13 @@
+XEngine_Storage V3.12.1.1001
+
+修改:不在插入数据当HTTP的HOOK出错
+修改:当http的hook和数据库插入出错上传的文件会被删除了
+修正:编译问题
+
+modify:does not insert db when http pass is failed
+modify:remove upload file when http pass and insert db are failed
+fixed:build error
+======================================================================================
 XEngine_Storage V3.12.0.1001
 
 增加:为P2P启用内存数据库支持
