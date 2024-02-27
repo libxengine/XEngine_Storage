@@ -286,7 +286,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			int nPos = 0;
 			if (Algorithm_String_XFastMatch(lpszMsgBuffer, st_StorageInfo.st_Boundary.tszBoundStr, &nPos, nMsgLen))
 			{
-				Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer, nPos);
+				int nRLen = _tcsxlen(st_StorageInfo.st_Boundary.tszBoundStr) + 3;
+				Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer, nPos - nRLen);
 			}
 			else
 			{
@@ -302,8 +303,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			{
 				if (Algorithm_String_XFastMatch(lpszMsgBuffer + nPosStart, st_StorageInfo.st_Boundary.tszBoundStr, &nPosEnd, nMsgLen - nPosStart))
 				{
-					int nRLen = _tcsxlen(st_StorageInfo.st_Boundary.tszBoundStr);
-					Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer + nPosStart, nPosEnd - nRLen - 3);
+					int nRLen = _tcsxlen(st_StorageInfo.st_Boundary.tszBoundStr) + 3;
+					Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer + nPosStart, nPosEnd - nRLen);
 				}
 				else
 				{
