@@ -266,6 +266,16 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,请求文件失败,可能BUCKET:%s 不正确,错误：%lX"), lpszClientAddr, pSt_HTTPParam->tszHttpUri, StorageHelp_GetLastError());
 		return false;
 	}
+	if (!st_StorageBucket.bEnable)
+	{
+		st_HDRParam.bIsClose = true;
+		st_HDRParam.nHttpCode = 404;
+
+		HttpProtocol_Server_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,请求文件失败,请求的BUCKET:%s 已经被禁用"), lpszClientAddr, st_StorageBucket.tszBuckKey);
+		return false;
+	}
 	int nPathType = 0;
 	_xstprintf(tszFileDir, _X("%s%s"), st_StorageBucket.tszFilePath, st_StorageBucket.tszFileName);
 	BaseLib_OperatorString_GetPath(tszFileDir, &nPathType);
