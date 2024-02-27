@@ -15,6 +15,12 @@
 //////////////////////////////////////////////////////////////////////////
 typedef struct
 {
+	struct  
+	{
+		XCHAR tszBoundStr[MAX_PATH];                                          //boundary信息
+		bool bBoundMode;                                                      //是否是bound上传模式
+		bool bBoundStart;
+	}st_Boundary;
 	XCHAR tszFileDir[MAX_PATH];                                           //文件地址
 	XCHAR tszClientAddr[128];                                             //操作的用户地址
 	XCHAR tszFileHash[128];                                               //文件HASH值
@@ -25,7 +31,7 @@ typedef struct
 	__int64x ullPosStart;                                                 //开始位置
 	__int64x ullPosEnd;                                                   //结束位置
 	bool bRewrite;                                                        //是否为覆写
-
+	
 	int nLimit;                                                           //限制工具
 	XHANDLE xhToken;
 	FILE* pSt_File;
@@ -471,3 +477,36 @@ extern "C" bool Session_UPStroage_Close(LPCXSTR lpszClientAddr);
 备注：
 *********************************************************************/
 extern "C" bool Session_UPStroage_MaxConnect(LPCXSTR lpszClientAddr);
+/********************************************************************
+函数名称：Session_UPStroage_SetBoundary
+函数功能：设置bound模式信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的地址
+ 参数.二：lpszBoundary
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入bound字符串
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_UPStroage_SetBoundary(LPCXSTR lpszClientAddr, LPCXSTR lpszBoundary);
+/********************************************************************
+函数名称：Session_UPStroage_SetBoundaryStart
+函数功能：设置bound模式信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_UPStroage_SetBoundaryStart(LPCXSTR lpszClientAddr);

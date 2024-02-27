@@ -28,3 +28,5 @@ EXPORTS
 	Session_UPStroage_Delete
 	Session_UPStroage_Close
 	Session_UPStroage_MaxConnect
+	Session_UPStroage_SetBoundary
+	Session_UPStroage_SetBoundaryStart

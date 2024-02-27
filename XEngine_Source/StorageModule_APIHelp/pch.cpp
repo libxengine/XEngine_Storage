@@ -74,3 +74,7 @@ extern "C" bool APIHelp_Api_UrlParse(XCHAR * **ppptszList, int nListCount, XCHAR
 {
 	return m_APIHelp.APIHelp_Api_UrlParse(ppptszList, nListCount, ptszFileName, ptszKeyName);
 }
+extern "C" bool APIHelp_Api_Boundary(XCHAR * **ppptszList, int nListCount, XCHAR * ptszBoundStr)
+{
+	return m_APIHelp.APIHelp_Api_Boundary(ppptszList, nListCount, ptszBoundStr);
+}

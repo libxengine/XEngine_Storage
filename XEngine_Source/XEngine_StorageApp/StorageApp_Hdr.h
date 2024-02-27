@@ -27,6 +27,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_BaseLib/Algorithm_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/Algorithm_Error.h>
+#include <XEngine_Include/XEngine_BaseLib/Algorithm_Define.h>
+#include <XEngine_Include/XEngine_BaseLib/Algorithm_Error.h>
 #include <XEngine_Include/XEngine_Core/NetCore_Define.h>
 #include <XEngine_Include/XEngine_Core/NetCore_Error.h>
 #include <XEngine_Include/XEngine_Core/ManagePool_Define.h>

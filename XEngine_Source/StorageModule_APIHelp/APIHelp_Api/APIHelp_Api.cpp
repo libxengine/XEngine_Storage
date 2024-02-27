@@ -351,3 +351,59 @@ bool CAPIHelp_Api::APIHelp_Api_UrlParse(XCHAR*** ppptszList, int nListCount, XCH
 	}
 	return true;
 }
+/********************************************************************
+函数名称：APIHelp_Api_Boundary
+函数功能：boundary头解析,判断上传方法
+ 参数.一：ppptszList
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入要解析的列表
+ 参数.二：nListCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.三：ptszBoundStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出BOUND的字符串
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAPIHelp_Api::APIHelp_Api_Boundary(XCHAR*** ppptszList, int nListCount, XCHAR* ptszBoundStr)
+{
+	APIHelp_IsErrorOccur = false;
+
+	bool bRet = false;
+	LPCXSTR lpszHDRContent = _X("Content-Type");
+	//Content-Type: multipart/form-data; boundary=AaB03x
+	for (int i = 0; i < nListCount; i++)
+	{
+		XCHAR tszKeyStr[MAX_PATH] = {};
+		XCHAR tszVluStr[MAX_PATH] = {};
+
+		BaseLib_OperatorString_GetKeyValue((*ppptszList)[i], _X(": "), tszKeyStr, tszVluStr);
+
+		if (0 == _tcsxnicmp(lpszHDRContent, tszKeyStr, _tcsxlen(lpszHDRContent)))
+		{
+			XCHAR tszKeySub[MAX_PATH] = {};
+			XCHAR tszVluSub[MAX_PATH] = {};
+			//multipart/form-data; boundary=AaB03x
+			if (BaseLib_OperatorString_GetKeyValue(tszVluStr, _X(";"), tszKeySub, tszVluSub))
+			{
+				//boundary=AaB03x
+				ptszBoundStr[0] = '-';//要少一个字节
+				if (BaseLib_OperatorString_GetKeyValue(tszVluSub, _X("="), tszKeyStr, ptszBoundStr + 1))
+				{
+					bRet = true;
+					break;
+				}
+			}
+		}
+	}
+	return bRet;
+}
