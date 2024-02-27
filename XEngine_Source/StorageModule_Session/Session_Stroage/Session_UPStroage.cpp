@@ -171,6 +171,13 @@ bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXST
 	}
 	else
 	{
+		if ((0 == _xtaccess(lpszFileDir, 0)) && !bRewrite)
+		{
+			Session_IsErrorOccur = true;
+			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_REWRITE;
+			return false;
+		}
+
 		st_Client.st_StorageInfo.pSt_File = _xtfopen(lpszFileDir, _X("wb"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
