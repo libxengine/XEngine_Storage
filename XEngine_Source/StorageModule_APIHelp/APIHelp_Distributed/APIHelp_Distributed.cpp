@@ -292,6 +292,24 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
 			return false;
 		}
+		if (pSt_StorageBucket->st_PermissionFlags.bUPLimit)
+		{
+			if (!pSt_StorageBucket->bEnable)
+			{
+				APIHelp_IsErrorOccur = true;
+				APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_DISABLE;
+				return false;
+			}
+			__int64u nDirCount = 0;   //当前目录大小
+			APIHelp_Api_GetDIRSize(pSt_StorageBucket->tszFilePath, &nDirCount);
+			//如果当前目录大小大于设定的大小.
+			if (nDirCount >= APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize))
+			{
+				APIHelp_IsErrorOccur = true;
+				APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_SIZE;
+				return false;
+			}
+		}
 	}
 	else
 	{

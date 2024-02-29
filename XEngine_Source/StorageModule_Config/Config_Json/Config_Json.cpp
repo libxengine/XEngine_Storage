@@ -355,6 +355,7 @@ bool CConfig_Json::Config_Json_LoadBalance(LPCXSTR lpszConfigFile, XENGINE_LBCON
 		Json::Value st_JsonPermission = st_JsonBucket[i]["PermissionFlags"];
 		st_Bucket.st_PermissionFlags.bCreateDir = st_JsonPermission["CreateDir"].asBool();
 		st_Bucket.st_PermissionFlags.bRewrite = st_JsonPermission["Rewrite"].asBool();
+		st_Bucket.st_PermissionFlags.bUPLimit = st_JsonPermission["UPLimit"].asBool();
 
 		pSt_ServerConfig->st_LoadBalance.pStl_ListBucket->push_back(st_Bucket);
 	}
