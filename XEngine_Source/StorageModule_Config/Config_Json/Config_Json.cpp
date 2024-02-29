@@ -346,7 +346,7 @@ bool CConfig_Json::Config_Json_LoadBalance(LPCXSTR lpszConfigFile, XENGINE_LBCON
 		XENGINE_STORAGEBUCKET st_Bucket;
 		memset(&st_Bucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
 
-		st_Bucket.bEnable = st_JsonBucket[i]["bEnable"].asInt();
+		st_Bucket.bEnable = st_JsonBucket[i]["bEnable"].asBool();
 		st_Bucket.nLevel = st_JsonBucket[i]["nLevel"].asInt();
 		_tcsxcpy(st_Bucket.tszBuckSize, st_JsonBucket[i]["Size"].asCString());
 		_tcsxcpy(st_Bucket.tszBuckKey, st_JsonBucket[i]["XEngine_Key"].asCString());
