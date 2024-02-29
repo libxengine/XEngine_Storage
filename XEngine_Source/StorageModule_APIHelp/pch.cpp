@@ -78,3 +78,7 @@ extern "C" bool APIHelp_Api_Boundary(XCHAR * **ppptszList, int nListCount, XCHAR
 {
 	return m_APIHelp.APIHelp_Api_Boundary(ppptszList, nListCount, ptszBoundStr);
 }
+extern "C" bool APIHelp_Api_GetDIRSize(LPCXSTR lpszDIRStr, __int64u * pInt_DIRSize)
+{
+	return m_APIHelp.APIHelp_Api_GetDIRSize(lpszDIRStr, pInt_DIRSize);
+}

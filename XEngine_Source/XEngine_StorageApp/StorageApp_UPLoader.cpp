@@ -201,6 +201,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			return false;
 		}
 	}
+	
 	int nPathType = 0;
 	_xstprintf(tszFileDir, _X("%s/%s"), st_StorageBucket.tszFilePath, tszFileName);
 	BaseLib_OperatorString_GetPath(tszFileDir, &nPathType);

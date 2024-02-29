@@ -407,3 +407,51 @@ bool CAPIHelp_Api::APIHelp_Api_Boundary(XCHAR*** ppptszList, int nListCount, XCH
 	}
 	return bRet;
 }
+/********************************************************************
+函数名称：APIHelp_Api_GetDIRSize
+函数功能：获得目录大小
+ 参数.一：lpszDIRStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作s的目录
+ 参数.二：pInt_DIRSize
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出得到的目录大小
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAPIHelp_Api::APIHelp_Api_GetDIRSize(LPCXSTR lpszDIRStr, __int64u* pInt_DIRSize)
+{
+	int nListCount = 0;
+	int nPathType = 0;
+	__int64u nDirCount = 0;   //当前目录大小
+	XCHAR** ppListFile;
+	XCHAR tszFilePath[MAX_PATH] = {};
+	
+	_tcsxcpy(tszFilePath, lpszDIRStr);
+	BaseLib_OperatorString_GetPath(tszFilePath, &nPathType);
+	//判断是绝对路径还是相对路径
+	if (1 == nPathType)
+	{
+		_tcsxcat(tszFilePath, _X("\\*"));
+	}
+	else if (2 == nPathType)
+	{
+		_tcsxcat(tszFilePath, _X("/*"));
+	}
+	SystemApi_File_EnumFile(tszFilePath, &ppListFile, &nListCount, true, 1);
+	for (int i = 0; i < nListCount; i++)
+	{
+		struct _xtstat st_FStat;
+		_xtstat(ppListFile[i], &st_FStat);
+		nDirCount += st_FStat.st_size;
+	}
+	BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
+	*pInt_DIRSize = nDirCount;
+	return true;
+}
