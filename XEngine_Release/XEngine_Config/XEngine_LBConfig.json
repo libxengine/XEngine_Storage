@@ -18,25 +18,27 @@
         ],
         "StorageAddr":[
             {
-                "bEnable":1,
+                "bEnable":false,
                 "nLevel":1,
                 "Size":"1024MB",
                 "XEngine_Key":"storagekey1",
                 "XEngine_Path":"./XEngine_File",
                 "PermissionFlags":{
                     "CreateDir":false,
-                    "Rewrite":false
+                    "Rewrite":false,
+                    "UPLimit":  false
                 }
             },
             {
-                "bEnable":1,
+                "bEnable":true,
                 "nLevel":1,
                 "Size":"1024MB",
                 "XEngine_Key":"storagekey2",
                 "XEngine_Path":"./XEngine_File2",
                 "PermissionFlags":{
                     "CreateDir":false,
-                    "Rewrite":false
+                    "Rewrite":false,
+                    "UPLimit":  false
                 }
             }
         ]
