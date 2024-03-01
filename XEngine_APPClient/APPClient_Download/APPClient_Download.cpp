@@ -6,7 +6,7 @@
 #include <windows.h>
 #include <tchar.h>
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient")
+#pragma comment(lib,"XEngine_Client/XClient_APIHelp")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #pragma comment(lib,"Ws2_32")
 #ifdef _WIN64
@@ -24,8 +24,8 @@
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
+#include <XEngine_Include/XEngine_Client/APIClient_Define.h>
+#include <XEngine_Include/XEngine_Client/APIClient_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
@@ -34,8 +34,7 @@ using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
-//linux::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L /usr/local/lib/XEngine_Release/XEngine_BaseLib -L /usr/local/lib/XEngine_Release/XEngine_NetHelp -L /usr/local/lib/XEngine_Release/XEngine_SystemSdk -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
-//macos::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lNetHelp_APIClient -lXEngine_SystemApi -ljsoncpp
+//linux macos::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -L ../../XEngine_Source/XEngine_ThirdPart/jsoncpp -lXEngine_BaseLib -lXClient_APIHelp -lXEngine_SystemApi -ljsoncpp
 
 typedef struct 
 {
@@ -129,11 +128,11 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCXSTR lpszFile)
 		bool bComplete = true;
 		for (unsigned int i = 0; i < pStl_ListFile->size(); i++)
 		{
-			NETHELP_FILEINFO st_TaskInfo;
-			memset(&st_TaskInfo, '\0', sizeof(NETHELP_FILEINFO));
+			XCLIENT_APIFILE st_TaskInfo;
+			memset(&st_TaskInfo, '\0', sizeof(XCLIENT_APIFILE));
 
 			APIClient_File_Query(pSt_P2PFile[i].xhToken, &st_TaskInfo);
-			if (ENUM_NETHELP_APICLIENT_FILE_STATUS_COMPLETE != st_TaskInfo.en_DownStatus)
+			if (ENUM_XCLIENT_APIHELP_FILE_STATUS_COMPLETE != st_TaskInfo.en_DownStatus)
 			{
 				bComplete = FALSE;
 			}

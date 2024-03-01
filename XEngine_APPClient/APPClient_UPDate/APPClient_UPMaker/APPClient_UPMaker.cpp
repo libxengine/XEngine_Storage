@@ -5,7 +5,7 @@
 #pragma comment(lib,"Ws2_32.lib")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
-#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIClient.lib")
+#pragma comment(lib,"XEngine_Client/XClient_APIHelp.lib")
 #ifdef _WIN64
 #pragma comment(lib,"../../../XEngine_Source/x64/Debug/jsoncpp")
 #else
@@ -28,8 +28,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
-#include <XEngine_Include/XEngine_NetHelp/APIClient_Define.h>
-#include <XEngine_Include/XEngine_NetHelp/APIClient_Error.h>
+#include <XEngine_Include/XEngine_Client/APIClient_Define.h>
+#include <XEngine_Include/XEngine_Client/APIClient_Error.h>
 
 typedef struct 
 {
@@ -75,7 +75,7 @@ bool HelpModule_Api_BuildVer(XCHAR* ptszLocalBuffer, XCHAR* ptszRemoteBuffer, in
 	XCHAR** ppszListDir;
 	list<HELPMODULE_FILELIST> stl_ListFile;
 	//枚举文件
-	if (!SystemApi_File_EnumFile(lpszPath, &ppszListDir, &nListCount, NULL, NULL, bSubDir, 1))
+	if (!SystemApi_File_EnumFile(lpszPath, &ppszListDir, &nListCount, bSubDir, 1))
 	{
 		return FALSE;
 	}
