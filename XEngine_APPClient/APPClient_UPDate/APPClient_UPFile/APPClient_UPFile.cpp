@@ -72,10 +72,10 @@ int main(int argc, char** argv)
 	for (; stl_ListIterator != stl_ListUPDate.end(); stl_ListIterator++)
 	{
 		XCHAR tszPathFile[1024];
-		NETHELP_FILEINFO st_TaskInfo;
+		XCLIENT_APIFILE st_TaskInfo;
 
 		memset(tszPathFile, '\0', sizeof(tszPathFile));
-		memset(&st_TaskInfo, '\0', sizeof(NETHELP_FILEINFO));
+		memset(&st_TaskInfo, '\0', sizeof(XCLIENT_APIFILE));
 
 		_xstprintf(tszPathFile, _X("%s%s"), stl_ListIterator->tszModulePath, stl_ListIterator->tszModuleName);
 		_xtremove(tszPathFile);
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 			{
 				break;
 			}
-			if (ENUM_NETHELP_APICLIENT_FILE_STATUS_DOWNLOADDING != st_TaskInfo.en_DownStatus)
+			if (ENUM_XCLIENT_APIHELP_FILE_STATUS_DOWNLOADDING != st_TaskInfo.en_DownStatus)
 			{
 				break;
 			}

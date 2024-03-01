@@ -171,6 +171,13 @@ bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXST
 	}
 	else
 	{
+		if ((0 == _xtaccess(lpszFileDir, 0)) && !bRewrite)
+		{
+			Session_IsErrorOccur = true;
+			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_REWRITE;
+			return false;
+		}
+
 		st_Client.st_StorageInfo.pSt_File = _xtfopen(lpszFileDir, _X("wb"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
@@ -452,7 +459,11 @@ bool CSession_UPStroage::Session_UPStroage_MaxConnect(LPCXSTR lpszClientAddr)
 
 	int nExistNumber = 0;
 	st_Locker.lock_shared();
-	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.begin();
+	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+
+	}
 	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
 	{
 		XCHAR tszIPSource[128];
@@ -480,5 +491,74 @@ bool CSession_UPStroage::Session_UPStroage_MaxConnect(LPCXSTR lpszClientAddr)
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_MAXCONNECT;
 		return false;
 	}
+	return true;
+}
+/********************************************************************
+函数名称：Session_UPStroage_SetBoundary
+函数功能：设置bound模式信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的地址
+ 参数.二：lpszBoundary
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入bound字符串
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_UPStroage::Session_UPStroage_SetBoundary(LPCXSTR lpszClientAddr, LPCXSTR lpszBoundary)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	stl_MapIterator->second.st_StorageInfo.st_Boundary.bBoundStart = false;
+	stl_MapIterator->second.st_StorageInfo.st_Boundary.bBoundMode = true;
+	_tcsxcpy(stl_MapIterator->second.st_StorageInfo.st_Boundary.tszBoundStr, lpszBoundary);
+
+	st_Locker.unlock_shared();
+	return true;
+}
+/********************************************************************
+函数名称：Session_UPStroage_SetBoundaryStart
+函数功能：设置bound模式信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要处理的地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_UPStroage::Session_UPStroage_SetBoundaryStart(LPCXSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return false;
+	}
+	stl_MapIterator->second.st_StorageInfo.st_Boundary.bBoundStart = true;
+
+	st_Locker.unlock_shared();
 	return true;
 }

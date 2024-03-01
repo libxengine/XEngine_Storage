@@ -128,3 +128,11 @@ extern "C" bool Session_UPStroage_MaxConnect(LPCXSTR lpszClientAddr)
 {
 	return m_UPStorage.Session_UPStroage_MaxConnect(lpszClientAddr);
 }
+extern "C" bool Session_UPStroage_SetBoundary(LPCXSTR lpszClientAddr, LPCXSTR lpszBoundary)
+{
+	return m_UPStorage.Session_UPStroage_SetBoundary(lpszClientAddr, lpszBoundary);
+}
+extern "C" bool Session_UPStroage_SetBoundaryStart(LPCXSTR lpszClientAddr)
+{
+	return m_UPStorage.Session_UPStroage_SetBoundaryStart(lpszClientAddr);
+}

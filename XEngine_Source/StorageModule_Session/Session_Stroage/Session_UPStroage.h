@@ -32,6 +32,8 @@ public:
     bool Session_UPStroage_Delete(LPCXSTR lpszClientAddr);
     bool Session_UPStroage_Close(LPCXSTR lpszClientAddr);
     bool Session_UPStroage_MaxConnect(LPCXSTR lpszClientAddr);
+    bool Session_UPStroage_SetBoundary(LPCXSTR lpszClientAddr, LPCXSTR lpszBoundary);
+    bool Session_UPStroage_SetBoundaryStart(LPCXSTR lpszClientAddr);
 private:
     bool m_bResume;
     int m_nMaxConnect;

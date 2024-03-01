@@ -1,3 +1,25 @@
+XEngine_Storage V3.13.0.1001
+
+增加:st_PermissionFlags增加新的标志位上传限制,现在上传文件也可以进行限制了
+增加:boundary文件上传支持
+优化:选择模式代码
+更新:匹配XENGINE V8.25版本
+修改:获取目录大小函数单独出来了
+修正:上传覆写标识不起作用的问题
+修正:禁用标识在下载的时候没有作用的问题
+修正:配置文件字段逻辑型类型问题
+删除:put方法支持
+
+added:st_PermissionFlags a new flag use to upload limit. and now upload file size and enable limit supported
+added:boundary upload file supported
+improved:select mode code
+update:match xengine v8.25
+modify:Wrapped function to get folder size
+fixed:upload rewrite flag is not work
+fixed:disable flag does not work in download
+fixed:configure field is not boolean
+delete:upload put method
+======================================================================================
 XEngine_Storage V3.12.1.1001
 
 修改:不在插入数据当HTTP的HOOK出错

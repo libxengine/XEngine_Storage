@@ -13,10 +13,6 @@
 *********************************************************************/
 CAPIHelp_Distributed::CAPIHelp_Distributed()
 {
-	nRandomFront = 0;
-	nRandomBack = 0;
-	nUPFront = 0;
-	nUPBack = 0;
 }
 CAPIHelp_Distributed::~CAPIHelp_Distributed()
 {
@@ -81,37 +77,13 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 	}
 	else if (2 == nMode)
 	{
-		if (nRandomFront >= pStl_ListAddr->size())
-		{
-			nRandomFront = 0;
-		}
-		unsigned int i = 0;
-		for (auto stl_ListIterator = pStl_ListAddr->begin(); stl_ListIterator != pStl_ListAddr->end(); stl_ListIterator++, i++)
-		{
-			if (nRandomFront == i)
-			{
-				bFound = true;
-				_tcsxcpy(ptszAddr, stl_ListIterator->c_str());
-				break;
-			}
-		}
+		bFound = true;
+		_tcsxcpy(ptszAddr, pStl_ListAddr->front().c_str());
 	}
 	else if (3 == nMode)
 	{
-		if (nRandomBack >= pStl_ListAddr->size())
-		{
-			nRandomBack = 0;
-		}
-		unsigned int i = 0;
-		for (auto stl_ListIterator = pStl_ListAddr->rbegin(); stl_ListIterator != pStl_ListAddr->rend(); stl_ListIterator++, i++)
-		{
-			if (nRandomBack == i)
-			{
-				bFound = true;
-				_tcsxcpy(ptszAddr, stl_ListIterator->c_str());
-				break;
-			}
-		}
+		bFound = true;
+		_tcsxcpy(ptszAddr, pStl_ListAddr->back().c_str());
 	}
 
 	if (!bFound)
@@ -292,6 +264,24 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
 			return false;
 		}
+		if (pSt_StorageBucket->st_PermissionFlags.bUPLimit)
+		{
+			if (!pSt_StorageBucket->bEnable)
+			{
+				APIHelp_IsErrorOccur = true;
+				APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_DISABLE;
+				return false;
+			}
+			__int64u nDirCount = 0;   //当前目录大小
+			APIHelp_Api_GetDIRSize(pSt_StorageBucket->tszFilePath, &nDirCount);
+			//如果当前目录大小大于设定的大小.
+			if (nDirCount >= APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize))
+			{
+				APIHelp_IsErrorOccur = true;
+				APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_SIZE;
+				return false;
+			}
+		}
 	}
 	else
 	{
@@ -318,36 +308,8 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 				//处理优先级
 				if (stl_ListIterator->nLevel == nLastLevel)
 				{
-					int nListCount = 0;
 					__int64u nDirCount = 0;   //当前目录大小
-					XCHAR** ppListFile;
-					//处理路径是否有通配符
-					XCHAR tszFilePath[MAX_PATH];
-					memset(tszFilePath, '\0', MAX_PATH);
-
-					_tcsxcpy(tszFilePath, pSt_StorageBucket->tszFilePath);
-					if (tszFilePath[_tcsxlen(tszFilePath) - 1] != '*')
-					{
-						int nPathType = 0;
-						BaseLib_OperatorString_GetPath(tszFilePath, &nPathType);
-						//判断是绝对路径还是相对路径
-						if (1 == nPathType)
-						{
-							_tcsxcat(tszFilePath, _X("\\*"));
-						}
-						else if (2 == nPathType)
-						{
-							_tcsxcat(tszFilePath, _X("/*"));
-						}
-					}
-					SystemApi_File_EnumFile(tszFilePath, &ppListFile, &nListCount, true, 1);
-					for (int j = 0; j < nListCount; j++)
-					{
-						struct _xtstat st_FStat;
-						_xtstat(ppListFile[j], &st_FStat);
-						nDirCount += st_FStat.st_size;
-					}
-					BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
+					APIHelp_Api_GetDIRSize(pSt_StorageBucket->tszFilePath, &nDirCount);
 					//如果当前目录大小大于设定的大小.那么忽略
 					if (nDirCount >= APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize))
 					{
@@ -387,37 +349,13 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 		}
 		else if (2 == nMode)
 		{
-			if (nUPFront >= stl_BuckSelect.size())
-			{
-				nUPFront = 0;
-			}
-			unsigned int i = 0;
-			for (auto stl_ListIterator = stl_BuckSelect.begin(); stl_ListIterator != stl_BuckSelect.end(); stl_ListIterator++, i++)
-			{
-				if (nUPFront == i)
-				{
-					bFound = true;
-					*pSt_StorageBucket = *stl_ListIterator;
-					break;
-				}
-			}
+			bFound = true;
+			*pSt_StorageBucket = stl_BuckSelect.front();
 		}
 		else if (3 == nMode)
 		{
-			if (nUPBack >= stl_BuckSelect.size())
-			{
-				nUPBack = 0;
-			}
-			unsigned int i = 0;
-			for (auto stl_ListIterator = stl_BuckSelect.rbegin(); stl_ListIterator != stl_BuckSelect.rend(); stl_ListIterator++, i++)
-			{
-				if (nUPBack == i)
-				{
-					bFound = true;
-					*pSt_StorageBucket = *stl_ListIterator;
-					break;
-				}
-			}
+			bFound = true;
+			*pSt_StorageBucket = stl_BuckSelect.back();
 		}
 		
 		if (!bFound)
@@ -427,7 +365,6 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 			return false;
 		}
 	}
-
 	return true;
 }
 /********************************************************************

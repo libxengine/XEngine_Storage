@@ -27,8 +27,4 @@ protected:
 	bool APIHelp_Distributed_FileListParse(LPCXSTR lpszMsgBuffer, int nMsgLen, XSTORAGECORE_DBFILE* pSt_DBFile);
 	__int64u APIHelp_Distributed_GetSize(LPCXSTR lpszMsgBuffer);
 private:
-	unsigned int nRandomFront;
-	unsigned int nRandomBack;
-	unsigned int nUPFront;
-	unsigned int nUPBack;
 };

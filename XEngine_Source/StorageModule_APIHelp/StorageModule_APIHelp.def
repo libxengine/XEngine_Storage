@@ -14,3 +14,5 @@ EXPORTS
 	APIHelp_Api_VerHash
 	APIHelp_Api_GetIPInfo
 	APIHelp_Api_UrlParse
+	APIHelp_Api_Boundary
+	APIHelp_Api_GetDIRSize
