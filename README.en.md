@@ -15,10 +15,10 @@ best storage service for http,more concise code. On going maintenance
 The purpose of development and implementation based on libXEngine is a cross-platform network storage service  
 
 feature list:  
-1. support file http upload and download(use put and get method)  
+1. support file http upload and download(use post and get method)  
 2. support http api notify of event and management api interface  
 3. support http encrypt and cert data transimission  
-4. support database(mysql and sqlite) record infomation.  
+4. support database(mysql) record infomation.  
 5. support load banace  
 6. supprot http auth  
 7. support log and config  
@@ -32,6 +32,7 @@ feature list:
 15. support full speed and limit speed
 16. permission control
 17. upload file rewrite
+18. support convert record(Active download)
 
 ## install
 

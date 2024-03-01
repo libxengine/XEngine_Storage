@@ -14,10 +14,10 @@ c c++ file storage service
 ## 软件特性
 基于libXEngine开发并实现的一套简洁高性能跨平台网络存储服务  
 软件特性:  
-1. 支持HTTP协议上传和下载(采用PUT和GET)  
+1. 支持HTTP协议上传和下载(采用POST和GET)  
 2. 支持HTTP API接口事件通知与管理  
 3. 支持HTTP加密与证书  
-4. 采用数据库(MYSQL和SQLITE)记录信息  
+4. 采用数据库(MYSQL)记录信息  
 5. 支持分布式  
 6. 支持HTTP验证  
 7. 支持详尽的日志和配置信息  
@@ -31,6 +31,7 @@ c c++ file storage service
 15. 支持全速模式和限速模式
 16. 权限控制
 17. 上传文件覆写
+18. 支持转录(主动下载)
 
 ## 安装教程
 
