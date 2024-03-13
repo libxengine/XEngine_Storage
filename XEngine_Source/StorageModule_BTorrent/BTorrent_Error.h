@@ -1,0 +1,53 @@
+﻿#pragma once
+/********************************************************************
+//    Created:     2023/02/02  16:32:18
+//    File Name:   D:\XEngine\XEngine_SourceCode\XEngine_NetHelp\NetHelp_BTorrent\BTorrent_Error.h
+//    File Path:   D:\XEngine\XEngine_SourceCode\XEngine_NetHelp\NetHelp_BTorrent
+//    File Base:   BTorrent_Error
+//    File Ext:    h
+//    Project:     XEngine
+//    Author:      qyt
+//    Purpose:     BT下载错误导出
+//    History:
+*********************************************************************/
+//////////////////////////////////////////////////////////////////////////
+//                      BT下载器错误
+//////////////////////////////////////////////////////////////////////////
+#define ERROR_STORAGE_MODULE_BTORRENT_DLOAD_CREATE_PARAMENT 0x0060001    //创建下载参数错误
+#define ERROR_STORAGE_MODULE_BTORRENT_DLOAD_CREATE_MALLOC 0x0060002      //创建内存失败
+#define ERROR_STORAGE_MODULE_BTORRENT_DLOAD_UPEVENT_NOTFOUND 0x0060010   //没有找到
+#define ERROR_STORAGE_MODULE_BTORRENT_DLOAD_QUERY_PARAMENT 0x0060020     //参数错误
+#define ERROR_STORAGE_MODULE_BTORRENT_DLOAD_QUERY_NOTFOUND 0x0060021     //没有找到句柄
+#define ERROR_STORAGE_MODULE_BTORRENT_DLOAD_QUERY_NONE 0x0060022         //没有事件
+#define ERROR_STORAGE_MODULE_BTORRENT_DLOAD_GETSTATUS_PARAMENT 0x0060030 //参数错误
+#define ERROR_STORAGE_MODULE_BTORRENT_DLOAD_GETSTATUS_NOTFOUND 0x0060031 //没有找到
+//////////////////////////////////////////////////////////////////////////
+//                      BT解析器错误
+//////////////////////////////////////////////////////////////////////////
+#define ERROR_STORAGE_MODULE_BTORRENT_PARSE_INIT_PARAMENT 0x0061001    //参数错误
+#define ERROR_STORAGE_MODULE_BTORRENT_PARSE_INIT_MALLOC 0x0061002      //申请内存失败
+#define ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETNODE_PARAMENT 0x0061010 //参数错误
+#define ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETNODE_NOTFOUND 0x0061011 //没有找到
+#define ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETTRACKER_PARAMENT 0x0061020
+#define ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETTRACKER_NOTFOUND 0x0061021
+#define ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETSEED_PARAMENT 0x0061030
+#define ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETSEED_NOTFOUND 0x0061031
+#define ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETFILE_PARAMENT 0x0061040
+#define ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETFILE_NOTFOUND 0x0061041
+//////////////////////////////////////////////////////////////////////////
+//                      BT解析器错误
+//////////////////////////////////////////////////////////////////////////
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_INIT_PARAMENT 0x0062001  //参数错误,初始化失败
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_INIT_MALLOC 0x0062002    //申请内存失败
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_NODE_PARAMENT 0x0062010  //参数错误
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_NODE_NOTFOUND 0x0062011  //没有找到指定句柄
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_TRACKER_PARAMENT 0x0062020
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_TRACKER_NOTFOUND 0x0062021
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_SEEDS_PARAMENT 0x0062030
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_SEEDS_NOTFOUND 0x0062031
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_INFO_PARAMENT 0x0062040
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_INFO_NOTFOUND 0x0062041
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_FILE_PARAMENT 0x0062050
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_FILE_NOTFOUND 0x0062051
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_FILE_FAILED 0x0062052
+#define ERROR_STORAGE_MODULE_BTORRENT_CREATOR_FILE_PARSE 0x0062003     //解析文件失败,无法继续
