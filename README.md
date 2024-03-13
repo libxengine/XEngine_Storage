@@ -24,7 +24,7 @@ c c++ file storage service
 8. 支持传输速率控制
 9. 支持任务开始结束代理转发  
 10. 支持P2P  
-11. BT(规划中)  
+11. BT协议
 12. 数据分发  
 13. 支持秒传和断点续传  
 14. 支持上传和下载重定向  
@@ -48,15 +48,18 @@ macos执行:./XEngine_LINEnv.sh -i 3
 
 #### Windows
 使用VS打开并且编译,支持WINDOWS 7SP1以上系统  
-直接运行即可,使用XEngine_AuthorizeApp
+直接运行即可,使用XEngine_AuthorizeApp  
+如果需要bt协议支持,需要通过vcpkg安装bt支持库:./vcpkg.exe install libtorrent
 
 #### Linux
 Linux使用Makefile编译,UBUNTU22.04 x64或者RockyLinux x64  
-在控制台运行
+在控制台运行  
+如果需要bt协议支持,需要安装bt库,比如,在ubuntu下面安装:sudo apt install libtorrent-rasterbar-dev -y
 
 #### Macos
 使用makefile编译,控制台运行,需要mac 13以及以上版本  
-在控制台运行
+在控制台运行  
+如果需要bt协议支持,需要安装bt库,通过brew安装:brew install libtorrent-rasterbar
 
 ##### 编译命令
 在XEngine_Source目录下执行命令  
