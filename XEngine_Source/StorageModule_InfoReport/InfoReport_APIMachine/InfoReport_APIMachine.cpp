@@ -112,10 +112,9 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetText(XCHAR* ptszMSGBuffer)
 	st_JsonOSObject["OSVersion"] = tszOSVersion;
 	st_JsonOSObject["tszOSBuild"] = tszOSBuild;
 
-	st_JsonMEMObject["nTotal"] = st_MemoryInfo.dwMemory_Total;
-	st_JsonMEMObject["nFree"] = st_MemoryInfo.dwMemory_Free;
+	st_JsonMEMObject["nTotal"] = (Json::Value::UInt64)st_MemoryInfo.dwMemory_Total;
+	st_JsonMEMObject["nFree"] = (Json::Value::UInt64)st_MemoryInfo.dwMemory_Free;
 
-	st_JsonRoot["bAdmin"] = SystemApi_Process_IsAdmin();
 	st_JsonRoot["nProcessCount"] = nProcessCount;
 	st_JsonRoot["st_CPUObject"] = st_JsonCPUObject;
 	st_JsonRoot["st_OSObject"] = st_JsonOSObject;

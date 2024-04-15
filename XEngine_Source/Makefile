@@ -11,11 +11,12 @@ BASE_SESSION_PATH = ./StorageModule_Session
 BASE_APIHELP_PATH = ./StorageModule_APIHelp
 BASE_PROTOCOL_PATH = ./StorageModule_Protocol
 BASE_BTORRENT_PATH = ./StorageModule_BTorrent
+BASE_INFOREPORT_PATH = ./StorageModule_InfoReport
 
 APPSERVICE_STORAGE_PATH = ./XEngine_StorageApp
 
 XENGINE_MODULES = libjsoncpp.so                                                          \
-                libStorageModule_Database.so libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so libStorageModule_Protocol.so libStorageModule_BTorrent.so        \
+                libStorageModule_Database.so libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so libStorageModule_Protocol.so libStorageModule_BTorrent.so libStorageModule_InfoReport.so       \
 		 		XEngine_StorageApp.exe 
 
 .PHONY:MakeAll 
@@ -36,6 +37,8 @@ libStorageModule_Protocol.so:
 	make -C $(BASE_PROTOCOL_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
 libStorageModule_BTorrent.so:
 	make -C $(BASE_BTORRENT_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
-	
+libStorageModule_InfoReport.so:
+	make -C $(BASE_INFOREPORT_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
+
 XEngine_StorageApp.exe:
 	make -C $(APPSERVICE_STORAGE_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
