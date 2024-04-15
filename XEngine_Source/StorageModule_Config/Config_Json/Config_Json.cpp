@@ -222,6 +222,16 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 		_tcsxcpy(pSt_ServerConfig->st_XCert.tszCertKey, st_JsonP2xp["tszCertKey"].asCString());
 	}
 
+	if (st_JsonRoot["XReport"].empty() || (2 != st_JsonRoot["XReport"].size()))
+	{
+		Config_IsErrorOccur = true;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_CREPORT;
+		return false;
+	}
+	Json::Value st_JsonReport = st_JsonRoot["XReport"];
+	pSt_ServerConfig->st_XReport.bEnable = st_JsonReport["bEnable"].asBool();
+	_tcsxcpy(pSt_ServerConfig->st_XReport.tszAPIUrl, st_JsonReport["tszAPIUrl"].asCString());
+
 	if (st_JsonRoot["XVer"].empty())
 	{
 		Config_IsErrorOccur = true;

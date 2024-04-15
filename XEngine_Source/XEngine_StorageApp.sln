@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_Database", "S
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_BTorrent", "StorageModule_BTorrent\StorageModule_BTorrent.vcxproj", "{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_InfoReport", "StorageModule_InfoReport\StorageModule_InfoReport.vcxproj", "{6754838E-7DC4-4C57-8C80-522DA04E9284}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -99,6 +101,14 @@ Global
 		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Release|x64.Build.0 = Release|x64
 		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Release|x86.ActiveCfg = Release|Win32
 		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Release|x86.Build.0 = Release|Win32
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Debug|x64.ActiveCfg = Debug|x64
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Debug|x64.Build.0 = Debug|x64
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Debug|x86.ActiveCfg = Debug|Win32
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Debug|x86.Build.0 = Debug|Win32
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Release|x64.ActiveCfg = Release|x64
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Release|x64.Build.0 = Release|x64
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Release|x86.ActiveCfg = Release|Win32
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
