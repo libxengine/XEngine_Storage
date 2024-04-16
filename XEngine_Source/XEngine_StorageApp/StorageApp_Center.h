@@ -7,5 +7,4 @@
 #define XENGINE_STORAGE_APP_METHOD_DLFILE  _X("DLFile")
 
 XHTHREAD CALLBACK XEngine_Center_HTTPThread(XPVOID lParam);
-bool XEngine_Task_HttpCenter_APIList(LPCXSTR lpszUrlName, XCHAR* ptszAPIVersion, XCHAR* ptszAPIMethod, XCHAR* ptszAPIName);
 bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount);
