@@ -80,7 +80,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl)
 	st_JsonBuilder["emitUTF8"] = true;
 
 	XCHAR* ptszMsgBuffer = NULL;
-	st_HTTPParam.nTimeConnect = 2;
+	st_HTTPParam.nTimeConnect = 2000;
 	if (!APIClient_Http_Request(_X("POST"), tszAPIUrl, Json::writeString(st_JsonBuilder, st_JsonRoot).c_str(), &nCode, &ptszMsgBuffer, &nLen, NULL, NULL, &st_HTTPParam))
 	{
 		InfoReport_IsErrorOccur = true;
@@ -154,7 +154,7 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_GetTime(LPCXSTR lpszAPIUrl, _
 	st_JsonBuilder["emitUTF8"] = true;
 
 	XCHAR* ptszMsgBuffer = NULL;
-	st_HTTPParam.nTimeConnect = 2;
+	st_HTTPParam.nTimeConnect = 2000;
 	if (!APIClient_Http_Request(_X("POST"), tszAPIUrl, Json::writeString(st_JsonBuilder, st_JsonRoot).c_str(), &nCode, &ptszMsgBuffer, &nLen, NULL, NULL, &st_HTTPParam))
 	{
 		InfoReport_IsErrorOccur = true;
