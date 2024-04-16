@@ -53,7 +53,10 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl)
 	XCHAR tszOSBuild[128] = {};
 	XCHAR tszComputerName[128] = {};
 	XLONG nOSArch = 0;
+
+	XCLIENT_APIHTTP st_HTTPParam = {};
 	SYSTEMAPI_SERIAL_INFOMATION st_SDKSerial = {};
+	
 	SystemApi_System_GetSystemVer(tszOSName, tszOSVersion, tszOSBuild, &nOSArch);
 	SystemApi_System_GetSysName(NULL, tszComputerName);
 	SystemApi_HardWare_GetSerial(&st_SDKSerial);
@@ -72,7 +75,8 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl)
 	st_JsonBuilder["emitUTF8"] = true;
 
 	XCHAR* ptszMsgBuffer = NULL;
-	if (!APIClient_Http_Request(_X("POST"), lpszAPIUrl, Json::writeString(st_JsonBuilder, st_JsonRoot).c_str(), &nCode, &ptszMsgBuffer, &nLen))
+	st_HTTPParam.nTimeConnect = 2;
+	if (!APIClient_Http_Request(_X("POST"), lpszAPIUrl, Json::writeString(st_JsonBuilder, st_JsonRoot).c_str(), &nCode, &ptszMsgBuffer, &nLen, NULL, NULL, &st_HTTPParam))
 	{
 		InfoReport_IsErrorOccur = true;
 		InfoReport_dwErrorCode = APIClient_GetLastError();
@@ -82,6 +86,9 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl)
 
     return true;
 }
+//////////////////////////////////////////////////////////////////////////
+//                           保护函数
+//////////////////////////////////////////////////////////////////////////
 bool CInfoReport_APIMachine::InfoReport_APIMachine_GetText(XCHAR* ptszMSGBuffer)
 {
 	InfoReport_IsErrorOccur = false;
