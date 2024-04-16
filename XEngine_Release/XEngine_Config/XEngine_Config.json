@@ -32,8 +32,8 @@
         "SQLPass":"123123aa"
     },
     "XStorage":{
-        "bResumable":1,
-        "bUPHash":0,
+        "bResumable":true,
+        "bUPHash":false,
         "nHashMode":2
     },
     "XAuth":{
@@ -64,14 +64,19 @@
         "nSDPort":15001
     },
     "XCert":{
-        "bDLEnable":0,
-        "bUPEnable":0,
-        "bCHEnable":0,
-        "nSslType":0,
-        "tszCertChain":"./XEngine_Cert/1_www.xyry.org_bundle.crt",
-        "tszCertKey":"./XEngine_Cert/2_www.xyry.org.key"
+        "bDLEnable":false,
+        "bUPEnable":false,
+        "bCHEnable":false,
+        "tszCertChain":"./XEngine_Cert/server.crt",
+        "tszCertServer":"",
+        "tszCertKey":"./XEngine_Cert/server.key"
+    },
+    "XReport":{
+        "bEnable":true,
+        "tszAPIUrl":"http://app.xyry.org:5501/api?function=machine"
     },
     "XVer":[
+        "3.14.0.1001 Build20240430",
         "3.13.0.1001 Build20240301",
         "3.12.1.1001 Build20240104",
         "3.12.0.1001 Build20231025",
