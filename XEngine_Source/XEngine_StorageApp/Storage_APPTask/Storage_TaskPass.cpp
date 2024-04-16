@@ -4,6 +4,8 @@ bool XEngine_Task_Pass(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lpsz
 {
 	int nSDLen = 2048;
 	XCHAR tszSDBuffer[2048];
+	LPCXSTR lpszAPIUPFile = _X("UPFile");
+	LPCXSTR lpszAPIDLFile = _X("DLFile");
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
@@ -12,7 +14,7 @@ bool XEngine_Task_Pass(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lpsz
 	st_HDRParam.bIsClose = true;
 	st_HDRParam.nHttpCode = 200;
 	//下载
-	if (0 == _tcsxnicmp(XENGINE_STORAGE_APP_METHOD_UPFILE, lpszAPIName, _tcsxlen(XENGINE_STORAGE_APP_METHOD_UPFILE)))
+	if (0 == _tcsxnicmp(lpszAPIUPFile, lpszAPIName, _tcsxlen(lpszAPIUPFile)))
 	{
 		XCHAR tszClientAddr[128];
 		XSTORAGECORE_DBFILE st_DBFile;
@@ -24,7 +26,7 @@ bool XEngine_Task_Pass(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lpsz
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求的上传文件通知协议成功,Bucket:%s,文件名:%s,大小:%d"), lpszClientAddr, st_DBFile.tszBuckKey, st_DBFile.st_ProtocolFile.tszFileName, st_DBFile.st_ProtocolFile.nFileSize);
 	}
-	else if (0 == _tcsxnicmp(XENGINE_STORAGE_APP_METHOD_DLFILE, lpszAPIName, _tcsxlen(XENGINE_STORAGE_APP_METHOD_DLFILE)))
+	else if (0 == _tcsxnicmp(lpszAPIDLFile, lpszAPIName, _tcsxlen(lpszAPIDLFile)))
 	{
 		__int64x nFileSize = 0;
 		XCHAR tszPathKey[MAX_PATH];

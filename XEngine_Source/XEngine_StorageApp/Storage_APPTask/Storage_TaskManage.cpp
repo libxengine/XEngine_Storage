@@ -6,6 +6,12 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 	int nRVLen = 10240;
 	XCHAR tszSDBuffer[10240];
 	XCHAR tszRVBuffer[10240];
+	LPCXSTR lpszAPIConfig = _X("Config");
+	LPCXSTR lpszAPIInsert = _X("Insert");
+	LPCXSTR lpszAPIDelete = _X("Delete");
+	LPCXSTR lpszAPIQuery = _X("Query");
+	LPCXSTR lpszAPIDir = _X("Dir");
+	LPCXSTR lpszAPITask = _X("Task");
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
@@ -14,14 +20,14 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 
 	st_HDRParam.bIsClose = true;
 	st_HDRParam.nHttpCode = 200;
-	if (0 == _tcsxnicmp(XENGINE_STORAGE_APP_METHOD_CONFIG, lpszAPIName, _tcsxlen(XENGINE_STORAGE_APP_METHOD_CONFIG)))
+	if (0 == _tcsxnicmp(lpszAPIConfig, lpszAPIName, _tcsxlen(lpszAPIConfig)))
 	{
 		StorageApp_Config_Parament(0, NULL);
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,处理用户重载配置文件成功"), lpszClientAddr);
 	}
-	else if (0 == _tcsxnicmp(XENGINE_STORAGE_APP_METHOD_QUERY, lpszAPIName, _tcsxlen(XENGINE_STORAGE_APP_METHOD_QUERY)))
+	else if (0 == _tcsxnicmp(lpszAPIQuery, lpszAPIName, _tcsxlen(lpszAPIQuery)))
 	{
 		//查询文件列表
 		int nMode = 0;
@@ -160,7 +166,7 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 			stl_ListFile.clear();
 		}
 	}
-	else if (0 == _tcsxnicmp(XENGINE_STORAGE_APP_METHOD_INSERT, lpszAPIName, _tcsxlen(XENGINE_STORAGE_APP_METHOD_INSERT)))
+	else if (0 == _tcsxnicmp(lpszAPIInsert, lpszAPIName, _tcsxlen(lpszAPIInsert)))
 	{
 		int nListCount = 0;
 		XSTORAGECORE_DBFILE** ppSt_DBFile;
@@ -200,7 +206,7 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_DBFile, nListCount);
 	}
-	else if (0 == _tcsxnicmp(XENGINE_STORAGE_APP_METHOD_DELETE, lpszAPIName, _tcsxlen(XENGINE_STORAGE_APP_METHOD_DELETE)))
+	else if (0 == _tcsxnicmp(lpszAPIDelete, lpszAPIName, _tcsxlen(lpszAPIDelete)))
 	{
 		int nListCount = 0;
 		XSTORAGECORE_DBFILE** ppSt_DBFile;
@@ -275,7 +281,7 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_DBFile, nListCount);
 	}
-	else if (0 == _tcsxnicmp(XENGINE_STORAGE_APP_METHOD_DIR, lpszAPIName, _tcsxlen(XENGINE_STORAGE_APP_METHOD_DIR)))
+	else if (0 == _tcsxnicmp(lpszAPIDir, lpszAPIName, _tcsxlen(lpszAPIDir)))
 	{
 		int nOPCode = 0;
 		int nListCount = 0;
@@ -368,7 +374,7 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求删除文件夹:%s,成功"), lpszClientAddr, tszRealDir);
 		}
 	}
-	else if (0 == _tcsxnicmp(XENGINE_STORAGE_APP_METHOD_TASK, lpszAPIName, _tcsxlen(XENGINE_STORAGE_APP_METHOD_TASK)))
+	else if (0 == _tcsxnicmp(lpszAPITask, lpszAPIName, _tcsxlen(lpszAPITask)))
 	{
 		int nDLCount = 0;
 		int nUPCount = 0;
