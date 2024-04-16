@@ -212,10 +212,13 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XCert.bDLEnable = st_JsonCert["bDLEnable"].asInt();
 	pSt_ServerConfig->st_XCert.bUPEnable = st_JsonCert["bUPEnable"].asInt();
 	pSt_ServerConfig->st_XCert.bCHEnable = st_JsonCert["bCHEnable"].asInt();
-	pSt_ServerConfig->st_XCert.nSslType = st_JsonCert["nSslType"].asInt();
 	if (!st_JsonP2xp["tszCertChain"].isNull())
 	{
 		_tcsxcpy(pSt_ServerConfig->st_XCert.tszCertChain, st_JsonP2xp["tszCertChain"].asCString());
+	}
+	if (!st_JsonP2xp["tszCertServer"].isNull())
+	{
+		_tcsxcpy(pSt_ServerConfig->st_XCert.tszCertServer, st_JsonP2xp["tszCertServer"].asCString());
 	}
 	if (!st_JsonP2xp["tszCertKey"].isNull())
 	{
