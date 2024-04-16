@@ -65,7 +65,9 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl)
 	SystemApi_HardWare_GetSerial(&st_SDKSerial);
 
 	Json::Value st_JsonRoot;
+	JSONCPP_STRING st_JsonError;
 	Json::StreamWriterBuilder st_JsonBuilder;
+	Json::CharReaderBuilder st_JsonReader;
 
 	XCHAR tszMachineText[1024] = {};
 	InfoReport_APIMachine_GetText(tszMachineText);
@@ -85,7 +87,23 @@ bool CInfoReport_APIMachine::InfoReport_APIMachine_Send(LPCXSTR lpszAPIUrl)
 		InfoReport_dwErrorCode = APIClient_GetLastError();
 		return false;
 	}
+	st_JsonRoot.clear();
+	//开始解析配置文件
+	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonReader.newCharReader());
+	if (!pSt_JsonReader->parse(ptszMsgBuffer, ptszMsgBuffer + nLen, &st_JsonRoot, &st_JsonError))
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = ERROR_XENGINE_STORAGE_INFOREPORT_PARSE;
+		return false;
+	}
 	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+
+	if (0 != st_JsonRoot["code"].asInt())
+	{
+		InfoReport_IsErrorOccur = true;
+		InfoReport_dwErrorCode = ERROR_XENGINE_STORAGE_INFOREPORT_CODE;
+		return false;
+	}
 
     return true;
 }
