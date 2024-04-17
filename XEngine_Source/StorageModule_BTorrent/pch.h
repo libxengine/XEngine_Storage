@@ -46,6 +46,7 @@ using namespace std;
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
+#include "../XStorage_BuildSwitch.h"
 #include "BTorrent_Define.h"
 #include "BTorrent_Error.h"
 //////////////////////////////////////////////////////////////////////////
