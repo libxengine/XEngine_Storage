@@ -25,7 +25,7 @@ feature list:
 8. supprot speeds contral  
 9. supprot task start and end proxy forwarding  
 10. support p2p  
-11. bt(planning)  
+11. bt protocol  
 12. data distributed  
 13. support second pass and Resumable   
 14. support upload and download Redirect  
@@ -49,15 +49,18 @@ Macos Exection:./XEngine_LINEnv.sh -i 3
 
 #### Windows
 use vs open and compile,suport windows 7sp1 and above  
-Just Run it,use XEngine_AuthorizeApp
+Just Run it,use XEngine_AuthorizeApp  
+if you need bt protocol support,you must install bt library by vcpkg:./vcpkg.exe install libtorrent
 
 #### Linux
 use makefile compile,UBUNTU22.04 x64 or RockyLinux9 x64  
-Run it on the terminal
+Run it on the terminal  
+if you need bt protocol support,you must install bt library:sudo apt install libtorrent-rasterbar-dev -y
 
 #### Macos
 use makefile compile,mac 13 and above  
-Run it on the terminal
+Run it on the terminal  
+if you need bt protocol support,you must install bt library:brew install libtorrent-rasterbar
 
 ##### complie
 execute command in XEngine_Source path  

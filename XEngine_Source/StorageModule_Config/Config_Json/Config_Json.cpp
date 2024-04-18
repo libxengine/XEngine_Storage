@@ -147,8 +147,8 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	}
 	Json::Value st_JsonXStorage = st_JsonRoot["XStorage"];
 	pSt_ServerConfig->st_XStorage.nHashMode = st_JsonXStorage["nHashMode"].asInt();
-	pSt_ServerConfig->st_XStorage.bUPHash = st_JsonXStorage["bUPHash"].asInt();
-	pSt_ServerConfig->st_XStorage.bResumable = st_JsonXStorage["bResumable"].asInt();
+	pSt_ServerConfig->st_XStorage.bUPHash = st_JsonXStorage["bUPHash"].asBool();
+	pSt_ServerConfig->st_XStorage.bResumable = st_JsonXStorage["bResumable"].asBool();
 
 	if (st_JsonRoot["XProxy"].empty() || (6 != st_JsonRoot["XProxy"].size()))
 	{
@@ -209,18 +209,31 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 		return false;
 	}
 	Json::Value st_JsonCert = st_JsonRoot["XCert"];
-	pSt_ServerConfig->st_XCert.bDLEnable = st_JsonCert["bDLEnable"].asInt();
-	pSt_ServerConfig->st_XCert.bUPEnable = st_JsonCert["bUPEnable"].asInt();
-	pSt_ServerConfig->st_XCert.bCHEnable = st_JsonCert["bCHEnable"].asInt();
-	pSt_ServerConfig->st_XCert.nSslType = st_JsonCert["nSslType"].asInt();
-	if (!st_JsonP2xp["tszCertChain"].isNull())
+	pSt_ServerConfig->st_XCert.bDLEnable = st_JsonCert["bDLEnable"].asBool();
+	pSt_ServerConfig->st_XCert.bUPEnable = st_JsonCert["bUPEnable"].asBool();
+	pSt_ServerConfig->st_XCert.bCHEnable = st_JsonCert["bCHEnable"].asBool();
+	if (!st_JsonCert["tszCertChain"].isNull())
 	{
-		_tcsxcpy(pSt_ServerConfig->st_XCert.tszCertChain, st_JsonP2xp["tszCertChain"].asCString());
+		_tcsxcpy(pSt_ServerConfig->st_XCert.tszCertChain, st_JsonCert["tszCertChain"].asCString());
 	}
-	if (!st_JsonP2xp["tszCertKey"].isNull())
+	if (!st_JsonCert["tszCertServer"].isNull())
 	{
-		_tcsxcpy(pSt_ServerConfig->st_XCert.tszCertKey, st_JsonP2xp["tszCertKey"].asCString());
+		_tcsxcpy(pSt_ServerConfig->st_XCert.tszCertServer, st_JsonCert["tszCertServer"].asCString());
 	}
+	if (!st_JsonCert["tszCertKey"].isNull())
+	{
+		_tcsxcpy(pSt_ServerConfig->st_XCert.tszCertKey, st_JsonCert["tszCertKey"].asCString());
+	}
+
+	if (st_JsonRoot["XReport"].empty() || (2 != st_JsonRoot["XReport"].size()))
+	{
+		Config_IsErrorOccur = true;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_CREPORT;
+		return false;
+	}
+	Json::Value st_JsonReport = st_JsonRoot["XReport"];
+	pSt_ServerConfig->st_XReport.bEnable = st_JsonReport["bEnable"].asBool();
+	_tcsxcpy(pSt_ServerConfig->st_XReport.tszAPIUrl, st_JsonReport["tszAPIUrl"].asCString());
 
 	if (st_JsonRoot["XVer"].empty())
 	{

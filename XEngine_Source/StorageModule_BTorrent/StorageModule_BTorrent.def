@@ -1,0 +1,30 @@
+LIBRARY
+
+EXPORTS
+	BTorrent_GetLastError
+
+	BTorrent_DLoader_Create
+	BTorrent_DLoader_Query
+	BTorrent_DLoader_GetStatus
+	BTorrent_DLoader_SaveResume
+	BTorrent_DLoader_Close
+	BTorrent_DLoader_SetPause
+	BTorrent_DLoader_UPNPEnable
+
+	BTorrent_Parse_Init
+	BTorrent_Parse_GetNode
+	BTorrent_Parse_GetTracker
+	BTorrent_Parse_GetSeeds
+	BTorrent_Parse_GetPiece
+	BTorrent_Parse_GetInfo
+	BTorrent_Parse_GetMagnet
+	BTorrent_Parse_GetFile
+	BTorrent_Parse_Destory
+
+	BTorrent_Creator_Init
+	BTorrent_Creator_AddNode
+	BTorrent_Creator_AddTracker
+	BTorrent_Creator_AddSeeds
+	BTorrent_Creator_SetInfo
+	BTorrent_Creator_GetTorrent
+	BTorrent_Creator_Destory

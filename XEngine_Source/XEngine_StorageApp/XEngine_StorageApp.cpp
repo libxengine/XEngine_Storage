@@ -241,13 +241,20 @@ int main(int argc, char** argv)
 
 		if (st_ServiceCfg.st_XCert.bDLEnable)
 		{
-			xhDLSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, (ENUM_XENGINE_OPENSSL_PROTOCOL)st_ServiceCfg.st_XCert.nSslType);
+			if (_tcsxlen(st_ServiceCfg.st_XCert.tszCertServer) > 0)
+			{
+				xhDLSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+			}
+			else
+			{
+				xhDLSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+			}
 			if (NULL == xhDLSsl)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动下载SSL服务失败，错误：%lX"), Session_GetLastError());
 				goto XENGINE_EXITAPP;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动下载SSL服务成功,证书链:%s,证书Key:%s,验证模式:%d"), st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertKey, st_ServiceCfg.st_XCert.nSslType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动下载SSL服务成功,证书链:%s,证书Key:%s"), st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertKey);
 		}
 		else
 		{
@@ -301,13 +308,20 @@ int main(int argc, char** argv)
 
 		if (st_ServiceCfg.st_XCert.bUPEnable)
 		{
-			xhUPSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, (ENUM_XENGINE_OPENSSL_PROTOCOL)st_ServiceCfg.st_XCert.nSslType);
+			if (_tcsxlen(st_ServiceCfg.st_XCert.tszCertServer) > 0)
+			{
+				xhUPSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+			}
+			else
+			{
+				xhUPSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+			}
 			if (NULL == xhUPSsl)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动上传SSL服务失败，错误：%lX"), Session_GetLastError());
 				goto XENGINE_EXITAPP;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动上传SSL服务成功,证书链:%s,证书Key:%s,验证模式:%d"), st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertKey, st_ServiceCfg.st_XCert.nSslType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动上传SSL服务成功,证书链:%s,证书Key:%s"), st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertKey);
 		}
 		else
 		{
@@ -354,13 +368,20 @@ int main(int argc, char** argv)
 
 		if (st_ServiceCfg.st_XCert.bCHEnable)
 		{
-			xhCHSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, (ENUM_XENGINE_OPENSSL_PROTOCOL)st_ServiceCfg.st_XCert.nSslType);
+			if (_tcsxlen(st_ServiceCfg.st_XCert.tszCertServer) > 0)
+			{
+				xhCHSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+			}
+			else
+			{
+				xhCHSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+			}
 			if (NULL == xhCHSsl)
 			{
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动业务SSL服务失败，错误：%lX"), Session_GetLastError());
 				goto XENGINE_EXITAPP;
 			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动业务SSL服务成功,证书链:%s,证书Key:%s,验证模式:%d"), st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertKey, st_ServiceCfg.st_XCert.nSslType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动业务SSL服务成功,证书链:%s,证书Key:%s"), st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertKey);
 		}
 		else
 		{
@@ -421,6 +442,22 @@ int main(int argc, char** argv)
 	else
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，P2P存储服务配置为不启动"));
+	}
+	//发送信息报告
+	if (st_ServiceCfg.st_XReport.bEnable)
+	{
+		if (InfoReport_APIMachine_Send(st_ServiceCfg.st_XReport.tszAPIUrl))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动信息报告给API服务器:%s 成功"), st_ServiceCfg.st_XReport.tszAPIUrl);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动信息报告给API服务器:%s 失败，错误：%lX"), st_ServiceCfg.st_XReport.tszAPIUrl, InfoReport_GetLastError());
+		}
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，信息报告给API服务器没有启用"));
 	}
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,XEngine版本:%s%s 当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), BaseLib_OperatorVer_XNumberStr(), BaseLib_OperatorVer_XTypeStr(), st_ServiceCfg.st_XVer.pStl_ListStorage->front().c_str());

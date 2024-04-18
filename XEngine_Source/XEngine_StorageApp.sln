@@ -13,6 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_APIHelp", "St
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XStorage_Include", "XStorage_Include", "{B8417D60-3B19-45BC-8D8B-173E24E32B35}"
 	ProjectSection(SolutionItems) = preProject
+		XStorage_BuildSwitch.h = XStorage_BuildSwitch.h
 		XStorage_Protocol.h = XStorage_Protocol.h
 	EndProjectSection
 EndProject
@@ -23,6 +24,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsoncpp", "XEngine_ThirdPart\jsoncpp\jsoncpp.vcxproj", "{F1736B3F-03A2-4FC7-B045-A12BA8D724FB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_Database", "StorageModule_Database\StorageModule_Database.vcxproj", "{8B90FA35-1D93-4174-BF1C-926D52F0C67F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_BTorrent", "StorageModule_BTorrent\StorageModule_BTorrent.vcxproj", "{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_InfoReport", "StorageModule_InfoReport\StorageModule_InfoReport.vcxproj", "{6754838E-7DC4-4C57-8C80-522DA04E9284}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,6 +93,22 @@ Global
 		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Release|x64.Build.0 = Release|x64
 		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Release|x86.ActiveCfg = Release|Win32
 		{8B90FA35-1D93-4174-BF1C-926D52F0C67F}.Release|x86.Build.0 = Release|Win32
+		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Debug|x64.ActiveCfg = Debug|x64
+		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Debug|x64.Build.0 = Debug|x64
+		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Debug|x86.ActiveCfg = Debug|Win32
+		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Debug|x86.Build.0 = Debug|Win32
+		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Release|x64.ActiveCfg = Release|x64
+		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Release|x64.Build.0 = Release|x64
+		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Release|x86.ActiveCfg = Release|Win32
+		{FFBC453D-B12C-4C3F-86EA-FC569E0566E7}.Release|x86.Build.0 = Release|Win32
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Debug|x64.ActiveCfg = Debug|x64
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Debug|x64.Build.0 = Debug|x64
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Debug|x86.ActiveCfg = Debug|Win32
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Debug|x86.Build.0 = Debug|Win32
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Release|x64.ActiveCfg = Release|x64
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Release|x64.Build.0 = Release|x64
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Release|x86.ActiveCfg = Release|Win32
+		{6754838E-7DC4-4C57-8C80-522DA04E9284}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

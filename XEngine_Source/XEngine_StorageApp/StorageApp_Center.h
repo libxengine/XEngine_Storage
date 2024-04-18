@@ -1,11 +1,14 @@
 ﻿#pragma once
-#define XENGINE_STORAGE_APP_TASK_PASS  _X("Pass")
-#define XENGINE_STORAGE_APP_TASK_MANAGE  _X("Manage")
-
-#define XENGINE_STORAGE_APP_METHOD_CONFIG  _X("Config")
-#define XENGINE_STORAGE_APP_METHOD_UPFILE  _X("UPFile")
-#define XENGINE_STORAGE_APP_METHOD_DLFILE  _X("DLFile")
-
+/********************************************************************
+//    Created:     2024/04/16  10:43:39
+//    File Name:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageApp\StorageApp_Center.h
+//    File Path:   D:\XEngine_Storage\XEngine_Source\XEngine_StorageApp
+//    File Base:   StorageApp_Center
+//    File Ext:    h
+//    Project:     XEngine(网络通信引擎)
+//    Author:      qyt
+//    Purpose:     HTTP管理服务处理类
+//    History:
+*********************************************************************/
 XHTHREAD CALLBACK XEngine_Center_HTTPThread(XPVOID lParam);
-bool XEngine_Task_HttpCenter_APIList(LPCXSTR lpszUrlName, XCHAR* ptszAPIVersion, XCHAR* ptszAPIMethod, XCHAR* ptszAPIName);
 bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount);

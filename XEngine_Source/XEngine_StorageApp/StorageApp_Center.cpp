@@ -57,6 +57,8 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 
 	LPCXSTR lpszMethodPost = _X("POST");
 	LPCXSTR lpszMethodOption = _X("OPTIONS");
+	LPCXSTR lpszMethodPass = _X("Pass");
+	LPCXSTR lpszMehtodManage = _X("Manage");
 
 	if (st_ServiceCfg.st_XAuth.bCHAuth)
 	{
@@ -127,11 +129,11 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			return false;
 		}
 		//通知类型.用于多服务器
-		if (0 == _tcsxnicmp(XENGINE_STORAGE_APP_TASK_PASS, tszAPIMethod, _tcsxlen(XENGINE_STORAGE_APP_TASK_PASS)))
+		if (0 == _tcsxnicmp(lpszMethodPass, tszAPIMethod, _tcsxlen(lpszMethodPass)))
 		{
 			XEngine_Task_Pass(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
 		}
-		else if (0 == _tcsxnicmp(XENGINE_STORAGE_APP_TASK_MANAGE, tszAPIMethod, _tcsxlen(XENGINE_STORAGE_APP_TASK_MANAGE)))
+		else if (0 == _tcsxnicmp(lpszMehtodManage, tszAPIMethod, _tcsxlen(lpszMehtodManage)))
 		{
 			XEngine_Task_Manage(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
 		}

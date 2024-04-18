@@ -1,3 +1,25 @@
+XEngine_Storage V3.14.0.1001
+
+增加:默认SSL的KEY文件
+增加:BT协议模块(支持解析,创建和下载BT种子)
+增加:信息报告模块,可以上报信息和查询
+修改:定义http请求的类型修改为const char *类型
+修改:ssl类型现在采取默认tls了
+修改:ssl支持多类型证书了
+修改:配置文件逻辑型从int都改成bool了
+修正:读取ssl配置不正确的问题
+删除:没有使用的center相关代码
+
+added:default ssl key
+added:bt protocol module
+added:info report module
+modify:define http request type modify to const char *
+modify:ssl type default only tls now
+modify:ssl support multi type cert
+modify:boolean type to asbool from asint for configure
+fixed:read ssl configure is incorrect
+delete:unused code for center
+======================================================================================
 XEngine_Storage V3.13.0.1001
 
 增加:st_PermissionFlags增加新的标志位上传限制,现在上传文件也可以进行限制了

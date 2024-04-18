@@ -97,12 +97,17 @@ typedef struct tag_XEngine_ServerConfig
     struct  
     {
         XCHAR tszCertChain[MAX_PATH];
+        XCHAR tszCertServer[MAX_PATH];
         XCHAR tszCertKey[MAX_PATH];
-        int nSslType;
         bool bDLEnable;
         bool bUPEnable;
         bool bCHEnable;
     }st_XCert;
+    struct  
+    {
+        XCHAR tszAPIUrl[MAX_PATH];
+        bool bEnable;
+    }st_XReport;
     struct
     {
         list<string> *pStl_ListStorage;
