@@ -4,11 +4,12 @@ PLATVER =
 PLATDIR = 
 RELEASE = 0
 UNICODE = 0
-LOADHDR = -I ./ -I ../XEngine_ThirdPart/jsoncpp
-LOADSO = -L ../StorageModule_Database -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp -L ../StorageModule_Protocol -L ../StorageModule_BTorrent -L ../StorageModule_InfoReport  -L ../XEngine_ThirdPart/jsoncpp
+LOADHDR = -I ./ 
+LOADSO =  -L ../XEngine_Depend/XEngine_Module/jsoncpp -L ../XEngine_Depend/XEngine_Module/XEngine_InfoReport \
+          -L ../StorageModule_Database -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp -L ../StorageModule_Protocol -L ../StorageModule_BTorrent -L ../StorageModule_InfoReport
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lXClient_APIHelp -lXEngine_ProcFile -lXEngine_SystemApi -lHelpComponents_XLog -lHelpComponents_Packets -lRfcComponents_HttpProtocol \
-      -lStorageModule_Database -lStorageModule_Config -lStorageModule_Session -lStorageModule_APIHelp -lStorageModule_Protocol -lStorageModule_BTorrent -lStorageModule_InfoReport \
-	  -ljsoncpp
+      -lStorageModule_Database -lStorageModule_Config -lStorageModule_Session -lStorageModule_APIHelp -lStorageModule_Protocol -lStorageModule_BTorrent  \
+	  -ljsoncpp -lXEngine_InfoReport
 LIBEX = 
 OBJECTS = StorageApp_Config.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o Storage_TaskPass.o Storage_TaskManage.o Storage_TaskP2p.o XEngine_StorageApp.o
 
