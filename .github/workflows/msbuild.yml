@@ -1,0 +1,102 @@
+name: C++ Build with Dependencies
+
+#on: [push] # 触发条件，推送和拉取请求时，
+on:
+  workflow_dispatch:  # 添加这行来启用手动触发
+  
+permissions:
+  contents: write
+  
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [Release]
+        platform: [x86]
+
+    runs-on: windows-latest # 最新的 Windows 环境
+
+    steps:
+       # 检出您的主仓库代码
+      - name: Checkout main repository code
+        uses: actions/checkout@v3
+        
+       # 检出依赖的xengine仓库到指定的xengine目录
+      - name: Checkout dependency repository (xengine)
+        uses: actions/checkout@v3
+        with:
+          repository: libxengine/xengine
+          path: xengine
+
+      # 设置依赖库的环境变量
+      - name: Set up Dependency Environment Variables
+        run: |
+          echo "XENGINE_INCLUDE=${{ github.workspace }}/xengine" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "XENGINE_LIB32=${{ github.workspace }}/xengine/XEngine_Windows/x86" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "XENGINE_LIB64=${{ github.workspace }}/xengine/XEngine_Windows/x64" | Out-File -FilePath $env:GITHUB_ENV -Append
+        shell: pwsh
+        
+      # 配置 MSBuild 的路径，准备构建 VC++ 项目
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.0.2
+      #编译
+      - name: Build Solution
+        run: msbuild XEngine_Source/XEngine_StorageApp.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
+
+      # 打包
+      - name: Copy Build binaries for x86
+        run: |
+          mkdir -p "x86/XEngine_StorageApp"
+          cp -r ./XEngine_Release/* x86/XEngine_StorageApp/
+          cp -r ./XEngine_Source/Release/*.dll x86/XEngine_StorageApp/
+          cp -r ./XEngine_Source/Release/*.exe x86/XEngine_StorageApp/
+          cp -r ./XEngine_Source/VSCopy_x86.bat x86/XEngine_StorageApp/
+          cd x86/XEngine_StorageApp && ./VSCopy_x86.bat
+          cd ..
+          cd ..
+          7z a XEngine_StorageApp-x86-Windows.zip ./x86/XEngine_StorageApp/*
+        shell: pwsh
+
+      - name: Calculate new tag
+        id: newtag
+        shell: bash
+        run: |
+          git fetch --tags
+          TAG=$(git tag --sort=-v:refname | head -n 1)
+          MAJOR=$(echo $TAG | cut -d '.' -f 1)
+          MINOR=$(echo $TAG | cut -d '.' -f 2)
+          PATCH=$(echo $TAG | cut -d '.' -f 3)
+          BUILD=$(echo $TAG | cut -d '.' -f 4)
+          MINOR_BUMP=$((MINOR + 1))
+          NEW_TAG="${MAJOR}.${MINOR_BUMP}.0.${BUILD}"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
+          
+      # 创建GitHub Release
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.NEW_TAG }}
+          name: Release ${{ env.NEW_TAG }}
+          body: |
+            [${{ github.sha }}](https://github.com/libxengine/XEngine_Storage/commit/${{ github.sha }})
+            ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     
+      # 上传x86的zip包作为发布的artifacts
+      - name: Upload x86 Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./XEngine_StorageApp-x86-Windows.zip
+          asset_name: XEngine_StorageApp-x86-Windows.zip
+          asset_content_type: application/zip
