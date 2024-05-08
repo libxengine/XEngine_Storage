@@ -448,7 +448,9 @@ int main(int argc, char** argv)
 	{
 		if (InfoReport_APIMachine_Send(st_ServiceCfg.st_XReport.tszAPIUrl, st_ServiceCfg.st_XReport.tszServiceName))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动信息报告给API服务器:%s 成功"), st_ServiceCfg.st_XReport.tszAPIUrl);
+			__int64x nTimeCount = 0;
+			InfoReport_APIMachine_GetTime(st_ServiceCfg.st_XReport.tszAPIUrl, st_ServiceCfg.st_XReport.tszServiceName, &nTimeCount);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动信息报告给API服务器:%s 成功,报告次数:%lld"), st_ServiceCfg.st_XReport.tszAPIUrl, nTimeCount);
 		}
 		else
 		{
