@@ -34,4 +34,5 @@ EXPORTS
 	Session_Action_Insert
 	Session_Action_GetToken
 	Session_Action_GetInfo
+	Session_Action_GetAll
 	Session_Action_Delete

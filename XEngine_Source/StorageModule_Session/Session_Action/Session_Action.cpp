@@ -135,6 +135,47 @@ bool CSession_Action::Session_Action_GetInfo(XNETHANDLE xhToken, XENGINE_ACTIONI
 	return true;
 }
 /********************************************************************
+函数名称：Session_Action_GetAll
+函数功能：获得所有动作器句柄
+ 参数.一：pppxhToken
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出获取到的句柄列表
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_Action::Session_Action_GetAll(XNETHANDLE*** pppxhToken, int* pInt_ListCount)
+{
+	Session_IsErrorOccur = false;
+
+	st_Locker.lock_shared();
+	*pInt_ListCount = stl_MapAction.size();
+	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppxhToken, *pInt_ListCount, sizeof(XNETHANDLE));
+
+	unordered_map<XNETHANDLE, SESSION_ACTIONINFO>::iterator stl_MapIterator = stl_MapAction.begin();
+	for (int i = 0; stl_MapIterator != stl_MapAction.end(); stl_MapIterator++, i++)
+	{
+		*(*pppxhToken)[i] = stl_MapIterator->first;
+	}
+	st_Locker.unlock_shared();
+
+	if (*pInt_ListCount <= 0)
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_EMPTY;
+		return false;
+	}
+	return true;
+}
+/********************************************************************
 函数名称：Session_Action_Delete
 函数功能：删除一个动作管理器
  参数.一：xhToken

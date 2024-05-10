@@ -25,6 +25,7 @@ public:
     bool Session_Action_Insert(XNETHANDLE xhToken, XHANDLE xhAction, XENGINE_ACTIONINFO* pSt_ActionInfo);
     XHANDLE Session_Action_GetToken(XNETHANDLE xhToken);
     bool Session_Action_GetInfo(XNETHANDLE xhToken, XENGINE_ACTIONINFO* pSt_ActionInfo);
+    bool Session_Action_GetAll(XNETHANDLE*** pppxhToken, int* pInt_ListCount);
     bool Session_Action_Delete(XNETHANDLE xhToken);
 private:
     shared_mutex st_Locker;

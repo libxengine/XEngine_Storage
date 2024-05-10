@@ -153,6 +153,10 @@ extern "C" bool Session_Action_GetInfo(XNETHANDLE xhToken, XENGINE_ACTIONINFO * 
 {
 	return m_Action.Session_Action_GetInfo(xhToken, pSt_ActionInfo);
 }
+extern "C" bool Session_Action_GetAll(XNETHANDLE * **pppxhToken, int* pInt_ListCount)
+{
+	return m_Action.Session_Action_GetAll(pppxhToken, pInt_ListCount);
+}
 extern "C" bool Session_Action_Delete(XNETHANDLE xhToken)
 {
 	return m_Action.Session_Action_Delete(xhToken);
