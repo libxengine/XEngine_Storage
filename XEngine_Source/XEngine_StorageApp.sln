@@ -23,6 +23,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_Config", "Sto
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StorageModule_APIHelp", "StorageModule_APIHelp\StorageModule_APIHelp.vcxproj", "{D8C24395-605F-4C73-AA50-ABA6B7CD84D6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {F1736B3F-03A2-4FC7-B045-A12BA8D724FB}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XStorage_Include", "XStorage_Include", "{B8417D60-3B19-45BC-8D8B-173E24E32B35}"
 	ProjectSection(SolutionItems) = preProject
