@@ -10,7 +10,7 @@ LOADHDR = -I ./
 LOADSO = 
 LIB = -lXEngine_BaseLib
 LIBEX = 
-OBJECTS = Session_DLStroage.o Session_UPStroage.o Session_User.o pch.o
+OBJECTS = Session_DLStroage.o Session_UPStroage.o Session_User.o Session_Action.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 
@@ -58,7 +58,9 @@ Session_UPStroage.o:./Session_Stroage/Session_UPStroage.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Session_Stroage/Session_UPStroage.cpp 
 Session_User.o:./Session_User/Session_User.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Session_User/Session_User.cpp
-							              
+Session_Action.o:./Session_Action/Session_Action.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Session_Action/Session_Action.cpp
+
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp
 

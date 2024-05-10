@@ -30,3 +30,8 @@ EXPORTS
 	Session_UPStroage_MaxConnect
 	Session_UPStroage_SetBoundary
 	Session_UPStroage_SetBoundaryStart
+
+	Session_Action_Insert
+	Session_Action_GetToken
+	Session_Action_GetInfo
+	Session_Action_Delete
