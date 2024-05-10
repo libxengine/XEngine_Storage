@@ -66,4 +66,12 @@ typedef struct
 	XCHAR tszIPISP[128];        //运营商
 	XCHAR tszIPTime[128];       //数据库日期
 }XENGINE_IPADDRINFO;
+//服务器动作处理
+typedef struct
+{
+	XCHAR tszFileUrl[MAX_PATH];      //文件的URL
+	XCHAR tszFileName[MAX_PATH];     //本地文件路径
+	XCHAR tszBucketStr[MAX_PATH];    //存储的KEY
+	XBYTE byType;                    //操作类型,0 HTTP,1 FTP,2 BT
+}XENGINE_ACTIONINFO;
 #pragma pack(pop)

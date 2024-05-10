@@ -141,7 +141,7 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		}
 		else if (0 == _tcsxnicmp(lpszMehtodAction, tszAPIMethod, _tcsxlen(lpszMehtodAction)))
 		{
-			
+			Storage_TaskAction(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam);
 		}
 	}
 	else if (0 == _tcsxnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOption)))

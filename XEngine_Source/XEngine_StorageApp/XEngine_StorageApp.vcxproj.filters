@@ -48,6 +48,9 @@
     <ClCompile Include="Storage_APPTask\Storage_TaskManage.cpp">
       <Filter>源文件\Storage_APPTask</Filter>
     </ClCompile>
+    <ClCompile Include="Storage_APPTask\Storage_TaskAction.cpp">
+      <Filter>源文件\Storage_APPTask</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StorageApp_Config.h">
@@ -75,6 +78,9 @@
       <Filter>头文件\Storage_APPTask</Filter>
     </ClInclude>
     <ClInclude Include="Storage_APPTask\Storage_TaskManage.h">
+      <Filter>头文件\Storage_APPTask</Filter>
+    </ClInclude>
+    <ClInclude Include="Storage_APPTask\Storage_TaskAction.h">
       <Filter>头文件\Storage_APPTask</Filter>
     </ClInclude>
   </ItemGroup>

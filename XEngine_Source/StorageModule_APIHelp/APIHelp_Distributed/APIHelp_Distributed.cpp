@@ -212,6 +212,58 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, 
 	return true;
 }
 /********************************************************************
+函数名称：APIHelp_Distributed_CTStorage
+函数功能：通过KEY得到一个对应下载地址
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的URL
+ 参数.二：pStl_ListBucket
+  In/Out：In
+  类型：容器指针
+  可空：N
+  意思：输入要解析的列表
+ 参数.三：pSt_StorageBucket
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出获取到的可用存储
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAPIHelp_Distributed::APIHelp_Distributed_CTStorage(LPCXSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket)
+{
+	APIHelp_IsErrorOccur = false;
+
+	if ((NULL == lpszMsgBuffer) || (NULL == pSt_StorageBucket))
+	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
+		return false;
+	}
+	bool bFound = false;
+	//获得对应存储
+	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
+	{
+		if (0 == _tcsxncmp(lpszMsgBuffer, stl_ListIterator->tszBuckKey, _tcsxlen(lpszMsgBuffer)))
+		{
+			bFound = true;
+			*pSt_StorageBucket = *stl_ListIterator;
+			break;
+		}
+	}
+	if (!bFound)
+	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
+		return false;
+	}
+	return true;
+}
+/********************************************************************
 函数名称：APIHelp_Distributed_UPStorage
 函数功能：通过分布式存储列表获得一个存储地址
  参数.一：pStl_ListBucket
