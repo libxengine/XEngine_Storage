@@ -53,6 +53,10 @@ extern "C" bool Protocol_StorageParse_P2PToken(LPCXSTR lpszMsgBuffer, int nMsgLe
 {
 	return m_StorageParse.Protocol_StorageParse_P2PToken(lpszMsgBuffer, nMsgLen, pxhToken);
 }
+extern "C" bool Protocol_StorageParse_Action(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_ACTIONINFO * pSt_ActionInfo)
+{
+	return m_StorageParse.Protocol_StorageParse_Action(lpszMsgBuffer, nMsgLen, pSt_ActionInfo);
+}
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
@@ -79,4 +83,8 @@ extern "C" bool Protocol_StoragePacket_DirOperator(XCHAR * ptszMsgBuffer, int* p
 extern "C" bool Protocol_StoragePacket_REQFile(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName, LPCXSTR lpszFileHash, XNETHANDLE xhToken)
 {
 	return m_StoragePacket.Protocol_StoragePacket_REQFile(ptszMsgBuffer, pInt_MsgLen, lpszFileName, lpszFileHash, xhToken);
+}
+extern "C" bool Protocol_StoragePacket_Action(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XNETHANDLE xhToken, XENGINE_ACTIONINFO * pSt_ActionInfo)
+{
+	return m_StoragePacket.Protocol_StoragePacket_Action(ptszMsgBuffer, pInt_MsgLen, xhToken, pSt_ActionInfo);
 }
