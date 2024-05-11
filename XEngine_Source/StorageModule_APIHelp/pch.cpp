@@ -43,6 +43,10 @@ extern "C" bool APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, list<XENGIN
 {
 	return m_APIDistributed.APIHelp_Distributed_DLStorage(lpszMsgBuffer, pStl_ListBucket, pSt_StorageBucket);
 }
+extern "C" bool APIHelp_Distributed_CTStorage(LPCXSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>*pStl_ListBucket, XENGINE_STORAGEBUCKET * pSt_StorageBucket)
+{
+	return m_APIDistributed.APIHelp_Distributed_CTStorage(lpszMsgBuffer, pStl_ListBucket, pSt_StorageBucket);
+}
 extern "C" bool APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>*pStl_ListBucket, XENGINE_STORAGEBUCKET * pSt_StorageBucket, int nMode)
 {
 	return m_APIDistributed.APIHelp_Distributed_UPStorage(pStl_ListBucket, pSt_StorageBucket, nMode);

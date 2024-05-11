@@ -2,6 +2,7 @@
 #include "Session_Stroage/Session_DLStroage.h"
 #include "Session_Stroage/Session_UPStroage.h"
 #include "Session_User/Session_User.h"
+#include "Session_Action/Session_Action.h"
 /********************************************************************
 //    Created:     2021/06/02  14:38:34
 //    File Name:   D:\XEngine_Storage\StorageModule_Session\pch.cpp
@@ -19,6 +20,7 @@ XLONG Session_dwErrorCode = 0;
 CSession_DLStroage m_DLStorage;
 CSession_UPStroage m_UPStorage;
 CSession_User m_User;
+CSession_Action m_Action;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义机器
 //////////////////////////////////////////////////////////////////////////
@@ -135,4 +137,27 @@ extern "C" bool Session_UPStroage_SetBoundary(LPCXSTR lpszClientAddr, LPCXSTR lp
 extern "C" bool Session_UPStroage_SetBoundaryStart(LPCXSTR lpszClientAddr)
 {
 	return m_UPStorage.Session_UPStroage_SetBoundaryStart(lpszClientAddr);
+}
+/************************************************************************/
+/*                        存储会话导出的函数                            */
+/************************************************************************/
+extern "C" bool Session_Action_Insert(XNETHANDLE xhToken, XHANDLE xhAction, XENGINE_ACTIONINFO * pSt_ActionInfo)
+{
+	return m_Action.Session_Action_Insert(xhToken, xhAction, pSt_ActionInfo);
+}
+extern "C" XHANDLE Session_Action_GetToken(XNETHANDLE xhToken)
+{
+	return m_Action.Session_Action_GetToken(xhToken);
+}
+extern "C" bool Session_Action_GetInfo(XNETHANDLE xhToken, XENGINE_ACTIONINFO * pSt_ActionInfo)
+{
+	return m_Action.Session_Action_GetInfo(xhToken, pSt_ActionInfo);
+}
+extern "C" bool Session_Action_GetAll(XNETHANDLE * **pppxhToken, int* pInt_ListCount)
+{
+	return m_Action.Session_Action_GetAll(pppxhToken, pInt_ListCount);
+}
+extern "C" bool Session_Action_Delete(XNETHANDLE xhToken)
+{
+	return m_Action.Session_Action_Delete(xhToken);
 }

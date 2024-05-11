@@ -23,4 +23,5 @@ public:
     bool Protocol_StorageParse_ProxyNotify(LPCXSTR lpszMsgBuffer, int nMsgLen, XCHAR* ptszClientAddr, XCHAR* ptszBuckKey, XCHAR* ptszFileName, XCHAR* ptszFileHash, __int64x* pInt_FileSize);
     bool Protocol_StorageParse_SpeedLimit(LPCXSTR lpszMsgBuffer, int nMsgLen, int* pInt_Code, int* pInt_Limit);
     bool Protocol_StorageParse_P2PToken(LPCXSTR lpszMsgBuffer, int nMsgLen, XNETHANDLE* pxhToken);
+    bool Protocol_StorageParse_Action(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_ACTIONINFO* pSt_ActionInfo);
 };

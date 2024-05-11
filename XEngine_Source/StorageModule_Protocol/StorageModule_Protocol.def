@@ -10,6 +10,7 @@ EXPORTS
 	Protocol_StorageParse_DirOperator
 	Protocol_StorageParse_SpeedLimit
 	Protocol_StorageParse_P2PToken
+	Protocol_StorageParse_Action
 
 	Protocol_StoragePacket_BasicAuth
 	Protocol_StoragePacket_UPDown
@@ -17,3 +18,4 @@ EXPORTS
 	Protocol_StoragePacket_Info
 	Protocol_StoragePacket_DirOperator
 	Protocol_StoragePacket_REQFile
+	Protocol_StoragePacket_Action

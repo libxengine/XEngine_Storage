@@ -6,6 +6,7 @@ EXPORTS
 	APIHelp_Distributed_RandomAddr
 	APIHelp_Distributed_FileList
 	APIHelp_Distributed_DLStorage
+	APIHelp_Distributed_CTStorage
 	APIHelp_Distributed_UPStorage
 	APIHelp_Distributed_GetPathKey
 

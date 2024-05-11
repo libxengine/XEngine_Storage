@@ -18,7 +18,7 @@
         ],
         "StorageAddr":[
             {
-                "bEnable":false,
+                "bEnable":true,
                 "nLevel":1,
                 "Size":"1024MB",
                 "XEngine_Key":"storagekey1",
@@ -26,7 +26,7 @@
                 "PermissionFlags":{
                     "CreateDir":false,
                     "Rewrite":false,
-                    "UPLimit":  false
+                    "UPLimit":false
                 }
             },
             {
@@ -38,7 +38,7 @@
                 "PermissionFlags":{
                     "CreateDir":false,
                     "Rewrite":false,
-                    "UPLimit":  false
+                    "UPLimit":false
                 }
             }
         ]

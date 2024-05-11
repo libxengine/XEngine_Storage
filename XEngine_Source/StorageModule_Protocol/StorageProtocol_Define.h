@@ -221,6 +221,30 @@ extern "C" bool Protocol_StorageParse_SpeedLimit(LPCXSTR lpszMsgBuffer, int nMsg
 备注：
 *********************************************************************/
 extern "C" bool Protocol_StorageParse_P2PToken(LPCXSTR lpszMsgBuffer, int nMsgLen, XNETHANDLE* pxhToken);
+/********************************************************************
+函数名称：Protocol_StorageParse_Action
+函数功能：动作解析器
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pSt_ActionInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出解析的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Protocol_StorageParse_Action(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_ACTIONINFO * pSt_ActionInfo);
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
@@ -463,3 +487,32 @@ extern "C" bool Protocol_StoragePacket_DirOperator(XCHAR * ptszMsgBuffer, int* p
 备注：
 *********************************************************************/
 extern "C" bool Protocol_StoragePacket_REQFile(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName = NULL, LPCXSTR lpszFileHash = NULL, XNETHANDLE xhToken = 0);
+/********************************************************************
+函数名称：Protocol_StoragePacket_Action
+函数功能：动作脚本封装器
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入管理器句柄
+ 参数.四：pSt_ActionInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要打包的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XNETHANDLE xhToken, XENGINE_ACTIONINFO* pSt_ActionInfo);

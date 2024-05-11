@@ -31,7 +31,7 @@ c c++ file storage service
 15. 支持全速模式和限速模式
 16. 权限控制
 17. 上传文件覆写
-18. 支持转录(主动下载)
+18. 支持转录(服务器上传下载)
 
 ## 安装教程
 
@@ -45,6 +45,11 @@ git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.
 window执行XEngine_WINEnv.bat 脚本.  
 Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
 macos执行:./XEngine_LINEnv.sh -i 3  
+
+#### sub module
+由于依赖的子模块,在你checkout仓库后,在仓库目录下执行下面的命令拉取子模块  
+git submodule init  
+git submodule update  
 
 #### Windows
 使用VS打开并且编译,支持WINDOWS 7SP1以上系统  

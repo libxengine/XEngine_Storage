@@ -32,7 +32,7 @@ feature list:
 15. support full speed and limit speed
 16. permission control
 17. upload file rewrite
-18. support convert record(Active download)
+18. support convert record(service upload and download)
 
 ## install
 
@@ -46,6 +46,11 @@ git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/
 window Exection XEngine_WINEnv.bat   
 Linux Exection:sudo ./XEngine_LINEnv.sh -i 3  
 Macos Exection:./XEngine_LINEnv.sh -i 3
+
+#### sub module
+Due to the dependent sub-modules, after you checkout the warehouse, execute the following command in the warehouse directory to pull the sub-modules  
+git submodule init  
+git submodule update  
 
 #### Windows
 use vs open and compile,suport windows 7sp1 and above  

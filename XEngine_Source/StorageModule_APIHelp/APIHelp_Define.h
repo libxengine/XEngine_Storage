@@ -95,6 +95,30 @@ extern "C" bool APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>* pStl_List
 *********************************************************************/
 extern "C" bool APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket);
 /********************************************************************
+函数名称：APIHelp_Distributed_GetPathKey
+函数功能：通过BUCKET名称查找对应路径
+ 参数.一：pStl_ListBucket
+  In/Out：In
+  类型：STL容器指针
+  可空：N
+  意思：输入要操作的BUCKET容器
+ 参数.二：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要匹配的BUCKET名称
+ 参数.三：ptszFilePath
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出找到的路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool APIHelp_Distributed_CTStorage(LPCXSTR lpszMsgBuffer, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, XENGINE_STORAGEBUCKET* pSt_StorageBucket);
+/********************************************************************
 函数名称：APIHelp_Distributed_UPStorage
 函数功能：通过分布式存储列表获得一个存储地址
  参数.一：pStl_ListBucket

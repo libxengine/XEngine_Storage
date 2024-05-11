@@ -470,3 +470,53 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(XCHAR* ptszMsgBuffe
 	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
 	return true;
 }
+/********************************************************************
+函数名称：Protocol_StoragePacket_Action
+函数功能：动作脚本封装器
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入管理器句柄
+ 参数.四：pSt_ActionInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要打包的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XNETHANDLE xhToken, XENGINE_ACTIONINFO* pSt_ActionInfo)
+{
+	Protocol_IsErrorOccur = false;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return false;
+	}
+	Json::Value st_JsonRoot;
+
+    st_JsonRoot["xhToken"] = (Json::Value::UInt64)xhToken;
+	st_JsonRoot["tszFileName"] = pSt_ActionInfo->tszFileName;
+	st_JsonRoot["tszFileUrl"] = pSt_ActionInfo->tszFileUrl;
+    st_JsonRoot["byType"] = pSt_ActionInfo->byType;
+    st_JsonRoot["tszBucketStr"] = pSt_ActionInfo->tszBucketStr;
+	//打包输出信息
+	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
+	return true;
+}

@@ -33,6 +33,10 @@ extern "C" bool Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG * 
 {
 	return m_ConfigJson.Config_Json_File(lpszConfigFile, pSt_ServerConfig);
 }
+extern "C" bool Config_Json_Version(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG * pSt_ServerConfig)
+{
+	return m_ConfigJson.Config_Json_Version(lpszConfigFile, pSt_ServerConfig);
+}
 extern "C" bool Config_Json_LoadBalance(LPCXSTR lpszConfigFile, XENGINE_LBCONFIG* pSt_ServerConfig)
 {
 	return m_ConfigJson.Config_Json_LoadBalance(lpszConfigFile, pSt_ServerConfig);

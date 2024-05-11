@@ -25,6 +25,7 @@ XHANDLE xhCenterHttp = NULL;
 
 XSOCKET hBroadSocket = 0;
 shared_ptr<std::thread> pSTDThread = NULL;
+shared_ptr<std::thread> pSTDThread_Action = NULL;
 
 XENGINE_SERVERCONFIG st_ServiceCfg;
 XENGINE_LBCONFIG st_LoadbalanceCfg;
@@ -69,6 +70,10 @@ void ServiceApp_Stop(int signo)
 		{
 			NetCore_BroadCast_Close(hBroadSocket);
 			pSTDThread->join();
+		}
+		if (NULL != pSTDThread_Action)
+		{
+			pSTDThread_Action->join();
 		}
 		exit(0);
 	}
@@ -443,12 +448,29 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，P2P存储服务配置为不启动"));
 	}
+	//Action转录
+	if (st_ServiceCfg.st_XAction.bEnable)
+	{
+		pSTDThread_Action = make_shared<std::thread>(Session_Action_Thread);
+		if (!pSTDThread_Action->joinable())
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动转录动作处理线程失败，错误：%d"), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动转录动作处理线程成功"));
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，转录动作没有启用"));
+	}
 	//发送信息报告
 	if (st_ServiceCfg.st_XReport.bEnable)
 	{
-		if (InfoReport_APIMachine_Send(st_ServiceCfg.st_XReport.tszAPIUrl))
+		if (InfoReport_APIMachine_Send(st_ServiceCfg.st_XReport.tszAPIUrl, st_ServiceCfg.st_XReport.tszServiceName))
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动信息报告给API服务器:%s 成功"), st_ServiceCfg.st_XReport.tszAPIUrl);
+			__int64x nTimeCount = 0;
+			InfoReport_APIMachine_GetTime(st_ServiceCfg.st_XReport.tszAPIUrl, st_ServiceCfg.st_XReport.tszServiceName, &nTimeCount);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动信息报告给API服务器:%s 成功,报告次数:%lld"), st_ServiceCfg.st_XReport.tszAPIUrl, nTimeCount);
 		}
 		else
 		{
@@ -507,6 +529,10 @@ XENGINE_EXITAPP:
 		{
 			NetCore_BroadCast_Close(hBroadSocket);
 			pSTDThread->join();
+		}
+		if (NULL != pSTDThread_Action)
+		{
+			pSTDThread_Action->join();
 		}
 	}
 #ifdef _MSC_BUILD

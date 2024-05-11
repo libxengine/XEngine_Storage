@@ -510,3 +510,96 @@ extern "C" bool Session_UPStroage_SetBoundary(LPCXSTR lpszClientAddr, LPCXSTR lp
 备注：
 *********************************************************************/
 extern "C" bool Session_UPStroage_SetBoundaryStart(LPCXSTR lpszClientAddr);
+/************************************************************************/
+/*                        存储会话导出的函数                            */
+/************************************************************************/
+/********************************************************************
+函数名称：Session_Action_Insert
+函数功能：插入一个会话到动作管理器
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要插入的句柄
+ 参数.二：xhAction
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入下载器句柄
+ 参数.三：pSt_ActionInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入插入的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Action_Insert(XNETHANDLE xhToken, XHANDLE xhAction, XENGINE_ACTIONINFO* pSt_ActionInfo);
+/********************************************************************
+函数名称：Session_Action_GetToken
+函数功能：获得一个下载器句柄
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的动作句柄
+返回值
+  类型：句柄型
+  意思：返回下载器句柄
+备注：
+*********************************************************************/
+extern "C" XHANDLE Session_Action_GetToken(XNETHANDLE xhToken);
+/********************************************************************
+函数名称：Session_Action_GetInfo
+函数功能：获取下载信息
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的动作句柄
+ 参数.二：pSt_ActionInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出内容
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Action_GetInfo(XNETHANDLE xhToken, XENGINE_ACTIONINFO* pSt_ActionInfo);
+/********************************************************************
+函数名称：Session_Action_GetAll
+函数功能：获得所有动作器句柄
+ 参数.一：pppxhToken
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出获取到的句柄列表
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Action_GetAll(XNETHANDLE*** pppxhToken, int* pInt_ListCount);
+/********************************************************************
+函数名称：Session_Action_Delete
+函数功能：删除一个动作管理器
+ 参数.一：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入要操作的动作句柄
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Action_Delete(XNETHANDLE xhToken);

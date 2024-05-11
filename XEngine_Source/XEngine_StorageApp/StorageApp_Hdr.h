@@ -60,8 +60,8 @@ using namespace std;
 #include "../StorageModule_Protocol/StorageProtocol_Error.h"
 #include "../StorageModule_APIHelp/APIHelp_Define.h"
 #include "../StorageModule_APIHelp/APIHelp_Error.h"
-#include "../StorageModule_InfoReport/InfoReport_Define.h"
-#include "../StorageModule_InfoReport/InfoReport_Error.h"
+#include "../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
+#include "../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
 
 #define STORAGE_LEAVETYPE_HEARTBEAT 1
 #define STORAGE_LEAVETYPE_BYSELF 2
@@ -96,6 +96,7 @@ extern XHANDLE xhCenterHttp;
 
 extern XSOCKET hBroadSocket;
 extern shared_ptr<std::thread> pSTDThread;
+extern shared_ptr<std::thread> pSTDThread_Action;
 
 extern XENGINE_SERVERCONFIG st_ServiceCfg;
 extern XENGINE_LBCONFIG st_LoadbalanceCfg;
@@ -108,6 +109,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "Storage_APPTask/Storage_TaskPass.h"
 #include "Storage_APPTask/Storage_TaskP2p.h"
 #include "Storage_APPTask/Storage_TaskManage.h"
+#include "Storage_APPTask/Storage_TaskAction.h"
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"Ws2_32.lib")
@@ -128,14 +130,14 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../x64/Debug/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_Protocol.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_Database.lib")
-#pragma comment(lib,"../x64/Debug/StorageModule_InfoReport.lib")
+#pragma comment(lib,"../x64/Debug/XEngine_InfoReport.lib")
 #else
 #pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Protocol.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_Database.lib")
-#pragma comment(lib,"../x64/Release/StorageModule_InfoReport.lib")
+#pragma comment(lib,"../x64/Release/XEngine_InfoReport.lib")
 #endif
 #else
 #ifdef _DEBUG
@@ -144,14 +146,14 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../Debug/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../Debug/StorageModule_Protocol.lib")
 #pragma comment(lib,"../Debug/StorageModule_Database.lib")
-#pragma comment(lib,"../Debug/StorageModule_InfoReport.lib")
+#pragma comment(lib,"../Debug/XEngine_InfoReport.lib")
 #else
 #pragma comment(lib,"../Release/StorageModule_Session.lib")
 #pragma comment(lib,"../Release/StorageModule_Config.lib")
 #pragma comment(lib,"../Release/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../Release/StorageModule_Protocol.lib")
 #pragma comment(lib,"../Release/StorageModule_Database.lib")
-#pragma comment(lib,"../Release/StorageModule_InfoReport.lib")
+#pragma comment(lib,"../Release/XEngine_InfoReport.lib")
 #endif
 #endif
 #endif

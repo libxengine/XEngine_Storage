@@ -57,8 +57,6 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 
 	LPCXSTR lpszMethodPost = _X("POST");
 	LPCXSTR lpszMethodOption = _X("OPTIONS");
-	LPCXSTR lpszMethodPass = _X("Pass");
-	LPCXSTR lpszMehtodManage = _X("Manage");
 
 	if (st_ServiceCfg.st_XAuth.bCHAuth)
 	{
@@ -118,6 +116,10 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 
 	if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
 	{
+		LPCXSTR lpszMethodPass = _X("Pass");
+		LPCXSTR lpszMehtodManage = _X("Manage");
+		LPCXSTR lpszMehtodAction = _X("Action");
+
 		if (!HttpProtocol_ServerHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIVersion, tszAPIMethod, tszAPIName))
 		{
 			st_HDRParam.bIsClose = true;
@@ -136,6 +138,10 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		else if (0 == _tcsxnicmp(lpszMehtodManage, tszAPIMethod, _tcsxlen(lpszMehtodManage)))
 		{
 			XEngine_Task_Manage(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
+		}
+		else if (0 == _tcsxnicmp(lpszMehtodAction, tszAPIMethod, _tcsxlen(lpszMehtodAction)))
+		{
+			Storage_TaskAction(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam);
 		}
 	}
 	else if (0 == _tcsxnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOption)))

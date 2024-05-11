@@ -3,6 +3,7 @@
 bool StorageApp_Config_Parament(int argc,char **argv)
 {
     LPCXSTR lpszBaseCfg = _X("./XEngine_Config/XEngine_Config.json");
+    LPCXSTR lpszVerCfg = _X("./XEngine_Config/XEngine_VersionConfig.json");
     LPCXSTR lpszLoadCfg = _X("./XEngine_Config/XEngine_LBConfig.json");
 
     if (NULL != st_ServiceCfg.st_XVer.pStl_ListStorage)
@@ -33,6 +34,11 @@ bool StorageApp_Config_Parament(int argc,char **argv)
     {
         printf("解析配置文件失败,Config_Json_File:%lX\n",Config_GetLastError());
         return false;
+    }
+    if (!Config_Json_Version(lpszVerCfg, &st_ServiceCfg))
+    {
+		printf("解析配置文件失败,Config_Json_Version:%lX\n", Config_GetLastError());
+		return false;
     }
 	if (!Config_Json_LoadBalance(lpszLoadCfg, &st_LoadbalanceCfg))
 	{
