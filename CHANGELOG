@@ -1,3 +1,17 @@
+XEngine_Storage V3.15.0.1001
+
+增加:用户上传下载动作支持
+更新:获取信息报告次数统计
+修改:信息报告和jsoncpp模块使用git submodule模式加载
+修改:分离了版本配置文件从主配置中
+修改:调整子方法名称位置
+
+added:upload and download action support
+update:get time count for report
+modify:info report and jsoncpp module depend git sub module
+modify:detach version configure from main configure
+modify:adjust sub method name location
+======================================================================================
 XEngine_Storage V3.14.0.1001
 
 增加:默认SSL的KEY文件
