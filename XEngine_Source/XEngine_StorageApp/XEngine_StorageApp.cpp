@@ -448,14 +448,21 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，P2P存储服务配置为不启动"));
 	}
-
-	pSTDThread_Action = make_shared<std::thread>(Session_Action_Thread);
-	if (!pSTDThread_Action->joinable())
+	//Action转录
+	if (st_ServiceCfg.st_XAction.bEnable)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动转录动作处理线程失败，错误：%d"), errno);
-		goto XENGINE_EXITAPP;
+		pSTDThread_Action = make_shared<std::thread>(Session_Action_Thread);
+		if (!pSTDThread_Action->joinable())
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动转录动作处理线程失败，错误：%d"), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动转录动作处理线程成功"));
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动转录动作处理线程成功"));
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，转录动作没有启用"));
+	}
 	//发送信息报告
 	if (st_ServiceCfg.st_XReport.bEnable)
 	{

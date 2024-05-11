@@ -235,6 +235,17 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XReport.bEnable = st_JsonReport["bEnable"].asBool();
 	_tcsxcpy(pSt_ServerConfig->st_XReport.tszServiceName, st_JsonReport["tszServiceName"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XReport.tszAPIUrl, st_JsonReport["tszAPIUrl"].asCString());
+
+	if (st_JsonRoot["XAction"].empty() || (3 != st_JsonRoot["XAction"].size()))
+	{
+		Config_IsErrorOccur = true;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_CREPORT;
+		return false;
+	}
+	Json::Value st_JsonXAction = st_JsonRoot["XAction"];
+	pSt_ServerConfig->st_XAction.bEnable = st_JsonXAction["bEnable"].asBool();
+	pSt_ServerConfig->st_XAction.nSDMax = st_JsonXAction["nSDMax"].asInt();
+	pSt_ServerConfig->st_XAction.nRVMax = st_JsonXAction["nRVMax"].asInt();
 	return true;
 }
 /********************************************************************

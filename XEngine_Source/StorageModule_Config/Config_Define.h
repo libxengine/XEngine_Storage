@@ -109,6 +109,12 @@ typedef struct tag_XEngine_ServerConfig
         XCHAR tszServiceName[128];
         bool bEnable;
     }st_XReport;
+	struct
+	{
+        int nSDMax;
+        int nRVMax;
+		bool bEnable;
+	}st_XAction;
     struct
     {
         list<string> *pStl_ListStorage;

@@ -74,7 +74,7 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,存储Key解析失败,URL:%s,路径:%s,Bucket:%s"), lpszClientAddr, st_ActionInfo.tszFileUrl, st_ActionInfo.tszFileName, st_ActionInfo.tszBucketStr);
 		return false;
 	}
-	_stprintf(tszFileName, _X("%s/%s"), st_StorageBucket.tszFilePath, st_ActionInfo.tszFileName);
+	_xstprintf(tszFileName, _X("%s/%s"), st_StorageBucket.tszFilePath, st_ActionInfo.tszFileName);
 	if (0 == _tcsxnicmp(lpszAPIDownload, lpszAPIName, _tcsxlen(lpszAPIDownload)))
 	{
 		XNETHANDLE xhToken = 0;
@@ -89,8 +89,8 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,下载文件失败,URL:%s,路径:%s,Bucket:%s"), lpszClientAddr, st_ActionInfo.tszFileUrl, tszFileName, st_ActionInfo.tszBucketStr);
 			return false;
 		}
+		APIClient_File_SetMaxSpeed(xhAction, st_ServiceCfg.st_XAction.nSDMax, st_ServiceCfg.st_XAction.nRVMax);
 		APIClient_File_Start(xhAction);
-		//APIClient_File_SetMaxSpeed(xhAction);
 		Session_Action_Insert(xhToken, xhAction, &st_ActionInfo);
 		Protocol_StoragePacket_Action(tszRVBuffer, &nRVLen, xhToken, &st_ActionInfo);
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
@@ -111,8 +111,8 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,下载文件失败,URL:%s,路径:%s,Bucket:%s"), lpszClientAddr, st_ActionInfo.tszFileUrl, tszFileName, st_ActionInfo.tszBucketStr);
 			return false;
 		}
+		APIClient_File_SetMaxSpeed(xhAction, st_ServiceCfg.st_XAction.nSDMax, st_ServiceCfg.st_XAction.nRVMax);
 		APIClient_File_Start(xhAction);
-		//APIClient_File_SetMaxSpeed(xhAction);
 		Session_Action_Insert(xhToken, xhAction, &st_ActionInfo);
 		Protocol_StoragePacket_Action(tszRVBuffer, &nRVLen, xhToken, &st_ActionInfo);
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
