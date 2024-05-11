@@ -96,6 +96,7 @@ extern XHANDLE xhCenterHttp;
 
 extern XSOCKET hBroadSocket;
 extern shared_ptr<std::thread> pSTDThread;
+extern shared_ptr<std::thread> pSTDThread_Action;
 
 extern XENGINE_SERVERCONFIG st_ServiceCfg;
 extern XENGINE_LBCONFIG st_LoadbalanceCfg;
