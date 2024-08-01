@@ -51,6 +51,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_InfoReport", "XEngi
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {F1736B3F-03A2-4FC7-B045-A12BA8D724FB}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tinyxml2", "XEngine_Depend\XEngine_Module\tinyxml2\tinyxml2.vcxproj", "{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -131,6 +133,14 @@ Global
 		{F6520D2C-BB8E-45BB-964B-F5D6A4318A89}.Release|x64.Build.0 = Release|x64
 		{F6520D2C-BB8E-45BB-964B-F5D6A4318A89}.Release|x86.ActiveCfg = Release|Win32
 		{F6520D2C-BB8E-45BB-964B-F5D6A4318A89}.Release|x86.Build.0 = Release|Win32
+		{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A}.Debug|x64.ActiveCfg = Debug|x64
+		{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A}.Debug|x64.Build.0 = Debug|x64
+		{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A}.Debug|x86.ActiveCfg = Debug|Win32
+		{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A}.Debug|x86.Build.0 = Debug|Win32
+		{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A}.Release|x64.ActiveCfg = Release|x64
+		{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A}.Release|x64.Build.0 = Release|x64
+		{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A}.Release|x86.ActiveCfg = Release|Win32
+		{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -138,6 +148,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {E456F23F-1E72-4ABD-AAA9-051B2F7FD728}
 		{F6520D2C-BB8E-45BB-964B-F5D6A4318A89} = {E456F23F-1E72-4ABD-AAA9-051B2F7FD728}
+		{4BF7CA78-A1DD-4C6A-8AC7-C3AEB528115A} = {E456F23F-1E72-4ABD-AAA9-051B2F7FD728}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B1A862E2-1FE4-4F3E-B84C-3479A0B3A783}
