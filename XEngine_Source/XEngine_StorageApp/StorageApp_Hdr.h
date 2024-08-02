@@ -63,6 +63,7 @@ using namespace std;
 #include "../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
 #include "../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
 
+
 #define STORAGE_LEAVETYPE_HEARTBEAT 1
 #define STORAGE_LEAVETYPE_BYSELF 2
 #define STORAGE_LEAVETYPE_CLOSE 3
@@ -110,6 +111,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "Storage_APPTask/Storage_TaskP2p.h"
 #include "Storage_APPTask/Storage_TaskManage.h"
 #include "Storage_APPTask/Storage_TaskAction.h"
+#include "Storage_APPTask/Storage_TaskWebdav.h"
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"Ws2_32.lib")

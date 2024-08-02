@@ -58,6 +58,8 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	LPCXSTR lpszMethodPost = _X("POST");
 	LPCXSTR lpszMethodOption = _X("OPTIONS");
 
+	LPCXSTR lpszMethodPropfind = _X("PROPFIND");
+
 	if (st_ServiceCfg.st_XAuth.bCHAuth)
 	{
 		XCHAR tszUserName[64];
@@ -144,12 +146,16 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			Storage_TaskAction(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam);
 		}
 	}
+	else if (0 == _tcsxnicmp(lpszMethodPropfind, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPropfind)))
+	{
+		Storage_TaskWebdav(lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
+	}
 	else if (0 == _tcsxnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOption)))
 	{
 		//用于心跳
 		st_HDRParam.bIsClose = true;
 		st_HDRParam.nHttpCode = 200;
-		LPCXSTR lpszHdrBuffer = _X("Allow: POST GET PUT OPTIONS\r\n");
+		LPCXSTR lpszHdrBuffer = _X("Allow: POST GET PUT PROPFIND PROPPATCH MKCOL COPY MOVE DELETE LOCK UNLOCK OPTIONS\r\n");
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求OPTIONS心跳方法成功"), lpszClientAddr);

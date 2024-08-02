@@ -19,3 +19,4 @@ EXPORTS
 	Protocol_StoragePacket_DirOperator
 	Protocol_StoragePacket_REQFile
 	Protocol_StoragePacket_Action
+	Protocol_StoragePacket_Propfind

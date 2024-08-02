@@ -25,9 +25,12 @@
 #endif
 #endif //PCH_H
 #include <json/json.h>
+#include <tinyxml2.h>
 #include <list>
 #include <unordered_map>
+#include <filesystem>
 using namespace std;
+using namespace tinyxml2;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
@@ -35,6 +38,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 #include "../XStorage_Protocol.h"
 #include "../StorageModule_Config/Config_Define.h"
 #include "../StorageModule_Config/Config_Error.h"
@@ -58,17 +63,22 @@ extern XLONG Protocol_dwErrorCode;
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
+#pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #ifdef _DEBUG
 #ifdef _WIN64
 #pragma comment(lib,"../x64/Debug/jsoncpp")
+#pragma comment(lib,"../x64/Debug/tinyxml2")
 #else
 #pragma comment(lib,"../Debug/jsoncpp")
+#pragma comment(lib,"../Debug/tinyxml2")
 #endif
 #else
 #ifdef _WIN64
 #pragma comment(lib,"../x64/Release/jsoncpp")
+#pragma comment(lib,"../x64/Release/tinyxml2")
 #else
 #pragma comment(lib,"../Release/jsoncpp")
+#pragma comment(lib,"../Release/tinyxml2")
 #endif
 #endif
 #endif

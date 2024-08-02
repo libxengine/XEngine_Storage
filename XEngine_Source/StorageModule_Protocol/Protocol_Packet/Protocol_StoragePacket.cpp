@@ -520,3 +520,88 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer
 	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
 	return true;
 }
+
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Propfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount)
+{
+	Protocol_IsErrorOccur = false;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return false;
+	}
+	// 创建一个 XML 文档
+	XMLDocument m_XMLDocument;
+	// XML 声明
+    XMLDeclaration* pSt_XMLDeclaration = m_XMLDocument.NewDeclaration(R"(xml version="1.0" encoding="utf-8")");
+	m_XMLDocument.InsertFirstChild(pSt_XMLDeclaration);
+
+	// 根元素 <multistatus>
+	XMLElement* pSt_XMLRoot = m_XMLDocument.NewElement("d:multistatus");
+	pSt_XMLRoot->SetAttribute("xmlns:d", "DAV:");
+	m_XMLDocument.InsertEndChild(pSt_XMLRoot);
+	
+    for (int i = 0; i < nFileCount; i++)
+    {
+		XCHAR tszFileName[MAX_PATH] = {};
+		SYSTEMAPI_FILE_ATTR st_FileAttr = {};
+		BaseLib_OperatorString_GetFileAndPath((*ppptszListFile)[i], NULL, tszFileName);
+		SystemApi_File_GetFileAttr((*ppptszListFile)[i], &st_FileAttr);
+
+		XCHAR tszGMTTime[64] = {};
+		BaseLib_OperatorTime_GMTTime(tszGMTTime, st_FileAttr.nModifyTime);
+
+		// 子元素 <response>
+		XMLElement* pSt_XMLResponse = m_XMLDocument.NewElement("d:response");
+		pSt_XMLRoot->InsertEndChild(pSt_XMLResponse);
+        //文件
+        XMLElement* pSt_XMLhref = m_XMLDocument.NewElement("d:href");
+        pSt_XMLhref->SetText((*ppptszListFile)[i] + 1);
+        pSt_XMLResponse->InsertEndChild(pSt_XMLhref);
+        //属性
+		XMLElement* pSt_XMLPropstat = m_XMLDocument.NewElement("d:propstat");
+        pSt_XMLResponse->InsertEndChild(pSt_XMLPropstat);
+        //属性内容
+		XMLElement* pSt_XMLProp = m_XMLDocument.NewElement("d:prop");
+        pSt_XMLPropstat->InsertEndChild(pSt_XMLProp);
+		//属性名称
+		XMLElement* pSt_XMLPropName = m_XMLDocument.NewElement("d:displayname");
+        pSt_XMLPropName->SetText(tszFileName);
+        pSt_XMLProp->InsertEndChild(pSt_XMLPropName);
+
+        if (st_FileAttr.bFile)
+        {
+            XCHAR tszFileSize[128] = {};
+            _xstprintf(tszFileSize, _X("%llu"), st_FileAttr.nFileSize);
+			//属性大小
+			XMLElement* pSt_XMLLength = m_XMLDocument.NewElement("d:getcontentlength");
+            pSt_XMLLength->SetText(tszFileSize);
+			pSt_XMLProp->InsertEndChild(pSt_XMLLength);
+			//属性修改时间
+			XMLElement* pSt_XMLModifyTime = m_XMLDocument.NewElement("d:getlastmodified");
+			pSt_XMLModifyTime->SetText(tszGMTTime);
+			pSt_XMLProp->InsertEndChild(pSt_XMLModifyTime);
+        }
+        else
+        {
+            //集合<d:resourcetype><d:collection/></d:resourcetype>
+			XMLElement* pSt_XMLResource = m_XMLDocument.NewElement("d:resourcetype");
+            pSt_XMLProp->InsertEndChild(pSt_XMLResource);
+
+			XMLElement* pSt_XMLCollection = m_XMLDocument.NewElement("d:collection");
+            pSt_XMLResource->InsertEndChild(pSt_XMLCollection);
+        }
+		//属性状态
+		XMLElement* pSt_XMLStatus = m_XMLDocument.NewElement("d:status");
+        pSt_XMLStatus->SetText("HTTP/1.1 200 OK");
+        pSt_XMLPropstat->InsertEndChild(pSt_XMLStatus);
+    }
+	// 将 XML 数据保存到字符串
+	XMLPrinter m_XMLPrinter;
+	m_XMLDocument.Print(&m_XMLPrinter);
+
+    *pInt_MsgLen = m_XMLPrinter.CStrSize();
+    memcpy(ptszMsgBuffer, m_XMLPrinter.CStr(), m_XMLPrinter.CStrSize());
+    return true;
+}

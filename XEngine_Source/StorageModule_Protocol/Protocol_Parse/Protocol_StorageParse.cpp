@@ -545,3 +545,10 @@ bool CProtocol_StorageParse::Protocol_StorageParse_Action(LPCXSTR lpszMsgBuffer,
     _tcsxcpy(pSt_ActionInfo->tszFileUrl, st_JsonRoot["tszFileUrl"].asCString());
 	return true;
 }
+bool CProtocol_StorageParse::Protocol_StorageParse_Propfind(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_ACTIONINFO* pSt_ActionInfo)
+{
+    Protocol_IsErrorOccur = false;
+
+
+    return true;
+}

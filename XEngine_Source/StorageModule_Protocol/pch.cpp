@@ -88,3 +88,7 @@ extern "C" bool Protocol_StoragePacket_Action(XCHAR * ptszMsgBuffer, int* pInt_M
 {
 	return m_StoragePacket.Protocol_StoragePacket_Action(ptszMsgBuffer, pInt_MsgLen, xhToken, pSt_ActionInfo);
 }
+extern "C" bool Protocol_StoragePacket_Propfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount)
+{
+	return m_StoragePacket.Protocol_StoragePacket_Propfind(ptszMsgBuffer, pInt_MsgLen, ppptszListFile, nFileCount);
+}
