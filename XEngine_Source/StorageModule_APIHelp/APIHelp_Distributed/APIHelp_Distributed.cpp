@@ -195,7 +195,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, 
 	//获得对应存储
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
-		if (0 == _tcsxncmp(tszKeyStr, stl_ListIterator->tszBuckKey, _tcsxlen(tszKeyStr)))
+		if (0 == _tcsxncmp(tszKeyStr, stl_ListIterator->tszBuckKey, _tcsxlen(stl_ListIterator->tszBuckKey)))
 		{
 			bFound = true;
 			*pSt_StorageBucket = *stl_ListIterator;
@@ -248,7 +248,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_CTStorage(LPCXSTR lpszMsgBuffer, 
 	//获得对应存储
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
-		if (0 == _tcsxncmp(lpszMsgBuffer, stl_ListIterator->tszBuckKey, _tcsxlen(lpszMsgBuffer)))
+		if (0 == _tcsxncmp(lpszMsgBuffer, stl_ListIterator->tszBuckKey, _tcsxlen(stl_ListIterator->tszBuckKey)))
 		{
 			bFound = true;
 			*pSt_StorageBucket = *stl_ListIterator;
@@ -303,7 +303,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 		list<XENGINE_STORAGEBUCKET>::const_iterator stl_ListIterator = pStl_ListBucket->begin();
 		for (; stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 		{
-			if (0 == _tcsxnicmp(pSt_StorageBucket->tszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(pSt_StorageBucket->tszBuckKey)))
+			if (0 == _tcsxnicmp(pSt_StorageBucket->tszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(stl_ListIterator->tszBuckKey)))
 			{
 				bFound = true;
 				*pSt_StorageBucket = *stl_ListIterator;
@@ -455,7 +455,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBU
 	bool bFound = false;
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
-		if (0 == _tcsxncmp(lpszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(lpszBuckKey)))
+		if (0 == _tcsxncmp(lpszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(stl_ListIterator->tszBuckKey)))
 		{
 			_tcsxcpy(ptszFilePath, stl_ListIterator->tszFilePath);
 			bFound = true;
