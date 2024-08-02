@@ -25,6 +25,8 @@ public:
 	bool APIHelp_Api_UrlParse(XCHAR*** ppptszList, int nListCount, XCHAR* ptszFileName, XCHAR* ptszKeyName);
 	bool APIHelp_Api_Boundary(XCHAR*** ppptszList, int nListCount, XCHAR* ptszBoundStr);
 	bool APIHelp_Api_GetDIRSize(LPCXSTR lpszDIRStr, __int64u* pInt_DIRSize);
+	bool APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl);
+	bool APIHelp_Api_UrlChange(XCHAR* ptszKeyStr, LPCXSTR lpszSourceStr, LPCXSTR lpszDestStr);
 protected:
 private:
 };

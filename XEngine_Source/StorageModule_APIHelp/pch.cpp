@@ -86,3 +86,11 @@ extern "C" bool APIHelp_Api_GetDIRSize(LPCXSTR lpszDIRStr, __int64u * pInt_DIRSi
 {
 	return m_APIHelp.APIHelp_Api_GetDIRSize(lpszDIRStr, pInt_DIRSize);
 }
+extern "C" bool APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl)
+{
+	return m_APIHelp.APIHelp_Api_UrlStr(ptszKeyStr, lpszUrl);
+}
+extern "C" bool APIHelp_Api_UrlChange(XCHAR* ptszKeyStr, LPCXSTR lpszSourceStr, LPCXSTR lpszDestStr)
+{
+	return m_APIHelp.APIHelp_Api_UrlChange(ptszKeyStr, lpszSourceStr, lpszDestStr);
+}
