@@ -119,7 +119,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,处理WEBDAV协议PROPFIND方法失败,文件没有找到,URL:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 			return false;
 		}
-		Protocol_StoragePacket_Propfind(tszRVBuffer, &nRVLen, &pptszListFile, nListCount);
+		Protocol_StoragePacket_Propfind(tszRVBuffer, &nRVLen, &pptszListFile, nListCount, st_StorageBucket.tszFilePath, st_StorageBucket.tszBuckKey);
 		nRVLen -= 1;
 
 		st_HDRParam.nHttpCode = 207;

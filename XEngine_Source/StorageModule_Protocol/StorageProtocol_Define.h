@@ -516,5 +516,42 @@ extern "C" bool Protocol_StoragePacket_REQFile(XCHAR * ptszMsgBuffer, int* pInt_
 备注：
 *********************************************************************/
 extern "C" bool Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XNETHANDLE xhToken, XENGINE_ACTIONINFO* pSt_ActionInfo);
-
-extern "C" bool Protocol_StoragePacket_Propfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount);
+/********************************************************************
+函数名称：Protocol_StoragePacket_Propfind
+函数功能：propfind协议打包处理函数
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出打好包的XML数据
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出大小
+ 参数.三：ppptszListFile
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入打包的文件列表
+ 参数.四：nFileCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.五：lpszBucketPath
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入BUCKET名称
+ 参数.六：lpszBucketKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入BUCKET的KEY
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Protocol_StoragePacket_Propfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount, LPCXSTR lpszBucketPath, LPCXSTR lpszBucketKey);

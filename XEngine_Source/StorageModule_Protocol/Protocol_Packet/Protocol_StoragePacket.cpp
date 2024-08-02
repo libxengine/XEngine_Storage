@@ -520,8 +520,45 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer
 	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
 	return true;
 }
-
-bool CProtocol_StoragePacket::Protocol_StoragePacket_Propfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount)
+/********************************************************************
+函数名称：Protocol_StoragePacket_Propfind
+函数功能：propfind协议打包处理函数
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出打好包的XML数据
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出大小
+ 参数.三：ppptszListFile
+  In/Out：In
+  类型：三级指针
+  可空：N
+  意思：输入打包的文件列表
+ 参数.四：nFileCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入列表个数
+ 参数.五：lpszBucketPath
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入BUCKET名称
+ 参数.六：lpszBucketKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入BUCKET的KEY
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Propfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount, LPCXSTR lpszBucketPath, LPCXSTR lpszBucketKey)
 {
 	Protocol_IsErrorOccur = false;
 
@@ -556,8 +593,17 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Propfind(XCHAR* ptszMsgBuff
 		XMLElement* pSt_XMLResponse = m_XMLDocument.NewElement("d:response");
 		pSt_XMLRoot->InsertEndChild(pSt_XMLResponse);
         //文件
+        XCHAR tszSourceStr[128] = {};
+        XCHAR tszDestStr[128] = {};
+        XCHAR tszFileAlis[MAX_PATH] = {};
+        _tcsxcpy(tszFileAlis, (*ppptszListFile)[i] + 1);
+
+        APIHelp_Api_UrlStr(tszSourceStr, (*ppptszListFile)[i]);
+        APIHelp_Api_UrlStr(tszDestStr, (*ppptszListFile)[i]);
+
+        APIHelp_Api_UrlChange(tszFileAlis, lpszBucketPath + 2, lpszBucketKey);
         XMLElement* pSt_XMLhref = m_XMLDocument.NewElement("d:href");
-        pSt_XMLhref->SetText((*ppptszListFile)[i] + 1);
+        pSt_XMLhref->SetText(tszFileAlis);
         pSt_XMLResponse->InsertEndChild(pSt_XMLhref);
         //属性
 		XMLElement* pSt_XMLPropstat = m_XMLDocument.NewElement("d:propstat");
