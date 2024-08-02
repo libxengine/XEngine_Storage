@@ -71,6 +71,7 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPUPLOADER 1
 #define STORAGE_NETTYPE_HTTPDOWNLOAD 2
 #define STORAGE_NETTYPE_HTTPCENTER 3
+#define STORAGE_NETTYPE_HTTPWEBDAV 4
 
 extern bool bIsRun;
 extern XHANDLE xhLog;
@@ -78,22 +79,28 @@ extern XHANDLE xhLog;
 extern XHANDLE xhHBDownload;
 extern XHANDLE xhHBUPLoader;
 extern XHANDLE xhHBCenter;
+extern XHANDLE xhHBWebdav;
 
 extern XHANDLE xhNetDownload;
 extern XHANDLE xhNetUPLoader;
 extern XHANDLE xhNetCenter;
+extern XHANDLE xhNetWebdav;
 
 extern XHANDLE xhUPPool;
 extern XHANDLE xhDLPool;
 extern XHANDLE xhCTPool;
+extern XHANDLE xhWDPool;
 
 extern XHANDLE xhDLSsl;
 extern XHANDLE xhUPSsl;
 extern XHANDLE xhCHSsl;
+extern XHANDLE xhWDSsl;
+
 extern XHANDLE xhLimit;
 extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
+extern XHANDLE xhWebdavHttp;
 
 extern XSOCKET hBroadSocket;
 extern shared_ptr<std::thread> pSTDThread;
@@ -107,11 +114,11 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "StorageApp_Download.h"
 #include "StorageApp_UPLoader.h"
 #include "StorageApp_Center.h"
+#include "StorageApp_Webdav.h"
 #include "Storage_APPTask/Storage_TaskPass.h"
 #include "Storage_APPTask/Storage_TaskP2p.h"
 #include "Storage_APPTask/Storage_TaskManage.h"
 #include "Storage_APPTask/Storage_TaskAction.h"
-#include "Storage_APPTask/Storage_TaskWebdav.h"
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"Ws2_32.lib")

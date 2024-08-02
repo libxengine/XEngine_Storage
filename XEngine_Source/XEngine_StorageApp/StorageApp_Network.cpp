@@ -130,6 +130,47 @@ void CALLBACK XEngine_Callback_CenterLeave(LPCXSTR lpszClientAddr, XSOCKET hSock
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPCENTER);
 }
 //////////////////////////////////////////////////////////////////////////
+bool CALLBACK XEngine_Callback_WebdavLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+{
+	if (st_ServiceCfg.st_XCert.bWDEnable)
+	{
+		OPenSsl_Server_AcceptEx(xhWDSsl, hSocket, lpszClientAddr);
+	}
+	HttpProtocol_Server_CreateClientEx(xhWebdavHttp, lpszClientAddr, 0);
+	SocketOpt_HeartBeat_InsertAddrEx(xhHBWebdav, lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端：%s，进入了服务器"), lpszClientAddr);
+	return true;
+}
+void CALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+	if (st_ServiceCfg.st_XCert.bWDEnable)
+	{
+		int nSLen = 0;
+		XCHAR* ptszMsgBuffer = NULL;
+		OPenSsl_Server_RecvMemoryEx(xhWDSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
+		if (!HttpProtocol_Server_InserQueueEx(xhWebdavHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
+			return;
+		}
+		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	}
+	else
+	{
+		if (!HttpProtocol_Server_InserQueueEx(xhWebdavHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
+			return;
+		}
+	}
+	SocketOpt_HeartBeat_ActiveAddrEx(xhHBWebdav, lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("WEBDAV客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
+}
+void CALLBACK XEngine_Callback_WebdavLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+{
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPWEBDAV);
+}
+//////////////////////////////////////////////////////////////////////////
 void CALLBACK XEngine_Callback_HBDownload(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPDOWNLOAD);
@@ -141,6 +182,10 @@ void CALLBACK XEngine_Callback_HBUPLoader(LPCXSTR lpszClientAddr, XSOCKET hSocke
 void CALLBACK XEngine_Callback_HBCenter(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPCENTER);
+}
+void CALLBACK XEngine_Callback_HBWebdav(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+{
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPWEBDAV);
 }
 //////////////////////////////////////////////////////////////////////////
 bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClientType)
@@ -225,6 +270,29 @@ bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClient
 		HttpProtocol_Server_CloseClinetEx(xhCenterHttp, lpszClientAddr);
 		OPenSsl_Server_CloseClientEx(xhCHSsl, lpszClientAddr);
 	}
+	else if (STORAGE_NETTYPE_HTTPWEBDAV == nClientType)
+	{
+		m_StrClient = _X("WEBDAV客户端");
+		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
+		{
+			m_StrLeaveMsg = _X("心跳超时");
+			NetCore_TCPXCore_CloseForClientEx(xhNetWebdav, lpszClientAddr);
+		}
+		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
+		{
+			m_StrLeaveMsg = _X("被动断开");
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBWebdav, lpszClientAddr);
+		}
+		else
+		{
+			m_StrLeaveMsg = _X("主动关闭");
+
+			NetCore_TCPXCore_CloseForClientEx(xhNetWebdav, lpszClientAddr);
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBWebdav, lpszClientAddr);
+		}
+		HttpProtocol_Server_CloseClinetEx(xhWebdavHttp, lpszClientAddr);
+		OPenSsl_Server_CloseClientEx(xhWDSsl, lpszClientAddr);
+	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("%s：%s，与服务器断开，原因：%s"), m_StrClient.c_str(), lpszClientAddr, m_StrLeaveMsg.c_str());
 	return true;
 }
@@ -291,6 +359,26 @@ bool XEngine_Net_SendMsg(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsg
 		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBCenter, lpszClientAddr);
+		}
+	}
+	else if (STORAGE_NETTYPE_HTTPWEBDAV == nType)
+	{
+		if (st_ServiceCfg.st_XCert.bWDEnable)
+		{
+			int nSLen = 0;
+			XCHAR* ptszMsgBuffer = NULL;
+
+			OPenSsl_Server_SendMemoryEx(xhWDSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
+			bRet = NetCore_TCPXCore_SendEx(xhNetWebdav, lpszClientAddr, ptszMsgBuffer, nSLen);
+			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+		}
+		else
+		{
+			bRet = NetCore_TCPXCore_SendEx(xhNetWebdav, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		}
+		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
+		{
+			SocketOpt_HeartBeat_ActiveAddrEx(xhHBWebdav, lpszClientAddr);
 		}
 	}
 	if (!bRet)

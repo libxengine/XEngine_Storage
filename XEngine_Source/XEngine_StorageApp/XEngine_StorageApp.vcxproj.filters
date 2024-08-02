@@ -51,8 +51,8 @@
     <ClCompile Include="Storage_APPTask\Storage_TaskAction.cpp">
       <Filter>源文件\Storage_APPTask</Filter>
     </ClCompile>
-    <ClCompile Include="Storage_APPTask\Storage_TaskWebdav.cpp">
-      <Filter>源文件\Storage_APPTask</Filter>
+    <ClCompile Include="StorageApp_Webdav.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,8 +86,8 @@
     <ClInclude Include="Storage_APPTask\Storage_TaskAction.h">
       <Filter>头文件\Storage_APPTask</Filter>
     </ClInclude>
-    <ClInclude Include="Storage_APPTask\Storage_TaskWebdav.h">
-      <Filter>头文件\Storage_APPTask</Filter>
+    <ClInclude Include="StorageApp_Webdav.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

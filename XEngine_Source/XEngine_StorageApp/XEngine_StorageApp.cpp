@@ -6,22 +6,28 @@ XHANDLE xhLog = NULL;
 XHANDLE xhHBDownload = NULL;
 XHANDLE xhHBUPLoader = NULL;
 XHANDLE xhHBCenter = NULL;
+XHANDLE xhHBWebdav = NULL;
 
 XHANDLE xhNetDownload = NULL;
 XHANDLE xhNetUPLoader = NULL;
 XHANDLE xhNetCenter = NULL;
+XHANDLE xhNetWebdav = NULL;
 
 XHANDLE xhUPPool = NULL;
 XHANDLE xhDLPool = NULL;
 XHANDLE xhCTPool = NULL;
+XHANDLE xhWDPool = NULL;
 
 XHANDLE xhDLSsl = NULL;
 XHANDLE xhUPSsl = NULL;
 XHANDLE xhCHSsl = NULL;
+XHANDLE xhWDSsl = NULL;
+
 XHANDLE xhLimit = NULL;
 XHANDLE xhUPHttp = NULL;
 XHANDLE xhDLHttp = NULL;
 XHANDLE xhCenterHttp = NULL;
+XHANDLE xhWebdavHttp = NULL;
 
 XSOCKET hBroadSocket = 0;
 shared_ptr<std::thread> pSTDThread = NULL;
@@ -40,22 +46,27 @@ void ServiceApp_Stop(int signo)
 		HttpProtocol_Server_DestroyEx(xhUPHttp);
 		HttpProtocol_Server_DestroyEx(xhDLHttp);
 		HttpProtocol_Server_DestroyEx(xhCenterHttp);
+		HttpProtocol_Server_DestroyEx(xhWebdavHttp);
 
 		OPenSsl_Server_StopEx(xhDLSsl);
 		OPenSsl_Server_StopEx(xhUPSsl);
 		OPenSsl_Server_StopEx(xhCHSsl);
+		OPenSsl_Server_StopEx(xhWDSsl);
 
 		NetCore_TCPXCore_DestroyEx(xhNetDownload);
 		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
 		NetCore_TCPXCore_DestroyEx(xhNetCenter);
+		NetCore_TCPXCore_DestroyEx(xhNetWebdav);
 
 		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
 		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
 		SocketOpt_HeartBeat_DestoryEx(xhHBCenter);
+		SocketOpt_HeartBeat_DestoryEx(xhHBWebdav);
 
 		ManagePool_Thread_NQDestroy(xhUPPool);
 		ManagePool_Thread_NQDestroy(xhDLPool);
 		ManagePool_Thread_NQDestroy(xhCTPool);
+		ManagePool_Thread_NQDestroy(xhWDPool);
 
 		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
@@ -123,6 +134,7 @@ int main(int argc, char** argv)
 	THREADPOOL_PARAMENT** ppSt_ListUPThread;
 	THREADPOOL_PARAMENT** ppSt_ListDLThread;
 	THREADPOOL_PARAMENT** ppSt_ListCTThread;
+	THREADPOOL_PARAMENT** ppSt_ListWDThread;
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceCfg, '\0', sizeof(XENGINE_SERVERCONFIG));
@@ -200,6 +212,14 @@ int main(int argc, char** argv)
 			goto XENGINE_EXITAPP;
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化业务管理服务成功,时间:%d,次数:%d"), st_ServiceCfg.st_XTime.nCenterTimeOut, st_ServiceCfg.st_XTime.nTimeCheck);
+
+		xhHBWebdav = SocketOpt_HeartBeat_InitEx(st_ServiceCfg.st_XTime.nWebdavTimeOut, st_ServiceCfg.st_XTime.nTimeCheck, XEngine_Callback_HBWebdav);
+		if (NULL == xhHBCenter)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，初始化WEBDAV服务失败，错误：%lX"), NetCore_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化WEBDAV服务成功,时间:%d,次数:%d"), st_ServiceCfg.st_XTime.nWebdavTimeOut, st_ServiceCfg.st_XTime.nTimeCheck);
 	}
 	else
 	{
@@ -420,6 +440,66 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动HTTP业务任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nCenterThread);
 	}
+	//WEBDAV
+	if (st_ServiceCfg.nWebdavPort > 0)
+	{
+		xhWebdavHttp = HttpProtocol_Server_InitEx(lpszHTTPCode, lpszHTTPMime, st_ServiceCfg.st_XMax.nWebdavThread);
+		if (NULL == xhWebdavHttp)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，初始化WEBDAV服务失败，错误：%lX"), HttpProtocol_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化WEBDAV服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nWebdavThread);
+
+		if (st_ServiceCfg.st_XCert.bWDEnable)
+		{
+			if (_tcsxlen(st_ServiceCfg.st_XCert.tszCertServer) > 0)
+			{
+				xhWDSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+			}
+			else
+			{
+				xhWDSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+			}
+			if (NULL == xhWDSsl)
+			{
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动WEBDAV SSL服务失败，错误：%lX"), Session_GetLastError());
+				goto XENGINE_EXITAPP;
+			}
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动WEBDAV SSL服务成功,证书链:%s,证书Key:%s"), st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertKey);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，检测到没有启用WEBDAV SSL服务"));
+		}
+
+		xhNetWebdav = NetCore_TCPXCore_StartEx(st_ServiceCfg.nWebdavPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, false, st_ServiceCfg.bReuseraddr);
+		if (NULL == xhNetWebdav)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动WEBDAV网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nWebdavPort, NetCore_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动WEBDAV网络服务成功，端口：%d,IO线程个数:%d"), st_ServiceCfg.nWebdavPort, st_ServiceCfg.st_XMax.nIOThread);
+		NetCore_TCPXCore_RegisterCallBackEx(xhNetWebdav, XEngine_Callback_WebdavLogin, XEngine_Callback_WebdavRecv, XEngine_Callback_WebdavLeave);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，注册WEBDAV网络服务事件成功！"));
+
+		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListWDThread, st_ServiceCfg.st_XMax.nWebdavThread, sizeof(THREADPOOL_PARAMENT));
+		for (int i = 0; i < st_ServiceCfg.st_XMax.nWebdavThread; i++)
+		{
+			int* pInt_Pos = new int;
+			*pInt_Pos = i;
+
+			ppSt_ListWDThread[i]->lParam = pInt_Pos;
+			ppSt_ListWDThread[i]->fpCall_ThreadsTask = XEngine_Webdav_HTTPThread;
+		}
+		xhWDPool = ManagePool_Thread_NQCreate(&ppSt_ListWDThread, st_ServiceCfg.st_XMax.nWebdavThread);
+		if (NULL == xhWDPool)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动WEBDAV处理线程池失败，错误：%d"), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动WEBDAV任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nWebdavThread);
+	}
 	//只有使用了数据库,才启用P2P
 	if (st_ServiceCfg.st_P2xp.bEnable)
 	{
@@ -499,22 +579,27 @@ XENGINE_EXITAPP:
 		HttpProtocol_Server_DestroyEx(xhUPHttp);
 		HttpProtocol_Server_DestroyEx(xhDLHttp);
 		HttpProtocol_Server_DestroyEx(xhCenterHttp);
+		HttpProtocol_Server_DestroyEx(xhWebdavHttp);
 
 		OPenSsl_Server_StopEx(xhDLSsl);
 		OPenSsl_Server_StopEx(xhUPSsl);
 		OPenSsl_Server_StopEx(xhCHSsl);
+		OPenSsl_Server_StopEx(xhWDSsl);
 
 		NetCore_TCPXCore_DestroyEx(xhNetDownload);
 		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
 		NetCore_TCPXCore_DestroyEx(xhNetCenter);
+		NetCore_TCPXCore_DestroyEx(xhNetWebdav);
 
 		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
 		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
 		SocketOpt_HeartBeat_DestoryEx(xhHBCenter);
+		SocketOpt_HeartBeat_DestoryEx(xhHBWebdav);
 
 		ManagePool_Thread_NQDestroy(xhUPPool);
 		ManagePool_Thread_NQDestroy(xhDLPool);
 		ManagePool_Thread_NQDestroy(xhCTPool);
+		ManagePool_Thread_NQDestroy(xhWDPool);
 
 		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);

@@ -19,6 +19,7 @@ typedef struct tag_XEngine_ServerConfig
     bool bDeamon;
     bool bReuseraddr;
     int nCenterPort;
+    int nWebdavPort;
     int nStorageDLPort;
     int nStorageUPPort;
     struct 
@@ -31,6 +32,7 @@ typedef struct tag_XEngine_ServerConfig
         int nMaxQueue;
         int nIOThread;
         int nCenterThread;
+        int nWebdavThread;
         int nStorageDLThread;
         int nStorageUPThread;
     }st_XMax;
@@ -41,6 +43,7 @@ typedef struct tag_XEngine_ServerConfig
         int nTimeCheck;
         int nCenterTimeOut;
         int nStorageTimeOut;
+        int nWebdavTimeOut;
     }st_XTime;
     struct
     {
@@ -102,6 +105,7 @@ typedef struct tag_XEngine_ServerConfig
         bool bDLEnable;
         bool bUPEnable;
         bool bCHEnable;
+        bool bWDEnable;
     }st_XCert;
     struct  
     {

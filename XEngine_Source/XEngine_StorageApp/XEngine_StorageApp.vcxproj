@@ -157,11 +157,11 @@
     <ClCompile Include="StorageApp_Download.cpp" />
     <ClCompile Include="StorageApp_Network.cpp" />
     <ClCompile Include="StorageApp_UPLoader.cpp" />
+    <ClCompile Include="StorageApp_Webdav.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskAction.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskManage.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskP2p.cpp" />
     <ClCompile Include="Storage_APPTask\Storage_TaskPass.cpp" />
-    <ClCompile Include="Storage_APPTask\Storage_TaskWebdav.cpp" />
     <ClCompile Include="XEngine_StorageApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,11 +171,11 @@
     <ClInclude Include="StorageApp_Hdr.h" />
     <ClInclude Include="StorageApp_Network.h" />
     <ClInclude Include="StorageApp_UPLoader.h" />
+    <ClInclude Include="StorageApp_Webdav.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskAction.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskManage.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskP2p.h" />
     <ClInclude Include="Storage_APPTask\Storage_TaskPass.h" />
-    <ClInclude Include="Storage_APPTask\Storage_TaskWebdav.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

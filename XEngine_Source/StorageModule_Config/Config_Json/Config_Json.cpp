@@ -84,10 +84,11 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	_tcsxcpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asInt();
 	pSt_ServerConfig->nCenterPort = st_JsonRoot["nCenterPort"].asInt();
+	pSt_ServerConfig->nWebdavPort = st_JsonRoot["nWebdavPort"].asInt();
 	pSt_ServerConfig->nStorageDLPort = st_JsonRoot["nStorageDLPort"].asInt();
 	pSt_ServerConfig->nStorageUPPort = st_JsonRoot["nStorageUPPort"].asInt();
 
-	if (st_JsonRoot["XMax"].empty() || (6 != st_JsonRoot["XMax"].size()))
+	if (st_JsonRoot["XMax"].empty() || (7 != st_JsonRoot["XMax"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XMAX;
@@ -100,8 +101,9 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XMax.nCenterThread = st_JsonXMax["CenterThread"].asInt();
 	pSt_ServerConfig->st_XMax.nStorageUPThread = st_JsonXMax["nStorageUPThread"].asInt();
 	pSt_ServerConfig->st_XMax.nStorageDLThread = st_JsonXMax["nStorageDLThread"].asInt();
+	pSt_ServerConfig->st_XMax.nWebdavThread = st_JsonXMax["nWebdavThread"].asInt();
 
-	if (st_JsonRoot["XTime"].empty() || (5 != st_JsonRoot["XTime"].size()))
+	if (st_JsonRoot["XTime"].empty() || (6 != st_JsonRoot["XTime"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XTIME;
@@ -113,6 +115,7 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XTime.nTimeCheck = st_JsonXTime["nTimeCheck"].asInt();
 	pSt_ServerConfig->st_XTime.nCenterTimeOut = st_JsonXTime["nCenterTimeOut"].asInt();
 	pSt_ServerConfig->st_XTime.nStorageTimeOut = st_JsonXTime["nStorageTimeOut"].asInt();
+	pSt_ServerConfig->st_XTime.nWebdavTimeOut = st_JsonXTime["nWebdavTimeOut"].asInt();
 
 	if (st_JsonRoot["XLog"].empty() || (3 != st_JsonRoot["XLog"].size()))
 	{
@@ -202,7 +205,7 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_P2xp.nSDPort = st_JsonP2xp["nSDPort"].asInt();
 	pSt_ServerConfig->st_P2xp.nRVPort = st_JsonP2xp["nRVPort"].asInt();
 
-	if (st_JsonRoot["XCert"].empty() || (6 != st_JsonRoot["XCert"].size()))
+	if (st_JsonRoot["XCert"].empty() || (7 != st_JsonRoot["XCert"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_CERT;
@@ -212,6 +215,8 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XCert.bDLEnable = st_JsonCert["bDLEnable"].asBool();
 	pSt_ServerConfig->st_XCert.bUPEnable = st_JsonCert["bUPEnable"].asBool();
 	pSt_ServerConfig->st_XCert.bCHEnable = st_JsonCert["bCHEnable"].asBool();
+	pSt_ServerConfig->st_XCert.bWDEnable = st_JsonCert["bWDEnable"].asBool();
+
 	if (!st_JsonCert["tszCertChain"].isNull())
 	{
 		_tcsxcpy(pSt_ServerConfig->st_XCert.tszCertChain, st_JsonCert["tszCertChain"].asCString());
