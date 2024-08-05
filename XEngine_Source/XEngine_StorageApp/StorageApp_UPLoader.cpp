@@ -51,7 +51,9 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
 	LPCXSTR lpszMethodPost = _X("POST");
-	if (0 != _tcsxncmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
+	LPCXSTR lpszMethodPut = _X("PUT");
+
+	if ((0 != _tcsxncmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost))) && (0 != _tcsxncmp(lpszMethodPut, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPut))))
 	{
 		st_HDRParam.bIsClose = true;
 		st_HDRParam.nHttpCode = 405;
