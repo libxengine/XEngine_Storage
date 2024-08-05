@@ -74,4 +74,13 @@ typedef struct
 	XCHAR tszBucketStr[MAX_PATH];    //存储的KEY
 	XBYTE byType;                    //操作类型,0 HTTP,1 FTP,2 BT
 }XENGINE_ACTIONINFO;
+//WEBDAV协议
+typedef struct
+{
+	XCHAR tszToken[MAX_PATH];                 //令牌
+	XCHAR tszOwner[128];                 //所属用户
+	XCHAR tszTimeout[64];                //超时时间
+	XBYTE byLockType;                    //0未知,1独占,2共享
+	XBYTE byLockOP;                      //0未知,1写,2读
+}XENGINE_WEBDAVLOCK;
 #pragma pack(pop)

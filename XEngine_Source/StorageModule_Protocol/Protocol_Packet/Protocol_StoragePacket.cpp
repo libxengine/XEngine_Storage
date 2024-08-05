@@ -521,7 +521,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer
 	return true;
 }
 /********************************************************************
-函数名称：Protocol_StoragePacket_Propfind
+函数名称：Protocol_StoragePacket_WDPropfind
 函数功能：propfind协议打包处理函数
  参数.一：ptszMsgBuffer
   In/Out：Out
@@ -558,7 +558,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer
   意思：是否成功
 备注：
 *********************************************************************/
-bool CProtocol_StoragePacket::Protocol_StoragePacket_Propfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount, LPCXSTR lpszBucketPath, LPCXSTR lpszBucketKey)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount, LPCXSTR lpszBucketPath, LPCXSTR lpszBucketKey)
 {
 	Protocol_IsErrorOccur = false;
 
@@ -651,4 +651,107 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Propfind(XCHAR* ptszMsgBuff
     *pInt_MsgLen = m_XMLPrinter.CStrSize();
     memcpy(ptszMsgBuffer, m_XMLPrinter.CStr(), m_XMLPrinter.CStrSize());
     return true;
+}
+/********************************************************************
+函数名称：Protocol_StoragePacket_WDLock
+函数功能：webdav锁协议封装
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pSt_WDLock
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入要打包的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StoragePacket::Protocol_StoragePacket_WDLock(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_WEBDAVLOCK* pSt_WDLock)
+{
+	Protocol_IsErrorOccur = false;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return false;
+	}
+	// 创建一个 XML 文档
+	XMLDocument m_XMLDocument;
+	// XML 声明
+	XMLDeclaration* pSt_XMLDeclaration = m_XMLDocument.NewDeclaration(R"(xml version="1.0" encoding="utf-8")");
+	m_XMLDocument.InsertFirstChild(pSt_XMLDeclaration);
+
+	// 根元素 <multistatus>
+	XMLElement* pSt_XMLRoot = m_XMLDocument.NewElement("d:prop");
+	pSt_XMLRoot->SetAttribute("xmlns:d", "DAV:");
+	m_XMLDocument.InsertEndChild(pSt_XMLRoot);
+	// 子元素 <lockdiscovery>
+	XMLElement* pSt_XMLLockDiscovery = m_XMLDocument.NewElement("D:lockdiscovery");
+	pSt_XMLRoot->InsertEndChild(pSt_XMLLockDiscovery);
+	// 子元素 <activelock>
+	XMLElement* pSt_XMLLockActive = m_XMLDocument.NewElement("D:activelock");
+	pSt_XMLLockDiscovery->InsertEndChild(pSt_XMLLockActive);
+	// 子元素 <locktype>
+	XMLElement* pSt_XMLLockType = m_XMLDocument.NewElement("D:locktype");
+	pSt_XMLLockActive->InsertEndChild(pSt_XMLLockType);
+	if (1 == pSt_WDLock->byLockOP)
+	{
+		XMLElement* pSt_XMLLockWrite = m_XMLDocument.NewElement("D:write");
+		pSt_XMLLockType->InsertEndChild(pSt_XMLLockWrite);
+	}
+	else if (2 == pSt_WDLock->byLockOP)
+	{
+		XMLElement* pSt_XMLLockRead = m_XMLDocument.NewElement("D:read");
+		pSt_XMLLockType->InsertEndChild(pSt_XMLLockRead);
+	}
+	// 子元素 <lockscope>
+	XMLElement* pSt_XMLLockScope = m_XMLDocument.NewElement("D:lockscope");
+	pSt_XMLLockActive->InsertEndChild(pSt_XMLLockScope);
+	if (1 == pSt_WDLock->byLockType)
+	{
+		XMLElement* pSt_XMLLockExclusive = m_XMLDocument.NewElement("D:exclusive");
+		pSt_XMLLockScope->InsertEndChild(pSt_XMLLockExclusive);
+	}
+	else if (2 == pSt_WDLock->byLockType)
+	{
+		XMLElement* pSt_XMLLockShared = m_XMLDocument.NewElement("D:shared");
+		pSt_XMLLockScope->InsertEndChild(pSt_XMLLockShared);
+	}
+	// 子元素 <depth>
+	XMLElement* pSt_XMLDepth = m_XMLDocument.NewElement("D:depth");
+	pSt_XMLDepth->SetText(_X("Infinity"));
+	pSt_XMLLockActive->InsertEndChild(pSt_XMLDepth);
+	// 子元素 <owner>
+	XMLElement* pSt_XMLOwner = m_XMLDocument.NewElement("D:owner");
+	pSt_XMLLockActive->InsertEndChild(pSt_XMLOwner);
+	XMLElement* pSt_XMHRef = m_XMLDocument.NewElement("D:href");
+	pSt_XMHRef->SetText(pSt_WDLock->tszOwner);
+	pSt_XMLOwner->InsertEndChild(pSt_XMHRef);
+	// 子元素 <timeout>
+	XMLElement* pSt_XMLTimeout = m_XMLDocument.NewElement("D:timeout");
+	pSt_XMLTimeout->SetText(pSt_WDLock->tszTimeout);
+	pSt_XMLLockActive->InsertEndChild(pSt_XMLTimeout);
+	// 子元素 <locktoken>
+	XMLElement* pSt_XMLLockToken = m_XMLDocument.NewElement("D:locktoken");
+	pSt_XMLLockActive->InsertEndChild(pSt_XMLLockToken);
+	XMLElement* pSt_XMHTokenRef = m_XMLDocument.NewElement("D:href");
+	pSt_XMHTokenRef->SetText(pSt_WDLock->tszToken);
+	pSt_XMLLockToken->InsertEndChild(pSt_XMHTokenRef);
+	// 将 XML 数据保存到字符串
+	XMLPrinter m_XMLPrinter;
+	m_XMLDocument.Print(&m_XMLPrinter);
+
+	*pInt_MsgLen = m_XMLPrinter.CStrSize();
+	memcpy(ptszMsgBuffer, m_XMLPrinter.CStr(), m_XMLPrinter.CStrSize());
+	return true;
 }

@@ -228,7 +228,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 				}
 				//文件是否可写
 				FILE* pSt_File = _xtfopen(tszFileDir, _X("wb"));
-				if (NULL != pSt_File)
+				if (NULL == pSt_File)
 				{
 					st_HDRParam.bIsClose = true;
 					st_HDRParam.nHttpCode = 403;

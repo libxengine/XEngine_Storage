@@ -3,6 +3,7 @@
 #include "Session_Stroage/Session_UPStroage.h"
 #include "Session_User/Session_User.h"
 #include "Session_Action/Session_Action.h"
+#include "Session_Webdav/Session_Webdav.h"
 /********************************************************************
 //    Created:     2021/06/02  14:38:34
 //    File Name:   D:\XEngine_Storage\StorageModule_Session\pch.cpp
@@ -21,6 +22,7 @@ CSession_DLStroage m_DLStorage;
 CSession_UPStroage m_UPStorage;
 CSession_User m_User;
 CSession_Action m_Action;
+CSession_Webdav m_Webdav;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义机器
 //////////////////////////////////////////////////////////////////////////
@@ -160,4 +162,19 @@ extern "C" bool Session_Action_GetAll(XNETHANDLE * **pppxhToken, int* pInt_ListC
 extern "C" bool Session_Action_Delete(XNETHANDLE xhToken)
 {
 	return m_Action.Session_Action_Delete(xhToken);
+}
+/************************************************************************/
+/*                        WEBDAV会话导出的函数                          */
+/************************************************************************/
+extern "C" bool Session_Webdav_Insert(LPCXSTR lpszFileName, XENGINE_WEBDAVLOCK* pSt_WDLocker, int nTimeout)
+{
+	return m_Webdav.Session_Webdav_Insert(lpszFileName, pSt_WDLocker, nTimeout);
+}
+extern "C" bool Session_Webdav_Get(LPCXSTR lpszFileName, XENGINE_WEBDAVLOCK* pSt_WDLocker)
+{
+	return m_Webdav.Session_Webdav_Get(lpszFileName, pSt_WDLocker);
+}
+extern "C" bool Session_Webdav_Delete(LPCXSTR lpszFileName)
+{
+	return m_Webdav.Session_Webdav_Delete(lpszFileName);
 }

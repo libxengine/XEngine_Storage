@@ -603,3 +603,64 @@ extern "C" bool Session_Action_GetAll(XNETHANDLE*** pppxhToken, int* pInt_ListCo
 备注：
 *********************************************************************/
 extern "C" bool Session_Action_Delete(XNETHANDLE xhToken);
+/************************************************************************/
+/*                        WEBDAV会话导出的函数                          */
+/************************************************************************/
+//////////////////////////////////////////////////////////////////////////
+/********************************************************************
+函数名称：Session_Webdav_Insert
+函数功能：插入一个会话
+ 参数.一：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要插入的名称
+ 参数.二：pSt_WDLocker
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：输入插入的内容
+ 参数.三：nTimeout
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入超时时间
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Webdav_Insert(LPCXSTR lpszFileName, XENGINE_WEBDAVLOCK* pSt_WDLocker, int nTimeout = 3600);
+/********************************************************************
+函数名称：Session_Webdav_Get
+函数功能：获取信息
+ 参数.一：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的文件
+ 参数.二：pSt_WDLocker
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出获取到的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Webdav_Get(LPCXSTR lpszFileName, XENGINE_WEBDAVLOCK* pSt_WDLocker);
+/********************************************************************
+函数名称：Session_Webdav_Delete
+函数功能：删除一个会话
+ 参数.一：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的文件
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_Webdav_Delete(LPCXSTR lpszFileName);
