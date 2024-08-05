@@ -18,4 +18,3 @@ EXPORTS
 	APIHelp_Api_Boundary
 	APIHelp_Api_GetDIRSize
 	APIHelp_Api_UrlStr
-	APIHelp_Api_UrlChange

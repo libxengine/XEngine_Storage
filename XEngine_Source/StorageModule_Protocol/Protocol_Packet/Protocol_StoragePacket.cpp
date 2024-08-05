@@ -601,7 +601,8 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Propfind(XCHAR* ptszMsgBuff
         APIHelp_Api_UrlStr(tszSourceStr, (*ppptszListFile)[i]);
         APIHelp_Api_UrlStr(tszDestStr, (*ppptszListFile)[i]);
 
-        APIHelp_Api_UrlChange(tszFileAlis, lpszBucketPath + 2, lpszBucketKey);
+        int nRLen = 0;
+        BaseLib_OperatorString_Replace(tszFileAlis, &nRLen, lpszBucketPath + 2, lpszBucketKey, true);
         XMLElement* pSt_XMLhref = m_XMLDocument.NewElement("d:href");
         pSt_XMLhref->SetText(tszFileAlis);
         pSt_XMLResponse->InsertEndChild(pSt_XMLhref);
