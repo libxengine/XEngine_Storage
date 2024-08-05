@@ -138,6 +138,7 @@ typedef struct
         bool bCreateDir;
         bool bRewrite;
         bool bUPLimit;
+        bool bUPReady;
     }st_PermissionFlags;
 }XENGINE_STORAGEBUCKET;
 typedef struct
