@@ -123,7 +123,6 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			return false;
 		}
 		Protocol_StoragePacket_WDPropfind(tszRVBuffer, &nRVLen, &pptszListFile, nListCount, st_StorageBucket.tszFilePath, st_StorageBucket.tszBuckKey);
-		nRVLen -= 1;
 
 		st_HDRParam.nHttpCode = 207;
 		_tcsxcpy(st_HDRParam.tszMimeType, _X("xml"));
@@ -210,7 +209,6 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		}
 		Session_Webdav_Insert(pSt_HTTPParam->tszHttpUri, &st_WDLock);
 		Protocol_StoragePacket_WDLock(tszRVBuffer, &nRVLen, &st_WDLock);
-		nRVLen -= 1;
 
 		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);

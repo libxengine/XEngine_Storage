@@ -706,8 +706,8 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBu
 	XMLPrinter m_XMLPrinter;
 	m_XMLDocument.Print(&m_XMLPrinter);
 
-    *pInt_MsgLen = m_XMLPrinter.CStrSize();
-    memcpy(ptszMsgBuffer, m_XMLPrinter.CStr(), m_XMLPrinter.CStrSize());
+    *pInt_MsgLen = m_XMLPrinter.CStrSize() - 1;
+    memcpy(ptszMsgBuffer, m_XMLPrinter.CStr(), *pInt_MsgLen);
     return true;
 }
 /********************************************************************
@@ -809,7 +809,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDLock(XCHAR* ptszMsgBuffer
 	XMLPrinter m_XMLPrinter;
 	m_XMLDocument.Print(&m_XMLPrinter);
 
-	*pInt_MsgLen = m_XMLPrinter.CStrSize();
-	memcpy(ptszMsgBuffer, m_XMLPrinter.CStr(), m_XMLPrinter.CStrSize());
+	*pInt_MsgLen = m_XMLPrinter.CStrSize() - 1;
+	memcpy(ptszMsgBuffer, m_XMLPrinter.CStr(), *pInt_MsgLen);
 	return true;
 }
