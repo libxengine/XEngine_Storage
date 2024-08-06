@@ -208,8 +208,10 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,处理WEBDAV协议LOCK方法失败,协议不正确,内容:%s"), lpszClientAddr, lpszMsgBuffer);
 			return false;
 		}
-		Session_Webdav_Insert(pSt_HTTPParam->tszHttpUri + 1, &st_WDLock);
+		Session_Webdav_Insert(pSt_HTTPParam->tszHttpUri, &st_WDLock);
 		Protocol_StoragePacket_WDLock(tszRVBuffer, &nRVLen, &st_WDLock);
+		nRVLen -= 1;
+
 		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议LOCK方法成功,锁用户:%s"), lpszClientAddr, st_WDLock.tszOwner);

@@ -629,6 +629,64 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBu
 			XMLElement* pSt_XMLModifyTime = m_XMLDocument.NewElement("d:getlastmodified");
 			pSt_XMLModifyTime->SetText(tszGMTTime);
 			pSt_XMLProp->InsertEndChild(pSt_XMLModifyTime);
+			//增加会话属性
+			//获得会话
+			XENGINE_WEBDAVLOCK st_WDLocker = {};
+			if (Session_Webdav_Get(tszFileAlis, &st_WDLocker))
+			{
+				// 子元素 <lockdiscovery>
+				XMLElement* pSt_XMLLockDiscovery = m_XMLDocument.NewElement("D:lockdiscovery");
+				pSt_XMLProp->InsertEndChild(pSt_XMLLockDiscovery);
+				// 子元素 <activelock>
+				XMLElement* pSt_XMLLockActive = m_XMLDocument.NewElement("D:activelock");
+				pSt_XMLLockDiscovery->InsertEndChild(pSt_XMLLockActive);
+				// 子元素 <locktype>
+				XMLElement* pSt_XMLLockType = m_XMLDocument.NewElement("D:locktype");
+				pSt_XMLLockActive->InsertEndChild(pSt_XMLLockType);
+				if (1 == st_WDLocker.byLockOP)
+				{
+					XMLElement* pSt_XMLLockWrite = m_XMLDocument.NewElement("D:write");
+					pSt_XMLLockType->InsertEndChild(pSt_XMLLockWrite);
+				}
+				else if (2 == st_WDLocker.byLockOP)
+				{
+					XMLElement* pSt_XMLLockRead = m_XMLDocument.NewElement("D:read");
+					pSt_XMLLockType->InsertEndChild(pSt_XMLLockRead);
+				}
+				// 子元素 <lockscope>
+				XMLElement* pSt_XMLLockScope = m_XMLDocument.NewElement("D:lockscope");
+				pSt_XMLLockActive->InsertEndChild(pSt_XMLLockScope);
+				if (1 == st_WDLocker.byLockType)
+				{
+					XMLElement* pSt_XMLLockExclusive = m_XMLDocument.NewElement("D:exclusive");
+					pSt_XMLLockScope->InsertEndChild(pSt_XMLLockExclusive);
+				}
+				else if (2 == st_WDLocker.byLockType)
+				{
+					XMLElement* pSt_XMLLockShared = m_XMLDocument.NewElement("D:shared");
+					pSt_XMLLockScope->InsertEndChild(pSt_XMLLockShared);
+				}
+				// 子元素 <depth>
+				XMLElement* pSt_XMLDepth = m_XMLDocument.NewElement("D:depth");
+				pSt_XMLDepth->SetText(_X("Infinity"));
+				pSt_XMLLockActive->InsertEndChild(pSt_XMLDepth);
+				// 子元素 <owner>
+				XMLElement* pSt_XMLOwner = m_XMLDocument.NewElement("D:owner");
+				pSt_XMLLockActive->InsertEndChild(pSt_XMLOwner);
+				XMLElement* pSt_XMHRef = m_XMLDocument.NewElement("D:href");
+				pSt_XMHRef->SetText(st_WDLocker.tszOwner);
+				pSt_XMLOwner->InsertEndChild(pSt_XMHRef);
+				// 子元素 <timeout>
+				XMLElement* pSt_XMLTimeout = m_XMLDocument.NewElement("D:timeout");
+				pSt_XMLTimeout->SetText(st_WDLocker.tszTimeout);
+				pSt_XMLLockActive->InsertEndChild(pSt_XMLTimeout);
+				// 子元素 <locktoken>
+				XMLElement* pSt_XMLLockToken = m_XMLDocument.NewElement("D:locktoken");
+				pSt_XMLLockActive->InsertEndChild(pSt_XMLLockToken);
+				XMLElement* pSt_XMHTokenRef = m_XMLDocument.NewElement("D:href");
+				pSt_XMHTokenRef->SetText(st_WDLocker.tszToken);
+				pSt_XMLLockToken->InsertEndChild(pSt_XMHTokenRef);
+			}
         }
         else
         {
