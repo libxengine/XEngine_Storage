@@ -181,15 +181,18 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, 
 		if ('/' == lpszMsgBuffer[i])
 		{
 			bFound = true;
-			memcpy(tszKeyStr, lpszMsgBuffer + 1, i - 1);
 			break;
 		}
 	}
-	if (!bFound)
+	if (bFound)
 	{
-		APIHelp_IsErrorOccur = true;
-		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
-		return false;
+		_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + i);
+		memcpy(tszKeyStr, lpszMsgBuffer + 1, i - 1);
+	}
+	else
+	{
+		_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + 1);
+		_tcsxcpy(tszKeyStr, lpszMsgBuffer + 1);
 	}
 	bFound = false;
 	//获得对应存储
@@ -208,7 +211,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, 
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
 		return false;
 	}
-	_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + i);
+	
 	return true;
 }
 /********************************************************************

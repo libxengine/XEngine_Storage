@@ -50,8 +50,10 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 
 	LPCXSTR lpszMethodOption = _X("OPTIONS");
 	LPCXSTR lpszMethodPropfind = _X("PROPFIND");
+	LPCXSTR lpszMethodPropPatch = _X("PROPPATCH");
 	LPCXSTR lpszMethodGet = _X("GET");
 	LPCXSTR lpszMethodPut = _X("PUT");
+	LPCXSTR lpszMethodDel = _X("DELETE");
 	LPCXSTR lpszMethodLock = _X("LOCK");
 
 	st_HDRParam.bIsClose = false;
@@ -62,7 +64,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		//用于心跳
 		st_HDRParam.bIsClose = true;
 		st_HDRParam.nHttpCode = 200;
-		LPCXSTR lpszHdrBuffer = _X("Allow: OPTIONS POST GET PUT PROPFIND DELETE LOCK\r\n");
+		LPCXSTR lpszHdrBuffer = _X("Allow: OPTIONS POST GET PUT PROPFIND PROPPATCH DELETE LOCK\r\n");
 		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,请求OPTIONS心跳方法成功"), lpszClientAddr);
@@ -79,7 +81,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			return false;
 		}
 		XENGINE_STORAGEBUCKET st_StorageBucket = {};
-		if (!APIHelp_Distributed_CTStorage(pSt_HTTPParam->tszHttpUri + 1, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
+		if (!APIHelp_Distributed_DLStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
 		{
 			st_HDRParam.bIsClose = true;
 			st_HDRParam.nHttpCode = 400;
@@ -213,6 +215,33 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议LOCK方法成功,锁用户:%s"), lpszClientAddr, st_WDLock.tszOwner);
+		return true;
+	}
+	else if (0 == _tcsxnicmp(lpszMethodDel, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodDel)))
+	{
+		//使用重定向实现上传
+		st_HDRParam.bIsClose = false;
+		st_HDRParam.nHttpCode = 204;
+
+		XENGINE_STORAGEBUCKET st_StorageBucket = {};
+		if (!APIHelp_Distributed_DLStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
+		{
+			st_HDRParam.bIsClose = true;
+			st_HDRParam.nHttpCode = 400;
+			HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,处理WEBDAV协议DELETE方法失败,获取BUCKET失败,URL:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+			return false;
+		}
+		int nFLen = 0;
+		XCHAR tszFileName[MAX_PATH] = {};
+		_tcsxcpy(tszFileName, pSt_HTTPParam->tszHttpUri + 1);
+		BaseLib_OperatorString_Replace(tszFileName, &nFLen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath);
+
+		_xtremove(tszFileName);
+		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议DELETE方法成功,删除的文件:%s"), lpszClientAddr, tszFileName);
 		return true;
 	}
 	else
