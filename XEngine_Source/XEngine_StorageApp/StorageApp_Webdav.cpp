@@ -217,6 +217,20 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议LOCK方法成功,锁用户:%s"), lpszClientAddr, st_WDLock.tszOwner);
 		return true;
 	}
+	else if (0 == _tcsxnicmp(lpszMethodPropPatch, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPropPatch)))
+	{
+		st_HDRParam.bIsClose = false;
+		st_HDRParam.nHttpCode = 207;
+
+		std::list<string> stl_ListName;
+		Protocol_StorageParse_WDPropPatch(lpszMsgBuffer, nMsgLen, &stl_ListName);
+
+		Protocol_StoragePacket_WDPropPatch(tszRVBuffer, &nRVLen, pSt_HTTPParam->tszHttpUri, &stl_ListName);
+		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议PROPPATCH方法成功,锁用户:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+		return true;
+	}
 	else if (0 == _tcsxnicmp(lpszMethodDel, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodDel)))
 	{
 		//使用重定向实现上传

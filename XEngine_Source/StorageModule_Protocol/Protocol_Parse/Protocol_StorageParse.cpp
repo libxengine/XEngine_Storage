@@ -630,3 +630,61 @@ bool CProtocol_StorageParse::Protocol_StorageParse_WDLock(LPCXSTR lpszMsgBuffer,
 	}
     return true;
 }
+/********************************************************************
+函数名称：Protocol_StorageParse_WDPropPatch
+函数功能：解析proppatch协议
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pStl_ListName
+  In/Out：Out
+  类型：LIST容器指针
+  可空：N
+  意思：输出解析的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StorageParse::Protocol_StorageParse_WDPropPatch(LPCXSTR lpszMsgBuffer, int nMsgLen, std::list<string>* pStl_ListName)
+{
+	Protocol_IsErrorOccur = false;
+
+	XMLDocument m_XMLDocument;
+	XMLError m_XMLResult = m_XMLDocument.Parse(lpszMsgBuffer);
+	if (XML_SUCCESS != m_XMLResult)
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
+		return false;
+	}
+	//获取根元素
+	XMLElement* pSt_XMLRoot = m_XMLDocument.RootElement();
+	if (NULL == pSt_XMLRoot)
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_ROOT;
+		return false;
+	}
+	XMLElement* pSt_XMLPropertySet = pSt_XMLRoot->FirstChildElement("D:set");
+	if (NULL != pSt_XMLPropertySet)
+	{
+		XMLElement* pSt_XMLPropertyProp = pSt_XMLPropertySet->FirstChildElement("D:prop");
+		if (NULL != pSt_XMLPropertyProp)
+		{
+			//获得所有名称
+			for (XMLElement* pSt_XMLChild = pSt_XMLPropertyProp->FirstChildElement(); NULL != pSt_XMLChild; pSt_XMLChild = pSt_XMLChild->NextSiblingElement())
+			{
+				pStl_ListName->push_back(pSt_XMLChild->Name());
+			}
+		}
+	}
+	return true;
+}

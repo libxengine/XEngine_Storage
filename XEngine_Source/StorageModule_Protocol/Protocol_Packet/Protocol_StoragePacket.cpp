@@ -813,3 +813,82 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDLock(XCHAR* ptszMsgBuffer
 	memcpy(ptszMsgBuffer, m_XMLPrinter.CStr(), *pInt_MsgLen);
 	return true;
 }
+/********************************************************************
+函数名称：Protocol_StoragePacket_WDPropPatch
+函数功能：webdavPROPPATCH协议封装
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入文件名
+ 参数.四：pStl_ListName
+  In/Out：In
+  类型：STL容器指针
+  可空：N
+  意思：输入打包的属性列表
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropPatch(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName, std::list<string>* pStl_ListName)
+{
+	Protocol_IsErrorOccur = false;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return false;
+	}
+	// 创建一个 XML 文档
+	XMLDocument m_XMLDocument;
+	// XML 声明
+	XMLDeclaration* pSt_XMLDeclaration = m_XMLDocument.NewDeclaration(R"(xml version="1.0" encoding="utf-8")");
+	m_XMLDocument.InsertFirstChild(pSt_XMLDeclaration);
+
+	// 根元素 <multistatus>
+	XMLElement* pSt_XMLRoot = m_XMLDocument.NewElement("d:multistatus");
+	pSt_XMLRoot->SetAttribute("xmlns:d", "DAV:");
+	m_XMLDocument.InsertEndChild(pSt_XMLRoot);
+	// 子元素 <response>
+	XMLElement* pSt_XMLResponse = m_XMLDocument.NewElement("D:response");
+	pSt_XMLRoot->InsertEndChild(pSt_XMLResponse);
+	// 子元素 <href>
+	XMLElement* pSt_XMLHRef = m_XMLDocument.NewElement("D:href");
+	pSt_XMLHRef->SetText(lpszFileName);
+	pSt_XMLResponse->InsertEndChild(pSt_XMLHRef);
+	// 子元素 <propstat>
+	XMLElement* pSt_XMLPropStat = m_XMLDocument.NewElement("D:propstat");
+	pSt_XMLResponse->InsertEndChild(pSt_XMLPropStat);
+	// 子元素 <prop>
+	XMLElement* pSt_XMLProp = m_XMLDocument.NewElement("D:prop");
+	pSt_XMLPropStat->InsertEndChild(pSt_XMLProp);
+	// 子元素
+	for (auto stl_ListIterator = pStl_ListName->begin(); stl_ListIterator != pStl_ListName->end(); stl_ListIterator++)
+	{
+		XMLElement* pSt_XMLListValue = m_XMLDocument.NewElement(stl_ListIterator->c_str());
+		pSt_XMLProp->InsertEndChild(pSt_XMLListValue);
+	}
+	// 子元素 <status>
+	XMLElement* pSt_XMLStatus = m_XMLDocument.NewElement("D:status");
+	pSt_XMLStatus->SetText("HTTP/1.1 200 OK");
+	pSt_XMLPropStat->InsertEndChild(pSt_XMLStatus);
+	// 将 XML 数据保存到字符串
+	XMLPrinter m_XMLPrinter;
+	m_XMLDocument.Print(&m_XMLPrinter);
+
+	*pInt_MsgLen = m_XMLPrinter.CStrSize() - 1;
+	memcpy(ptszMsgBuffer, m_XMLPrinter.CStr(), *pInt_MsgLen);
+	return true;
+}

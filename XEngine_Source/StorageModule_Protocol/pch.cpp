@@ -61,6 +61,10 @@ extern "C" bool Protocol_StorageParse_WDLock(LPCXSTR lpszMsgBuffer, int nMsgLen,
 {
 	return m_StorageParse.Protocol_StorageParse_WDLock(lpszMsgBuffer, nMsgLen, pSt_WDLock);
 }
+extern "C" bool Protocol_StorageParse_WDPropPatch(LPCXSTR lpszMsgBuffer, int nMsgLen, std::list<string>* pStl_ListName)
+{
+	return m_StorageParse.Protocol_StorageParse_WDPropPatch(lpszMsgBuffer, nMsgLen, pStl_ListName);
+}
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
@@ -99,4 +103,8 @@ extern "C" bool Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBuffer, int* pIn
 extern "C" bool Protocol_StoragePacket_WDLock(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_WEBDAVLOCK* pSt_WDLock)
 {
 	return m_StoragePacket.Protocol_StoragePacket_WDLock(ptszMsgBuffer, pInt_MsgLen, pSt_WDLock);
+}
+extern "C" bool Protocol_StoragePacket_WDPropPatch(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName, std::list<string>* pStl_ListName)
+{
+	return m_StoragePacket.Protocol_StoragePacket_WDPropPatch(ptszMsgBuffer, pInt_MsgLen, lpszFileName, pStl_ListName);
 }

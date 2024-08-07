@@ -170,7 +170,8 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, 
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
 		return false;
 	}
-	bool bFound = false;
+	bool bFileFound = false;
+	bool bBucketFound = false;
 	XCHAR tszKeyStr[128];
 	memset(tszKeyStr, '\0', sizeof(tszKeyStr));
 	//获得key
@@ -180,38 +181,43 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, 
 	{
 		if ('/' == lpszMsgBuffer[i])
 		{
-			bFound = true;
+			bFileFound = true;
 			break;
 		}
 	}
-	if (bFound)
+	if (bFileFound)
 	{
-		_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + i);
 		memcpy(tszKeyStr, lpszMsgBuffer + 1, i - 1);
 	}
 	else
 	{
-		_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + 1);
 		_tcsxcpy(tszKeyStr, lpszMsgBuffer + 1);
 	}
-	bFound = false;
 	//获得对应存储
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
 		if (0 == _tcsxncmp(tszKeyStr, stl_ListIterator->tszBuckKey, _tcsxlen(stl_ListIterator->tszBuckKey)))
 		{
-			bFound = true;
+			bBucketFound = true;
 			*pSt_StorageBucket = *stl_ListIterator;
 			break;
 		}
 	}
-	if (!bFound)
+	if (!bBucketFound)
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
 		return false;
 	}
 	
+	if (bFileFound)
+	{
+		_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + i);
+	}
+	else
+	{
+		_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + 1);
+	}
 	return true;
 }
 /********************************************************************

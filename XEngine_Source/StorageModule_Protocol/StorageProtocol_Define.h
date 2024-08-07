@@ -269,6 +269,30 @@ extern "C" bool Protocol_StorageParse_Action(LPCXSTR lpszMsgBuffer, int nMsgLen,
 备注：
 *********************************************************************/
 extern "C" bool Protocol_StorageParse_WDLock(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_WEBDAVLOCK* pSt_WDLock);
+/********************************************************************
+函数名称：Protocol_StorageParse_WDPropPatch
+函数功能：解析proppatch协议
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pStl_ListName
+  In/Out：Out
+  类型：LIST容器指针
+  可空：N
+  意思：输出解析的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Protocol_StorageParse_WDPropPatch(LPCXSTR lpszMsgBuffer, int nMsgLen, std::list<string>* pStl_ListName);
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
@@ -603,3 +627,32 @@ extern "C" bool Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBuffer, int* pIn
 备注：
 *********************************************************************/
 extern "C" bool Protocol_StoragePacket_WDLock(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_WEBDAVLOCK* pSt_WDLock);
+/********************************************************************
+函数名称：Protocol_StoragePacket_WDPropPatch
+函数功能：webdavPROPPATCH协议封装
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入文件名
+ 参数.四：pStl_ListName
+  In/Out：In
+  类型：STL容器指针
+  可空：N
+  意思：输入打包的属性列表
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Protocol_StoragePacket_WDPropPatch(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName, std::list<string>* pStl_ListName);
