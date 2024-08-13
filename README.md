@@ -32,6 +32,8 @@ c c++ file storage service
 16. 权限控制
 17. 上传文件覆写
 18. 支持转录(服务器上传下载)
+19. 支持WEBDAV协议上传下载文件
+20. 预创建文件
 
 ## 安装教程
 
@@ -131,6 +133,9 @@ jsoncpp模块在使用的时候编译运行时库选择必须一致.否则会崩
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request  
+
+## 开发计划
+你可以通过此地址了解更多开发内容和计划:https://github.com/libxengine/XEngine_Storage/issues
 
 ## 关注我们
   

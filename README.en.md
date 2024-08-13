@@ -33,6 +33,8 @@ feature list:
 16. permission control
 17. upload file rewrite
 18. support convert record(service upload and download)
+19. webdav protocol download and upload file support
+20. preview file create
 
 ## install
 
@@ -127,6 +129,9 @@ Port:HTTP Center Port 5100,Download 5101,UPLoad 5102
 2. Create new Feat_xxx branch
 3. Submit the code
 4. New Pull Request
+
+## development plan
+You can learn more about development content and plans at this address:https://github.com/libxengine/XEngine_Storage/issues
 
 ## Follow us
 If you think this software is helpful to you, please give us a START  
