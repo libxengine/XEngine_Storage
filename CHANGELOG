@@ -1,3 +1,17 @@
+XEngine_Storage V3.16.0.1001
+
+增加:上传接口文件准备支持
+增加:webdav协议支持:OPTIONS POST GET PUT PROPFIND PROPPATCH DELETE LOCK UNLOCK
+增加:XML的子模块
+修正:可能跳过存储KEY名称的错误返回
+修正:APIHelp_Distributed_DLStorage 某些时候文件名称和key不正确导致的问题
+
+added:upload create ready supported
+added:webdav protocol support:OPTIONS POST GET PUT PROPFIND PROPPATCH DELETE LOCK UNLOCK
+add:xml module form sub module
+fixed:maybe return error bucket when input mistake storage key
+fixed:APIHelp_Distributed_DLStorage sometime is file name and key is incorrect
+======================================================================================
 XEngine_Storage V3.15.0.1001
 
 增加:用户上传下载动作支持
