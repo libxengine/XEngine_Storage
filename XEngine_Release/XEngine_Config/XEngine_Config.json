@@ -4,20 +4,23 @@
     "nCenterPort":5100,
     "nStorageDLPort":5101,
     "nStorageUPPort":5102,
+    "nWebdavPort":5103,
     "XMax":{
         "MaxClient":10000,
         "MaxQueue":10000,
         "IOThread":2,
         "CenterThread":2,
         "nStorageUPThread":2,
-        "nStorageDLThread":2
+        "nStorageDLThread":2,
+        "nWebdavThread":2
     },
     "XTime":{
         "bHBTime":0,
         "nDBMonth":3,
         "nTimeCheck":3,
         "nCenterTimeOut":5,
-        "nStorageTimeOut":5
+        "nStorageTimeOut":5,
+        "nWebdavTimeOut":5
     },
     "XLog":{
         "MaxSize":1024000,
@@ -67,6 +70,7 @@
         "bDLEnable":false,
         "bUPEnable":false,
         "bCHEnable":false,
+        "bWDEnable":false,
         "tszCertChain":"./XEngine_Cert/server.crt",
         "tszCertServer":"",
         "tszCertKey":"./XEngine_Cert/server.key"
