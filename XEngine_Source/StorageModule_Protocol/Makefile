@@ -6,9 +6,9 @@ FILEEXT =
 LIBFLAG = 
 RELEASE = 0
 UNICODE = 0
-LOADHDR = -I ./ -I ../XEngine_Depend/XEngine_Module/jsoncpp
-LOADSO = -L ../XEngine_Depend/XEngine_Module/jsoncpp
-LIB = -lXEngine_BaseLib -ljsoncpp
+LOADHDR = -I ./ -I ../XEngine_Depend/XEngine_Module/jsoncpp -I ../XEngine_Depend/XEngine_Module/tinyxml2
+LOADSO = -L ../XEngine_Depend/XEngine_Module/jsoncpp -L ../XEngine_Depend/XEngine_Module/tinyxml2
+LIB = -lXEngine_BaseLib -ljsoncpp -ltinyxml2
 LIBEX = 
 OBJECTS = Protocol_StoragePacket.o Protocol_StorageParse.o pch.o
 

@@ -179,7 +179,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		XCHAR tszStroageKey[MAX_PATH] = {};
 		XCHAR tszFileName[MAX_PATH] = {};
 
-		int nRet = _stxscanf(pSt_HTTPParam->tszHttpUri + 1, _T("%99[^/]/%199[^\n]"), tszStroageKey, tszFileName);
+		int nRet = _stxscanf(pSt_HTTPParam->tszHttpUri + 1, _X("%99[^/]/%199[^\n]"), tszStroageKey, tszFileName);
 		if (2 != nRet)
 		{
 			st_HDRParam.nHttpCode = 413;

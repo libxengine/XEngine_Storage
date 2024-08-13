@@ -4,6 +4,7 @@ PLATFORM=linux
 FLAGS= 
 
 THIRD_JSONCPP_PATH = ./XEngine_Depend/XEngine_Module/jsoncpp
+THIRD_TINYXML_PATH = ./XEngine_Depend/XEngine_Module/tinyxml2
 THIRD_REPORT_PATH = ./XEngine_Depend/XEngine_Module/XEngine_InfoReport
 
 BASE_SQL_PATH = ./StorageModule_Database
@@ -15,7 +16,7 @@ BASE_BTORRENT_PATH = ./StorageModule_BTorrent
 
 APPSERVICE_STORAGE_PATH = ./XEngine_StorageApp
 
-XENGINE_MODULES = libjsoncpp.so libXEngine_InfoReport.so                                   \
+XENGINE_MODULES = libjsoncpp.so libtinyxml2.so libXEngine_InfoReport.so                                   \
                 libStorageModule_Database.so libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so libStorageModule_Protocol.so libStorageModule_BTorrent.so    \
 		 		XEngine_StorageApp.exe 
 
@@ -23,9 +24,23 @@ XENGINE_MODULES = libjsoncpp.so libXEngine_InfoReport.so                        
 MakeAll:$(XENGINE_MODULES)
 	
 libjsoncpp.so:
+ifeq ($(FLAGS), InstallAll)
+	cp $(THIRD_JSONCPP_PATH)/libjsoncpp.so ../XEngine_Release/
+else
 	make -C $(THIRD_JSONCPP_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
+endif
+libtinyxml2.so:
+ifeq ($(FLAGS), InstallAll)
+	cp $(THIRD_TINYXML_PATH)/libtinyxml2.so ../XEngine_Release/
+else
+	make -C $(THIRD_TINYXML_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
+endif
 libXEngine_InfoReport.so:
+ifeq ($(FLAGS), InstallAll)
+	cp $(THIRD_REPORT_PATH)/libXEngine_InfoReport.so ../XEngine_Release/
+else
 	make -C $(THIRD_REPORT_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
+endif
 
 libStorageModule_Database.so:
 	make -C $(BASE_SQL_PATH) PLATFORM=$(PLATFORM) $(FLAGS)
