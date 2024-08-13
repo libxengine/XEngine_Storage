@@ -149,7 +149,7 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		//用于心跳
 		st_HDRParam.bIsClose = true;
 		st_HDRParam.nHttpCode = 200;
-		LPCXSTR lpszHdrBuffer = _X("Allow: POST GET PUT OPTIONS\r\n");
+		LPCXSTR lpszHdrBuffer = _X("Allow: POST GET PUT\r\n");
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求OPTIONS心跳方法成功"), lpszClientAddr);

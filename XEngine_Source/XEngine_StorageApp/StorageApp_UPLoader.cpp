@@ -51,7 +51,9 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
 
 	LPCXSTR lpszMethodPost = _X("POST");
-	if (0 != _tcsxncmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
+	LPCXSTR lpszMethodPut = _X("PUT");
+
+	if ((0 != _tcsxncmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost))) && (0 != _tcsxncmp(lpszMethodPut, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPut))))
 	{
 		st_HDRParam.bIsClose = true;
 		st_HDRParam.nHttpCode = 405;
@@ -201,12 +203,61 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			return false;
 		}
 	}
-	
+	//修正文件路径
 	int nPathType = 0;
 	_xstprintf(tszFileDir, _X("%s/%s"), st_StorageBucket.tszFilePath, tszFileName);
 	BaseLib_OperatorString_GetPath(tszFileDir, &nPathType);
 	BaseLib_OperatorString_FixPath(tszFileDir, nPathType);
+	//得到上传大小
+	XCHAR tszVluStr[8] = {};
+	if (HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, _X("Content-Length"), tszVluStr))
+	{
+		if (0 == _ttxoi(tszVluStr))
+		{
+			if (st_StorageBucket.st_PermissionFlags.bUPReady)
+			{
+				//文件是否存在
+				if (0 == _xtaccess(tszFileDir, 0) && !st_StorageBucket.st_PermissionFlags.bRewrite)
+				{
+					st_HDRParam.bIsClose = true;
+					st_HDRParam.nHttpCode = 403;
+					HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,准备上传文件:%s 失败,文件已经存在"), lpszClientAddr, tszFileDir);
+					return true;
+				}
+				//文件是否可写
+				FILE* pSt_File = _xtfopen(tszFileDir, _X("wb"));
+				if (NULL == pSt_File)
+				{
+					st_HDRParam.bIsClose = true;
+					st_HDRParam.nHttpCode = 403;
+					HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,准备上传文件:%s 失败,创建文件失败"), lpszClientAddr, tszFileDir);
+					return true;
+				}
+				fclose(pSt_File);
 
+				st_HDRParam.bIsClose = false;
+				st_HDRParam.nHttpCode = 201;
+				HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,准备上传文件:%s 成功"), lpszClientAddr, tszFileDir);
+				return true;
+			}
+			else
+			{
+				st_HDRParam.bIsClose = true;
+				st_HDRParam.nHttpCode = 403;
+				HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,准备上传文件:%s 失败,服务器关闭了UPReady,无法继续"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+				return true;
+			}
+		}
+	}
+	//开始处理文件
 	if (!Session_UPStroage_Exist(lpszClientAddr))
 	{
 		int nPosStart = 0;

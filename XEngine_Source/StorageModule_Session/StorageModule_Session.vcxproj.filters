@@ -31,6 +31,12 @@
     <Filter Include="源文件\Session_Action">
       <UniqueIdentifier>{a289814a-e390-41d8-90ea-ad0c68665334}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Session_Webdav">
+      <UniqueIdentifier>{1b6f62ae-3af8-425d-9cf2-7ab36d96471a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Session_Webdav">
+      <UniqueIdentifier>{ada350db-0019-4645-b441-fe09e2d37c31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -57,6 +63,9 @@
     <ClInclude Include="Session_Action\Session_Action.h">
       <Filter>头文件\Session_Action</Filter>
     </ClInclude>
+    <ClInclude Include="Session_Webdav\Session_Webdav.h">
+      <Filter>头文件\Session_Webdav</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -76,6 +85,9 @@
     </ClCompile>
     <ClCompile Include="Session_Action\Session_Action.cpp">
       <Filter>源文件\Session_Action</Filter>
+    </ClCompile>
+    <ClCompile Include="Session_Webdav\Session_Webdav.cpp">
+      <Filter>源文件\Session_Webdav</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

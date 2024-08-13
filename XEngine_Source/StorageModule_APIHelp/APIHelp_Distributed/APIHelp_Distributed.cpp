@@ -170,7 +170,8 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, 
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
 		return false;
 	}
-	bool bFound = false;
+	bool bFileFound = false;
+	bool bBucketFound = false;
 	XCHAR tszKeyStr[128];
 	memset(tszKeyStr, '\0', sizeof(tszKeyStr));
 	//获得key
@@ -180,35 +181,43 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_DLStorage(LPCXSTR lpszMsgBuffer, 
 	{
 		if ('/' == lpszMsgBuffer[i])
 		{
-			bFound = true;
-			memcpy(tszKeyStr, lpszMsgBuffer + 1, i - 1);
+			bFileFound = true;
 			break;
 		}
 	}
-	if (!bFound)
+	if (bFileFound)
 	{
-		APIHelp_IsErrorOccur = true;
-		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
-		return false;
+		memcpy(tszKeyStr, lpszMsgBuffer + 1, i - 1);
 	}
-	bFound = false;
+	else
+	{
+		_tcsxcpy(tszKeyStr, lpszMsgBuffer + 1);
+	}
 	//获得对应存储
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
-		if (0 == _tcsxncmp(tszKeyStr, stl_ListIterator->tszBuckKey, _tcsxlen(tszKeyStr)))
+		if (0 == _tcsxncmp(tszKeyStr, stl_ListIterator->tszBuckKey, _tcsxlen(stl_ListIterator->tszBuckKey)))
 		{
-			bFound = true;
+			bBucketFound = true;
 			*pSt_StorageBucket = *stl_ListIterator;
 			break;
 		}
 	}
-	if (!bFound)
+	if (!bBucketFound)
 	{
 		APIHelp_IsErrorOccur = true;
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
 		return false;
 	}
-	_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + i);
+	
+	if (bFileFound)
+	{
+		_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + i);
+	}
+	else
+	{
+		_tcsxcpy(pSt_StorageBucket->tszFileName, lpszMsgBuffer + 1);
+	}
 	return true;
 }
 /********************************************************************
@@ -248,7 +257,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_CTStorage(LPCXSTR lpszMsgBuffer, 
 	//获得对应存储
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
-		if (0 == _tcsxncmp(lpszMsgBuffer, stl_ListIterator->tszBuckKey, _tcsxlen(lpszMsgBuffer)))
+		if (0 == _tcsxncmp(lpszMsgBuffer, stl_ListIterator->tszBuckKey, _tcsxlen(stl_ListIterator->tszBuckKey)))
 		{
 			bFound = true;
 			*pSt_StorageBucket = *stl_ListIterator;
@@ -303,7 +312,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 		list<XENGINE_STORAGEBUCKET>::const_iterator stl_ListIterator = pStl_ListBucket->begin();
 		for (; stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 		{
-			if (0 == _tcsxnicmp(pSt_StorageBucket->tszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(pSt_StorageBucket->tszBuckKey)))
+			if (0 == _tcsxnicmp(pSt_StorageBucket->tszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(stl_ListIterator->tszBuckKey)))
 			{
 				bFound = true;
 				*pSt_StorageBucket = *stl_ListIterator;
@@ -455,7 +464,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBU
 	bool bFound = false;
 	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
-		if (0 == _tcsxncmp(lpszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(lpszBuckKey)))
+		if (0 == _tcsxncmp(lpszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(stl_ListIterator->tszBuckKey)))
 		{
 			_tcsxcpy(ptszFilePath, stl_ListIterator->tszFilePath);
 			bFound = true;

@@ -57,6 +57,14 @@ extern "C" bool Protocol_StorageParse_Action(LPCXSTR lpszMsgBuffer, int nMsgLen,
 {
 	return m_StorageParse.Protocol_StorageParse_Action(lpszMsgBuffer, nMsgLen, pSt_ActionInfo);
 }
+extern "C" bool Protocol_StorageParse_WDLock(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_WEBDAVLOCK* pSt_WDLock)
+{
+	return m_StorageParse.Protocol_StorageParse_WDLock(lpszMsgBuffer, nMsgLen, pSt_WDLock);
+}
+extern "C" bool Protocol_StorageParse_WDPropPatch(LPCXSTR lpszMsgBuffer, int nMsgLen, std::list<string>* pStl_ListName)
+{
+	return m_StorageParse.Protocol_StorageParse_WDPropPatch(lpszMsgBuffer, nMsgLen, pStl_ListName);
+}
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
@@ -87,4 +95,16 @@ extern "C" bool Protocol_StoragePacket_REQFile(XCHAR * ptszMsgBuffer, int* pInt_
 extern "C" bool Protocol_StoragePacket_Action(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XNETHANDLE xhToken, XENGINE_ACTIONINFO * pSt_ActionInfo)
 {
 	return m_StoragePacket.Protocol_StoragePacket_Action(ptszMsgBuffer, pInt_MsgLen, xhToken, pSt_ActionInfo);
+}
+extern "C" bool Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount, LPCXSTR lpszBucketPath, LPCXSTR lpszBucketKey)
+{
+	return m_StoragePacket.Protocol_StoragePacket_WDPropfind(ptszMsgBuffer, pInt_MsgLen, ppptszListFile, nFileCount, lpszBucketPath, lpszBucketKey);
+}
+extern "C" bool Protocol_StoragePacket_WDLock(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_WEBDAVLOCK* pSt_WDLock)
+{
+	return m_StoragePacket.Protocol_StoragePacket_WDLock(ptszMsgBuffer, pInt_MsgLen, pSt_WDLock);
+}
+extern "C" bool Protocol_StoragePacket_WDPropPatch(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName, std::list<string>* pStl_ListName)
+{
+	return m_StoragePacket.Protocol_StoragePacket_WDPropPatch(ptszMsgBuffer, pInt_MsgLen, lpszFileName, pStl_ListName);
 }

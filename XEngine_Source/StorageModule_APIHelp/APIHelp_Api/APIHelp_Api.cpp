@@ -427,6 +427,8 @@ bool CAPIHelp_Api::APIHelp_Api_Boundary(XCHAR*** ppptszList, int nListCount, XCH
 *********************************************************************/
 bool CAPIHelp_Api::APIHelp_Api_GetDIRSize(LPCXSTR lpszDIRStr, __int64u* pInt_DIRSize)
 {
+	APIHelp_IsErrorOccur = false;
+
 	int nListCount = 0;
 	int nPathType = 0;
 	__int64u nDirCount = 0;   //当前目录大小
@@ -453,5 +455,50 @@ bool CAPIHelp_Api::APIHelp_Api_GetDIRSize(LPCXSTR lpszDIRStr, __int64u* pInt_DIR
 	}
 	BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
 	*pInt_DIRSize = nDirCount;
+	return true;
+}
+/********************************************************************
+函数名称：APIHelp_Api_UrlStr
+函数功能：获取URL的KEY
+ 参数.一：ptszKeyStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的数据
+ 参数.二：lpszUrl
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要获取的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAPIHelp_Api::APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl)
+{
+	APIHelp_IsErrorOccur = false;
+
+	XCHAR tszUrlStr[MAX_PATH] = {};
+	_tcsxcpy(tszUrlStr, lpszUrl);
+	// 查找第一个 '/' 的位置
+	XCHAR *ptszFirstStr = _tcsxchr(tszUrlStr, '/');
+	if (ptszFirstStr == NULL) 
+	{
+		return false;
+	}
+	// 查找第二个 '/' 的位置
+	XCHAR* ptszSecondStr = _tcsxchr(ptszFirstStr + 1, '/');
+	if (ptszSecondStr == NULL)
+	{
+		return false;
+	}
+	// 计算提取字符串的长度
+	int nLen = ptszSecondStr - ptszFirstStr - 1;
+	// 复制字符串
+	_tcsxncpy(ptszKeyStr, ptszFirstStr + 1, nLen);
+	// 添加字符串结束符
+	ptszKeyStr[nLen] = '\0';
+
 	return true;
 }

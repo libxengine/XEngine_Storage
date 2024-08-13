@@ -545,3 +545,146 @@ bool CProtocol_StorageParse::Protocol_StorageParse_Action(LPCXSTR lpszMsgBuffer,
     _tcsxcpy(pSt_ActionInfo->tszFileUrl, st_JsonRoot["tszFileUrl"].asCString());
 	return true;
 }
+/********************************************************************
+函数名称：Protocol_StorageParse_WDLock
+函数功能：WEBDAV加锁协议解析函数
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pSt_WDLock
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出解析的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StorageParse::Protocol_StorageParse_WDLock(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_WEBDAVLOCK* pSt_WDLock)
+{
+    Protocol_IsErrorOccur = false;
+
+	XMLDocument m_XMLDocument;
+	XMLError m_XMLResult = m_XMLDocument.Parse(lpszMsgBuffer);
+	if (XML_SUCCESS != m_XMLResult)
+    {
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
+		return false;
+	}
+	//获取根元素
+	XMLElement* pSt_XMLRoot = m_XMLDocument.RootElement();
+	if (NULL == pSt_XMLRoot)
+    {
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_ROOT;
+		return false;
+	}
+	//解析lockscope
+	XMLElement* pSt_XMLLockScope = pSt_XMLRoot->FirstChildElement("D:lockscope");
+	if (NULL != pSt_XMLLockScope)
+    {
+		XMLElement* pSt_XMLExclusive = pSt_XMLLockScope->FirstChildElement("D:exclusive");
+		if (NULL != pSt_XMLExclusive)
+        {
+            pSt_WDLock->byLockType = 1;
+		}
+		XMLElement* pSt_XMLShared = pSt_XMLLockScope->FirstChildElement("D:shared");
+		if (NULL != pSt_XMLShared)
+		{
+            pSt_WDLock->byLockType = 2;
+		}
+	}
+	//解析locktype
+	XMLElement* pSt_XMLLockType = pSt_XMLRoot->FirstChildElement("D:locktype");
+	if (NULL != pSt_XMLLockType)
+    {
+		XMLElement* pSt_XMLTypeWrite = pSt_XMLLockType->FirstChildElement("D:write");
+		if (NULL != pSt_XMLTypeWrite)
+        {
+            pSt_WDLock->byLockOP = 1;
+		}
+		XMLElement* pSt_XMLTypeRead = pSt_XMLLockType->FirstChildElement("D:read");
+		if (NULL != pSt_XMLTypeRead)
+		{
+            pSt_WDLock->byLockOP = 2;
+		}
+	}
+	// 解析owner
+	XMLElement* pSt_XMLLockOwner = pSt_XMLRoot->FirstChildElement("D:owner");
+	if (NULL != pSt_XMLLockOwner)
+    {
+		XMLElement* pSt_XMLHRef = pSt_XMLLockOwner->FirstChildElement("D:href");
+		if (NULL != pSt_XMLHRef)
+        {
+            _tcsxcpy(pSt_WDLock->tszOwner, pSt_XMLHRef->GetText());
+		}
+	}
+    return true;
+}
+/********************************************************************
+函数名称：Protocol_StorageParse_WDPropPatch
+函数功能：解析proppatch协议
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pStl_ListName
+  In/Out：Out
+  类型：LIST容器指针
+  可空：N
+  意思：输出解析的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StorageParse::Protocol_StorageParse_WDPropPatch(LPCXSTR lpszMsgBuffer, int nMsgLen, std::list<string>* pStl_ListName)
+{
+	Protocol_IsErrorOccur = false;
+
+	XMLDocument m_XMLDocument;
+	XMLError m_XMLResult = m_XMLDocument.Parse(lpszMsgBuffer);
+	if (XML_SUCCESS != m_XMLResult)
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARSE;
+		return false;
+	}
+	//获取根元素
+	XMLElement* pSt_XMLRoot = m_XMLDocument.RootElement();
+	if (NULL == pSt_XMLRoot)
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_ROOT;
+		return false;
+	}
+	XMLElement* pSt_XMLPropertySet = pSt_XMLRoot->FirstChildElement("D:set");
+	if (NULL != pSt_XMLPropertySet)
+	{
+		XMLElement* pSt_XMLPropertyProp = pSt_XMLPropertySet->FirstChildElement("D:prop");
+		if (NULL != pSt_XMLPropertyProp)
+		{
+			//获得所有名称
+			for (XMLElement* pSt_XMLChild = pSt_XMLPropertyProp->FirstChildElement(); NULL != pSt_XMLChild; pSt_XMLChild = pSt_XMLChild->NextSiblingElement())
+			{
+				pStl_ListName->push_back(pSt_XMLChild->Name());
+			}
+		}
+	}
+	return true;
+}

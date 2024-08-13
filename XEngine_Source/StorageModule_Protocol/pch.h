@@ -25,9 +25,12 @@
 #endif
 #endif //PCH_H
 #include <json/json.h>
+#include <tinyxml2.h>
 #include <list>
 #include <unordered_map>
+#include <filesystem>
 using namespace std;
+using namespace tinyxml2;
 #include <XEngine_Include/XEngine_CommHdr.h>
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
@@ -35,11 +38,16 @@ using namespace std;
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Error.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
+#include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 #include "../XStorage_Protocol.h"
 #include "../StorageModule_Config/Config_Define.h"
 #include "../StorageModule_Config/Config_Error.h"
 #include "../StorageModule_Session/Session_Define.h"
+#include "../StorageModule_Session/Session_Error.h"
 #include "../StorageModule_Database/Database_Define.h"
+#include "../StorageModule_APIHelp/APIHelp_Define.h"
+#include "../StorageModule_APIHelp/APIHelp_Error.h"
 #include "StorageProtocol_Define.h"
 #include "StorageProtocol_Error.h"
 /********************************************************************
@@ -58,17 +66,30 @@ extern XLONG Protocol_dwErrorCode;
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
+#pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #ifdef _DEBUG
 #ifdef _WIN64
 #pragma comment(lib,"../x64/Debug/jsoncpp")
+#pragma comment(lib,"../x64/Debug/tinyxml2")
+#pragma comment(lib,"../x64/Debug/StorageModule_Session.lib")
+#pragma comment(lib,"../x64/Debug/StorageModule_APIHelp.lib")
 #else
 #pragma comment(lib,"../Debug/jsoncpp")
+#pragma comment(lib,"../Debug/tinyxml2")
+#pragma comment(lib,"../Debug/StorageModule_Session.lib")
+#pragma comment(lib,"../Debug/StorageModule_APIHelp.lib")
 #endif
 #else
 #ifdef _WIN64
 #pragma comment(lib,"../x64/Release/jsoncpp")
+#pragma comment(lib,"../x64/Release/tinyxml2")
+#pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
+#pragma comment(lib,"../x64/Release/StorageModule_APIHelp.lib")
 #else
 #pragma comment(lib,"../Release/jsoncpp")
+#pragma comment(lib,"../Release/tinyxml2")
+#pragma comment(lib,"../Release/StorageModule_Session.lib")
+#pragma comment(lib,"../Release/StorageModule_APIHelp.lib")
 #endif
 #endif
 #endif

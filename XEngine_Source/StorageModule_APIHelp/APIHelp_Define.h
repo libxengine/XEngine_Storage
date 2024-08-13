@@ -352,3 +352,22 @@ extern "C" bool APIHelp_Api_Boundary(XCHAR*** ppptszList, int nListCount, XCHAR*
 备注：
 *********************************************************************/
 extern "C" bool APIHelp_Api_GetDIRSize(LPCXSTR lpszDIRStr, __int64u* pInt_DIRSize);
+/********************************************************************
+函数名称：APIHelp_Api_UrlStr
+函数功能：获取URL的KEY
+ 参数.一：ptszKeyStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的数据
+ 参数.二：lpszUrl
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要获取的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl);

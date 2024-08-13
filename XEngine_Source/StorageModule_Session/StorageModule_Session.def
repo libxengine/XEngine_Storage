@@ -36,3 +36,7 @@ EXPORTS
 	Session_Action_GetInfo
 	Session_Action_GetAll
 	Session_Action_Delete
+
+	Session_Webdav_Insert
+	Session_Webdav_Get
+	Session_Webdav_Delete

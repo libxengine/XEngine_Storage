@@ -25,6 +25,7 @@
 #include <sys/stat.h>
 #include <list>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <shared_mutex>
 using namespace std;
