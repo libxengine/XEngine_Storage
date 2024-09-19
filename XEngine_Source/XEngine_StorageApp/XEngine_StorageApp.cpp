@@ -1,6 +1,7 @@
 ﻿#include "StorageApp_Hdr.h"
 
 bool bIsRun = false;
+bool bIsTest = false;
 XHANDLE xhLog = NULL;
 
 XHANDLE xhHBDownload = NULL;
@@ -127,7 +128,7 @@ int main(int argc, char** argv)
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
 	bIsRun = true;
-	string m_StrVersion;
+	int nRet = -1;
 	LPCXSTR lpszHTTPMime = _X("./XEngine_Config/HttpMime.types");
 	LPCXSTR lpszHTTPCode = _X("./XEngine_Config/HttpCode.types");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
@@ -544,7 +545,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，转录动作没有启用"));
 	}
 	//发送信息报告
-	if (st_ServiceCfg.st_XReport.bEnable)
+	if (st_ServiceCfg.st_XReport.bEnable && !bIsTest)
 	{
 		if (InfoReport_APIMachine_Send(st_ServiceCfg.st_XReport.tszAPIUrl, st_ServiceCfg.st_XReport.tszServiceName))
 		{
@@ -564,8 +565,13 @@ int main(int argc, char** argv)
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,XEngine版本:%s%s 当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), BaseLib_OperatorVer_XNumberStr(), BaseLib_OperatorVer_XTypeStr(), st_ServiceCfg.st_XVer.pStl_ListStorage->front().c_str());
 
-	while (true)
+	while (bIsRun)
 	{
+		if (bIsTest)
+		{
+			nRet = 0;
+			break;
+		}
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 
@@ -573,9 +579,15 @@ XENGINE_EXITAPP:
 
 	if (bIsRun)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("存储中心服务关闭，服务器退出..."));
 		bIsRun = false;
-
+		if (bIsTest && 0 == nRet)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("存储中心服务关闭，测试程序退出..."));
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("存储中心服务关闭，服务器退出..."));
+		}
 		HttpProtocol_Server_DestroyEx(xhUPHttp);
 		HttpProtocol_Server_DestroyEx(xhDLHttp);
 		HttpProtocol_Server_DestroyEx(xhCenterHttp);
@@ -623,5 +635,5 @@ XENGINE_EXITAPP:
 #ifdef _MSC_BUILD
 	WSACleanup();
 #endif
-	return 0;
+	return nRet;
 }

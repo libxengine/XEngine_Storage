@@ -75,6 +75,10 @@ bool StorageApp_Config_Parament(int argc,char **argv)
 		{
 			st_ServiceCfg.bReuseraddr = true;
 		}
+		else if (0 == _tcsxcmp("-t", argv[i]))
+		{
+            bIsTest = true;
+		}
     }
 
     return true;

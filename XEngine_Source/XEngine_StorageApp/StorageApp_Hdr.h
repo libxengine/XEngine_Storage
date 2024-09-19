@@ -74,6 +74,7 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPWEBDAV 4
 
 extern bool bIsRun;
+extern bool bIsTest;
 extern XHANDLE xhLog;
 
 extern XHANDLE xhHBDownload;
