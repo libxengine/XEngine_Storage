@@ -1,4 +1,4 @@
-CC = g++ -Wall -std=c++17 -fPIC -Wformat-overflow=0
+CC = g++ -Wall -std=c++17 -fPIC
 PLATFORM = linux
 PLATVER = 
 PLATDIR = 
@@ -6,7 +6,7 @@ RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./ 
 LOADSO =  -L ../XEngine_Depend/XEngine_Module/jsoncpp -L ../XEngine_Depend/XEngine_Module/tinyxml2 -L ../XEngine_Depend/XEngine_Module/XEngine_InfoReport \
-          -L ../StorageModule_Database -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp -L ../StorageModule_Protocol -L ../StorageModule_BTorrent -L ../StorageModule_InfoReport
+          -L ../StorageModule_Database -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp -L ../StorageModule_Protocol -L ../StorageModule_BTorrent
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_OPenSsl -lXClient_APIHelp -lXEngine_ProcFile -lXEngine_SystemApi -lHelpComponents_XLog -lHelpComponents_Packets -lRfcComponents_HttpProtocol \
       -lStorageModule_Database -lStorageModule_Config -lStorageModule_Session -lStorageModule_APIHelp -lStorageModule_Protocol -lStorageModule_BTorrent  \
 	  -ljsoncpp -ltinyxml2 -lXEngine_InfoReport
