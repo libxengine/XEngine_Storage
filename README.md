@@ -43,7 +43,7 @@ GITEE:https://gitee.com/libxengine/libxengine
 GITHUB:https://github.com/libxengine/libxengine
 
 ###### 快速部署
-git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.com/libxengine/libxengine.git  
+git clone https://gitee.com/libxengine/libxengine.git 或者 git clone https://github.com/libxengine/libxengine.git  
 window执行XEngine_WINEnv.bat 脚本.  
 Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
 macos执行:./XEngine_LINEnv.sh -i 3  
