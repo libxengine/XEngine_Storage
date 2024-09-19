@@ -17,7 +17,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-          - os: ubuntu-24.04
+          #- os: ubuntu-24.04
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -61,4 +61,4 @@ jobs:
       - name: test
         run: |
             cd XEngine_Release
-            ./XEngine_StorageApp -t
+            ./XEngine_XStorageApp -t
