@@ -15,6 +15,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <io.h>
+#include <minidumpapiset.h>
 #else
 #include <unistd.h>
 #include <sys/wait.h>
@@ -123,6 +124,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 
 #ifdef _MSC_BUILD
 #pragma comment(lib,"Ws2_32.lib")
+#pragma comment(lib,"Dbghelp.lib")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_Algorithm.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_Core.lib")
