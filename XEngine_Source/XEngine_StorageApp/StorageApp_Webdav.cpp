@@ -116,8 +116,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			}
 			else
 			{
-				//SystemApi_File_EnumFile(tszFindStr, &pptszListFile, &nListCount);
-				SystemApi_File_EnumFile(tszFindStr, &pptszListFile, &nListCount, false, 3);
+				SystemApi_File_EnumFile(tszFindStr, &pptszListFile, &nListCount);
 			}
 		}
 		//枚举文件
