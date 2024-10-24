@@ -167,18 +167,6 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	_tcsxcpy(pSt_ServerConfig->st_XProxy.tszUPPass, st_JsonXProxy["tszUPPass"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XProxy.tszAuthPass, st_JsonXProxy["tszAuthPass"].asCString());
 
-	if (st_JsonRoot["XAuth"].empty() || (4 != st_JsonRoot["XAuth"].size()))
-	{
-		Config_IsErrorOccur = true;
-		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XAUTH;
-		return false;
-	}
-	Json::Value st_JsonXAuth = st_JsonRoot["XAuth"];
-	pSt_ServerConfig->st_XAuth.bUPAuth = st_JsonXAuth["bUPAuth"].asInt();
-	pSt_ServerConfig->st_XAuth.bDLAuth = st_JsonXAuth["bDLAuth"].asInt();
-	pSt_ServerConfig->st_XAuth.bCHAuth = st_JsonXAuth["bCHAuth"].asInt();
-	_tcsxcpy(pSt_ServerConfig->st_XAuth.tszUserList, st_JsonXAuth["tszUserList"].asCString());
-
 	if (st_JsonRoot["XLimit"].empty() || (5 != st_JsonRoot["XLimit"].size()))
 	{
 		Config_IsErrorOccur = true;

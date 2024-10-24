@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "Session_Stroage/Session_DLStroage.h"
 #include "Session_Stroage/Session_UPStroage.h"
-#include "Session_User/Session_User.h"
 #include "Session_Action/Session_Action.h"
 #include "Session_Webdav/Session_Webdav.h"
 /********************************************************************
@@ -20,7 +19,6 @@ XLONG Session_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CSession_DLStroage m_DLStorage;
 CSession_UPStroage m_UPStorage;
-CSession_User m_User;
 CSession_Action m_Action;
 CSession_Webdav m_Webdav;
 //////////////////////////////////////////////////////////////////////////
@@ -33,21 +31,6 @@ extern "C" XLONG Session_GetLastError(int* pInt_SysError)
 		*pInt_SysError = errno;
 	}
 	return Session_dwErrorCode;
-}
-/************************************************************************/
-/*                        用户管理导出的函数                            */
-/************************************************************************/
-extern "C" bool Session_User_Init(LPCXSTR lpszUserFile)
-{
-	return m_User.Session_User_Init(lpszUserFile);
-}
-extern "C" bool Session_User_Destory()
-{
-	return m_User.Session_User_Destory();
-}
-extern "C" bool Session_User_Exist(LPCXSTR lpszUser, LPCXSTR lpszPass, int* pInt_Limit)
-{
-	return m_User.Session_User_Exist(lpszUser, lpszPass, pInt_Limit);
 }
 /************************************************************************/
 /*                        存储会话导出的函数                            */

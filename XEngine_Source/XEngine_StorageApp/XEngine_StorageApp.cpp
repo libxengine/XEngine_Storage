@@ -72,7 +72,6 @@ void ServiceApp_Stop(int signo)
 		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
 
-		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		Database_File_Destory();
@@ -268,12 +267,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，初始化数据库失败,数据库被设置为禁用,相关功能已经被禁止使用!"));
 	}
 
-	if (!Session_User_Init(st_ServiceCfg.st_XAuth.tszUserList))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动用户管理服务失败，错误：%lX"), Session_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动用户管理服务成功"));
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，验证服务启动标志:API:%d,上传:%d,下载:%d"), st_ServiceCfg.st_XProxy.bAuthPass, st_ServiceCfg.st_XProxy.bDLPass, st_ServiceCfg.st_XProxy.bUPPass);
 	//启动下载服务
 	if (st_ServiceCfg.nStorageDLPort > 0)
 	{
@@ -643,7 +637,6 @@ XENGINE_EXITAPP:
 		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
 
-		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		Database_File_Destory();
