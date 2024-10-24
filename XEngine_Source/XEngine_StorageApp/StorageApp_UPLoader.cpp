@@ -42,6 +42,7 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(XPVOID lParam)
 bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount)
 {
 	int nSDLen = 2048;
+	int nLimit = 0;
 	XCHAR tszSDBuffer[2048];
 	XCHAR tszFileDir[1024];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
@@ -96,6 +97,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,用户验证失败,错误:%lX"), lpszClientAddr, StorageHelp_GetLastError());
 			return false;
 		}
+		int nCode = 0;
 		int nResponseCode = 0;
 		XCHAR* ptszBody = NULL;
 
@@ -111,6 +113,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 		}
+		Protocol_StorageParse_SpeedLimit(ptszBody, nSDLen, &nCode, &nLimit);
 		BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass);
 		st_HDRParam.bAuth = true;
