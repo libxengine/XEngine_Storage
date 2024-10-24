@@ -311,20 +311,6 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 		if (0 == nOPCode)
 		{
 			//处理路径格式
-			if (tszRealDir[_tcsxlen(tszRealDir) - 1] != '*')
-			{
-				int nPathType = 0;
-				BaseLib_OperatorString_GetPath(tszRealDir, &nPathType);
-				//判断是绝对路径还是相对路径
-				if (1 == nPathType)
-				{
-					_tcsxcat(tszRealDir, _X("\\*"));
-				}
-				else if (2 == nPathType)
-				{
-					_tcsxcat(tszRealDir, _X("/*"));
-				}
-			}
 			if (!SystemApi_File_EnumFile(tszRealDir, &ppszListDir, &nListCount, true, 2))
 			{
 				st_HDRParam.bIsClose = true;

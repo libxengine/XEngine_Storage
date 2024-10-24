@@ -91,6 +91,8 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,处理WEBDAV协议PROPFIND方法失败,URL:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 			return false;
 		}
+		int nListCount = 0;
+		XCHAR** pptszListFile;
 		XCHAR tszFindStr[MAX_PATH] = {};
 		//得到是否是文件
 		if (APIHelp_Api_UrlStr(st_StorageBucket.tszBuckKey, pSt_HTTPParam->tszHttpUri))
@@ -98,6 +100,10 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			int nALen = 0;
 			_tcsxcpy(tszFindStr, pSt_HTTPParam->tszHttpUri + 1);
 			BaseLib_OperatorString_Replace(tszFindStr, &nALen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath, true);
+			//如果是文件
+			nListCount = 1;
+			BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszListFile, nListCount, MAX_PATH);
+			_tcsxcpy(pptszListFile[0], tszFindStr);
 		}
 		else
 		{
@@ -106,17 +112,15 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, _X("Depth"), tszVluStr);
 			if (1 == _ttxoi(tszVluStr))
 			{
-				_xstprintf(tszFindStr, _X("%s/*"), st_StorageBucket.tszFilePath);
+				SystemApi_File_EnumFile(tszFindStr, &pptszListFile, &nListCount, false, 3);
 			}
 			else
 			{
-				_tcsxcpy(tszFindStr, st_StorageBucket.tszFilePath);
+				//SystemApi_File_EnumFile(tszFindStr, &pptszListFile, &nListCount);
+				SystemApi_File_EnumFile(tszFindStr, &pptszListFile, &nListCount, false, 3);
 			}
 		}
 		//枚举文件
-		int nListCount = 0;
-		XCHAR** pptszListFile;
-		SystemApi_File_EnumFile(tszFindStr, &pptszListFile, &nListCount);
 		if (0 == nListCount)
 		{
 			st_HDRParam.nHttpCode = 404;
