@@ -51,7 +51,7 @@ void CALLBACK XEngine_UPLoader_UPFlow(XHANDLE xhToken, bool bSDFlow, bool bRVFlo
 	{
 		NetCore_TCPXCore_PasueRecvEx(xhNetUPLoader, tszIPAddr, true);
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,接受数据标志:%d,当前平均流量:%llu"), tszIPAddr, bSDFlow, nSDFlow);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("上传客户端:%s,接受数据标志:%d,当前平均流量:%llu"), tszIPAddr, bSDFlow, nSDFlow);
 }
 bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount)
 {
@@ -311,6 +311,16 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		{
 			//处理限速情况
 			XCHAR* ptszIPClient = (XCHAR*)malloc(MAX_PATH);
+			if (NULL == ptszIPClient)
+			{
+				st_HDRParam.bIsClose = true;
+				st_HDRParam.nHttpCode = 500;
+
+				HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,插入用户请求失败,文件:%s,内存申请失败,服务器错误"), lpszClientAddr, tszFileDir);
+				return false;
+			}
 			memset(ptszIPClient, '\0', MAX_PATH);
 			_tcsxcpy(ptszIPClient, lpszClientAddr);
 

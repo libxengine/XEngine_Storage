@@ -206,6 +206,7 @@ bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClient
 			NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
 		}
+		Algorithm_Calculation_PassiveClose(Session_UPStroage_GetSpeed(lpszClientAddr), true);
 		Algorithm_Calculation_Close(Session_UPStroage_GetSpeed(lpszClientAddr));
 		Session_UPStroage_Delete(lpszClientAddr);
 		HttpProtocol_Server_CloseClinetEx(xhUPHttp, lpszClientAddr);
