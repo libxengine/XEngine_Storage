@@ -39,6 +39,20 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(XPVOID lParam)
 	}
 	return 0;
 }
+void CALLBACK XEngine_UPLoader_UPFlow(XHANDLE xhToken, bool bSDFlow, bool bRVFlow, bool bTime, __int64u nSDFlow, __int64u nRVFlow, __int64u nTimeFlow, XPVOID lParam)
+{
+	XCHAR tszIPAddr[128] = {};
+	_tcsxcpy(tszIPAddr, (LPCXSTR)lParam);
+	if (bSDFlow)
+	{
+		NetCore_TCPXCore_PasueRecvEx(xhNetUPLoader, tszIPAddr, false);
+	}
+	else
+	{
+		NetCore_TCPXCore_PasueRecvEx(xhNetUPLoader, tszIPAddr, true);
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,接受数据标志:%d,当前平均流量:%llu"), tszIPAddr, bSDFlow, nSDFlow);
+}
 bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount)
 {
 	int nSDLen = 2048;
@@ -292,7 +306,21 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			}
 			SystemApi_File_CreateMutilFolder(tszTmpPath);
 		}
-		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, nPosCount, st_StorageBucket.st_PermissionFlags.bRewrite, nPosStart, nPosEnd))
+		XHANDLE xhUPSpeed = NULL;
+		if (nLimit > 0 || (st_ServiceCfg.st_XLimit.bLimitMode && st_ServiceCfg.st_XLimit.nMaxUPLoader > 0))
+		{
+			//处理限速情况
+			XCHAR* ptszIPClient = (XCHAR*)malloc(MAX_PATH);
+			memset(ptszIPClient, '\0', MAX_PATH);
+			_tcsxcpy(ptszIPClient, lpszClientAddr);
+
+			nLimit = nLimit == 0 ? st_ServiceCfg.st_XLimit.nMaxUPLoader : nLimit;
+			xhUPSpeed = Algorithm_Calculation_Create();
+			Algorithm_Calculation_PassiveOPen(xhUPSpeed, XEngine_UPLoader_UPFlow, nLimit, 0, 0, false, ptszIPClient);
+			NetCore_TCPXCore_PasueRecvEx(xhNetUPLoader, lpszClientAddr, false);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,上传限速被启用,文件:%s,限速:%d"), lpszClientAddr, tszFileDir, nLimit);
+		}
+		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, xhUPSpeed, nPosCount, st_StorageBucket.st_PermissionFlags.bRewrite, nLimit, nPosStart, nPosEnd))
 		{
 			st_HDRParam.bIsClose = true;
 			st_HDRParam.nHttpCode = 500;
@@ -354,6 +382,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	{
 		Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer, nMsgLen);
 	}
+	Algorithm_Calculation_ADDSDFlow(Session_UPStroage_GetSpeed(lpszClientAddr), nMsgLen);
 	HttpProtocol_Server_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 	if (nHDSize >= nRVCount)
 	{

@@ -83,13 +83,17 @@ extern "C" bool Session_UPStroage_Destory()
 {
 	return m_UPStorage.Session_UPStroage_Destory();
 }
-extern "C" bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, __int64x nFileSize, bool bRewrite, int nPosStart, int nPostEnd)
+extern "C" bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, XHANDLE xhSpeed, __int64x nFileSize, bool bRewrite, int nSpeedLimit, int nPosStart, int nPostEnd)
 {
-	return m_UPStorage.Session_UPStroage_Insert(lpszClientAddr, lpszBuckKey, lpszFileDir, nFileSize, bRewrite, nPosStart, nPostEnd);
+	return m_UPStorage.Session_UPStroage_Insert(lpszClientAddr, lpszBuckKey, lpszFileDir, xhSpeed, nFileSize, bRewrite, nSpeedLimit, nPosStart, nPostEnd);
 }
 extern "C" bool Session_UPStroage_GetInfo(LPCXSTR lpszClientAddr, SESSION_STORAGEINFO * pSt_StorageInfo)
 {
 	return m_UPStorage.Session_UPStroage_GetInfo(lpszClientAddr, pSt_StorageInfo);
+}
+extern "C" XHANDLE Session_UPStroage_GetSpeed(LPCXSTR lpszClientAddr)
+{
+	return m_UPStorage.Session_UPStroage_GetSpeed(lpszClientAddr);
 }
 extern "C" bool Session_UPStroage_Write(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {

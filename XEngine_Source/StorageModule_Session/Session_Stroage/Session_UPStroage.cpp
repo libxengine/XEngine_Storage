@@ -82,22 +82,32 @@ bool CSession_UPStroage::Session_UPStroage_Destory()
   类型：常量字符指针
   可空：N
   意思：输入文件地址
- 参数.四：nFileSize
+ 参数.四：xhSpeed
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：输入限速句柄
+ 参数.五：nFileSize
   In/Out：Out
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.五：bRewrite
+ 参数.六：bRewrite
   In/Out：In
   类型：整数型
   可空：N
   意思：是否允许覆写
- 参数.六：nPosStart
+ 参数.七：nSpeedLimit
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入上传限速速率
+ 参数.八：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入起始位置
- 参数.七：nPostEnd
+ 参数.九：nPostEnd
   In/Out：In
   类型：整数型
   可空：Y
@@ -107,7 +117,7 @@ bool CSession_UPStroage::Session_UPStroage_Destory()
   意思：是否成功
 备注：
 *********************************************************************/
-bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, __int64x nFileSize, bool bRewrite, int nPosStart /* = 0 */, int nPostEnd /* = 0 */)
+bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, XHANDLE xhSpeed, __int64x nFileSize, bool bRewrite, int nSpeedLimit, int nPosStart , int nPostEnd )
 {
 	Session_IsErrorOccur = false;
 
@@ -132,9 +142,11 @@ bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXST
 	SESSION_STORAGEUPLOADER st_Client;
 	memset(&st_Client, '\0', sizeof(SESSION_STORAGEUPLOADER));
 	//填充下载信息
+	st_Client.xhSpeed = xhSpeed;
 	st_Client.st_StorageInfo.ullPosStart = nPosStart;
 	st_Client.st_StorageInfo.ullPosEnd = nPostEnd;
 	st_Client.st_StorageInfo.ullCount = nFileSize;
+	st_Client.st_StorageInfo.nLimit = nSpeedLimit;
 	_tcsxcpy(st_Client.st_StorageInfo.tszBuckKey, lpszBuckKey);
 	_tcsxcpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
 	_tcsxcpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
@@ -232,6 +244,43 @@ bool CSession_UPStroage::Session_UPStroage_GetInfo(LPCXSTR lpszClientAddr, SESSI
 	*pSt_StorageInfo = stl_MapIterator->second.st_StorageInfo;
 	st_Locker.unlock_shared();
 	return true;
+}
+/********************************************************************
+函数名称：Session_UPStroage_GetSpeed
+函数功能：获得速率限制句柄
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+返回值
+  类型：句柄
+  意思：返回速率句柄
+备注：
+*********************************************************************/
+XHANDLE CSession_UPStroage::Session_UPStroage_GetSpeed(LPCXSTR lpszClientAddr)
+{
+	Session_IsErrorOccur = false;
+
+	if ((NULL == lpszClientAddr))
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_PARAMENT;
+		return NULL;
+	}
+
+	st_Locker.lock_shared();
+	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapStroage.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		st_Locker.unlock_shared();
+		return NULL;
+	}
+	XHANDLE xhSpeed = stl_MapIterator->second.xhSpeed;;
+	st_Locker.unlock_shared();
+	return xhSpeed;
 }
 /********************************************************************
 函数名称：Session_UPStroage_Write

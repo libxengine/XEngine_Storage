@@ -283,22 +283,32 @@ extern "C" bool Session_UPStroage_Destory();
   类型：常量字符指针
   可空：N
   意思：输入文件地址
- 参数.四：nFileSize
+ 参数.四：xhSpeed
+  In/Out：Out
+  类型：整数型
+  可空：N
+  意思：输入限速句柄
+ 参数.五：nFileSize
   In/Out：Out
   类型：整数型
   可空：N
   意思：输入文件大小
- 参数.五：bRewrite
+ 参数.六：bRewrite
   In/Out：In
   类型：整数型
   可空：N
   意思：是否允许覆写
- 参数.六：nPosStart
+ 参数.七：nSpeedLimit
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入上传限速速率
+ 参数.八：nPosStart
   In/Out：In
   类型：整数型
   可空：Y
   意思：输入起始位置
- 参数.七：nPostEnd
+ 参数.九：nPostEnd
   In/Out：In
   类型：整数型
   可空：Y
@@ -308,7 +318,7 @@ extern "C" bool Session_UPStroage_Destory();
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, __int64x nFileSize, bool bRewrite, int nPosStart = 0, int nPostEnd = 0);
+extern "C" bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, XHANDLE xhSpeed, __int64x nFileSize, bool bRewrite, int nSpeedLimit = 0, int nPosStart = 0, int nPostEnd = 0);
 /********************************************************************
 函数名称：Session_UPStroage_GetInfo
 函数功能：获取上传客户端信息
@@ -328,6 +338,20 @@ extern "C" bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuc
 备注：
 *********************************************************************/
 extern "C" bool Session_UPStroage_GetInfo(LPCXSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
+/********************************************************************
+函数名称：Session_UPStroage_GetSpeed
+函数功能：获得速率限制句柄
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端
+返回值
+  类型：句柄
+  意思：返回速率句柄
+备注：
+*********************************************************************/
+extern "C" XHANDLE Session_UPStroage_GetSpeed(LPCXSTR lpszClientAddr);
 /********************************************************************
 函数名称：Session_UPStroage_Write
 函数功能：写入数据到文件

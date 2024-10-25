@@ -76,12 +76,6 @@ void CALLBACK XEngine_Callback_UPLoaderRecv(LPCXSTR lpszClientAddr, XSOCKET hSoc
 		}
 	}
 	SocketOpt_HeartBeat_ActiveAddrEx(xhHBUPLoader, lpszClientAddr);
-
-	int nCount = 0;
-	__int64u nTimeWait = 0;
-	Session_UPStorage_GetAll(NULL, &nCount);
-	Algorithm_Calculation_SleepFlow(xhLimit, &nTimeWait, st_ServiceCfg.st_XLimit.nMaxUPLoader, nCount, nMsgLen);
-	std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("上传客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
 }
 void CALLBACK XEngine_Callback_UPLoaderLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
@@ -212,6 +206,7 @@ bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClient
 			NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
 		}
+		Algorithm_Calculation_Close(Session_UPStroage_GetSpeed(lpszClientAddr));
 		Session_UPStroage_Delete(lpszClientAddr);
 		HttpProtocol_Server_CloseClinetEx(xhUPHttp, lpszClientAddr);
 		OPenSsl_Server_CloseClientEx(xhUPSsl, lpszClientAddr);
