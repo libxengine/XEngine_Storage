@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "APIHelp_Distributed/APIHelp_Distributed.h"
 #include "APIHelp_Api/APIHelp_Api.h"
+#include "APIHelp_Cryption/APIHelp_Cryption.h"
 /********************************************************************
 //    Created:     2021/07/08  16:40:04
 //    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_APIHelp\pch.cpp
@@ -17,6 +18,7 @@ XLONG APIHelp_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CAPIHelp_Distributed m_APIDistributed;
 CAPIHelp_Api m_APIHelp;
+CAPIHelp_Cryption m_APICryption;
 //////////////////////////////////////////////////////////////////////////
 //                       导出函数
 //////////////////////////////////////////////////////////////////////////
@@ -89,4 +91,19 @@ extern "C" bool APIHelp_Api_GetDIRSize(LPCXSTR lpszDIRStr, __int64u * pInt_DIRSi
 extern "C" bool APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl)
 {
 	return m_APIHelp.APIHelp_Api_UrlStr(ptszKeyStr, lpszUrl);
+}
+/************************************************************************/
+/*                       加解密函数                                     */
+/************************************************************************/
+extern "C" bool APIHelp_Cryption_BasicEncoder(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszMsgBuffer, bool bADD)
+{
+	return m_APICryption.APIHelp_Cryption_BasicEncoder(lpszUser, lpszPass, ptszMsgBuffer, bADD);
+}
+extern "C" bool APIHelp_Cryption_BasicDecoder(LPCXSTR lpszMsgBuffer, XCHAR* ptszUser, XCHAR* ptszPass)
+{
+	return m_APICryption.APIHelp_Cryption_BasicDecoder(lpszMsgBuffer, ptszUser, ptszPass);
+}
+extern "C" bool APIHelp_Cryption_Digest(XCHAR* ptszResponseStr, LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszRealm, LPCXSTR lpszMethod, LPCXSTR lpszUrl, LPCXSTR lpszNonce, LPCXSTR lpszCNonce, LPCXSTR lpszNC)
+{
+	return m_APICryption.APIHelp_Cryption_Digest(ptszResponseStr, lpszUser, lpszPass, lpszRealm, lpszMethod, lpszUrl, lpszNonce, lpszCNonce, lpszNC);
 }

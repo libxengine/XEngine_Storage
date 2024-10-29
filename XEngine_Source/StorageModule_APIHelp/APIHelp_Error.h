@@ -22,3 +22,4 @@
 #define ERROR_STORAGE_MODULE_APIHELP_NOTMATCH 0x0030015               //HASH不匹配
 #define ERROR_STORAGE_MODULE_APIHELP_SIZE 0x0030016                   //目录大小已经满了
 #define ERROR_STORAGE_MODULE_APIHELP_CODE 0x0030017                   //服务器返回失败
+#define ERROR_STORAGE_MODULE_APIHELP_FORMAT 0x0030018                 //格式化失败

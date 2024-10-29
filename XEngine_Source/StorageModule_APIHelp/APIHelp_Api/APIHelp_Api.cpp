@@ -76,7 +76,7 @@ bool CAPIHelp_Api::APIHelp_Api_ProxyAuth(XCHAR* ptszUser, XCHAR* ptszPass, XCHAR
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTSUPPORT;
 		return false;
 	}
-	OPenSsl_Help_BasicDecoder(tszAuthStr, ptszUser, ptszPass);
+	APIHelp_Cryption_BasicDecoder(tszAuthStr, ptszUser, ptszPass);
 	return true;
 }
 /********************************************************************
