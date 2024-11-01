@@ -22,7 +22,7 @@ feature list:
 5. support load banace  
 6. supprot http auth  
 7. support log and config  
-8. supprot speeds contral  
+8. Support multi-threaded file upload and download
 9. supprot task start and end proxy forwarding  
 10. support p2p  
 11. bt protocol  
