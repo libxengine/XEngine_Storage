@@ -1,3 +1,31 @@
+XEngine_Storage V3.17.0.1001
+
+added:workflows support
+added:start test parameter supported
+added:crash core-dump support for windows
+added:implement encryption and decryption for http basic and digest
+update:sub module library
+improved:start parameter parse
+modify:enum file function match to xengine v8.42
+modify:The upload speed limit is now processed using a new mode, network events + algorithm events, and will not affect other network clients
+fixed:build error on mac os
+fixed:vs Problems with incorrect generation order
+fixed:crash when exist service
+delete:user local authorize and just use proxy api authorize
+
+增加:工作流支持
+增加:启动参数测试支持
+增加:windows coredump支持
+增加:HTTP基本和摘要加解密实现
+更新:子模块支持库
+优化:启动参数优化
+修改:匹配了代码库版本到XEngine V8.42
+修改:上传限速使用了新的方法,网络事件+算法事件,不会影响其他客户端了
+修正:mac系统编译问题
+修正:生成顺序问题
+修正:某些时候退出崩溃问题
+删除:本地验证支持并且验证只使用代理授权验证
+======================================================================================
 XEngine_Storage V3.16.0.1001
 
 增加:上传接口文件准备支持

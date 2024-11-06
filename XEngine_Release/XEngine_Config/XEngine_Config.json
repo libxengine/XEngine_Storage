@@ -39,12 +39,6 @@
         "bUPHash":false,
         "nHashMode":2
     },
-    "XAuth":{
-        "bUPAuth":false,
-        "bDLAuth":false,
-        "bCHAuth":false,
-        "tszUserList":"./XEngine_Config/UserList.txt"
-    },
     "XProxy":{
         "bUPPass":false,
         "bDLPass":false,
@@ -55,7 +49,7 @@
     },
     "XLimit":{
         "bLimitMode":true,
-        "nMaxUPLoad":4096000,
+        "nMaxUPLoad":0,
         "nMaxDNLoad":4096000,
         "nMaxUPConnect":2,
         "nMaxDNConnect":2
