@@ -1,32 +1,44 @@
-name: C++ Build with Dependencies
+name: windows build workflows
 
-#on: [push] # 触发条件，推送和拉取请求时，
 on:
-  workflow_dispatch:  # 添加这行来启用手动触发
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
   
 permissions:
-  contents: write
+  contents: read
   
 jobs:
   build:
     strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
       matrix:
-        configuration: [Release]
-        platform: [x86]
+        configuration: [Debug ,Release]
+        platform: [x86 ,x64]
 
     runs-on: windows-latest # 最新的 Windows 环境
 
     steps:
        # 检出您的主仓库代码
       - name: Checkout main repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          ref: 'develop'
         
        # 检出依赖的xengine仓库到指定的xengine目录
       - name: Checkout dependency repository (xengine)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          repository: libxengine/xengine
+          repository: libxengine/libxengine
           path: xengine
+          
+      - name: sub module checkout (opensource)
+        run: |
+            git submodule init
+            git submodule update
+        shell: pwsh
 
       # 设置依赖库的环境变量
       - name: Set up Dependency Environment Variables
@@ -42,61 +54,24 @@ jobs:
       #编译
       - name: Build Solution
         run: msbuild XEngine_Source/XEngine_StorageApp.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
-
-      # 打包
-      - name: Copy Build binaries for x86
+      #测试
+      - name: Conditional Step for x86 Release
+        if: matrix.configuration == 'Release' && matrix.platform == 'x86'
         run: |
-          mkdir -p "x86/XEngine_StorageApp"
-          cp -r ./XEngine_Release/* x86/XEngine_StorageApp/
-          cp -r ./XEngine_Source/Release/*.dll x86/XEngine_StorageApp/
-          cp -r ./XEngine_Source/Release/*.exe x86/XEngine_StorageApp/
-          cp -r ./XEngine_Source/VSCopy_x86.bat x86/XEngine_StorageApp/
-          cd x86/XEngine_StorageApp && ./VSCopy_x86.bat
-          cd ..
-          cd ..
-          7z a XEngine_StorageApp-x86-Windows.zip ./x86/XEngine_StorageApp/*
+          cp -r XEngine_Source/Release/*.dll XEngine_Release/
+          cp -r XEngine_Source/Release/*.exe XEngine_Release/
+          cp -r XEngine_Source/VSCopy_x86.bat XEngine_Release/
+          cd XEngine_Release
+          ./VSCopy_x86.bat
+          ./XEngine_StorageApp.exe -t
         shell: pwsh
-
-      - name: Calculate new tag
-        id: newtag
-        shell: bash
+      - name: Conditional Step for x86 Debug
+        if: matrix.configuration == 'Debug' && matrix.platform == 'x86'
         run: |
-          git fetch --tags
-          TAG=$(git tag --sort=-v:refname | head -n 1)
-          MAJOR=$(echo $TAG | cut -d '.' -f 1)
-          MINOR=$(echo $TAG | cut -d '.' -f 2)
-          PATCH=$(echo $TAG | cut -d '.' -f 3)
-          BUILD=$(echo $TAG | cut -d '.' -f 4)
-          MINOR_BUMP=$((MINOR + 1))
-          NEW_TAG="${MAJOR}.${MINOR_BUMP}.0.${BUILD}"
-          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git tag $NEW_TAG
-          git push origin $NEW_TAG
-          
-      # 创建GitHub Release
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.NEW_TAG }}
-          name: Release ${{ env.NEW_TAG }}
-          body: |
-            [${{ github.sha }}](https://github.com/libxengine/XEngine_Storage/commit/${{ github.sha }})
-            ${{ github.event.head_commit.message }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-     
-      # 上传x86的zip包作为发布的artifacts
-      - name: Upload x86 Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./XEngine_StorageApp-x86-Windows.zip
-          asset_name: XEngine_StorageApp-x86-Windows.zip
-          asset_content_type: application/zip
+          cp -r XEngine_Source/Debug/*.dll XEngine_Release/
+          cp -r XEngine_Source/Debug/*.exe XEngine_Release/
+          cp -r XEngine_Source/VSCopy_x86.bat XEngine_Release/
+          cd XEngine_Release
+          ./VSCopy_x86.bat
+          ./XEngine_StorageApp.exe -t
+        shell: pwsh

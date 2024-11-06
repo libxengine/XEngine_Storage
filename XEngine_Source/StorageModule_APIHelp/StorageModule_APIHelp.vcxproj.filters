@@ -25,6 +25,12 @@
     <Filter Include="源文件\APIHelp_Api">
       <UniqueIdentifier>{70c91174-907f-422b-8db6-f8ee8298447c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\APIHelp_Cryption">
+      <UniqueIdentifier>{1db63e4d-1a66-425d-8ec3-464e7980c4ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\APIHelp_Cryption">
+      <UniqueIdentifier>{78596bd9-1685-40fa-83af-fd179d268bf0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -45,6 +51,9 @@
     <ClInclude Include="APIHelp_Api\APIHelp_Api.h">
       <Filter>头文件\APIHelp_Api</Filter>
     </ClInclude>
+    <ClInclude Include="APIHelp_Cryption\APIHelp_Cryption.h">
+      <Filter>头文件\APIHelp_Cryption</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -58,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="APIHelp_Api\APIHelp_Api.cpp">
       <Filter>源文件\APIHelp_Api</Filter>
+    </ClCompile>
+    <ClCompile Include="APIHelp_Cryption\APIHelp_Cryption.cpp">
+      <Filter>源文件\APIHelp_Cryption</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

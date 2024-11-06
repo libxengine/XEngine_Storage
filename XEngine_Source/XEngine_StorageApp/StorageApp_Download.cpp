@@ -156,7 +156,7 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		}
 	}
 	//验证用户
-	if (st_ServiceCfg.st_XAuth.bDLAuth)
+	if (st_ServiceCfg.st_XProxy.bDLPass)
 	{
 		XCHAR tszUserName[64];
 		XCHAR tszUserPass[64];
@@ -174,43 +174,25 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,用户验证失败,错误:%lX"), lpszClientAddr, StorageHelp_GetLastError());
 			return false;
 		}
-		if (st_ServiceCfg.st_XProxy.bAuthPass)
+		int nCode = 0;
+		int nResponseCode = 0;
+		XCHAR* ptszBody = NULL;
+
+		Protocol_StoragePacket_BasicAuth(pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
+		APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszAuthPass, tszSDBuffer, &nResponseCode, &ptszBody, &nSDLen);
+		if (200 != nResponseCode)
 		{
-			int nCode = 0;
-			int nResponseCode = 0;
-			XCHAR* ptszBody = NULL;
+			st_HDRParam.bIsClose = true;
+			st_HDRParam.bAuth = true;
+			st_HDRParam.nHttpCode = nResponseCode;
 
-			Protocol_StoragePacket_BasicAuth(pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
-			APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszAuthPass, tszSDBuffer, &nResponseCode, &ptszBody, &nSDLen);
-			if (200 != nResponseCode)
-			{
-				st_HDRParam.bIsClose = true;
-				st_HDRParam.bAuth = true;
-				st_HDRParam.nHttpCode = nResponseCode;
-
-				HttpProtocol_Server_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
-			}
-			Protocol_StorageParse_SpeedLimit(ptszBody, nSDLen, &nCode, &nLimit);
-			BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s,值:%d"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass, nCode);
+			HttpProtocol_Server_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 		}
-		else
-		{
-			if (!Session_User_Exist(tszUserName, tszUserPass, &nLimit))
-			{
-				st_HDRParam.bIsClose = true;
-				st_HDRParam.bAuth = true;
-				st_HDRParam.nHttpCode = 401;
-
-				HttpProtocol_Server_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPDOWNLOAD);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,验证用户失败,无法继续"), lpszClientAddr);
-				return false;
-			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,本地验证用户验证通过,用户名:%s,密码:%s"), lpszClientAddr, tszUserName, tszUserPass);
-		}
+		Protocol_StorageParse_SpeedLimit(ptszBody, nSDLen, &nCode, &nLimit);
+		BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s,值:%d"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass, nCode);
 		st_HDRParam.bAuth = true;
 	}
 	//使用重定向,这是分布式重定向实现

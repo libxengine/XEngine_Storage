@@ -1,6 +1,7 @@
 ﻿#include "StorageApp_Hdr.h"
 
 bool bIsRun = false;
+bool bIsTest = false;
 XHANDLE xhLog = NULL;
 
 XHANDLE xhHBDownload = NULL;
@@ -71,7 +72,6 @@ void ServiceApp_Stop(int signo)
 		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
 
-		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		Database_File_Destory();
@@ -119,15 +119,42 @@ static int ServiceApp_Deamon(int wait)
 #endif
 	return 0;
 }
+#ifdef _MSC_BUILD
+LONG WINAPI Coredump_ExceptionFilter(EXCEPTION_POINTERS* pExceptionPointers)
+{
+	static int i = 0;
+	XCHAR tszFileStr[MAX_PATH] = {};
+	XCHAR tszTimeStr[128] = {};
+	BaseLib_OperatorTime_TimeToStr(tszTimeStr);
+	_xstprintf(tszFileStr, _X("./XEngine_Coredump/dumpfile_%s_%d.dmp"), tszTimeStr, i++);
 
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_FATAL, _X("主程序:软件崩溃,写入dump:%s"), tszFileStr);
+
+	HANDLE hDumpFile = CreateFileA(tszFileStr, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (INVALID_HANDLE_VALUE != hDumpFile)
+	{
+		MINIDUMP_EXCEPTION_INFORMATION st_DumpInfo = {};
+		st_DumpInfo.ExceptionPointers = pExceptionPointers;
+		st_DumpInfo.ThreadId = GetCurrentThreadId();
+		st_DumpInfo.ClientPointers = TRUE;
+
+		// 写入 dump 文件
+		MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hDumpFile, MiniDumpNormal, &st_DumpInfo, NULL, NULL);
+		CloseHandle(hDumpFile);
+	}
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+#endif
 int main(int argc, char** argv)
 {
 #ifdef _MSC_BUILD
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
+
+	SetUnhandledExceptionFilter(Coredump_ExceptionFilter);
 #endif
 	bIsRun = true;
-	string m_StrVersion;
+	int nRet = -1;
 	LPCXSTR lpszHTTPMime = _X("./XEngine_Config/HttpMime.types");
 	LPCXSTR lpszHTTPCode = _X("./XEngine_Config/HttpCode.types");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
@@ -240,12 +267,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，初始化数据库失败,数据库被设置为禁用,相关功能已经被禁止使用!"));
 	}
 
-	if (!Session_User_Init(st_ServiceCfg.st_XAuth.tszUserList))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动用户管理服务失败，错误：%lX"), Session_GetLastError());
-		goto XENGINE_EXITAPP;
-	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动用户管理服务成功"));
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，验证服务启动标志:API:%d,上传:%d,下载:%d"), st_ServiceCfg.st_XProxy.bAuthPass, st_ServiceCfg.st_XProxy.bDLPass, st_ServiceCfg.st_XProxy.bUPPass);
 	//启动下载服务
 	if (st_ServiceCfg.nStorageDLPort > 0)
 	{
@@ -544,7 +566,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，转录动作没有启用"));
 	}
 	//发送信息报告
-	if (st_ServiceCfg.st_XReport.bEnable)
+	if (st_ServiceCfg.st_XReport.bEnable && !bIsTest)
 	{
 		if (InfoReport_APIMachine_Send(st_ServiceCfg.st_XReport.tszAPIUrl, st_ServiceCfg.st_XReport.tszServiceName))
 		{
@@ -566,6 +588,11 @@ int main(int argc, char** argv)
 
 	while (true)
 	{
+		if (bIsTest)
+		{
+			nRet = 0;
+			break;
+		}
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 
@@ -573,9 +600,15 @@ XENGINE_EXITAPP:
 
 	if (bIsRun)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("存储中心服务关闭，服务器退出..."));
 		bIsRun = false;
-
+		if (bIsTest && 0 == nRet)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("存储中心服务关闭，测试程序退出..."));
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("存储中心服务关闭，服务器退出..."));
+		}
 		HttpProtocol_Server_DestroyEx(xhUPHttp);
 		HttpProtocol_Server_DestroyEx(xhDLHttp);
 		HttpProtocol_Server_DestroyEx(xhCenterHttp);
@@ -604,7 +637,6 @@ XENGINE_EXITAPP:
 		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
 
-		Session_User_Destory();
 		Session_DLStroage_Destory();
 		Session_UPStroage_Destory();
 		Database_File_Destory();
@@ -623,5 +655,5 @@ XENGINE_EXITAPP:
 #ifdef _MSC_BUILD
 	WSACleanup();
 #endif
-	return 0;
+	return nRet;
 }

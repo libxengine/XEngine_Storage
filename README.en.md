@@ -22,7 +22,7 @@ feature list:
 5. support load banace  
 6. supprot http auth  
 7. support log and config  
-8. supprot speeds contral  
+8. Support multi-threaded file upload and download
 9. supprot task start and end proxy forwarding  
 10. support p2p  
 11. bt protocol  
@@ -40,11 +40,11 @@ feature list:
 
 #### XEngine Evn
 you must install XEngine,need V8.10 or above,install XEngine can be refer to xengine Readme docment  
-GITEE:https://gitee.com/xyry/libxengine  
-GITHUB:https://github.com/libxengine/xengine
+GITEE:https://gitee.com/libxengine/libxengine  
+GITHUB:https://github.com/libxengine/libxengine
 
 ##### fast to deployment 
-git clone https://gitee.com/xyry/libxengine.git or git clone https://github.com/libxengine/xengine.git  
+git clone https://gitee.com/libxengine/libxengine.git or git clone https://github.com/libxengine/libxengine.git  
 window Exection XEngine_WINEnv.bat   
 Linux Exection:sudo ./XEngine_LINEnv.sh -i 3  
 Macos Exection:./XEngine_LINEnv.sh -i 3
@@ -103,9 +103,6 @@ P2P distributed download is the same as the hyper-threaded download of other dow
 ## Example
 UPLoad File:   curl -d 'hello xengine' -X POST "http://192.168.1.8:5102/api?filename=hello.txt&storeagekey=storagekey1"  
 Download File: curl -X GET "http://192.168.1.8:5101/storagekey1/hello.txt"  
-
-## now task
-P2P WAN file search and download support  
 
 ## Installation Instructions
 #### Install

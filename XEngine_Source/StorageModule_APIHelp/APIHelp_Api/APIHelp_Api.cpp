@@ -76,7 +76,7 @@ bool CAPIHelp_Api::APIHelp_Api_ProxyAuth(XCHAR* ptszUser, XCHAR* ptszPass, XCHAR
 		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTSUPPORT;
 		return false;
 	}
-	OPenSsl_Help_BasicDecoder(tszAuthStr, ptszUser, ptszPass);
+	APIHelp_Cryption_BasicDecoder(tszAuthStr, ptszUser, ptszPass);
 	return true;
 }
 /********************************************************************
@@ -430,23 +430,9 @@ bool CAPIHelp_Api::APIHelp_Api_GetDIRSize(LPCXSTR lpszDIRStr, __int64u* pInt_DIR
 	APIHelp_IsErrorOccur = false;
 
 	int nListCount = 0;
-	int nPathType = 0;
 	__int64u nDirCount = 0;   //当前目录大小
 	XCHAR** ppListFile;
-	XCHAR tszFilePath[MAX_PATH] = {};
-	
-	_tcsxcpy(tszFilePath, lpszDIRStr);
-	BaseLib_OperatorString_GetPath(tszFilePath, &nPathType);
-	//判断是绝对路径还是相对路径
-	if (1 == nPathType)
-	{
-		_tcsxcat(tszFilePath, _X("\\*"));
-	}
-	else if (2 == nPathType)
-	{
-		_tcsxcat(tszFilePath, _X("/*"));
-	}
-	SystemApi_File_EnumFile(tszFilePath, &ppListFile, &nListCount, true, 1);
+	SystemApi_File_EnumFile(lpszDIRStr, &ppListFile, &nListCount, true, 1);
 	for (int i = 0; i < nListCount; i++)
 	{
 		struct _xtstat st_FStat;

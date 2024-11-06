@@ -66,13 +66,6 @@ typedef struct tag_XEngine_ServerConfig
         bool bUPHash;
         int nHashMode;
     }st_XStorage;
-	struct
-	{
-		bool bUPAuth;
-        bool bDLAuth;
-        bool bCHAuth;
-		XCHAR tszUserList[MAX_PATH];
-	}st_XAuth;
     struct  
     {
 		bool bUPPass;

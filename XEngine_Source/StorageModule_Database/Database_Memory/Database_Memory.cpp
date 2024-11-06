@@ -282,13 +282,7 @@ bool CDatabase_Memory::Database_Memory_Flush()
 	{
 		int nListCount = 0;
 		XCHAR** pptszListFile;
-        XCHAR tszFoundDir[MAX_PATH];
-
-        memset(tszFoundDir, '\0', MAX_PATH);
-        _tcsxcpy(tszFoundDir, stl_ListIterator->tszFilePath);
-        _tcsxcat(tszFoundDir, _X("/*"));
-
-		SystemApi_File_EnumFile(tszFoundDir, &pptszListFile, &nListCount, true, 1);
+		SystemApi_File_EnumFile(stl_ListIterator->tszFilePath, &pptszListFile, &nListCount, true, 1);
 		for (int i = 0; i < nListCount; i++)
 		{
 			int nHashLen = 0;

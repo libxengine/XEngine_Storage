@@ -19,12 +19,6 @@
     <Filter Include="源文件\Session_Stroage">
       <UniqueIdentifier>{b0b7eb76-2bec-46b1-8226-fc362b960454}</UniqueIdentifier>
     </Filter>
-    <Filter Include="头文件\Session_User">
-      <UniqueIdentifier>{6b277f3a-fbd4-4847-a386-376dd775da0e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\Session_User">
-      <UniqueIdentifier>{032cbde1-12f2-4e52-ab1d-81799538579f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="头文件\Session_Action">
       <UniqueIdentifier>{e950cfee-ded9-4200-a23c-3926b448090d}</UniqueIdentifier>
     </Filter>
@@ -57,9 +51,6 @@
     <ClInclude Include="Session_Stroage\Session_UPStroage.h">
       <Filter>头文件\Session_Stroage</Filter>
     </ClInclude>
-    <ClInclude Include="Session_User\Session_User.h">
-      <Filter>头文件\Session_User</Filter>
-    </ClInclude>
     <ClInclude Include="Session_Action\Session_Action.h">
       <Filter>头文件\Session_Action</Filter>
     </ClInclude>
@@ -79,9 +70,6 @@
     </ClCompile>
     <ClCompile Include="Session_Stroage\Session_UPStroage.cpp">
       <Filter>源文件\Session_Stroage</Filter>
-    </ClCompile>
-    <ClCompile Include="Session_User\Session_User.cpp">
-      <Filter>源文件\Session_User</Filter>
     </ClCompile>
     <ClCompile Include="Session_Action\Session_Action.cpp">
       <Filter>源文件\Session_Action</Filter>

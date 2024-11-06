@@ -39,9 +39,24 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(XPVOID lParam)
 	}
 	return 0;
 }
+void CALLBACK XEngine_UPLoader_UPFlow(XHANDLE xhToken, bool bSDFlow, bool bRVFlow, bool bTime, __int64u nSDFlow, __int64u nRVFlow, __int64u nTimeFlow, XPVOID lParam)
+{
+	XCHAR tszIPAddr[128] = {};
+	_tcsxcpy(tszIPAddr, (LPCXSTR)lParam);
+	if (bSDFlow)
+	{
+		NetCore_TCPXCore_PasueRecvEx(xhNetUPLoader, tszIPAddr, false);
+	}
+	else
+	{
+		NetCore_TCPXCore_PasueRecvEx(xhNetUPLoader, tszIPAddr, true);
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("上传客户端:%s,接受数据标志:%d,当前平均流量:%llu"), tszIPAddr, bSDFlow, nSDFlow);
+}
 bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount)
 {
 	int nSDLen = 2048;
+	int nLimit = 0;
 	XCHAR tszSDBuffer[2048];
 	XCHAR tszFileDir[1024];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
@@ -78,7 +93,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		}
 	}
 	//用户验证
-	if (st_ServiceCfg.st_XAuth.bUPAuth)
+	if (st_ServiceCfg.st_XProxy.bUPPass)
 	{
 		XCHAR tszUserName[64];
 		XCHAR tszUserPass[64];
@@ -96,41 +111,25 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,用户验证失败,错误:%lX"), lpszClientAddr, StorageHelp_GetLastError());
 			return false;
 		}
-		if (st_ServiceCfg.st_XProxy.bAuthPass)
+		int nCode = 0;
+		int nResponseCode = 0;
+		XCHAR* ptszBody = NULL;
+
+		Protocol_StoragePacket_BasicAuth(pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
+		APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszAuthPass, tszSDBuffer, &nResponseCode, &ptszBody, &nSDLen);
+		if (200 != nResponseCode)
 		{
-			int nResponseCode = 0;
-			XCHAR* ptszBody = NULL;
+			st_HDRParam.bIsClose = true;
+			st_HDRParam.bAuth = true;
+			st_HDRParam.nHttpCode = nResponseCode;
 
-			Protocol_StoragePacket_BasicAuth(pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
-			APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszAuthPass, tszSDBuffer, &nResponseCode, &ptszBody, &nSDLen);
-			if (200 != nResponseCode)
-			{
-				st_HDRParam.bIsClose = true;
-				st_HDRParam.bAuth = true;
-				st_HDRParam.nHttpCode = nResponseCode;
-
-				HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
-			}
-			BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass);
+			HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 		}
-		else
-		{
-			if (!Session_User_Exist(tszUserName, tszUserPass))
-			{
-				st_HDRParam.bIsClose = true;
-				st_HDRParam.bAuth = true;
-				st_HDRParam.nHttpCode = 401;
-
-				HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,验证用户失败,无法继续"), lpszClientAddr);
-				return false;
-			}
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,本地验证用户验证通过,用户名:%s,密码:%s"), lpszClientAddr, tszUserName, tszUserPass);
-		}
+		Protocol_StorageParse_SpeedLimit(ptszBody, nSDLen, &nCode, &nLimit);
+		BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass);
 		st_HDRParam.bAuth = true;
 	}
 	//使用重定向?
@@ -307,7 +306,31 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			}
 			SystemApi_File_CreateMutilFolder(tszTmpPath);
 		}
-		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, nPosCount, st_StorageBucket.st_PermissionFlags.bRewrite, nPosStart, nPosEnd))
+		XHANDLE xhUPSpeed = NULL;
+		if (nLimit > 0 || (st_ServiceCfg.st_XLimit.bLimitMode && st_ServiceCfg.st_XLimit.nMaxUPLoader > 0))
+		{
+			//处理限速情况
+			XCHAR* ptszIPClient = (XCHAR*)malloc(MAX_PATH);
+			if (NULL == ptszIPClient)
+			{
+				st_HDRParam.bIsClose = true;
+				st_HDRParam.nHttpCode = 500;
+
+				HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,插入用户请求失败,文件:%s,内存申请失败,服务器错误"), lpszClientAddr, tszFileDir);
+				return false;
+			}
+			memset(ptszIPClient, '\0', MAX_PATH);
+			_tcsxcpy(ptszIPClient, lpszClientAddr);
+
+			nLimit = nLimit == 0 ? st_ServiceCfg.st_XLimit.nMaxUPLoader : nLimit;
+			xhUPSpeed = Algorithm_Calculation_Create();
+			Algorithm_Calculation_PassiveOPen(xhUPSpeed, XEngine_UPLoader_UPFlow, nLimit, 0, 0, false, ptszIPClient);
+			NetCore_TCPXCore_PasueRecvEx(xhNetUPLoader, lpszClientAddr, false);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,上传限速被启用,文件:%s,限速:%d"), lpszClientAddr, tszFileDir, nLimit);
+		}
+		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, xhUPSpeed, nPosCount, st_StorageBucket.st_PermissionFlags.bRewrite, nLimit, nPosStart, nPosEnd))
 		{
 			st_HDRParam.bIsClose = true;
 			st_HDRParam.nHttpCode = 500;
@@ -369,6 +392,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	{
 		Session_UPStroage_Write(lpszClientAddr, lpszMsgBuffer, nMsgLen);
 	}
+	Algorithm_Calculation_ADDSDFlow(Session_UPStroage_GetSpeed(lpszClientAddr), nMsgLen);
 	HttpProtocol_Server_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 	if (nHDSize >= nRVCount)
 	{

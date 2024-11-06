@@ -14,6 +14,7 @@ typedef struct
 {
     time_t nTimeStart;
     SESSION_STORAGEINFO st_StorageInfo;
+    XHANDLE xhSpeed;
 }SESSION_STORAGEUPLOADER;
 
 class CSession_UPStroage
@@ -24,8 +25,9 @@ public:
 public:
     bool Session_UPStroage_Init(int nMaxConnect, bool bUPResume = false);
     bool Session_UPStroage_Destory();
-    bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, __int64x nFileSize, bool bRewrite, int nPosStart = 0, int nPostEnd = 0);
+    bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, XHANDLE xhSpeed, __int64x nFileSize, bool bRewrite, int nSpeedLimit = 0, int nPosStart = 0, int nPostEnd = 0);
     bool Session_UPStroage_GetInfo(LPCXSTR lpszClientAddr, SESSION_STORAGEINFO* pSt_StorageInfo);
+    XHANDLE Session_UPStroage_GetSpeed(LPCXSTR lpszClientAddr);
     bool Session_UPStroage_Write(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen);
     bool Session_UPStroage_Exist(LPCXSTR lpszClientAddr);
     bool Session_UPStorage_GetAll(SESSION_STORAGEINFO*** pppSt_StorageInfo, int* pInt_ListCount);

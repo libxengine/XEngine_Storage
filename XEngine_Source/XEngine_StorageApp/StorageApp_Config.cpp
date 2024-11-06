@@ -61,11 +61,11 @@ bool StorageApp_Config_Parament(int argc,char **argv)
         }
         else if (0 == _tcsxcmp("-l",argv[i]))
         {
-            st_ServiceCfg.st_XLog.nLogLeave = _ttxoi(argv[i + 1]);
+            st_ServiceCfg.st_XLog.nLogLeave = _ttxoi(argv[++i]);
         }
         else if (0 == _tcsxcmp("-d",argv[i]))
         {
-            st_ServiceCfg.bDeamon = _ttxoi(argv[i + 1]);
+            st_ServiceCfg.bDeamon = _ttxoi(argv[++i]);
         }
 		else if (0 == _tcsxcmp("-r", argv[i]))
 		{
@@ -74,6 +74,10 @@ bool StorageApp_Config_Parament(int argc,char **argv)
 		else if (0 == _tcsxcmp("-u", argv[i]))
 		{
 			st_ServiceCfg.bReuseraddr = true;
+		}
+		else if (0 == _tcsxcmp("-t", argv[i]))
+		{
+            bIsTest = true;
 		}
     }
 

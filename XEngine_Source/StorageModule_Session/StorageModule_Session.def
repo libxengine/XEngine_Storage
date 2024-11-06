@@ -3,10 +3,6 @@ LIBRARY
 EXPORTS
 	Session_GetLastError
 
-	Session_User_Init
-	Session_User_Destory
-	Session_User_Exist
-
 	Session_DLStroage_Init
 	Session_DLStroage_Destory
 	Session_DLStroage_Insert
@@ -22,6 +18,7 @@ EXPORTS
 	Session_UPStroage_Destory
 	Session_UPStroage_Insert
 	Session_UPStroage_GetInfo
+	Session_UPStroage_GetSpeed
 	Session_UPStroage_Write
 	Session_UPStroage_Exist
 	Session_UPStorage_GetAll

@@ -174,7 +174,6 @@
     <ClInclude Include="Session_Error.h" />
     <ClInclude Include="Session_Stroage\Session_DLStroage.h" />
     <ClInclude Include="Session_Stroage\Session_UPStroage.h" />
-    <ClInclude Include="Session_User\Session_User.h" />
     <ClInclude Include="Session_Webdav\Session_Webdav.h" />
   </ItemGroup>
   <ItemGroup>
@@ -188,7 +187,6 @@
     <ClCompile Include="Session_Action\Session_Action.cpp" />
     <ClCompile Include="Session_Stroage\Session_DLStroage.cpp" />
     <ClCompile Include="Session_Stroage\Session_UPStroage.cpp" />
-    <ClCompile Include="Session_User\Session_User.cpp" />
     <ClCompile Include="Session_Webdav\Session_Webdav.cpp" />
   </ItemGroup>
   <ItemGroup>

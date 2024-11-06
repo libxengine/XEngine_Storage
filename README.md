@@ -21,7 +21,7 @@ c c++ file storage service
 5. 支持分布式  
 6. 支持HTTP验证  
 7. 支持详尽的日志和配置信息  
-8. 支持传输速率控制
+8. 支持多线程方式上传和下载文件
 9. 支持任务开始结束代理转发  
 10. 支持P2P  
 11. BT协议
@@ -39,11 +39,11 @@ c c++ file storage service
 
 #### XEngine环境
 必须安装XEngine,版本需要V8.10或者以上版本,安装XEngine可以参考其Readme文档  
-GITEE:https://gitee.com/xyry/libxengine  
-GITHUB:https://github.com/libxengine/xengine
+GITEE:https://gitee.com/libxengine/libxengine  
+GITHUB:https://github.com/libxengine/libxengine
 
 ###### 快速部署
-git clone https://gitee.com/xyry/libxengine.git 或者 git clone https://github.com/libxengine/xengine.git  
+git clone https://gitee.com/libxengine/libxengine.git 或者 git clone https://github.com/libxengine/libxengine.git  
 window执行XEngine_WINEnv.bat 脚本.  
 Linux执行:sudo ./XEngine_LINEnv.sh -i 3  
 macos执行:./XEngine_LINEnv.sh -i 3  
@@ -52,7 +52,7 @@ macos执行:./XEngine_LINEnv.sh -i 3
 由于依赖的子模块,在你checkout仓库后,在仓库目录下执行下面的命令拉取子模块  
 git submodule init  
 git submodule update  
-如果github访问失败,也可以在XEngine_Source\XEngine_Depend 下直接clone项目:git clone https://gitee.com/xengine/XEngine_OPenSource.git
+如果github访问失败,你也可以clone该项目,在主目录下使用命令:git clone https://gitee.com/xengine/XEngine_OPenSource.git XEngine_Source/XEngine_Depend
 
 #### Windows
 使用VS打开并且编译,支持WINDOWS 7SP1以上系统  
@@ -103,10 +103,6 @@ make FLAGS=CleanAll 清理编译
 ## 关于P2P
 P2P分布式下载已经支持,不过目前只能在局域网中,暂时不支持跨网段,需要等待开发完毕  
 P2P分布式下载与其他下载工具的超线程下载一样,原理是使用HTTP RANGE字段实现.各位可以通过libcurl等库实现此功能.  
-
-## 当前任务  
-P2P广域网文件查找与下载支持  
-分布式数据库存储
 
 ## 安装指导
 #### 安装

@@ -10,14 +10,19 @@ LOADHDR = -I ./ -I ../XEngine_Depend/XEngine_Module/jsoncpp
 LOADSO = -L ../XEngine_Depend/XEngine_Module/jsoncpp
 LIB = -lXEngine_BaseLib -lXEngine_OPenSsl -lRfcComponents_HttpProtocol -lXEngine_SystemApi -ljsoncpp
 LIBEX = 
-OBJECTS = APIHelp_Distributed.o APIHelp_Api.o pch.o
+OBJECTS = APIHelp_Distributed.o APIHelp_Api.o APIHelp_Cryption.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c 
 DEBUG = 
 else
-FLAGS = -c -lc_p
-DEBUG = -g -pg 
+	ifeq ($(PLATFORM),mac)
+		FLAGS = -c
+		DEBUG = -g 
+	else
+		FLAGS = -c -lc_p
+		DEBUG = -g -pg 
+	endif
 endif
 
 ifeq ($(UNICODE),1)
@@ -55,6 +60,8 @@ APIHelp_Distributed.o:./APIHelp_Distributed/APIHelp_Distributed.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./APIHelp_Distributed/APIHelp_Distributed.cpp 
 APIHelp_Api.o:./APIHelp_Api/APIHelp_Api.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./APIHelp_Api/APIHelp_Api.cpp
+APIHelp_Cryption.o:./APIHelp_Cryption/APIHelp_Cryption.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./APIHelp_Cryption/APIHelp_Cryption.cpp
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp

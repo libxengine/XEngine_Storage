@@ -169,6 +169,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="APIHelp_Api\APIHelp_Api.h" />
+    <ClInclude Include="APIHelp_Cryption\APIHelp_Cryption.h" />
     <ClInclude Include="APIHelp_Define.h" />
     <ClInclude Include="APIHelp_Distributed\APIHelp_Distributed.h" />
     <ClInclude Include="APIHelp_Error.h" />
@@ -177,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APIHelp_Api\APIHelp_Api.cpp" />
+    <ClCompile Include="APIHelp_Cryption\APIHelp_Cryption.cpp" />
     <ClCompile Include="APIHelp_Distributed\APIHelp_Distributed.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">

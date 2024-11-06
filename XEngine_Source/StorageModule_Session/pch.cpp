@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "Session_Stroage/Session_DLStroage.h"
 #include "Session_Stroage/Session_UPStroage.h"
-#include "Session_User/Session_User.h"
 #include "Session_Action/Session_Action.h"
 #include "Session_Webdav/Session_Webdav.h"
 /********************************************************************
@@ -20,7 +19,6 @@ XLONG Session_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CSession_DLStroage m_DLStorage;
 CSession_UPStroage m_UPStorage;
-CSession_User m_User;
 CSession_Action m_Action;
 CSession_Webdav m_Webdav;
 //////////////////////////////////////////////////////////////////////////
@@ -33,21 +31,6 @@ extern "C" XLONG Session_GetLastError(int* pInt_SysError)
 		*pInt_SysError = errno;
 	}
 	return Session_dwErrorCode;
-}
-/************************************************************************/
-/*                        用户管理导出的函数                            */
-/************************************************************************/
-extern "C" bool Session_User_Init(LPCXSTR lpszUserFile)
-{
-	return m_User.Session_User_Init(lpszUserFile);
-}
-extern "C" bool Session_User_Destory()
-{
-	return m_User.Session_User_Destory();
-}
-extern "C" bool Session_User_Exist(LPCXSTR lpszUser, LPCXSTR lpszPass, int* pInt_Limit)
-{
-	return m_User.Session_User_Exist(lpszUser, lpszPass, pInt_Limit);
 }
 /************************************************************************/
 /*                        存储会话导出的函数                            */
@@ -100,13 +83,17 @@ extern "C" bool Session_UPStroage_Destory()
 {
 	return m_UPStorage.Session_UPStroage_Destory();
 }
-extern "C" bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, __int64x nFileSize, bool bRewrite, int nPosStart, int nPostEnd)
+extern "C" bool Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXSTR lpszBuckKey, LPCXSTR lpszFileDir, XHANDLE xhSpeed, __int64x nFileSize, bool bRewrite, int nSpeedLimit, int nPosStart, int nPostEnd)
 {
-	return m_UPStorage.Session_UPStroage_Insert(lpszClientAddr, lpszBuckKey, lpszFileDir, nFileSize, bRewrite, nPosStart, nPostEnd);
+	return m_UPStorage.Session_UPStroage_Insert(lpszClientAddr, lpszBuckKey, lpszFileDir, xhSpeed, nFileSize, bRewrite, nSpeedLimit, nPosStart, nPostEnd);
 }
 extern "C" bool Session_UPStroage_GetInfo(LPCXSTR lpszClientAddr, SESSION_STORAGEINFO * pSt_StorageInfo)
 {
 	return m_UPStorage.Session_UPStroage_GetInfo(lpszClientAddr, pSt_StorageInfo);
+}
+extern "C" XHANDLE Session_UPStroage_GetSpeed(LPCXSTR lpszClientAddr)
+{
+	return m_UPStorage.Session_UPStroage_GetSpeed(lpszClientAddr);
 }
 extern "C" bool Session_UPStroage_Write(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen)
 {
