@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: libxengine/libxengine
-          path: xengine
+          path: libxengine
           
       - name: sub module checkout (opensource)
         run: |
