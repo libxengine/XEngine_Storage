@@ -400,7 +400,7 @@ bool CSession_DLStroage::Session_DLStorage_GetAll(SESSION_STORAGEINFO*** pppSt_S
 
 	st_Locker.lock_shared();
 	*pInt_ListCount = stl_MapStroage.size();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_StorageInfo, *pInt_ListCount, sizeof(SESSION_STORAGEINFO));
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_StorageInfo, *pInt_ListCount, sizeof(SESSION_STORAGEINFO));
 
 	unordered_map<string, SESSION_STORAGEINFO>::iterator stl_MapIterator = stl_MapStroage.begin();
 	for (int i = 0; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++, i++)
@@ -475,8 +475,8 @@ bool CSession_DLStroage::Session_DLStroage_MaxConnect(LPCXSTR lpszClientAddr)
 		_tcsxcpy(tszIPSource, stl_MapIterator->first.c_str());
 		_tcsxcpy(tszIPDest, lpszClientAddr);
 
-		BaseLib_OperatorIPAddr_SegAddr(tszIPSource);
-		BaseLib_OperatorIPAddr_SegAddr(tszIPDest);
+		APIAddr_IPAddr_SegAddr(tszIPSource);
+		APIAddr_IPAddr_SegAddr(tszIPDest);
 
 		if (0 == _tcsxcmp(tszIPSource, tszIPDest))
 		{

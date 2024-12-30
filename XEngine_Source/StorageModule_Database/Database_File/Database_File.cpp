@@ -132,7 +132,7 @@ bool CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage,
     XSTORAGECORE_DBFILE **ppSt_ListFile;
     if (Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, pSt_DBManage->st_ProtocolFile.tszFileHash))
     {
-        BaseLib_OperatorMemory_Free((void***)&ppSt_ListFile, nListCount);
+        BaseLib_Memory_Free((void***)&ppSt_ListFile, nListCount);
         return true;
     }
 	XCHAR tszSQLQuery[2048];
@@ -146,7 +146,7 @@ bool CDatabase_File::Database_File_FileInsert(XSTORAGECORE_DBFILE *pSt_DBManage,
 
 	int nType = 0;
     std::string m_StrSQL = tszSQLQuery;
-    BaseLib_OperatorString_GetPath(pSt_DBManage->st_ProtocolFile.tszFilePath, &nType);
+    BaseLib_String_GetPath(pSt_DBManage->st_ProtocolFile.tszFilePath, &nType);
     if (1 == nType)
     {
 		std::string m_StrSource = "\\";
@@ -443,7 +443,7 @@ bool CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
         Database_dwErrorCode = ERROR_XENGINE_XSTROGE_CORE_DB_QUERYFILE_EMPTY;
         return false;
     }
-    BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ListFile, stl_ListFile.size(), sizeof(XSTORAGECORE_DBFILE));
+    BaseLib_Memory_Malloc((XPPPMEM)pppSt_ListFile, stl_ListFile.size(), sizeof(XSTORAGECORE_DBFILE));
 
     list<XSTORAGECORE_DBFILE>::const_iterator stl_ListIterator = stl_ListFile.begin();
     for (int i = 0; stl_ListIterator != stl_ListFile.end(); stl_ListIterator++, i++)
@@ -480,7 +480,7 @@ bool CDatabase_File::Database_File_CreateTable()
 		XENGINE_LIBTIMER st_DBTime;
 		memset(&st_DBTime, 0, sizeof(XENGINE_LIBTIMER));
 
-		BaseLib_OperatorTime_GetSysTime(&st_DBTime);
+		BaseLib_Time_GetSysTime(&st_DBTime);
 
 		if (12 == st_DBTime.wMonth)
 		{
@@ -507,7 +507,7 @@ bool CDatabase_File::Database_File_CreateTable()
         int nUTFLen = 0;
         XCHAR tszUTFBuffer[2048];
         memset(tszUTFBuffer, '\0', sizeof(tszUTFBuffer));
-        BaseLib_OperatorCharset_AnsiToUTF(tszSQLQuery, tszUTFBuffer, &nUTFLen);
+        BaseLib_Charset_AnsiToUTF(tszSQLQuery, tszUTFBuffer, &nUTFLen);
         if (!DataBase_MySQL_Execute(xhDBSQL, tszUTFBuffer))
 #else
         if (!DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery))
@@ -545,7 +545,7 @@ bool CDatabase_File::Database_File_TimeMonth(LPCXSTR lpszStartTime, int* pInt_Mo
     XENGINE_LIBTIMER st_EndTime;
     memset(&st_EndTime, '\0', sizeof(XENGINE_LIBTIMER));
 
-    BaseLib_OperatorTime_GetSysTime(&st_EndTime);
+    BaseLib_Time_GetSysTime(&st_EndTime);
 
     XCHAR tszTimeStr[64];
     memset(tszTimeStr, '\0', sizeof(tszTimeStr));
@@ -611,7 +611,7 @@ bool CDatabase_File::Database_File_TimeDel()
                     memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
                     _xstprintf(tszSQLQuery, _X("DROP TABLE `%s`"), pptszResult[0]);
                     DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery);
-                    BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
+                    BaseLib_Memory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
                 }
             }
         }

@@ -30,11 +30,11 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(XPVOID lParam)
 					{
 						XEngine_Task_HttpDownload(ppSt_PKTClient[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
-					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
+					BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+					BaseLib_Memory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
 				}
 			}
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
+			BaseLib_Memory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
 		}
 	}
 	return 0;
@@ -191,7 +191,7 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 		}
 		Protocol_StorageParse_SpeedLimit(ptszBody, nSDLen, &nCode, &nLimit);
-		BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
+		BaseLib_Memory_FreeCStyle((VOID**)&ptszBody);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s,值:%d"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass, nCode);
 		st_HDRParam.bAuth = true;
 	}
@@ -260,8 +260,8 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	}
 	int nPathType = 0;
 	_xstprintf(tszFileDir, _X("%s%s"), st_StorageBucket.tszFilePath, st_StorageBucket.tszFileName);
-	BaseLib_OperatorString_GetPath(tszFileDir, &nPathType);
-	BaseLib_OperatorString_FixPath(tszFileDir, nPathType);
+	BaseLib_String_GetPath(tszFileDir, &nPathType);
+	BaseLib_String_FixPath(tszFileDir, nPathType);
 
 	int nHashLen = 0;
 	XBYTE tszHashKey[MAX_PATH];
@@ -271,9 +271,9 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	memset(tszFieldStr, '\0', MAX_PATH);
 	memset(tszHashStr, '\0', sizeof(tszHashStr));
 	//得到文件HASH
-	OPenSsl_Api_Digest(tszFileDir, tszHashKey, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
-	BaseLib_OperatorString_StrToHex((char*)tszHashKey, nHashLen, tszHashStr);
-	BaseLib_OperatorString_GetFileAndPath(tszFileDir, NULL, NULL, NULL, st_HDRParam.tszMimeType);
+	Cryption_Api_Digest(tszFileDir, tszHashKey, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
+	BaseLib_String_StrToHex((char*)tszHashKey, nHashLen, tszHashStr);
+	BaseLib_String_GetFileAndPath(tszFileDir, NULL, NULL, NULL, st_HDRParam.tszMimeType);
 	if (nLimit > 0)
 	{
 		xhLimit = Algorithm_Calculation_Create();

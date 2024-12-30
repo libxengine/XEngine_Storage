@@ -59,7 +59,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 	if (1 == nMode)
 	{
 		XNETHANDLE xhToken = 0;
-		BaseLib_OperatorHandle_Create(&xhToken, 0, pStl_ListAddr->size(), false);
+		BaseLib_Handle_Create(&xhToken, 0, pStl_ListAddr->size(), false);
 		if (xhToken == pStl_ListAddr->size())
 		{
 			xhToken--;
@@ -128,7 +128,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_FileList(list<APIHELP_LBFILEINFO>
 		return false;
 	}
 
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ListPacket, pStl_ListParse->size(), sizeof(XSTORAGECORE_DBFILE));
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_ListPacket, pStl_ListParse->size(), sizeof(XSTORAGECORE_DBFILE));
 	list<APIHELP_LBFILEINFO>::const_iterator stl_ListIterator = pStl_ListParse->begin();
 	for (int i = 0; stl_ListIterator != pStl_ListParse->end(); stl_ListIterator++, i++)
 	{
@@ -392,7 +392,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 		if (1 == nMode)
 		{
 			XNETHANDLE xhToken = 0;
-			BaseLib_OperatorHandle_Create(&xhToken, 0, stl_BuckSelect.size(), false);
+			BaseLib_Handle_Create(&xhToken, 0, stl_BuckSelect.size(), false);
 			if (xhToken == stl_BuckSelect.size())
 			{
 				xhToken--;

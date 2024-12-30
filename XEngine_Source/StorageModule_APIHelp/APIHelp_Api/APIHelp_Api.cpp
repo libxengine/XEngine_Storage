@@ -135,7 +135,7 @@ bool CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64
 		{
 			nBPos = 6;
 		}
-		if (!BaseLib_OperatorString_GetKeyValue(tszFieldStr + nBPos, "-", tszKeyStr, tszValueStr))
+		if (!BaseLib_String_GetKeyValue(tszFieldStr + nBPos, "-", tszKeyStr, tszValueStr))
 		{
 			APIHelp_IsErrorOccur = true;
 			APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARSELEN;
@@ -147,7 +147,7 @@ bool CAPIHelp_Api::APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64
 
 		memset(tszRangeEnd, '\0', sizeof(tszRangeEnd));
 		memset(tszRangeCount, '\0', sizeof(tszRangeCount));
-		if (BaseLib_OperatorString_GetKeyValue(tszValueStr, "/", tszRangeEnd, tszRangeCount))
+		if (BaseLib_String_GetKeyValue(tszValueStr, "/", tszRangeEnd, tszRangeCount))
 		{
 			*pInt_SPos = _ttxoi(tszKeyStr);
 			*pInt_EPos = _ttxoi(tszRangeEnd);
@@ -327,7 +327,7 @@ bool CAPIHelp_Api::APIHelp_Api_UrlParse(XCHAR*** ppptszList, int nListCount, XCH
 		memset(tszKey, '\0', MAX_PATH);
 		memset(tszValue, '\0', MAX_PATH);
 
-		BaseLib_OperatorString_GetKeyValue((*ppptszList)[i], _X("="), tszKey, tszValue);
+		BaseLib_String_GetKeyValue((*ppptszList)[i], _X("="), tszKey, tszValue);
 
 		if (0 == _tcsxnicmp(lpszHDRFile, tszKey, _tcsxlen(lpszHDRFile)))
 		{
@@ -336,12 +336,12 @@ bool CAPIHelp_Api::APIHelp_Api_UrlParse(XCHAR*** ppptszList, int nListCount, XCH
 			XCHAR tszFileName[MAX_PATH];
 			memset(tszFileName, '\0', MAX_PATH);
 
-			OPenSsl_Codec_UrlDeCodec(tszValue, _tcsxlen(tszValue), tszFileName);
+			Cryption_Codec_UrlDeCodec(tszValue, _tcsxlen(tszValue), tszFileName);
 
 			int nLen = _tcsxlen(tszFileName);
-			BaseLib_OperatorCharset_UTFToAnsi(tszFileName, ptszFileName, &nLen);
+			BaseLib_Charset_UTFToAnsi(tszFileName, ptszFileName, &nLen);
 #else
-			OPenSsl_Codec_UrlDeCodec(tszValue, _tcsxlen(tszValue), ptszFileName);
+			Cryption_Codec_UrlDeCodec(tszValue, _tcsxlen(tszValue), ptszFileName);
 #endif
 		}
 		else if (0 == _tcsxnicmp(lpszHDRKey, tszKey, _tcsxlen(lpszHDRKey)))
@@ -386,18 +386,18 @@ bool CAPIHelp_Api::APIHelp_Api_Boundary(XCHAR*** ppptszList, int nListCount, XCH
 		XCHAR tszKeyStr[MAX_PATH] = {};
 		XCHAR tszVluStr[MAX_PATH] = {};
 
-		BaseLib_OperatorString_GetKeyValue((*ppptszList)[i], _X(": "), tszKeyStr, tszVluStr);
+		BaseLib_String_GetKeyValue((*ppptszList)[i], _X(": "), tszKeyStr, tszVluStr);
 
 		if (0 == _tcsxnicmp(lpszHDRContent, tszKeyStr, _tcsxlen(lpszHDRContent)))
 		{
 			XCHAR tszKeySub[MAX_PATH] = {};
 			XCHAR tszVluSub[MAX_PATH] = {};
 			//multipart/form-data; boundary=AaB03x
-			if (BaseLib_OperatorString_GetKeyValue(tszVluStr, _X(";"), tszKeySub, tszVluSub))
+			if (BaseLib_String_GetKeyValue(tszVluStr, _X(";"), tszKeySub, tszVluSub))
 			{
 				//boundary=AaB03x
 				ptszBoundStr[0] = '-';//要少一个字节
-				if (BaseLib_OperatorString_GetKeyValue(tszVluSub, _X("="), tszKeyStr, ptszBoundStr + 1))
+				if (BaseLib_String_GetKeyValue(tszVluSub, _X("="), tszKeyStr, ptszBoundStr + 1))
 				{
 					bRet = true;
 					break;
@@ -439,7 +439,7 @@ bool CAPIHelp_Api::APIHelp_Api_GetDIRSize(LPCXSTR lpszDIRStr, __int64u* pInt_DIR
 		_xtstat(ppListFile[i], &st_FStat);
 		nDirCount += st_FStat.st_size;
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppListFile, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppListFile, nListCount);
 	*pInt_DIRSize = nDirCount;
 	return true;
 }

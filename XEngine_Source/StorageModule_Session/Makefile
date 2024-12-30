@@ -8,7 +8,7 @@ RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./
 LOADSO = 
-LIB = -lXEngine_BaseLib
+LIB = -lXEngine_BaseLib -lNetHelp_APIAddr
 LIBEX = 
 OBJECTS = Session_DLStroage.o Session_UPStroage.o Session_Action.o Session_Webdav.o pch.o
 

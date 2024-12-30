@@ -255,7 +255,7 @@ bool CDatabase_Memory::Database_Memory_FileQuery(XSTORAGECORE_DBFILE*** pppSt_Li
     if (bFound)
     {
 		*pInt_ListCount = 1;
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_ListFile, 1, sizeof(XSTORAGECORE_DBFILE));
+		BaseLib_Memory_Malloc((XPPPMEM)pppSt_ListFile, 1, sizeof(XSTORAGECORE_DBFILE));
 
 		*(*pppSt_ListFile)[0] = *stl_ListIterator;
     }
@@ -298,15 +298,15 @@ bool CDatabase_Memory::Database_Memory_Flush()
             if (st_FileStatus.st_size > 0)
             {
                 st_DBFile.st_ProtocolFile.nFileSize = st_FileStatus.st_size;
-				OPenSsl_Api_Digest(pptszListFile[i], tszHashStr, &nHashLen, true, m_nHashMode);
-				BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, st_DBFile.st_ProtocolFile.tszFileHash);
-				BaseLib_OperatorString_GetFileAndPath(pptszListFile[i], st_DBFile.st_ProtocolFile.tszFilePath, st_DBFile.st_ProtocolFile.tszFileName);
+				Cryption_Api_Digest(pptszListFile[i], tszHashStr, &nHashLen, true, m_nHashMode);
+				BaseLib_String_StrToHex((char*)tszHashStr, nHashLen, st_DBFile.st_ProtocolFile.tszFileHash);
+				BaseLib_String_GetFileAndPath(pptszListFile[i], st_DBFile.st_ProtocolFile.tszFilePath, st_DBFile.st_ProtocolFile.tszFileName);
 				_tcsxcpy(st_DBFile.tszBuckKey, stl_ListIterator->tszBuckKey);
 
 				stl_ListFile.push_back(st_DBFile);
             }
 		}
-        BaseLib_OperatorMemory_Free((XPPPMEM)&pptszListFile, nListCount);
+        BaseLib_Memory_Free((XPPPMEM)&pptszListFile, nListCount);
 	}
     st_Locker->unlock();
     return true;

@@ -196,7 +196,7 @@ bool CProtocol_StorageParse::Protocol_StorageParse_ReportFile(LPCXSTR lpszMsgBuf
     int nCount = st_JsonRoot["Count"].asInt();
     Json::Value st_JsonArray = st_JsonRoot["List"];
 
-    BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_DBFile, nCount, sizeof(XSTORAGECORE_DBFILE));
+    BaseLib_Memory_Malloc((XPPPMEM)pppSt_DBFile, nCount, sizeof(XSTORAGECORE_DBFILE));
     for (int i = 0; i < nCount; i++)
     {
         if (st_JsonArray[i]["nFileSize"].isNull())

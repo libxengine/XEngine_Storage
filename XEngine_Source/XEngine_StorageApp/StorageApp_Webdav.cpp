@@ -30,11 +30,11 @@ XHTHREAD CALLBACK XEngine_Webdav_HTTPThread(XPVOID lParam)
 					{
 						XEngine_Task_HttpWebdav(ppSt_PKTClient[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
-					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
+					BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+					BaseLib_Memory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
 				}
 			}
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
+			BaseLib_Memory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
 		}
 	}
 	return 0;
@@ -99,10 +99,10 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		{
 			int nALen = 0;
 			_tcsxcpy(tszFindStr, pSt_HTTPParam->tszHttpUri + 1);
-			BaseLib_OperatorString_Replace(tszFindStr, &nALen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath, true);
+			BaseLib_String_Replace(tszFindStr, &nALen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath, true);
 			//如果是文件
 			nListCount = 1;
-			BaseLib_OperatorMemory_Malloc((XPPPMEM)&pptszListFile, nListCount, MAX_PATH);
+			BaseLib_Memory_Malloc((XPPPMEM)&pptszListFile, nListCount, MAX_PATH);
 			_tcsxcpy(pptszListFile[0], tszFindStr);
 		}
 		else
@@ -153,7 +153,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		_xstprintf(tszPortDownload, _X("%d"), st_ServiceCfg.nStorageDLPort);
 		//转换端口
 		int nReplaceLen = 0;
-		BaseLib_OperatorString_Replace(tszHostStr, &nReplaceLen, tszPortWebdav, tszPortDownload, true);
+		BaseLib_String_Replace(tszHostStr, &nReplaceLen, tszPortWebdav, tszPortDownload, true);
 		_xstprintf(tszRequestAddr, _X("Location: http://%s%s\r\n"), tszHostStr, pSt_HTTPParam->tszHttpUri);
 
 		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszRequestAddr);
@@ -177,7 +177,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		_xstprintf(tszPortDownload, _X("%d"), st_ServiceCfg.nStorageUPPort);
 		//转换端口
 		int nRLen = 0;
-		BaseLib_OperatorString_Replace(tszHostStr, &nRLen, tszPortWebdav, tszPortDownload, true);
+		BaseLib_String_Replace(tszHostStr, &nRLen, tszPortWebdav, tszPortDownload, true);
 		//转换地址
 		XCHAR tszStroageKey[MAX_PATH] = {};
 		XCHAR tszFileName[MAX_PATH] = {};
@@ -266,7 +266,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		int nFLen = 0;
 		XCHAR tszFileName[MAX_PATH] = {};
 		_tcsxcpy(tszFileName, pSt_HTTPParam->tszHttpUri + 1);
-		BaseLib_OperatorString_Replace(tszFileName, &nFLen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath);
+		BaseLib_String_Replace(tszFileName, &nFLen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath);
 
 		_xtremove(tszFileName);
 		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);

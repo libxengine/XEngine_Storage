@@ -4,7 +4,7 @@ bool CALLBACK XEngine_Callback_DownloadLogin(LPCXSTR lpszClientAddr, XSOCKET hSo
 {
 	if (st_ServiceCfg.st_XCert.bDLEnable)
 	{
-		OPenSsl_Server_AcceptEx(xhDLSsl, hSocket, lpszClientAddr);
+		Cryption_Server_AcceptEx(xhDLSsl, hSocket, lpszClientAddr);
 	}
 	HttpProtocol_Server_CreateClientEx(xhDLHttp, lpszClientAddr, 0);
 	SocketOpt_HeartBeat_InsertAddrEx(xhHBDownload, lpszClientAddr);
@@ -17,13 +17,13 @@ void CALLBACK XEngine_Callback_DownloadRecv(LPCXSTR lpszClientAddr, XSOCKET hSoc
 	{
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
-		OPenSsl_Server_RecvMemoryEx(xhDLSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
+		Cryption_Server_RecvMemoryEx(xhDLSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
 		if (!HttpProtocol_Server_InserQueueEx(xhDLHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
 		}
-		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	}
 	else
 	{
@@ -45,7 +45,7 @@ bool CALLBACK XEngine_Callback_UPLoaderLogin(LPCXSTR lpszClientAddr, XSOCKET hSo
 {
 	if (st_ServiceCfg.st_XCert.bUPEnable)
 	{
-		OPenSsl_Server_AcceptEx(xhUPSsl, hSocket, lpszClientAddr);
+		Cryption_Server_AcceptEx(xhUPSsl, hSocket, lpszClientAddr);
 	}
 	HttpProtocol_Server_CreateClientEx(xhUPHttp, lpszClientAddr, 0);
 	HttpProtocol_Server_SetRecvModeEx(xhUPHttp, lpszClientAddr, 1);   //设置为文件接受模式
@@ -59,13 +59,13 @@ void CALLBACK XEngine_Callback_UPLoaderRecv(LPCXSTR lpszClientAddr, XSOCKET hSoc
 	{
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
-		OPenSsl_Server_RecvMemoryEx(xhUPSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
+		Cryption_Server_RecvMemoryEx(xhUPSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
 		if (!HttpProtocol_Server_InserQueueEx(xhUPHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
 		}
-		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	}
 	else
 	{
@@ -87,7 +87,7 @@ bool CALLBACK XEngine_Callback_CenterLogin(LPCXSTR lpszClientAddr, XSOCKET hSock
 {
 	if (st_ServiceCfg.st_XCert.bCHEnable)
 	{
-		OPenSsl_Server_AcceptEx(xhCHSsl, hSocket, lpszClientAddr);
+		Cryption_Server_AcceptEx(xhCHSsl, hSocket, lpszClientAddr);
 	}
 	HttpProtocol_Server_CreateClientEx(xhCenterHttp, lpszClientAddr, 0);
 	SocketOpt_HeartBeat_InsertAddrEx(xhHBCenter, lpszClientAddr);
@@ -100,13 +100,13 @@ void CALLBACK XEngine_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSocke
 	{
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
-		OPenSsl_Server_RecvMemoryEx(xhCHSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
+		Cryption_Server_RecvMemoryEx(xhCHSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
 		if (!HttpProtocol_Server_InserQueueEx(xhCenterHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
 		}
-		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	}
 	else
 	{
@@ -128,7 +128,7 @@ bool CALLBACK XEngine_Callback_WebdavLogin(LPCXSTR lpszClientAddr, XSOCKET hSock
 {
 	if (st_ServiceCfg.st_XCert.bWDEnable)
 	{
-		OPenSsl_Server_AcceptEx(xhWDSsl, hSocket, lpszClientAddr);
+		Cryption_Server_AcceptEx(xhWDSsl, hSocket, lpszClientAddr);
 	}
 	HttpProtocol_Server_CreateClientEx(xhWebdavHttp, lpszClientAddr, 0);
 	SocketOpt_HeartBeat_InsertAddrEx(xhHBWebdav, lpszClientAddr);
@@ -141,13 +141,13 @@ void CALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSocke
 	{
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
-		OPenSsl_Server_RecvMemoryEx(xhWDSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
+		Cryption_Server_RecvMemoryEx(xhWDSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
 		if (!HttpProtocol_Server_InserQueueEx(xhWebdavHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
 		}
-		BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	}
 	else
 	{
@@ -210,7 +210,7 @@ bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClient
 		Algorithm_Calculation_Close(Session_UPStroage_GetSpeed(lpszClientAddr));
 		Session_UPStroage_Delete(lpszClientAddr);
 		HttpProtocol_Server_CloseClinetEx(xhUPHttp, lpszClientAddr);
-		OPenSsl_Server_CloseClientEx(xhUPSsl, lpszClientAddr);
+		Cryption_Server_CloseClientEx(xhUPSsl, lpszClientAddr);
 	}
 	else if (STORAGE_NETTYPE_HTTPDOWNLOAD == nClientType)
 	{
@@ -241,7 +241,7 @@ bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClient
 		}
 		
 		HttpProtocol_Server_CloseClinetEx(xhDLHttp, lpszClientAddr);
-		OPenSsl_Server_CloseClientEx(xhDLSsl, lpszClientAddr);
+		Cryption_Server_CloseClientEx(xhDLSsl, lpszClientAddr);
 	}
 	else if (STORAGE_NETTYPE_HTTPCENTER == nClientType)
 	{
@@ -264,7 +264,7 @@ bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClient
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBCenter, lpszClientAddr);
 		}
 		HttpProtocol_Server_CloseClinetEx(xhCenterHttp, lpszClientAddr);
-		OPenSsl_Server_CloseClientEx(xhCHSsl, lpszClientAddr);
+		Cryption_Server_CloseClientEx(xhCHSsl, lpszClientAddr);
 	}
 	else if (STORAGE_NETTYPE_HTTPWEBDAV == nClientType)
 	{
@@ -287,7 +287,7 @@ bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClient
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBWebdav, lpszClientAddr);
 		}
 		HttpProtocol_Server_CloseClinetEx(xhWebdavHttp, lpszClientAddr);
-		OPenSsl_Server_CloseClientEx(xhWDSsl, lpszClientAddr);
+		Cryption_Server_CloseClientEx(xhWDSsl, lpszClientAddr);
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("%s：%s，与服务器断开，原因：%s"), m_StrClient.c_str(), lpszClientAddr, m_StrLeaveMsg.c_str());
 	return true;
@@ -304,9 +304,9 @@ bool XEngine_Net_SendMsg(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsg
 			int nSLen = 0;
 			XCHAR *ptszMsgBuffer = NULL;
 
-			OPenSsl_Server_SendMemoryEx(xhDLSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
+			Cryption_Server_SendMemoryEx(xhDLSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
 			bRet = NetCore_TCPXCore_SendEx(xhNetDownload, lpszClientAddr, ptszMsgBuffer, nSLen);
-			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+			BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 		}
 		else
 		{
@@ -324,9 +324,9 @@ bool XEngine_Net_SendMsg(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsg
 			int nSLen = 0;
 			XCHAR* ptszMsgBuffer = NULL;
 
-			OPenSsl_Server_SendMemoryEx(xhUPSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
+			Cryption_Server_SendMemoryEx(xhUPSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
 			bRet = NetCore_TCPXCore_SendEx(xhNetUPLoader, lpszClientAddr, ptszMsgBuffer, nSLen);
-			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+			BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 		}
 		else
 		{
@@ -344,9 +344,9 @@ bool XEngine_Net_SendMsg(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsg
 			int nSLen = 0;
 			XCHAR* ptszMsgBuffer = NULL;
 
-			OPenSsl_Server_SendMemoryEx(xhCHSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
+			Cryption_Server_SendMemoryEx(xhCHSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
 			bRet = NetCore_TCPXCore_SendEx(xhNetCenter, lpszClientAddr, ptszMsgBuffer, nSLen);
-			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+			BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 		}
 		else
 		{
@@ -364,9 +364,9 @@ bool XEngine_Net_SendMsg(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsg
 			int nSLen = 0;
 			XCHAR* ptszMsgBuffer = NULL;
 
-			OPenSsl_Server_SendMemoryEx(xhWDSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
+			Cryption_Server_SendMemoryEx(xhWDSsl, lpszClientAddr, lpszMsgBuffer, nMsgLen, &ptszMsgBuffer, &nSLen);
 			bRet = NetCore_TCPXCore_SendEx(xhNetWebdav, lpszClientAddr, ptszMsgBuffer, nSLen);
-			BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+			BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 		}
 		else
 		{

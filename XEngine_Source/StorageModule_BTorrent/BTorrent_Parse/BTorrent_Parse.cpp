@@ -90,7 +90,7 @@ bool CBTorrent_Parse::BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr
 		//如果是磁力
 	}
 	
-	BaseLib_OperatorHandle_Create(pxhToken);
+	BaseLib_Handle_Create(pxhToken);
     st_Locker.lock();
     stl_MapBTParse.insert(make_pair(*pxhToken, pSt_BTParse));
     st_Locker.unlock();
@@ -109,7 +109,7 @@ bool CBTorrent_Parse::BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr
   In/Out：Out
   类型：三级指针
   可空：N
-  意思：输出解析到的节点列表,此参数需要BaseLib_OperatorMemory_Free释放内存
+  意思：输出解析到的节点列表,此参数需要BaseLib_Memory_Free释放内存
  参数.三：pInt_ListCount
   In/Out：Out
   类型：整数型指针
@@ -141,7 +141,7 @@ bool CBTorrent_Parse::BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEM
     }
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
     *pInt_ListCount = stl_MapIterator->second->m_BTInfo->nodes().size();
-    BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_Parse, stl_MapIterator->second->m_BTInfo->nodes().size(), sizeof(BTORRENT_PARSEMAP));
+    BaseLib_Memory_Malloc((XPPPMEM)pppSt_Parse, stl_MapIterator->second->m_BTInfo->nodes().size(), sizeof(BTORRENT_PARSEMAP));
     std::vector<std::pair<std::string, int>>::const_iterator stl_ListIterator = stl_MapIterator->second->m_BTInfo->nodes().begin();
     for (int i = 0; stl_ListIterator != stl_MapIterator->second->m_BTInfo->nodes().end(); stl_ListIterator++, i++)
     {
@@ -164,7 +164,7 @@ bool CBTorrent_Parse::BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEM
   In/Out：Out
   类型：三级指针
   可空：N
-  意思：输出解析到的列表,此参数需要BaseLib_OperatorMemory_Free释放内存
+  意思：输出解析到的列表,此参数需要BaseLib_Memory_Free释放内存
  参数.三：pInt_ListCount
   In/Out：Out
   类型：整数型指针
@@ -197,7 +197,7 @@ bool CBTorrent_Parse::BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PAR
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
 	int i = 0;
 	*pInt_ListCount = stl_MapIterator->second->m_BTInfo->trackers().size();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_Parse, stl_MapIterator->second->m_BTInfo->trackers().size(), sizeof(BTORRENT_PARSEMAP));
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_Parse, stl_MapIterator->second->m_BTInfo->trackers().size(), sizeof(BTORRENT_PARSEMAP));
     
     for (auto const& stl_ListIterator : stl_MapIterator->second->m_BTInfo->trackers())
     {
@@ -221,7 +221,7 @@ bool CBTorrent_Parse::BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PAR
   In/Out：Out
   类型：三级指针
   可空：N
-  意思：输出解析到的列表,此参数需要BaseLib_OperatorMemory_Free释放内存
+  意思：输出解析到的列表,此参数需要BaseLib_Memory_Free释放内存
  参数.三：pInt_ListCount
   In/Out：Out
   类型：整数型指针
@@ -254,7 +254,7 @@ bool CBTorrent_Parse::BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARSE
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
 	int i = 0;
 	*pInt_ListCount = stl_MapIterator->second->m_BTInfo->web_seeds().size();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_Parse, stl_MapIterator->second->m_BTInfo->web_seeds().size(), sizeof(BTORRENT_PARSEMAP));
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_Parse, stl_MapIterator->second->m_BTInfo->web_seeds().size(), sizeof(BTORRENT_PARSEMAP));
 	
 	for (auto const& stl_ListIterator : stl_MapIterator->second->m_BTInfo->web_seeds())
 	{
@@ -451,10 +451,10 @@ bool CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFile
 	}
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
 	int nUTFLen = stl_MapIterator->second->m_BTInfo->name().length();
-	BaseLib_OperatorCharset_UTFToAnsi(stl_MapIterator->second->m_BTInfo->name().c_str(), ptszFilePath, &nUTFLen);
+	BaseLib_Charset_UTFToAnsi(stl_MapIterator->second->m_BTInfo->name().c_str(), ptszFilePath, &nUTFLen);
 
 	*pInt_ListCount = stl_MapIterator->second->m_BTInfo->num_files();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_FileList, stl_MapIterator->second->m_BTInfo->num_files(), sizeof(BTORRENT_FILEINFO));
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_FileList, stl_MapIterator->second->m_BTInfo->num_files(), sizeof(BTORRENT_FILEINFO));
 	
 	lt::file_storage const& m_FileStorage = stl_MapIterator->second->m_BTInfo->files();
 	int i = 0;
@@ -470,9 +470,9 @@ bool CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFile
 		}
 #ifdef _MSC_BUILD
 		nUTFLen = m_FileStorage.file_path(stl_ListIterator).length();
-		BaseLib_OperatorCharset_UTFToAnsi(m_FileStorage.file_path(stl_ListIterator).c_str(), (*pppSt_FileList)[i]->tszFilePath, &nUTFLen);
+		BaseLib_Charset_UTFToAnsi(m_FileStorage.file_path(stl_ListIterator).c_str(), (*pppSt_FileList)[i]->tszFilePath, &nUTFLen);
 		nUTFLen = m_FileStorage.file_name(stl_ListIterator).size();
-		BaseLib_OperatorCharset_UTFToAnsi(m_FileStorage.file_name(stl_ListIterator).data(), (*pppSt_FileList)[i]->tszFileName, &nUTFLen);
+		BaseLib_Charset_UTFToAnsi(m_FileStorage.file_name(stl_ListIterator).data(), (*pppSt_FileList)[i]->tszFileName, &nUTFLen);
 #else
 		_tcsxcpy((*pppSt_FileList)[i]->tszFilePath, m_FileStorage.file_path(stl_ListIterator).c_str());
 		_tcsxcpy((*pppSt_FileList)[i]->tszFileName, m_FileStorage.file_name(stl_ListIterator).data());

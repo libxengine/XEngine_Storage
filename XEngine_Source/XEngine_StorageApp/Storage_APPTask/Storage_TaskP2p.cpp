@@ -35,7 +35,7 @@ XHTHREAD XEngine_Task_P2PThread()
 				{
 					_xstprintf(pppSt_ListFile[0]->tszTableName, _X("%s:%d"), st_ServiceCfg.tszIPAddr, st_ServiceCfg.nStorageDLPort);
 					Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &pppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd, xhToken);
-					BaseLib_OperatorMemory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
+					BaseLib_Memory_Free((XPPPMEM)&pppSt_ListFile, nListCount);
 
 					XSOCKET hSocket;
 					NetCore_BroadCast_Create(&hSocket, st_ServiceCfg.st_P2xp.nSDPort, st_ServiceCfg.tszIPAddr);

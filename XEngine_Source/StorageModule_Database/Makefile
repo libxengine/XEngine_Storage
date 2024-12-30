@@ -8,7 +8,7 @@ RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./ -I ../XEngine_ThirdPart/jsoncpp
 LOADSO = 
-LIB = -lXEngine_BaseLib -lXEngine_OPenSsl -lHelpComponents_DataBase -lXEngine_SystemApi
+LIB = -lXEngine_BaseLib -lXEngine_Cryption -lHelpComponents_DataBase -lXEngine_SystemApi
 LIBEX = 
 OBJECTS = Database_File.o Database_Memory.o Database_Help.o pch.o
 

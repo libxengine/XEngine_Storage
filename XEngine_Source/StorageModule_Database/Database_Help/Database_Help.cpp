@@ -48,7 +48,7 @@ bool CDatabase_Help::Database_Help_Insert(XCHAR* ptszSQLBuffer, XSTORAGECORE_DBF
 	memset(tszTableName, '\0', sizeof(tszTableName));
 	memset(&st_LibTimer, '\0', sizeof(XENGINE_LIBTIMER));
 	//获得插入日期表
-	BaseLib_OperatorTime_GetSysTime(&st_LibTimer);
+	BaseLib_Time_GetSysTime(&st_LibTimer);
 
 	if (_tcsxlen(pSt_DBFile->tszTableName) > 0)
 	{

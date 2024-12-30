@@ -246,7 +246,7 @@ extern "C" bool BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr);
   In/Out：Out
   类型：三级指针
   可空：N
-  意思：输出解析到的节点列表,此参数需要BaseLib_OperatorMemory_Free释放内存
+  意思：输出解析到的节点列表,此参数需要BaseLib_Memory_Free释放内存
  参数.三：pInt_ListCount
   In/Out：Out
   类型：整数型指针
@@ -270,7 +270,7 @@ extern "C" bool BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** 
   In/Out：Out
   类型：三级指针
   可空：N
-  意思：输出解析到的列表,此参数需要BaseLib_OperatorMemory_Free释放内存
+  意思：输出解析到的列表,此参数需要BaseLib_Memory_Free释放内存
  参数.三：pInt_ListCount
   In/Out：Out
   类型：整数型指针
@@ -294,7 +294,7 @@ extern "C" bool BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PARSEMAP*
   In/Out：Out
   类型：三级指针
   可空：N
-  意思：输出解析到的列表,此参数需要BaseLib_OperatorMemory_Free释放内存
+  意思：输出解析到的列表,此参数需要BaseLib_Memory_Free释放内存
  参数.三：pInt_ListCount
   In/Out：Out
   类型：整数型指针
