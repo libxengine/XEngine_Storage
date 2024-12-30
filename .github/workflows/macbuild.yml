@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - 'develop'
-  
+    paths:
+      - 'XEngine_Source/**'
+      - 'XEngine_Release/**'
+      - '.github/**'
+      
 permissions:
   contents: read
   
