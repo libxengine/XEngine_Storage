@@ -39,7 +39,7 @@ feature list:
 ## install
 
 #### XEngine Evn
-you must install XEngine,need V8.10 or above,install XEngine can be refer to xengine Readme docment  
+you must install XEngine,need V9.x or above,install XEngine can be refer to xengine Readme docment  
 GITEE:https://gitee.com/libxengine/libxengine  
 GITHUB:https://github.com/libxengine/libxengine
 
@@ -60,7 +60,7 @@ Just Run it,use XEngine_AuthorizeApp
 if you need bt protocol support,you must install bt library by vcpkg:./vcpkg.exe install libtorrent
 
 #### Linux
-use makefile compile,UBUNTU22.04 x64 or RockyLinux9 x64  
+use makefile compile,UBUNTU22.04 or above  
 Run it on the terminal  
 if you need bt protocol support,you must install bt library:sudo apt install libtorrent-rasterbar-dev -y
 

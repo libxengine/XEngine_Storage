@@ -11,6 +11,9 @@ c c++ file storage service
 此服务器更偏向于存储传输与API接口管理,此服务可以用于上传下载的管理,网络文件共享或者软件更新服务.  
 目前最好的HTTP存储服务,更方便管理,代码更简洁.持续维护中...  
 
+## 注意
+编译发布版本将只在github上面发布.
+
 ## 软件特性
 基于libXEngine开发并实现的一套简洁高性能跨平台网络存储服务  
 软件特性:  
@@ -38,7 +41,7 @@ c c++ file storage service
 ## 安装教程
 
 #### XEngine环境
-必须安装XEngine,版本需要V8.10或者以上版本,安装XEngine可以参考其Readme文档  
+必须安装XEngine,版本需要V9.x或者以上版本,安装XEngine可以参考其Readme文档  
 GITEE:https://gitee.com/libxengine/libxengine  
 GITHUB:https://github.com/libxengine/libxengine
 
@@ -60,7 +63,7 @@ git submodule update
 如果需要bt协议支持,需要通过vcpkg安装bt支持库:./vcpkg.exe install libtorrent
 
 #### Linux
-Linux使用Makefile编译,UBUNTU22.04 x64或者RockyLinux x64  
+Linux使用Makefile编译,UBUNTU22.04以上系统  
 在控制台运行  
 如果需要bt协议支持,需要安装bt库,比如,在ubuntu下面安装:sudo apt install libtorrent-rasterbar-dev -y
 
