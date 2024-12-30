@@ -193,7 +193,7 @@ int main()
 	}
 	P2PFile_Create(&stl_ListFile, lpszFile);
 
-	BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszMsgBody);
+	BaseLib_Memory_FreeCStyle((VOID**)&ptszMsgBody);
 
 #ifdef _MSC_BUILD
 	WSACleanup();

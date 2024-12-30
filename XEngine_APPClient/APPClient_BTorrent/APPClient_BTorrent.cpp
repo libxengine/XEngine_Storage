@@ -40,7 +40,7 @@ int BTorrent_Parse(LPCXSTR lpszFile)
 	{
 		printf("BTorrent_Parse_GetNode:%d = %s\n", ppSt_ParseNode[i]->nValue, ppSt_ParseNode[i]->tszValue);
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ParseNode, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_ParseNode, nListCount);
 	nListCount = 0;
 
 	if (!BTorrent_Parse_GetTracker(xhToken, &ppSt_ParseNode, &nListCount))
@@ -52,7 +52,7 @@ int BTorrent_Parse(LPCXSTR lpszFile)
 	{
 		printf("BTorrent_Parse_GetTracker:%d = %s\n", ppSt_ParseNode[i]->nValue, ppSt_ParseNode[i]->tszValue);
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ParseNode, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_ParseNode, nListCount);
 	nListCount = 0;
 
 	if (!BTorrent_Parse_GetSeeds(xhToken, &ppSt_ParseNode, &nListCount))
@@ -64,7 +64,7 @@ int BTorrent_Parse(LPCXSTR lpszFile)
 	{
 		printf("BTorrent_Parse_GetSeeds:%d = %s\n", ppSt_ParseNode[i]->nValue, ppSt_ParseNode[i]->tszValue);
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_ParseNode, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_ParseNode, nListCount);
 	nListCount = 0;
 
 	int nPieceLen = 0;
@@ -103,7 +103,7 @@ int BTorrent_Parse(LPCXSTR lpszFile)
 	{
 		printf("BTorrent_Parse_GetFile:%s %s %s %s %lld %lld %lld %d %d\n", ppSt_FileList[i]->tszFileHash, ppSt_FileList[i]->tszFilePath, ppSt_FileList[i]->tszFileName, ppSt_FileList[i]->tszFileLink, ppSt_FileList[i]->nFileOffset, ppSt_FileList[i]->nFileSize, ppSt_FileList[i]->nFileTime, ppSt_FileList[i]->nFileStart, ppSt_FileList[i]->nFileEnd);
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_FileList, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_FileList, nListCount);
 
 	BTorrent_Parse_Destory(xhToken);
 	return 0;
@@ -178,7 +178,7 @@ int BTorrent_Download()
 			break;
 		}
 		std::this_thread::sleep_for(std::chrono::seconds(1));
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppenEventList, nListCount);
+		BaseLib_Memory_Free((XPPPMEM)&ppenEventList, nListCount);
 	}
 
 	BTorrent_DLoader_Close(xhToken);

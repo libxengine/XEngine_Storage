@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <tchar.h>
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
-#pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
+#pragma comment(lib,"XEngine_Core/XEngine_Cryption")
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp")
 #pragma comment(lib,"Ws2_32")
 #pragma comment(lib,"../../XEngine_Source/Debug/jsoncpp")
@@ -22,15 +22,15 @@
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
-#include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Define.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
 using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
-//linux macos::g++ -std=c++17 -Wall -g APPClient_UPDownload.cpp -o APPClient_UPDownload.exe -I ../../XEngine_Source/XEngine_Depend/XEngine_Module/jsoncpp -L ../../XEngine_Release -lXEngine_BaseLib -lXEngine_OPenSsl -lXClient_APIHelp -ljsoncpp -Wl,-rpath=../../XEngine_Release
+//linux macos::g++ -std=c++17 -Wall -g APPClient_UPDownload.cpp -o APPClient_UPDownload.exe -I ../../XEngine_Source/XEngine_Depend/XEngine_Module/jsoncpp -L ../../XEngine_Release -lXEngine_BaseLib -lXEngine_Cryption -lXClient_APIHelp -ljsoncpp -Wl,-rpath=../../XEngine_Release
 
 
 //上传文件
@@ -40,18 +40,15 @@ void File_UPLoad()
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
-	XCHAR tszBaseBuffer[128];
 	XCHAR tszHdrBuffer[MAX_PATH];
 	XCHAR tszKeyBuffer[MAX_PATH];
 	LPCXSTR lpszMsgBuffer = _X("01234");
 	LPCXSTR lpszMsgBuffer2 = _X("56789");
 
-	memset(tszBaseBuffer, '\0', sizeof(tszBaseBuffer));
 	memset(tszHdrBuffer, '\0', MAX_PATH);
 	memset(tszKeyBuffer, '\0', MAX_PATH);
-	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
 
-	_xstprintf(tszHdrBuffer, _X("Range: bytes=0-5/10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
+	_xstprintf(tszHdrBuffer, _X("Range: bytes=0-5/10\r\n"));
 	if (!APIClient_Http_Request(_X("POST"), lpszUrl, lpszMsgBuffer, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("upload failed:%lX\n", APIClient_GetLastError());
@@ -68,18 +65,18 @@ void File_UPLoad()
 	_tcsxcpy(tszKeyBuffer, st_JsonRoot["lpszBuckKey"].asCString());
 
 	_xtprintf("upload:%d\n", nCode);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	//断点续传必须指定storagekey
 	nLen = 0;
 	memset(tszHdrBuffer, '\0', MAX_PATH);
-	_xstprintf(tszHdrBuffer, _X("Range: bytes=5-10/10\r\nAuthorization: %s\r\nStorageKey: %s\r\n"), tszBaseBuffer, tszKeyBuffer);
+	_xstprintf(tszHdrBuffer, _X("Range: bytes=5-10/10\r\nStorageKey: %s\r\n"), tszKeyBuffer);
 	if (!APIClient_Http_Request(_X("POST"), lpszUrl, lpszMsgBuffer2, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("upload failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	_xtprintf("upload:%d\n%s\n", nCode, ptszMsgBuffer);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
 //下载文件
 void File_Download()
@@ -88,31 +85,28 @@ void File_Download()
 
 	int nLen = 0;
 	XCHAR* ptszMsgBuffer = NULL;
-	XCHAR tszBaseBuffer[128];
 	XCHAR tszHdrBuffer[MAX_PATH];
 
-	memset(tszBaseBuffer, '\0', sizeof(tszBaseBuffer));
 	memset(tszHdrBuffer, '\0', MAX_PATH);
-	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
 
-	_xstprintf(tszHdrBuffer, _X("Range: bytes=0-5\r\nAuthorization: %s\r\n"), tszBaseBuffer);
+	_xstprintf(tszHdrBuffer, _X("Range: bytes=0-5\r\n"));
 	if (!APIClient_Http_Request(_X("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("download failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	_xtprintf("download:%d,%s\n", nLen, ptszMsgBuffer);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 
 	memset(tszHdrBuffer, '\0', MAX_PATH);
-	_xstprintf(tszHdrBuffer, _X("Range: bytes=5-10\r\nAuthorization: %s\r\n"), tszBaseBuffer);
+	_xstprintf(tszHdrBuffer, _X("Range: bytes=5-10\r\n"));
 	if (!APIClient_Http_Request(_X("GET"), lpszUrl, NULL, NULL, &ptszMsgBuffer, &nLen, tszHdrBuffer))
 	{
 		_xtprintf("download failed:%lX\n", APIClient_GetLastError());
 		return;
 	}
 	_xtprintf("download:%d,%s\n", nLen, ptszMsgBuffer);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
 
 int main()

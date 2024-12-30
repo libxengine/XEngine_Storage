@@ -69,7 +69,7 @@ bool FileParser_ReadVer_GetRemote(LPCXSTR lpszJsonMsg, int nMsgLen, FILEPARSER_V
 		return FALSE;
 	}
 	*pInt_Count = st_JsonArray.size();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_FileList, *pInt_Count, sizeof(FILEPARSER_VERSIONINFO));
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_FileList, *pInt_Count, sizeof(FILEPARSER_VERSIONINFO));
 
 	for (unsigned int i = 0; i < st_JsonArray.size(); i++)
 	{
@@ -169,7 +169,7 @@ bool FileParser_ReadVer_GetLocal(LPCXSTR lpszFileList, FILEPARSER_VERSIONINFO***
 		return FALSE;
 	}
 	*pInt_Count = st_JsonArray.size();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppSt_FileList, *pInt_Count, sizeof(FILEPARSER_VERSIONINFO));
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_FileList, *pInt_Count, sizeof(FILEPARSER_VERSIONINFO));
 	for (unsigned int i = 0; i < st_JsonArray.size(); i++)
 	{
 		(*pppSt_FileList)[i]->st_LocalVersion.nModuleVersion = st_JsonArray[i]["ModuleVersion"].asInt64();

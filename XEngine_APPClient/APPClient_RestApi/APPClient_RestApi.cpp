@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <tchar.h>
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib")
-#pragma comment(lib,"XEngine_Core/XEngine_OPenSsl")
+#pragma comment(lib,"XEngine_Core/XEngine_Cryption")
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp")
 #pragma comment(lib,"Ws2_32")
 #ifdef _WIN64
@@ -21,8 +21,8 @@
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_Core/OPenSsl_Define.h>
-#include <XEngine_Include/XEngine_Core/OPenSsl_Error.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Define.h>
+#include <XEngine_Include/XEngine_Core/Cryption_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
 using namespace std;
@@ -53,7 +53,7 @@ void API_Manage_Query()
 		return;
 	}
 	_xtprintf("API_Manage_Query:%d,%s\n", nCode, ptszMsgBuffer);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
 //插入
 void API_Manage_Insert()
@@ -81,7 +81,7 @@ void API_Manage_Insert()
 		return;
 	}
 	_xtprintf("API_Manage_Insert:%d,%s\n", nCode, ptszMsgBuffer);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
 //删除
 void API_Manage_Delete()
@@ -106,7 +106,7 @@ void API_Manage_Delete()
 		return;
 	}
 	_xtprintf("API_Manage_Delete:%d,%s\n", nCode, ptszMsgBuffer);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
 //文件夹
 void API_Manage_Dir()
@@ -126,7 +126,7 @@ void API_Manage_Dir()
 		return;
 	}
 	_xtprintf("API_Manage_Dir:%d,%s\n", nCode, ptszMsgBuffer);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	//查询
 	st_JsonRoot.clear();
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
@@ -138,7 +138,7 @@ void API_Manage_Dir()
 		return;
 	}
 	_xtprintf("API_Manage_Dir:%d,%s\n", nCode, ptszMsgBuffer);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 	//删除
 	st_JsonRoot.clear();
 	st_JsonRoot["lpszBuckKey"] = "storagekey1";
@@ -150,7 +150,7 @@ void API_Manage_Dir()
 		return;
 	}
 	_xtprintf("API_Manage_Dir:%d,%s\n", nCode, ptszMsgBuffer);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
 //任务管理
 void API_Manage_Task()
@@ -165,7 +165,7 @@ void API_Manage_Task()
 		return;
 	}
 	_xtprintf("API_Manage_Task:%d,%s\n", nCode, ptszMsgBuffer);
-	BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
 
 int main()
@@ -174,10 +174,6 @@ int main()
 	WSADATA st_WSAData;
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
-	memset(tszBaseBuffer, '\0', MAX_PATH);
-	memset(tszHdrBuffer, '\0', MAX_PATH);
-	OPenSsl_Help_BasicEncoder("123123aa", "123123", tszBaseBuffer);
-	_xstprintf(tszHdrBuffer, _X("Authorization: %s\r\n"), tszBaseBuffer);
 
 	API_Manage_Query();
 	API_Manage_Insert();

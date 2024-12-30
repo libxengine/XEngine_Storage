@@ -47,8 +47,8 @@ int main(int argc, char** argv)
 		_xtprintf("FileParser_ReadVer_GetLocal error\n");
 		return 0;
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_LocalList, nLocalCount);
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_RemoteList, nRemoteCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_LocalList, nLocalCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppSt_RemoteList, nRemoteCount);
 
 	if (stl_ListUPDate.empty())
 	{
