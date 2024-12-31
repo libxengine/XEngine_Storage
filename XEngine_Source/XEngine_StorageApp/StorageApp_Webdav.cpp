@@ -263,7 +263,32 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		_tcsxcpy(tszFileName, pSt_HTTPParam->tszHttpUri + 1);
 		BaseLib_String_Replace(tszFileName, &nFLen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath);
 
-		_xtremove(tszFileName);
+		SYSTEMAPI_FILE_ATTR st_FileAttr = {};
+		if (SystemApi_File_GetFileAttr(tszFileName, &st_FileAttr))
+		{
+			if (st_FileAttr.bFile)
+			{
+				_xtremove(tszFileName);
+			}
+			else
+			{
+				//如果是文件夹
+				int nFileCount = 0;
+				XCHAR** pptszListFile;
+				SystemApi_File_EnumFile(tszFileName, &pptszListFile, &nFileCount);
+				BaseLib_Memory_Free((XPPPMEM)&pptszListFile, nFileCount);
+				if (nFileCount > 0)
+				{
+					st_HDRParam.bIsClose = true;
+					st_HDRParam.nHttpCode = 400;
+					HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,处理WEBDAV协议DELETE方法失败,删除的文件夹不为空,URL:%s"), lpszClientAddr, tszFileName);
+					return false;
+				}
+				SystemApi_File_DeleteMutilFolder(tszFileName, true);
+			}
+		}
 		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议DELETE方法成功,删除的文件:%s"), lpszClientAddr, tszFileName);
