@@ -144,7 +144,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		st_HDRParam.bIsClose = true;
 		st_HDRParam.nHttpCode = 302;
 
-		XCHAR tszRequestAddr[MAX_PATH] = {};
+		XCHAR tszRequestAddr[512] = {};
 		XCHAR tszHostStr[128] = {};
 		HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, _X("Host"), tszHostStr);
 
@@ -168,7 +168,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		st_HDRParam.bIsClose = false;
 		st_HDRParam.nHttpCode = 302;
 
-		XCHAR tszRequestAddr[MAX_PATH] = {};
+		XCHAR tszRequestAddr[1024] = {};
 		XCHAR tszHostStr[128] = {};
 		HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, _X("Host"), tszHostStr);
 

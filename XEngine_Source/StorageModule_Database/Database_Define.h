@@ -17,7 +17,7 @@ typedef struct
 {
     XENGINE_PROTOCOL_FILE st_ProtocolFile;
     XCHAR tszBuckKey[MAX_PATH];                                             //路径的关键字
-    XCHAR tszTableName[64];                                                 //日期表名称,插入:表示自定义插入日期表,获取:表示导出这个文件所属日期表
+    XCHAR tszTableName[MAX_PATH];                                           //日期表名称,插入:表示自定义插入日期表,获取:表示导出这个文件所属日期表
 }XSTORAGECORE_DBFILE, *LPXSTORAGECORE_DBFILE;
 typedef struct
 {
