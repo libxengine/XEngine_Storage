@@ -11,3 +11,7 @@
 //    History:
 *********************************************************************/
 #define _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT 0               //BT支持
+
+#if (XENGINE_VERSION_KERNEL < 9) && (XENGINE_VERSION_MAIN < 10)
+typedef XENGINE_LIBTIMER XENGINE_LIBTIME;
+#endif
