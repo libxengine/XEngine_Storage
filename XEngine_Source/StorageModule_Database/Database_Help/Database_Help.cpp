@@ -43,10 +43,10 @@ bool CDatabase_Help::Database_Help_Insert(XCHAR* ptszSQLBuffer, XSTORAGECORE_DBF
 	Database_IsErrorOccur = false;
 
 	XCHAR tszTableName[64];
-	XENGINE_LIBTIMER st_LibTimer;
+	XENGINE_LIBTIME st_LibTimer;
 
 	memset(tszTableName, '\0', sizeof(tszTableName));
-	memset(&st_LibTimer, '\0', sizeof(XENGINE_LIBTIMER));
+	memset(&st_LibTimer, '\0', sizeof(XENGINE_LIBTIME));
 	//获得插入日期表
 	BaseLib_Time_GetSysTime(&st_LibTimer);
 

@@ -56,6 +56,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	LPCXSTR lpszMethodDel = _X("DELETE");
 	LPCXSTR lpszMethodLock = _X("LOCK");
 	LPCXSTR lpszMethodUNLock = _X("UNLOCK");
+	LPCXSTR lpszMethodMKCol = _X("MKCOL");
 
 	st_HDRParam.bIsClose = false;
 	st_HDRParam.nHttpCode = 200;
@@ -232,7 +233,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议UNLOCK方法成功,锁文件:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
 		return true;
-		}
+	}
 	else if (0 == _tcsxnicmp(lpszMethodPropPatch, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPropPatch)))
 	{
 		st_HDRParam.bIsClose = false;
@@ -273,6 +274,28 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议DELETE方法成功,删除的文件:%s"), lpszClientAddr, tszFileName);
 		return true;
+	}
+	else if (0 == _tcsxnicmp(lpszMethodMKCol, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodMKCol)))
+	{
+		XENGINE_STORAGEBUCKET st_StorageBucket = {};
+		if (!APIHelp_Distributed_DLStorage(pSt_HTTPParam->tszHttpUri, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
+		{
+			st_HDRParam.bIsClose = true;
+			st_HDRParam.nHttpCode = 400;
+			HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,处理WEBDAV协议PROPFIND方法失败,URL:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+			return false;
+		}
+		int nALen = 0;
+		XCHAR tszCreateDir[MAX_PATH] = {};
+		_tcsxcpy(tszCreateDir, pSt_HTTPParam->tszHttpUri + 1);
+		BaseLib_String_Replace(tszCreateDir, &nALen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath, true);
+
+		st_HDRParam.nHttpCode = 201;
+		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议MLCOL方法成功,创建的路径:%s"), lpszClientAddr, tszCreateDir);
 	}
 	else
 	{

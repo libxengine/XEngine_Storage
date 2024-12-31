@@ -477,8 +477,8 @@ bool CDatabase_File::Database_File_CreateTable()
 		memset(tszTableName, '\0', sizeof(tszTableName));
 		memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
 
-		XENGINE_LIBTIMER st_DBTime;
-		memset(&st_DBTime, 0, sizeof(XENGINE_LIBTIMER));
+		XENGINE_LIBTIME st_DBTime;
+		memset(&st_DBTime, 0, sizeof(XENGINE_LIBTIME));
 
 		BaseLib_Time_GetSysTime(&st_DBTime);
 
@@ -542,8 +542,8 @@ bool CDatabase_File::Database_File_TimeMonth(LPCXSTR lpszStartTime, int* pInt_Mo
 {
     Database_IsErrorOccur = false;
 
-    XENGINE_LIBTIMER st_EndTime;
-    memset(&st_EndTime, '\0', sizeof(XENGINE_LIBTIMER));
+    XENGINE_LIBTIME st_EndTime;
+    memset(&st_EndTime, '\0', sizeof(XENGINE_LIBTIME));
 
     BaseLib_Time_GetSysTime(&st_EndTime);
 
