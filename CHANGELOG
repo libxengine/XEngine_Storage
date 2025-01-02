@@ -1,3 +1,21 @@
+XEngine_Storage V3.18.0.1001
+
+added:MKCOL method support for webdav
+modify:Do not allow deletion of non-empty directories
+update:depend library
+update:xengine v9 workflows support
+update:more release support
+fixed:build warn
+fixed:return is incorrect for webdav
+
+增加:WEBDAV MKCOL方法支持
+更新:子模块支持库
+更新:xengine v9支持
+更新:更多发布系统支持
+修改:现在不支持WEBDAV删除空文件夹
+修正:编译警告
+修正:WEBDAV返回值处理不正确
+======================================================================================
 XEngine_Storage V3.17.0.1001
 
 added:workflows support
