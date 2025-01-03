@@ -49,10 +49,10 @@ void ServiceApp_Stop(int signo)
 		HttpProtocol_Server_DestroyEx(xhCenterHttp);
 		HttpProtocol_Server_DestroyEx(xhWebdavHttp);
 
-		OPenSsl_Server_StopEx(xhDLSsl);
-		OPenSsl_Server_StopEx(xhUPSsl);
-		OPenSsl_Server_StopEx(xhCHSsl);
-		OPenSsl_Server_StopEx(xhWDSsl);
+		Cryption_Server_StopEx(xhDLSsl);
+		Cryption_Server_StopEx(xhUPSsl);
+		Cryption_Server_StopEx(xhCHSsl);
+		Cryption_Server_StopEx(xhWDSsl);
 
 		NetCore_TCPXCore_DestroyEx(xhNetDownload);
 		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
@@ -125,7 +125,7 @@ LONG WINAPI Coredump_ExceptionFilter(EXCEPTION_POINTERS* pExceptionPointers)
 	static int i = 0;
 	XCHAR tszFileStr[MAX_PATH] = {};
 	XCHAR tszTimeStr[128] = {};
-	BaseLib_OperatorTime_TimeToStr(tszTimeStr);
+	BaseLib_Time_TimeToStr(tszTimeStr);
 	_xstprintf(tszFileStr, _X("./XEngine_Coredump/dumpfile_%s_%d.dmp"), tszTimeStr, i++);
 
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_FATAL, _X("主程序:软件崩溃,写入dump:%s"), tszFileStr);
@@ -290,11 +290,11 @@ int main(int argc, char** argv)
 		{
 			if (_tcsxlen(st_ServiceCfg.st_XCert.tszCertServer) > 0)
 			{
-				xhDLSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+				xhDLSsl = Cryption_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_CRYPTION_PROTOCOL_TLS);
 			}
 			else
 			{
-				xhDLSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+				xhDLSsl = Cryption_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_CRYPTION_PROTOCOL_TLS);
 			}
 			if (NULL == xhDLSsl)
 			{
@@ -318,7 +318,7 @@ int main(int argc, char** argv)
 		NetCore_TCPXCore_RegisterCallBackEx(xhNetDownload, XEngine_Callback_DownloadLogin, XEngine_Callback_DownloadRecv, XEngine_Callback_DownloadLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，注册下载存储网络服务事件成功！"));
 
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread, sizeof(THREADPOOL_PARAMENT));
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_ListDLThread, st_ServiceCfg.st_XMax.nStorageDLThread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceCfg.st_XMax.nStorageDLThread; i++)
 		{
 			int* pInt_Pos = new int;
@@ -357,11 +357,11 @@ int main(int argc, char** argv)
 		{
 			if (_tcsxlen(st_ServiceCfg.st_XCert.tszCertServer) > 0)
 			{
-				xhUPSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+				xhUPSsl = Cryption_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_CRYPTION_PROTOCOL_TLS);
 			}
 			else
 			{
-				xhUPSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+				xhUPSsl = Cryption_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_CRYPTION_PROTOCOL_TLS);
 			}
 			if (NULL == xhUPSsl)
 			{
@@ -385,7 +385,7 @@ int main(int argc, char** argv)
 		NetCore_TCPXCore_RegisterCallBackEx(xhNetUPLoader, XEngine_Callback_UPLoaderLogin, XEngine_Callback_UPLoaderRecv, XEngine_Callback_UPLoaderLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，注册上传存储网络服务事件成功！"));
 
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageUPThread, sizeof(THREADPOOL_PARAMENT));
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_ListUPThread, st_ServiceCfg.st_XMax.nStorageUPThread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceCfg.st_XMax.nStorageUPThread; i++)
 		{
 			int* pInt_Pos = new int;
@@ -417,11 +417,11 @@ int main(int argc, char** argv)
 		{
 			if (_tcsxlen(st_ServiceCfg.st_XCert.tszCertServer) > 0)
 			{
-				xhCHSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+				xhCHSsl = Cryption_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_CRYPTION_PROTOCOL_TLS);
 			}
 			else
 			{
-				xhCHSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+				xhCHSsl = Cryption_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_CRYPTION_PROTOCOL_TLS);
 			}
 			if (NULL == xhCHSsl)
 			{
@@ -445,7 +445,7 @@ int main(int argc, char** argv)
 		NetCore_TCPXCore_RegisterCallBackEx(xhNetCenter, XEngine_Callback_CenterLogin, XEngine_Callback_CenterRecv, XEngine_Callback_CenterLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，注册业务控制存储存储网络服务事件成功！"));
 
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread, sizeof(THREADPOOL_PARAMENT));
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_ListCTThread, st_ServiceCfg.st_XMax.nCenterThread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceCfg.st_XMax.nCenterThread; i++)
 		{
 			int* pInt_Pos = new int;
@@ -477,11 +477,11 @@ int main(int argc, char** argv)
 		{
 			if (_tcsxlen(st_ServiceCfg.st_XCert.tszCertServer) > 0)
 			{
-				xhWDSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+				xhWDSsl = Cryption_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, st_ServiceCfg.st_XCert.tszCertServer, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_CRYPTION_PROTOCOL_TLS);
 			}
 			else
 			{
-				xhWDSsl = OPenSsl_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_OPENSSL_PROTOCOL_TLS_SERVER);
+				xhWDSsl = Cryption_Server_InitEx(st_ServiceCfg.st_XCert.tszCertChain, NULL, st_ServiceCfg.st_XCert.tszCertKey, false, false, XENGINE_CRYPTION_PROTOCOL_TLS);
 			}
 			if (NULL == xhWDSsl)
 			{
@@ -505,7 +505,7 @@ int main(int argc, char** argv)
 		NetCore_TCPXCore_RegisterCallBackEx(xhNetWebdav, XEngine_Callback_WebdavLogin, XEngine_Callback_WebdavRecv, XEngine_Callback_WebdavLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，注册WEBDAV网络服务事件成功！"));
 
-		BaseLib_OperatorMemory_Malloc((XPPPMEM)&ppSt_ListWDThread, st_ServiceCfg.st_XMax.nWebdavThread, sizeof(THREADPOOL_PARAMENT));
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_ListWDThread, st_ServiceCfg.st_XMax.nWebdavThread, sizeof(THREADPOOL_PARAMENT));
 		for (int i = 0; i < st_ServiceCfg.st_XMax.nWebdavThread; i++)
 		{
 			int* pInt_Pos = new int;
@@ -584,7 +584,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，信息报告给API服务器没有启用"));
 	}
 
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,XEngine版本:%s%s 当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), BaseLib_OperatorVer_XNumberStr(), BaseLib_OperatorVer_XTypeStr(), st_ServiceCfg.st_XVer.pStl_ListStorage->front().c_str());
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,XEngine版本:%s%s 当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), BaseLib_Version_XNumberStr(), BaseLib_Version_XTypeStr(), st_ServiceCfg.st_XVer.pStl_ListStorage->front().c_str());
 
 	while (true)
 	{
@@ -614,10 +614,10 @@ XENGINE_EXITAPP:
 		HttpProtocol_Server_DestroyEx(xhCenterHttp);
 		HttpProtocol_Server_DestroyEx(xhWebdavHttp);
 
-		OPenSsl_Server_StopEx(xhDLSsl);
-		OPenSsl_Server_StopEx(xhUPSsl);
-		OPenSsl_Server_StopEx(xhCHSsl);
-		OPenSsl_Server_StopEx(xhWDSsl);
+		Cryption_Server_StopEx(xhDLSsl);
+		Cryption_Server_StopEx(xhUPSsl);
+		Cryption_Server_StopEx(xhCHSsl);
+		Cryption_Server_StopEx(xhWDSsl);
 
 		NetCore_TCPXCore_DestroyEx(xhNetDownload);
 		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);

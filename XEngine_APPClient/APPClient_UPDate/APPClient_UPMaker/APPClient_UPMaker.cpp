@@ -84,13 +84,13 @@ bool HelpModule_Api_BuildVer(XCHAR* ptszLocalBuffer, XCHAR* ptszRemoteBuffer, in
 		HELPMODULE_FILELIST st_FileList;
 		memset(&st_FileList, '\0', sizeof(HELPMODULE_FILELIST));
 
-		if (!BaseLib_OperatorString_GetFileAndPath(ppszListDir[i], st_FileList.tszFilePath, st_FileList.tszFileName))
+		if (!BaseLib_String_GetFileAndPath(ppszListDir[i], st_FileList.tszFilePath, st_FileList.tszFileName))
 		{
 			return FALSE;
 		}
 		stl_ListFile.push_back(st_FileList);
 	}
-	BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListDir, nListCount);
+	BaseLib_Memory_Free((XPPPMEM)&ppszListDir, nListCount);
 
 	Json::Value st_JsonLocalRoot;
 	Json::Value st_JsonLocalArray;
@@ -108,7 +108,7 @@ bool HelpModule_Api_BuildVer(XCHAR* ptszLocalBuffer, XCHAR* ptszRemoteBuffer, in
 	memset(tszTimer, '\0', sizeof(tszTimer));
 	memset(&st_Timer, '\0', sizeof(XENGINE_LIBTIMER));
 
-	BaseLib_OperatorTime_GetSysTime(&st_Timer);
+	BaseLib_Time_GetSysTime(&st_Timer);
 	_xstprintf(tszTimer, _X("%04d%02d%02d%02d%02d%02d"), st_Timer.wYear, st_Timer.wMonth, st_Timer.wDay, st_Timer.wHour, st_Timer.wMinute, st_Timer.wSecond);
 	__int64x m_nFileVer = _ttxoll(tszTimer);
 
@@ -135,7 +135,7 @@ bool HelpModule_Api_BuildVer(XCHAR* ptszLocalBuffer, XCHAR* ptszRemoteBuffer, in
 		memset(tszDlPath, '\0', sizeof(tszDlPath));
 		//删除指定字符串
 		int nPathType = 0;
-		BaseLib_OperatorString_GetPath(stl_ListIterator->tszFilePath, &nPathType);
+		BaseLib_String_GetPath(stl_ListIterator->tszFilePath, &nPathType);
 		if (1 == nPathType)
 		{
 			XCHAR tszDelPath[MAX_PATH];
@@ -149,8 +149,8 @@ bool HelpModule_Api_BuildVer(XCHAR* ptszLocalBuffer, XCHAR* ptszRemoteBuffer, in
 
 			tszDelPath[_tcsxlen(tszDelPath) - 1] = '\0';
 
-			BaseLib_OperatorString_DelSub(tszSubPath, tszDelPath);
-			BaseLib_OperatorString_FixPath(tszSubPath, 2);
+			BaseLib_String_DelSub(tszSubPath, tszDelPath);
+			BaseLib_String_FixPath(tszSubPath, 2);
 			_xstprintf(tszDlPath, _X("%s%s%s"), lpszDlUrl, tszSubPath, stl_ListIterator->tszFileName);
 		}
 		else

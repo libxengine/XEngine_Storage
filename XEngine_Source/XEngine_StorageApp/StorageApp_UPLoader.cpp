@@ -30,11 +30,11 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(XPVOID lParam)
 					{
 						XEngine_Task_HttpUPLoader(ppSt_PKTClient[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
-					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
+					BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+					BaseLib_Memory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
 				}
 			}
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
+			BaseLib_Memory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
 		}
 	}
 	return 0;
@@ -128,7 +128,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 		}
 		Protocol_StorageParse_SpeedLimit(ptszBody, nSDLen, &nCode, &nLimit);
-		BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
+		BaseLib_Memory_FreeCStyle((VOID**)&ptszBody);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass);
 		st_HDRParam.bAuth = true;
 	}
@@ -169,7 +169,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		st_HDRParam.nHttpCode = 413;
 		HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPUPLOADER);
-		BaseLib_OperatorMemory_Free((XPPPMEM)&pptszParamList, nParamCount);
+		BaseLib_Memory_Free((XPPPMEM)&pptszParamList, nParamCount);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,请求上传文件失败,提供的参数:%s 不正确,错误：%lX"), lpszClientAddr, pSt_HTTPParam->tszHttpUri, HttpProtocol_GetLastError());
 		return false;
 	}
@@ -205,8 +205,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	//修正文件路径
 	int nPathType = 0;
 	_xstprintf(tszFileDir, _X("%s/%s"), st_StorageBucket.tszFilePath, tszFileName);
-	BaseLib_OperatorString_GetPath(tszFileDir, &nPathType);
-	BaseLib_OperatorString_FixPath(tszFileDir, nPathType);
+	BaseLib_String_GetPath(tszFileDir, &nPathType);
+	BaseLib_String_FixPath(tszFileDir, nPathType);
 	//得到上传大小
 	XCHAR tszVluStr[8] = {};
 	if (HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, _X("Content-Length"), tszVluStr))
@@ -290,7 +290,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		XCHAR tszTmpPath[MAX_PATH];
 		memset(tszTmpPath, '\0', MAX_PATH);
 
-		BaseLib_OperatorString_GetFileAndPath(tszFileDir, tszTmpPath);
+		BaseLib_String_GetFileAndPath(tszFileDir, tszTmpPath);
 		if (0 != _xtaccess(tszTmpPath, 0))
 		{
 			//不存在,是否允许创建?
@@ -427,8 +427,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		st_ProtocolFile.st_ProtocolFile.nFileSize = st_StorageInfo.ullRWLen;
 		//上传完毕需要关闭,否则计算HASH会不正常
 		Session_UPStroage_Close(lpszClientAddr);
-		OPenSsl_Api_Digest(tszFileDir, tszHashStr, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
-		BaseLib_OperatorString_StrToHex((char*)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+		Cryption_Api_Digest(tszFileDir, tszHashStr, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
+		BaseLib_String_StrToHex((char*)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		//处理结果
 		if (st_ServiceCfg.st_XStorage.bUPHash)
 		{

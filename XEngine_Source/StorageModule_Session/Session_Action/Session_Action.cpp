@@ -158,7 +158,7 @@ bool CSession_Action::Session_Action_GetAll(XNETHANDLE*** pppxhToken, int* pInt_
 
 	st_Locker.lock_shared();
 	*pInt_ListCount = stl_MapAction.size();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppxhToken, *pInt_ListCount, sizeof(XNETHANDLE));
+	BaseLib_Memory_Malloc((XPPPMEM)pppxhToken, *pInt_ListCount, sizeof(XNETHANDLE));
 
 	unordered_map<XNETHANDLE, SESSION_ACTIONINFO>::iterator stl_MapIterator = stl_MapAction.begin();
 	for (int i = 0; stl_MapIterator != stl_MapAction.end(); stl_MapIterator++, i++)

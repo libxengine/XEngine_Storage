@@ -30,11 +30,11 @@ XHTHREAD CALLBACK XEngine_Center_HTTPThread(XPVOID lParam)
 					{
 						XEngine_Task_HttpCenter(ppSt_PKTClient[i]->tszClientAddr, ptszMsgBuffer, nMsgLen, &st_HTTPParam, ppszListHdr, nHdrCount);
 					}
-					BaseLib_OperatorMemory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
-					BaseLib_OperatorMemory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
+					BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+					BaseLib_Memory_Free((XPPPMEM)&ppszListHdr, nHdrCount);
 				}
 			}
-			BaseLib_OperatorMemory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
+			BaseLib_Memory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
 		}
 	}
 	return 0;
@@ -91,7 +91,7 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 		}
-		BaseLib_OperatorMemory_FreeCStyle((VOID**)&ptszBody);
+		BaseLib_Memory_FreeCStyle((VOID**)&ptszBody);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass);
 		st_HDRParam.bAuth = true;
 	}

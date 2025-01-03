@@ -8,7 +8,7 @@ RELEASE = 0
 UNICODE = 0
 LOADHDR = -I ./ -I ../XEngine_Depend/XEngine_Module/jsoncpp
 LOADSO = -L ../XEngine_Depend/XEngine_Module/jsoncpp
-LIB = -lXEngine_BaseLib -lXEngine_OPenSsl -lRfcComponents_HttpProtocol -lXEngine_SystemApi -ljsoncpp
+LIB = -lXEngine_BaseLib -lXEngine_Cryption -lRfcComponents_HttpProtocol -lXEngine_SystemApi -ljsoncpp
 LIBEX = 
 OBJECTS = APIHelp_Distributed.o APIHelp_Api.o APIHelp_Cryption.o pch.o
 

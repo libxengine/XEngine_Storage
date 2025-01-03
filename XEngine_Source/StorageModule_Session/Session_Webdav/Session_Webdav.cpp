@@ -51,7 +51,7 @@ bool CSession_Webdav::Session_Webdav_Insert(LPCXSTR lpszFileName, XENGINE_WEBDAV
 	
 	_xstprintf(pSt_WDLocker->tszTimeout, _X("Second-%d"), nTimeout);
 	int nRet = _xstprintf(pSt_WDLocker->tszToken, _X("opaquelocktoken:"));
-	BaseLib_OperatorHandle_CreateGuid(pSt_WDLocker->tszToken + nRet);
+	BaseLib_Handle_CreateGuid(pSt_WDLocker->tszToken + nRet);
 
 	st_WDSession.nTimeStart = time(NULL);
 	st_WDSession.st_WDLocker = *pSt_WDLocker;

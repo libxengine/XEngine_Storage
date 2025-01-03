@@ -65,7 +65,7 @@ bool CAPIHelp_Cryption::APIHelp_Cryption_BasicEncoder(LPCXSTR lpszUser, LPCXSTR 
     memset(tszBaseBuffer, '\0', sizeof(tszBaseBuffer));
 
     int nLen = _xstprintf(tszMsgBuffer, _X("%s:%s"), lpszUser, lpszPass);
-	if (!OPenSsl_Codec_Base64(tszMsgBuffer, tszBaseBuffer, &nLen))
+	if (!Cryption_Codec_Base64(tszMsgBuffer, tszBaseBuffer, &nLen))
 	{
 		return false;
 	}
@@ -119,7 +119,7 @@ bool CAPIHelp_Cryption::APIHelp_Cryption_BasicDecoder(LPCXSTR lpszMsgBuffer, XCH
     if (NULL == _tcsxstr(lpszMsgBuffer, _X("Basic")))
     {
 		int nMsgLen = _tcsxlen(lpszMsgBuffer);
-		if (!OPenSsl_Codec_Base64(lpszMsgBuffer, tszBaseBuffer, &nMsgLen, false))
+		if (!Cryption_Codec_Base64(lpszMsgBuffer, tszBaseBuffer, &nMsgLen, false))
 		{
 			return false;
 		}
@@ -127,7 +127,7 @@ bool CAPIHelp_Cryption::APIHelp_Cryption_BasicDecoder(LPCXSTR lpszMsgBuffer, XCH
     else
     {
 		int nMsgLen = _tcsxlen(lpszMsgBuffer) - 6;
-		if (!OPenSsl_Codec_Base64(lpszMsgBuffer + 6, tszBaseBuffer, &nMsgLen, false))
+		if (!Cryption_Codec_Base64(lpszMsgBuffer + 6, tszBaseBuffer, &nMsgLen, false))
 		{
 			return false;
 		}
@@ -223,15 +223,15 @@ bool CAPIHelp_Cryption::APIHelp_Cryption_Digest(XCHAR* ptszResponseStr, LPCXSTR 
 
 	//计算HA1 的MD5字符串 MD5(USER:PASS:REAL)
 	int nRet = _xstprintf(tszUserStr, _X("%s:%s:%s"), lpszUser, lpszRealm, lpszPass);
-    OPenSsl_Api_Digest(tszUserStr, tszUserMD5, &nRet);
-	BaseLib_OperatorString_StrToHex((XCHAR*)tszUserMD5, nRet, tszUserHex);
+    Cryption_Api_Digest(tszUserStr, tszUserMD5, &nRet);
+	BaseLib_String_StrToHex((XCHAR*)tszUserMD5, nRet, tszUserHex);
 	//计算HA2 的MD5字符串,根据验证模式来计算
     nRet = _xstprintf(tszUrlStr, _X("%s:%s"), lpszMethod, lpszUrl);
-    OPenSsl_Api_Digest(tszUrlStr, tszUrlMD5, &nRet);
-	BaseLib_OperatorString_StrToHex((XCHAR*)tszUrlMD5, nRet, tszUrlHex);
+    Cryption_Api_Digest(tszUrlStr, tszUrlMD5, &nRet);
+	BaseLib_String_StrToHex((XCHAR*)tszUrlMD5, nRet, tszUrlHex);
 	//计算RESPONSE值
     nRet = _xstprintf(tszResponseStr, _X("%s:%s:%s:%s:auth:%s"), tszUserHex, lpszNonce, lpszNC, lpszCNonce, tszUrlHex);
-    OPenSsl_Api_Digest(tszResponseStr, tszResponseMD5, &nRet);
-	BaseLib_OperatorString_StrToHex((XCHAR*)tszResponseMD5, nRet, ptszResponseStr);
+    Cryption_Api_Digest(tszResponseStr, tszResponseMD5, &nRet);
+	BaseLib_String_StrToHex((XCHAR*)tszResponseMD5, nRet, ptszResponseStr);
     return true;
 }

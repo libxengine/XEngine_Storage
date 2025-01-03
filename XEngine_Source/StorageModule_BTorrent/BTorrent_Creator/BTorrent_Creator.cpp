@@ -72,7 +72,7 @@ bool CBTorrent_Creator::BTorrent_Creator_Init(XNETHANDLE* pxhToken, LPCXSTR lpsz
 	st_BTCreator.m_nPieceSize = nPieceSize;
 	_tcsxcpy(st_BTCreator.tszBTPath, lpszBTPath);
 
-	BaseLib_OperatorHandle_Create(pxhToken);
+	BaseLib_Handle_Create(pxhToken);
     st_Locker.lock();
     stl_MapBTCreator.insert(make_pair(*pxhToken, st_BTCreator));
     st_Locker.unlock();

@@ -37,7 +37,7 @@ XHTHREAD Session_Action_Thread()
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("转录动作线程:文件转录失败,句柄:%lld,URL:%s,Bucket:%s,FileName:%s,错误:%lX"), (*ppxhToken)[i], st_ActionInfo.tszFileUrl, st_ActionInfo.tszBucketStr, st_ActionInfo.tszFileName, Session_GetLastError());
 			}
 		}
-		BaseLib_OperatorMemory_Free((XPPPMEM)&ppxhToken, nListCount);
+		BaseLib_Memory_Free((XPPPMEM)&ppxhToken, nListCount);
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 	return 0;
@@ -64,7 +64,7 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,协议解析失败,负载内容:%s"), lpszClientAddr, lpszMsgBuffer);
 		return false;
 	}
-	XCHAR tszFileName[MAX_PATH] = {};
+	XCHAR tszFileName[1024] = {};
 	XENGINE_STORAGEBUCKET st_StorageBucket = {};
 	if (!APIHelp_Distributed_CTStorage(st_ActionInfo.tszBucketStr, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
 	{
@@ -78,7 +78,7 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 	if (0 == _tcsxnicmp(lpszAPIDownload, lpszAPIName, _tcsxlen(lpszAPIDownload)))
 	{
 		XNETHANDLE xhToken = 0;
-		BaseLib_OperatorHandle_Create(&xhToken);
+		BaseLib_Handle_Create(&xhToken);
 
 		XHANDLE xhAction = APIClient_File_Create(st_ActionInfo.tszFileUrl, tszFileName, true);
 		if (NULL == xhAction)
@@ -100,7 +100,7 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 	else if (0 == _tcsxnicmp(lpszAPIUPload, lpszAPIName, _tcsxlen(lpszAPIUPload)))
 	{
 		XNETHANDLE xhToken = 0;
-		BaseLib_OperatorHandle_Create(&xhToken);
+		BaseLib_Handle_Create(&xhToken);
 
 		XHANDLE xhAction = APIClient_File_Create(st_ActionInfo.tszFileUrl, tszFileName, false);
 		if (NULL == xhAction)

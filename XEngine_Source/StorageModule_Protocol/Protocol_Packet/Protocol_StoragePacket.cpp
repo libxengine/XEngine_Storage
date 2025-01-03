@@ -583,11 +583,11 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBu
     {
 		XCHAR tszFileName[MAX_PATH] = {};
 		SYSTEMAPI_FILE_ATTR st_FileAttr = {};
-		BaseLib_OperatorString_GetFileAndPath((*ppptszListFile)[i], NULL, tszFileName);
+		BaseLib_String_GetFileAndPath((*ppptszListFile)[i], NULL, tszFileName);
 		SystemApi_File_GetFileAttr((*ppptszListFile)[i], &st_FileAttr);
 
 		XCHAR tszGMTTime[64] = {};
-		BaseLib_OperatorTime_GMTTime(tszGMTTime, st_FileAttr.nModifyTime);
+		BaseLib_Time_GMTTime(tszGMTTime, st_FileAttr.nModifyTime);
 
 		// 子元素 <response>
 		XMLElement* pSt_XMLResponse = m_XMLDocument.NewElement("d:response");
@@ -602,7 +602,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBu
         APIHelp_Api_UrlStr(tszDestStr, (*ppptszListFile)[i]);
 
         int nRLen = 0;
-        BaseLib_OperatorString_Replace(tszFileAlis, &nRLen, lpszBucketPath + 2, lpszBucketKey, true);
+        BaseLib_String_Replace(tszFileAlis, &nRLen, lpszBucketPath + 2, lpszBucketKey, true);
         XMLElement* pSt_XMLhref = m_XMLDocument.NewElement("d:href");
         pSt_XMLhref->SetText(tszFileAlis);
         pSt_XMLResponse->InsertEndChild(pSt_XMLhref);

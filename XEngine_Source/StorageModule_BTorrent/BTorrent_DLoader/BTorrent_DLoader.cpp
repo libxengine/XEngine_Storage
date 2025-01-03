@@ -107,7 +107,7 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lp
     _tcsxcpy(pSt_BTDLoader->tszAddr, lpszAddr);
 	_tcsxcpy(pSt_BTDLoader->tszFile, lpszSavePath);
 	//生成句柄
-	BaseLib_OperatorHandle_Create(pxhToken);
+	BaseLib_Handle_Create(pxhToken);
    
     st_Locker.lock();
     stl_MapDLoader.insert(make_pair(*pxhToken, pSt_BTDLoader));
@@ -171,7 +171,7 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT
 		return false;
 	}
 	*pInt_ListCount = stl_VectorAlerts.size();
-	BaseLib_OperatorMemory_Malloc((XPPPMEM)pppenEventList, stl_VectorAlerts.size(), sizeof(ENUM_BTORRENT_EVENT_TYPE));
+	BaseLib_Memory_Malloc((XPPPMEM)pppenEventList, stl_VectorAlerts.size(), sizeof(ENUM_BTORRENT_EVENT_TYPE));
 	//轮训元素
 	int i = 0;
 	for (lt::alert const* stl_ListElement : stl_VectorAlerts)
@@ -225,7 +225,7 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT
 			{
 #if _MSC_BUILD
 				int nUTFLen = stl_VectorIterator->name.length();
-				BaseLib_OperatorCharset_UTFToAnsi(stl_VectorIterator->name.c_str(), stl_MapIterator->second->st_DLStatus.tszFileName, &nUTFLen);
+				BaseLib_Charset_UTFToAnsi(stl_VectorIterator->name.c_str(), stl_MapIterator->second->st_DLStatus.tszFileName, &nUTFLen);
 				stl_MapIterator->second->st_DLStatus.nDLoadTotal = stl_VectorIterator->total;
 #else
 				_tcsxcpy(stl_MapIterator->second->st_DLStatus.tszFileName, stl_VectorIterator->name.c_str());
