@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <signal.h>
 #include <errno.h>
+#include <locale.h>
 #include <thread>
 #include <memory>
 #include <list>
