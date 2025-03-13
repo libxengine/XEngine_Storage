@@ -47,9 +47,11 @@ typedef struct tag_XEngine_ServerConfig
     }st_XTime;
     struct
     {
+        XCHAR tszLogFile[MAX_PATH];
         int nMaxSize;
         int nMaxCount;
         int nLogLeave;
+        int nLogType;
     }st_XLog;
     struct
     {
