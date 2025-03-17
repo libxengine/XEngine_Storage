@@ -1,4 +1,4 @@
-name: ubuntu build workflows
+name: ubuntu x86_64 build workflows
 
 on:
   push:
