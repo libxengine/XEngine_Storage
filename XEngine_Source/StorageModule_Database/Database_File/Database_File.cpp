@@ -596,7 +596,7 @@ bool CDatabase_File::Database_File_TimeDel()
                 {
                     //删除文件
                     int nListCount = 0;
-                    XSTORAGECORE_DBFILE **ppSt_ListFile;
+                    XSTORAGECORE_DBFILE **ppSt_ListFile = NULL;
                     Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, NULL, pptszResult[0]);
                     for (int i = 0; i < nListCount; i++)
                     {
