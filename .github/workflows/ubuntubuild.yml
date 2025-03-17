@@ -86,7 +86,7 @@ jobs:
         with:
           name: XEngine_XStorageApp-x86_64-Ubuntu-22.04
           path: XEngine_Release/
-          retention-days: 3
+          retention-days: 1
 
       - name: Upload folder as artifact with ubuntu24.04
         if: matrix.os == 'ubuntu-24.04'
@@ -94,4 +94,4 @@ jobs:
         with:
           name: XEngine_XStorageApp-x86_64-Ubuntu-24.04
           path: XEngine_Release/
-          retention-days: 3
+          retention-days: 1
