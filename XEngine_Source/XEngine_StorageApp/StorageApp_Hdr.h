@@ -136,31 +136,45 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets.lib")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
-#ifdef _WIN64
 #ifdef _DEBUG
+#ifdef _M_X64
 #pragma comment(lib,"../x64/Debug/StorageModule_Session.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_Config.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_Protocol.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_Database.lib")
 #pragma comment(lib,"../x64/Debug/XEngine_InfoReport.lib")
-#else
-#pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
-#pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
-#pragma comment(lib,"../x64/Release/StorageModule_APIHelp.lib")
-#pragma comment(lib,"../x64/Release/StorageModule_Protocol.lib")
-#pragma comment(lib,"../x64/Release/StorageModule_Database.lib")
-#pragma comment(lib,"../x64/Release/XEngine_InfoReport.lib")
-#endif
-#else
-#ifdef _DEBUG
+#elif _M_ARM64
+#pragma comment(lib,"../ARM64/Debug/StorageModule_Session.lib")
+#pragma comment(lib,"../ARM64/Debug/StorageModule_Config.lib")
+#pragma comment(lib,"../ARM64/Debug/StorageModule_APIHelp.lib")
+#pragma comment(lib,"../ARM64/Debug/StorageModule_Protocol.lib")
+#pragma comment(lib,"../ARM64/Debug/StorageModule_Database.lib")
+#pragma comment(lib,"../ARM64/Debug/XEngine_InfoReport.lib")
+#elif _M_IX86
 #pragma comment(lib,"../Debug/StorageModule_Session.lib")
 #pragma comment(lib,"../Debug/StorageModule_Config.lib")
 #pragma comment(lib,"../Debug/StorageModule_APIHelp.lib")
 #pragma comment(lib,"../Debug/StorageModule_Protocol.lib")
 #pragma comment(lib,"../Debug/StorageModule_Database.lib")
 #pragma comment(lib,"../Debug/XEngine_InfoReport.lib")
+#endif
 #else
+#ifdef _M_X64
+#pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
+#pragma comment(lib,"../x64/Release/StorageModule_Config.lib")
+#pragma comment(lib,"../x64/Release/StorageModule_APIHelp.lib")
+#pragma comment(lib,"../x64/Release/StorageModule_Protocol.lib")
+#pragma comment(lib,"../x64/Release/StorageModule_Database.lib")
+#pragma comment(lib,"../x64/Release/XEngine_InfoReport.lib")
+#elif _M_ARM64
+#pragma comment(lib,"../ARM64/Release/StorageModule_Session.lib")
+#pragma comment(lib,"../ARM64/Release/StorageModule_Config.lib")
+#pragma comment(lib,"../ARM64/Release/StorageModule_APIHelp.lib")
+#pragma comment(lib,"../ARM64/Release/StorageModule_Protocol.lib")
+#pragma comment(lib,"../ARM64/Release/StorageModule_Database.lib")
+#pragma comment(lib,"../ARM64/Release/XEngine_InfoReport.lib")
+#elif _M_IX86
 #pragma comment(lib,"../Release/StorageModule_Session.lib")
 #pragma comment(lib,"../Release/StorageModule_Config.lib")
 #pragma comment(lib,"../Release/StorageModule_APIHelp.lib")

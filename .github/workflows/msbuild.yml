@@ -124,7 +124,7 @@ jobs:
           name: XEngine_StorageApp-x86_64-Windows
           path: XEngine_Release/
           retention-days: 1
-      - name: Upload folder as artifact with x64
+      - name: Upload folder as artifact with ARM64
         if: matrix.configuration == 'Release' && matrix.platform == 'ARM64'
         uses: actions/upload-artifact@v4
         with:
