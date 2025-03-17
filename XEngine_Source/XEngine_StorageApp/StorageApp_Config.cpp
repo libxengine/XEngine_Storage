@@ -75,6 +75,14 @@ bool StorageApp_Config_Parament(int argc,char **argv)
 		{
 			st_ServiceCfg.bReuseraddr = true;
 		}
+		else if (0 == _tcsxcmp("-lt", argv[i]))
+		{
+			st_ServiceCfg.st_XLog.nLogType = _ttxoi(argv[++i]);
+		}
+		else if (0 == _tcsxcmp("-ll", argv[i]))
+		{
+			st_ServiceCfg.st_XLog.nLogLeave = _ttxoi(argv[++i]);
+		}
 		else if (0 == _tcsxcmp("-t", argv[i]))
 		{
             bIsTest = true;
