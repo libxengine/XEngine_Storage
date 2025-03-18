@@ -23,22 +23,17 @@ CBTorrent_DLoader::~CBTorrent_DLoader()
 /********************************************************************
 函数名称：BTorrent_DLoader_Create
 函数功能：创建一个BT下载
- 参数.一：pxhToken
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：导出一个下载句柄
- 参数.二：lpszAddr
+ 参数.一：lpszAddr
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：下载的地址,可以是本地种子文件路径或者磁力链接
- 参数.三：lpszSavePath
+ 参数.二：lpszSavePath
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：要保存的地址,这个地址是一个本地文件夹.而不是文件名.
- 参数.四：lpszTempFile
+ 参数.三：lpszTempFile
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -48,25 +43,26 @@ CBTorrent_DLoader::~CBTorrent_DLoader()
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_DLoader::BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAddr, LPCXSTR lpszSavePath, LPCXSTR lpszTempFile /* = NULL */)
+XHANDLE CBTorrent_DLoader::BTorrent_DLoader_Create(LPCXSTR lpszAddr, LPCXSTR lpszSavePath, LPCXSTR lpszTempFile /* = NULL */)
 {
     BTDload_IsErrorOccur = false;
 
-    if ((NULL == pxhToken) || (NULL == lpszAddr) || (NULL == lpszSavePath))
+    if ((NULL == lpszAddr) || (NULL == lpszSavePath))
     {
         BTDload_IsErrorOccur = true;
         BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_DLOAD_CREATE_PARAMENT;
-        return false;
+        return NULL;
     }
-#if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
 	//申请空间
-    BTORRENT_DLOADINFO* pSt_BTDLoader = new BTORRENT_DLOADINFO;         
-    if (NULL == pSt_BTDLoader)
-    {
-        BTDload_IsErrorOccur = true;
-        BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_DLOAD_CREATE_MALLOC;
-        return false;
-    }
+	BTORRENT_DLOADINFO* pSt_BTDLoader = new BTORRENT_DLOADINFO;
+	if (NULL == pSt_BTDLoader)
+	{
+		BTDload_IsErrorOccur = true;
+		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_DLOAD_CREATE_MALLOC;
+		return NULL;
+	}
+
+#if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
 	//初始化要查询的事件
 	pSt_BTDLoader->m_BTSetPack.set_int(lt::settings_pack::alert_mask, lt::alert_category::error | lt::alert_category::storage | lt::alert_category::status | lt::alert_category::port_mapping);
 	pSt_BTDLoader->m_BTSession = std::make_shared<lt::session>(pSt_BTDLoader->m_BTSetPack);
@@ -106,14 +102,8 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lp
     pSt_BTDLoader->lPClass = this;
     _tcsxcpy(pSt_BTDLoader->tszAddr, lpszAddr);
 	_tcsxcpy(pSt_BTDLoader->tszFile, lpszSavePath);
-	//生成句柄
-	BaseLib_Handle_Create(pxhToken);
-   
-    st_Locker.lock();
-    stl_MapDLoader.insert(make_pair(*pxhToken, pSt_BTDLoader));
-    st_Locker.unlock();
 #endif
-    return true;
+    return pSt_BTDLoader;
 }
 /********************************************************************
 函数名称：BTorrent_DLoader_Query
@@ -138,7 +128,7 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lp
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT_EVENT_TYPE*** pppenEventList, int* pInt_ListCount)
+bool CBTorrent_DLoader::BTorrent_DLoader_Query(XHANDLE xhToken, ENUM_BTORRENT_EVENT_TYPE*** pppenEventList, int* pInt_ListCount)
 {
 	BTDload_IsErrorOccur = false;
 
@@ -148,26 +138,23 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_DLOAD_QUERY_PARAMENT;
 		return false;
 	}
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_DLOADINFO*>::const_iterator stl_MapIterator = stl_MapDLoader.find(xhToken);
-	if (stl_MapIterator == stl_MapDLoader.end())
+	BTORRENT_DLOADINFO* pSt_BTDLoader = (BTORRENT_DLOADINFO*)xhToken;
+	if (NULL == pSt_BTDLoader)
 	{
 		BTDload_IsErrorOccur = true;
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_DLOAD_QUERY_NOTFOUND;
-		st_Locker.unlock_shared();
 		return false;
 	}
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
 	//投教一个状态更新请求,才能触发信号
-	stl_MapIterator->second->m_BTSession->post_torrent_updates();
+	pSt_BTDLoader->m_BTSession->post_torrent_updates();
 	//得到信号
 	std::vector<lt::alert*> stl_VectorAlerts;
-	stl_MapIterator->second->m_BTSession->pop_alerts(&stl_VectorAlerts);
+	pSt_BTDLoader->m_BTSession->pop_alerts(&stl_VectorAlerts);
 	if (stl_VectorAlerts.empty())
 	{
 		BTDload_IsErrorOccur = true;
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_DLOAD_QUERY_NONE;
-		st_Locker.unlock_shared();
 		return false;
 	}
 	*pInt_ListCount = stl_VectorAlerts.size();
@@ -191,7 +178,7 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT
 		if (auto m_BTDLoader = lt::alert_cast<lt::save_resume_data_alert>(stl_ListElement))
 		{
 			*((*pppenEventList)[i]) = ENUM_BTORRENT_EVENT_TYPE_WRITETMP;
-			std::ofstream m_OSFile(stl_MapIterator->second->tszTemp, std::ios_base::binary);
+			std::ofstream m_OSFile(pSt_BTDLoader->tszTemp, std::ios_base::binary);
 			m_OSFile.unsetf(std::ios_base::skipws);
 			auto const m_BTData = write_resume_data_buf(m_BTDLoader->params);
 			m_OSFile.write(m_BTData.data(), int(m_BTData.size()));
@@ -225,25 +212,24 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT
 			{
 #if _MSC_BUILD
 				int nUTFLen = stl_VectorIterator->name.length();
-				BaseLib_Charset_UTFToAnsi(stl_VectorIterator->name.c_str(), stl_MapIterator->second->st_DLStatus.tszFileName, &nUTFLen);
-				stl_MapIterator->second->st_DLStatus.nDLoadTotal = stl_VectorIterator->total;
+				BaseLib_Charset_UTFToAnsi(stl_VectorIterator->name.c_str(), pSt_BTDLoader->st_DLStatus.tszFileName, &nUTFLen);
+				pSt_BTDLoader->st_DLStatus.nDLoadTotal = stl_VectorIterator->total;
 #else
-				_tcsxcpy(stl_MapIterator->second->st_DLStatus.tszFileName, stl_VectorIterator->name.c_str());
-				stl_MapIterator->second->st_DLStatus.nDLoadTotal = stl_VectorIterator->total_wanted;
+				_tcsxcpy(pSt_BTDLoader->st_DLStatus.tszFileName, stl_VectorIterator->name.c_str());
+				pSt_BTDLoader->st_DLStatus.nDLoadTotal = stl_VectorIterator->total_wanted;
 #endif
-				stl_MapIterator->second->st_DLStatus.nDLCount = stl_VectorIterator->total_done;
-				stl_MapIterator->second->st_DLStatus.nUPCount = stl_VectorIterator->total_upload;
-				stl_MapIterator->second->st_DLStatus.nDLStatus = stl_VectorIterator->state;
-				stl_MapIterator->second->st_DLStatus.nDLoadRate = stl_VectorIterator->download_payload_rate;
-				stl_MapIterator->second->st_DLStatus.nDLPeers = stl_VectorIterator->num_peers;
-				stl_MapIterator->second->st_DLStatus.nUPPeers = stl_VectorIterator->num_seeds;
-				stl_MapIterator->second->st_DLStatus.nDLoadProcess = stl_VectorIterator->progress_ppm / 10000;
+				pSt_BTDLoader->st_DLStatus.nDLCount = stl_VectorIterator->total_done;
+				pSt_BTDLoader->st_DLStatus.nUPCount = stl_VectorIterator->total_upload;
+				pSt_BTDLoader->st_DLStatus.nDLStatus = stl_VectorIterator->state;
+				pSt_BTDLoader->st_DLStatus.nDLoadRate = stl_VectorIterator->download_payload_rate;
+				pSt_BTDLoader->st_DLStatus.nDLPeers = stl_VectorIterator->num_peers;
+				pSt_BTDLoader->st_DLStatus.nUPPeers = stl_VectorIterator->num_seeds;
+				pSt_BTDLoader->st_DLStatus.nDLoadProcess = stl_VectorIterator->progress_ppm / 10000;
 			}
 		}
 		i++;
 	}
 #endif
-	st_Locker.unlock_shared();
 	return true;
 }
 /********************************************************************
@@ -264,7 +250,7 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_DLoader::BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT_DLOADER* pSt_DLStatus)
+bool CBTorrent_DLoader::BTorrent_DLoader_GetStatus(XHANDLE xhToken, BTORRENT_DLOADER* pSt_DLStatus)
 {
 	BTDload_IsErrorOccur = false;
 
@@ -274,17 +260,14 @@ bool CBTorrent_DLoader::BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT_
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_DLOAD_GETSTATUS_PARAMENT;
 		return false;
 	}
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_DLOADINFO*>::const_iterator stl_MapIterator = stl_MapDLoader.find(xhToken);
-	if (stl_MapIterator == stl_MapDLoader.end())
+	BTORRENT_DLOADINFO* pSt_BTDLoader = (BTORRENT_DLOADINFO*)xhToken;
+	if (NULL == pSt_BTDLoader)
 	{
 		BTDload_IsErrorOccur = true;
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_DLOAD_GETSTATUS_NOTFOUND;
-		st_Locker.unlock_shared();
 		return false;
 	}
-	*pSt_DLStatus = stl_MapIterator->second->st_DLStatus;
-	st_Locker.unlock_shared();
+	*pSt_DLStatus = pSt_BTDLoader->st_DLStatus;
 
 	return true;
 }
@@ -301,17 +284,16 @@ bool CBTorrent_DLoader::BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT_
   意思：是否成功
 备注：每调用一次,将会触发一次事件信号,通知系统保存一次临时文件
 *********************************************************************/
-bool CBTorrent_DLoader::BTorrent_DLoader_SaveResume(XNETHANDLE xhToken)
+bool CBTorrent_DLoader::BTorrent_DLoader_SaveResume(XHANDLE xhToken)
 {
 	BTDload_IsErrorOccur = false;
 
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_DLOADINFO*>::const_iterator stl_MapIterator = stl_MapDLoader.find(xhToken);
-	if (stl_MapIterator != stl_MapDLoader.end())
+	BTORRENT_DLOADINFO* pSt_BTDLoader = (BTORRENT_DLOADINFO*)xhToken;
+	if (NULL == pSt_BTDLoader)
 	{
 		std::vector<lt::alert*> stl_VectorAlerts;
-		stl_MapIterator->second->m_BTSession->pop_alerts(&stl_VectorAlerts);
+		pSt_BTDLoader->m_BTSession->pop_alerts(&stl_VectorAlerts);
 		//轮训元素
 		for (lt::alert const* stl_ListElement : stl_VectorAlerts)
 		{
@@ -320,7 +302,6 @@ bool CBTorrent_DLoader::BTorrent_DLoader_SaveResume(XNETHANDLE xhToken)
 			stl_ListIterator->handle.save_resume_data(lt::torrent_handle::save_info_dict);
 		}
 	}
-	st_Locker.unlock_shared();
 #endif
 	return true;
 }
@@ -337,18 +318,16 @@ bool CBTorrent_DLoader::BTorrent_DLoader_SaveResume(XNETHANDLE xhToken)
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_DLoader::BTorrent_DLoader_Close(XNETHANDLE xhToken)
+bool CBTorrent_DLoader::BTorrent_DLoader_Close(XHANDLE xhToken)
 {
 	BTDload_IsErrorOccur = false;
 
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
-	st_Locker.lock();
-	unordered_map<XNETHANDLE, BTORRENT_DLOADINFO*>::const_iterator stl_MapIterator = stl_MapDLoader.find(xhToken);
-	if (stl_MapIterator != stl_MapDLoader.end())
+	BTORRENT_DLOADINFO* pSt_BTDLoader = (BTORRENT_DLOADINFO*)xhToken;
+	if (NULL == pSt_BTDLoader)
 	{
-		stl_MapIterator->second->m_BTSession->abort();
+		pSt_BTDLoader->m_BTSession->abort();
 	}
-	st_Locker.unlock();
 #endif 
 	return true;
 }
@@ -370,25 +349,23 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Close(XNETHANDLE xhToken)
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_DLoader::BTorrent_DLoader_SetPause(XNETHANDLE xhToken, bool bPause)
+bool CBTorrent_DLoader::BTorrent_DLoader_SetPause(XHANDLE xhToken, bool bPause)
 {
 	BTDload_IsErrorOccur = false;
 
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_DLOADINFO*>::const_iterator stl_MapIterator = stl_MapDLoader.find(xhToken);
-	if (stl_MapIterator != stl_MapDLoader.end())
+	BTORRENT_DLOADINFO* pSt_BTDLoader = (BTORRENT_DLOADINFO*)xhToken;
+	if (NULL == pSt_BTDLoader)
 	{
 		if (bPause)
 		{
-			stl_MapIterator->second->m_BTSession->pause();
+			pSt_BTDLoader->m_BTSession->pause();
 		}
 		else
 		{
-			stl_MapIterator->second->m_BTSession->resume();
+			pSt_BTDLoader->m_BTSession->resume();
 		}
 	}
-	st_Locker.unlock_shared();
 #endif
 	return true;
 }
@@ -410,20 +387,18 @@ bool CBTorrent_DLoader::BTorrent_DLoader_SetPause(XNETHANDLE xhToken, bool bPaus
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_DLoader::BTorrent_DLoader_UPNPEnable(XNETHANDLE xhToken, bool bEnable /* = false */)
+bool CBTorrent_DLoader::BTorrent_DLoader_UPNPEnable(XHANDLE xhToken, bool bEnable /* = false */)
 {
 	BTDload_IsErrorOccur = false;
 
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_DLOADINFO*>::const_iterator stl_MapIterator = stl_MapDLoader.find(xhToken);
-	if (stl_MapIterator != stl_MapDLoader.end())
+	BTORRENT_DLOADINFO* pSt_BTDLoader = (BTORRENT_DLOADINFO*)xhToken;
+	if (NULL == pSt_BTDLoader)
 	{
-		stl_MapIterator->second->m_BTSetPack.set_bool(lt::settings_pack::enable_upnp, bEnable);
-		stl_MapIterator->second->m_BTSetPack.set_bool(lt::settings_pack::enable_natpmp, bEnable);
-		stl_MapIterator->second->m_BTSession->apply_settings(stl_MapIterator->second->m_BTSetPack);
+		pSt_BTDLoader->m_BTSetPack.set_bool(lt::settings_pack::enable_upnp, bEnable);
+		pSt_BTDLoader->m_BTSetPack.set_bool(lt::settings_pack::enable_natpmp, bEnable);
+		pSt_BTDLoader->m_BTSession->apply_settings(pSt_BTDLoader->m_BTSetPack);
 	}
-	st_Locker.unlock_shared();
 #endif
 	return true;
 }
