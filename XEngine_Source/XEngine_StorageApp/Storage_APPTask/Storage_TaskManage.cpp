@@ -11,6 +11,7 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 	LPCXSTR lpszAPIDelete = _X("Delete");
 	LPCXSTR lpszAPIQuery = _X("Query");
 	LPCXSTR lpszAPIDir = _X("Dir");
+	LPCXSTR lpszAPIBucket = _X("Bucket");
 	LPCXSTR lpszAPITask = _X("Task");
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 
@@ -311,16 +312,7 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 		if (0 == nOPCode)
 		{
 			//处理路径格式
-			if (!SystemApi_File_EnumFile(tszRealDir, &ppszListDir, &nListCount, true, 2))
-			{
-				st_HDRParam.bIsClose = true;
-				st_HDRParam.nHttpCode = 404;
-
-				HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,请求查询文件夹:%s,失败,错误:%lX"), lpszClientAddr, tszRealDir, SystemApi_GetLastError());
-				return false;
-			}
+			SystemApi_File_EnumFile(tszRealDir, &ppszListDir, &nListCount, true, 2);
 			Protocol_StoragePacket_DirOperator(tszRVBuffer, &nRVLen, &ppszListDir, nListCount);
 			BaseLib_Memory_Free((XPPPMEM)&ppszListDir, nListCount);
 			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
