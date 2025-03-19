@@ -96,6 +96,10 @@ extern "C" bool Protocol_StoragePacket_Action(XCHAR * ptszMsgBuffer, int* pInt_M
 {
 	return m_StoragePacket.Protocol_StoragePacket_Action(ptszMsgBuffer, pInt_MsgLen, xhToken, pSt_ActionInfo);
 }
+extern "C" bool Protocol_StoragePacket_Bucket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket)
+{
+	return m_StoragePacket.Protocol_StoragePacket_Bucket(ptszMsgBuffer, pInt_MsgLen, pStl_ListBucket);
+}
 extern "C" bool Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount, LPCXSTR lpszBucketPath, LPCXSTR lpszBucketKey)
 {
 	return m_StoragePacket.Protocol_StoragePacket_WDPropfind(ptszMsgBuffer, pInt_MsgLen, ppptszListFile, nFileCount, lpszBucketPath, lpszBucketKey);

@@ -352,6 +352,13 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求删除文件夹:%s,成功"), lpszClientAddr, tszRealDir);
 		}
 	}
+	else if (0 == _tcsxnicmp(lpszAPIBucket, lpszAPIName, _tcsxlen(lpszAPIBucket)))
+	{
+		Protocol_StoragePacket_Bucket(tszRVBuffer, &nRVLen, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket);
+		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求获取BUCKET信息成功"), lpszClientAddr);
+	}
 	else if (0 == _tcsxnicmp(lpszAPITask, lpszAPIName, _tcsxlen(lpszAPITask)))
 	{
 		int nDLCount = 0;

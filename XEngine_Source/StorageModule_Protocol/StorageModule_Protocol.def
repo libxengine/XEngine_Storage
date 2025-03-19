@@ -21,6 +21,7 @@ EXPORTS
 	Protocol_StoragePacket_DirOperator
 	Protocol_StoragePacket_REQFile
 	Protocol_StoragePacket_Action
+	Protocol_StoragePacket_Bucket
 	Protocol_StoragePacket_WDPropfind
 	Protocol_StoragePacket_WDLock
 	Protocol_StoragePacket_WDPropPatch

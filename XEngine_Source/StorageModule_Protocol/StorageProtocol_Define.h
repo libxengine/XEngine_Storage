@@ -565,6 +565,30 @@ extern "C" bool Protocol_StoragePacket_REQFile(XCHAR * ptszMsgBuffer, int* pInt_
 *********************************************************************/
 extern "C" bool Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XNETHANDLE xhToken, XENGINE_ACTIONINFO* pSt_ActionInfo);
 /********************************************************************
+函数名称：Protocol_StoragePacket_Bucket
+函数功能：获取bucket信息
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pStl_ListBucket
+  In/Out：In
+  类型：STL容器指针
+  可空：N
+  意思：输入要打包的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Protocol_StoragePacket_Bucket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket);
+/********************************************************************
 函数名称：Protocol_StoragePacket_WDPropfind
 函数功能：propfind协议打包处理函数
  参数.一：ptszMsgBuffer
