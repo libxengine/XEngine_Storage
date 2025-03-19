@@ -23,6 +23,55 @@ CProtocol_StoragePacket::~CProtocol_StoragePacket()
 //                           公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
+函数名称：Protocol_StoragePacket_HTTPPacket
+函数功能：查询回复打包协议
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：nCode
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入HTTP错误码
+ 参数.四：lpszMSGInfo
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入返回的消息信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StoragePacket::Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode /* = 0 */, LPCXSTR lpszMSGInfo /* = NULL */)
+{
+	Protocol_IsErrorOccur = false;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return false;
+	}
+	Json::Value st_JsonRoot;
+	st_JsonRoot["code"] = nCode;
+	if (NULL != lpszMSGInfo)
+	{
+		st_JsonRoot["msg"] = lpszMSGInfo;
+	}
+	//打包输出信息
+	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
+	return true;
+}
+/********************************************************************
 函数名称：Protocol_StoragePacket_QueryFile
 函数功能：查询回复打包协议
  参数.一：ptszMsgBuffer

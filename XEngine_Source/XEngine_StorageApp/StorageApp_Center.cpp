@@ -43,13 +43,14 @@ XHTHREAD CALLBACK XEngine_Center_HTTPThread(XPVOID lParam)
 bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount)
 {
 	int nSDLen = 2048;
-	XCHAR tszSDBuffer[2048];
+	int nRVLen = 2048;
+	XCHAR tszSDBuffer[2048] = {};
+	XCHAR tszRVBuffer[2048] = {};
 	XCHAR tszAPIVersion[64];
 	XCHAR tszAPIMethod[64];
 	XCHAR tszAPIName[64];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 
-	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 	memset(tszAPIVersion, '\0', sizeof(tszAPIVersion));
 	memset(tszAPIMethod, '\0', sizeof(tszAPIMethod));
 	memset(tszAPIName, '\0', sizeof(tszAPIName));
@@ -58,6 +59,8 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	LPCXSTR lpszMethodPost = _X("POST");
 	LPCXSTR lpszMethodOption = _X("OPTIONS");
 
+	st_HDRParam.bIsClose = true;
+	st_HDRParam.nHttpCode = 200;
 	if (st_ServiceCfg.st_XProxy.bAuthPass)
 	{
 		XCHAR tszUserName[64];
@@ -104,10 +107,8 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 
 		if (!HttpProtocol_ServerHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIVersion, tszAPIMethod, tszAPIName))
 		{
-			st_HDRParam.bIsClose = true;
-			st_HDRParam.nHttpCode = 404;
-
-			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_APINAME, "api name is incorrect");
+			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,请求的API不支持"), lpszClientAddr);
 			return false;
@@ -129,8 +130,6 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	else if (0 == _tcsxnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOption)))
 	{
 		//用于心跳
-		st_HDRParam.bIsClose = true;
-		st_HDRParam.nHttpCode = 200;
 		LPCXSTR lpszHdrBuffer = _X("Allow: POST GET PUT\r\n");
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);

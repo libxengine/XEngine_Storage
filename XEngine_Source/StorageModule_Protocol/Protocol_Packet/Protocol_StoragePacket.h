@@ -17,6 +17,7 @@ public:
     CProtocol_StoragePacket();
     ~CProtocol_StoragePacket();
 public:
+    bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCXSTR lpszMSGInfo = NULL);
     bool Protocol_StoragePacket_QueryFile(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XSTORAGECORE_DBFILE*** pppSt_DBFile, int nListCount, LPCXSTR lpszTimeStart = NULL, LPCXSTR lpszTimeEnd = NULL, XNETHANDLE xhToken = 0);
     bool Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, int nDLCount, int nUPCount);
 	bool Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** pppszListEnum, int nListCount);

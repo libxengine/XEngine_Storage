@@ -85,8 +85,8 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 
 	if (!Protocol_StorageParse_Action(lpszMsgBuffer, nMsgLen, &st_ActionInfo))
 	{
-		st_HDRParam.nHttpCode = 400;
-		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_PARSE, "parse json is incorrect");
+		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,协议解析失败,负载内容:%s"), lpszClientAddr, lpszMsgBuffer);
 		return false;
@@ -95,8 +95,8 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 	XENGINE_STORAGEBUCKET st_StorageBucket = {};
 	if (!APIHelp_Distributed_CTStorage(st_ActionInfo.tszBucketStr, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
 	{
-		st_HDRParam.nHttpCode = 400;
-		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_NOTFOUND, "bucket name is incorrect");
+		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,存储Key解析失败,URL:%s,路径:%s,Bucket:%s"), lpszClientAddr, st_ActionInfo.tszFileUrl, st_ActionInfo.tszFileName, st_ActionInfo.tszBucketStr);
 		return false;
@@ -113,8 +113,8 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 			XHANDLE xhAction = APIClient_File_Create(st_ActionInfo.tszFileUrl, tszFileName, true);
 			if (NULL == xhAction)
 			{
-				st_HDRParam.nHttpCode = 501;
-				HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_SERVER, "server execution failure");
+				HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,下载文件失败,URL:%s,路径:%s,Bucket:%s,类型:%d"), lpszClientAddr, st_ActionInfo.tszFileUrl, tszFileName, st_ActionInfo.tszBucketStr, st_ActionInfo.byType);
 				return false;
@@ -135,8 +135,8 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 			XHANDLE xhAction = APIClient_File_Create(st_ActionInfo.tszFileUrl, tszFileName, false);
 			if (NULL == xhAction)
 			{
-				st_HDRParam.nHttpCode = 501;
-				HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_SERVER, "server execution failure");
+				HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,下载文件失败,URL:%s,路径:%s,Bucket:%s,类型:%d"), lpszClientAddr, st_ActionInfo.tszFileUrl, tszFileName, st_ActionInfo.tszBucketStr, st_ActionInfo.byType);
 				return false;
@@ -158,8 +158,8 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 		XHANDLE xhAction = BTorrent_DLoader_Create(st_ActionInfo.tszFileUrl, tszFileName);
 		if (NULL == xhAction)
 		{
-			st_HDRParam.nHttpCode = 501;
-			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_SERVER, "server execution failure");
+			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,下载文件失败,URL:%s,路径:%s,Bucket:%s,类型:%d"), lpszClientAddr, st_ActionInfo.tszFileUrl, tszFileName, st_ActionInfo.tszBucketStr, st_ActionInfo.byType);
 			return false;

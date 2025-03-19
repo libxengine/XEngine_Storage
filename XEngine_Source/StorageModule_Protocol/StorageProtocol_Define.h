@@ -297,6 +297,35 @@ extern "C" bool Protocol_StorageParse_WDPropPatch(LPCXSTR lpszMsgBuffer, int nMs
 /*                        打包协议导出                                  */
 /************************************************************************/
 /********************************************************************
+函数名称：Protocol_StoragePacket_HTTPPacket
+函数功能：查询回复打包协议
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：nCode
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入HTTP错误码
+ 参数.四：lpszMSGInfo
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入返回的消息信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCXSTR lpszMSGInfo = NULL);
+/********************************************************************
 函数名称：Protocol_StoragePacket_BasicAuth
 函数功能：基本验证协议代理转发
  参数.一：lpszMethod

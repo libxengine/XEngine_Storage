@@ -19,6 +19,14 @@
 #define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQREPORT 0x4003    //报告查询结果
 #define XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REPREPORT 0x4004    //确认查询结果
 //////////////////////////////////////////////////////////////////////////
+//                         协议错误
+//////////////////////////////////////////////////////////////////////////
+#define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_APINAME 0x101                  //API名称错误
+#define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_PARSE 0x102                    //协议内容错误
+#define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_NOTFOUND 0x103                 //请求的内容不存在
+#define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_SERVER 0x104                   //内部错误,执行失败
+#define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_NOENABLE 0x105                 //功能没有启用
+//////////////////////////////////////////////////////////////////////////
 //                         协议结构体
 //////////////////////////////////////////////////////////////////////////
 #pragma pack(push)

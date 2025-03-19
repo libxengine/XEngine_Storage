@@ -68,6 +68,10 @@ extern "C" bool Protocol_StorageParse_WDPropPatch(LPCXSTR lpszMsgBuffer, int nMs
 /************************************************************************/
 /*                        打包协议导出                                  */
 /************************************************************************/
+extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode, LPCXSTR lpszMSGInfo)
+{
+	return m_StoragePacket.Protocol_StoragePacket_HTTPPacket(ptszMsgBuffer, pInt_MsgLen, nCode, lpszMSGInfo);
+}
 extern "C" bool Protocol_StoragePacket_BasicAuth(LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
 	return m_StoragePacket.Protocol_StoragePacket_BasicAuth(lpszMethod, lpszPostUrl, lpszClientAddr, lpszUser, lpszPass, ptszMsgBuffer, pInt_MsgLen);
