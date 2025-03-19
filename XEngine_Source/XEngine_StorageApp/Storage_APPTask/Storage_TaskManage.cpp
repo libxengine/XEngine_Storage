@@ -354,7 +354,29 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 	}
 	else if (0 == _tcsxnicmp(lpszAPIBucket, lpszAPIName, _tcsxlen(lpszAPIBucket)))
 	{
-		Protocol_StoragePacket_Bucket(tszRVBuffer, &nRVLen, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket);
+		XCHAR tszBuckKey[MAX_PATH] = {};
+		Protocol_StorageParse_DirOperator(lpszMsgBuffer, NULL, tszBuckKey, NULL);
+		if (_tcsxlen(tszBuckKey) > 0)
+		{
+			XENGINE_STORAGEBUCKET st_StorageBucket = {};
+			if (!APIHelp_Distributed_CTStorage(tszBuckKey, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
+			{
+				st_HDRParam.bIsClose = true;
+				st_HDRParam.nHttpCode = 404;
+
+				HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,请求获取BUCKET:%s,信息失败,错误:%lX"), lpszClientAddr, tszBuckKey, StorageHelp_GetLastError());
+				return false;
+			}
+			list<XENGINE_STORAGEBUCKET> stl_ListBucket;
+			stl_ListBucket.push_back(st_StorageBucket);
+			Protocol_StoragePacket_Bucket(tszRVBuffer, &nRVLen, &stl_ListBucket);
+		}
+		else
+		{
+			Protocol_StoragePacket_Bucket(tszRVBuffer, &nRVLen, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket);
+		}
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求获取BUCKET信息成功"), lpszClientAddr);
