@@ -1,3 +1,34 @@
+XEngine_Storage V3.19.0.1001
+
+增加:获取bucket列表信息功能
+增加:ACTION支持BT下载动作
+增加:更多发布系统支持
+增加:日志文件和配置设置
+优化:获取发送报告次数
+优化:启动参数优化
+修改:vs字符集ansi改为unicode
+修改:支持多语言系统
+修改:bt模块句柄类型
+修改:当文件夹为空查询不在返回错误
+修改:http接口现在返回JSON信息了
+修改:统一了HTTP接口返回格式
+修正:文件头丢失的问题
+
+added:get bucket list information for http restful
+added:download bt protocol for action
+added:release more supported
+added:log file and type configure set support
+improved:get send report time
+improved:start parameter
+update:depend library
+modify:character-set ansi to unicode on vs
+modify:Support multi-language system
+modify:bt module handle type
+modify:does not response error code when dir query is empty
+modify:reply json information for http manage api
+modify:Unified reply message format
+fixed:lost header file
+======================================================================================
 XEngine_Storage V3.18.0.1001
 
 added:MKCOL method support for webdav
