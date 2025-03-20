@@ -77,22 +77,17 @@ extern "C" XLONG BTorrent_GetLastError(int *pInt_SysError = NULL);
 /********************************************************************
 函数名称：BTorrent_DLoader_Create
 函数功能：创建一个BT下载
- 参数.一：pxhToken
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：导出一个下载句柄
- 参数.二：lpszAddr
+ 参数.一：lpszAddr
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：下载的地址,可以是本地种子文件路径或者磁力链接
- 参数.三：lpszSavePath
+ 参数.二：lpszSavePath
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：要保存的地址,这个地址是一个本地文件夹.而不是文件名.
- 参数.四：lpszTempFile
+ 参数.三：lpszTempFile
   In/Out：In
   类型：常量字符指针
   可空：Y
@@ -102,7 +97,7 @@ extern "C" XLONG BTorrent_GetLastError(int *pInt_SysError = NULL);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAddr, LPCXSTR lpszSavePath, LPCXSTR lpszTempFile = NULL);
+extern "C" XHANDLE BTorrent_DLoader_Create(LPCXSTR lpszAddr, LPCXSTR lpszSavePath, LPCXSTR lpszTempFile = NULL);
 /********************************************************************
 函数名称：BTorrent_DLoader_Query
 函数功能：查询下载状态
@@ -126,7 +121,7 @@ extern "C" bool BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAddr, 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT_EVENT_TYPE*** pppenEventList, int* pInt_ListCount);
+extern "C" bool BTorrent_DLoader_Query(XHANDLE xhToken, ENUM_BTORRENT_EVENT_TYPE*** pppenEventList, int* pInt_ListCount);
 /********************************************************************
 函数名称：BTorrent_DLoader_GetStatus
 函数功能：获取下载状态
@@ -145,7 +140,7 @@ extern "C" bool BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT_EVENT_T
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT_DLOADER * pSt_DLStatus);
+extern "C" bool BTorrent_DLoader_GetStatus(XHANDLE xhToken, BTORRENT_DLOADER * pSt_DLStatus);
 /********************************************************************
 函数名称：BTorrent_DLoader_SaveResume
 函数功能：触发一次临时文件保存操作
@@ -159,7 +154,7 @@ extern "C" bool BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT_DLOADER 
   意思：是否成功
 备注：每调用一次,将会触发一次事件信号,通知系统保存一次临时文件
 *********************************************************************/
-extern "C" bool BTorrent_DLoader_SaveResume(XNETHANDLE xhToken);
+extern "C" bool BTorrent_DLoader_SaveResume(XHANDLE xhToken);
 /********************************************************************
 函数名称：BTorrent_DLoader_Close
 函数功能：关闭一个种子下载器
@@ -173,7 +168,7 @@ extern "C" bool BTorrent_DLoader_SaveResume(XNETHANDLE xhToken);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_DLoader_Close(XNETHANDLE xhToken);
+extern "C" bool BTorrent_DLoader_Close(XHANDLE xhToken);
 /********************************************************************
 函数名称：BTorrent_DLoader_SetPause
 函数功能：设置暂停或者恢复
@@ -192,7 +187,7 @@ extern "C" bool BTorrent_DLoader_Close(XNETHANDLE xhToken);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_DLoader_SetPause(XNETHANDLE xhToken, bool bPause);
+extern "C" bool BTorrent_DLoader_SetPause(XHANDLE xhToken, bool bPause);
 /********************************************************************
 函数名称：BTorrent_DLoader_UPNPEnable
 函数功能：启用或者关闭UPNP
@@ -211,19 +206,14 @@ extern "C" bool BTorrent_DLoader_SetPause(XNETHANDLE xhToken, bool bPause);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_DLoader_UPNPEnable(XNETHANDLE xhToken, bool bEnable = false);
+extern "C" bool BTorrent_DLoader_UPNPEnable(XHANDLE xhToken, bool bEnable = false);
 /************************************************************************/
 /*                          BT解析器导出函数                            */
 /************************************************************************/
 /********************************************************************
 函数名称：BTorrent_Parse_Init
 函数功能：初始化一个解析器
- 参数.一：pxhToken
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：导出一个下载句柄
- 参数.二：lpszAddr
+ 参数.一：lpszAddr
   In/Out：In
   类型：常量字符指针
   可空：N
@@ -233,7 +223,7 @@ extern "C" bool BTorrent_DLoader_UPNPEnable(XNETHANDLE xhToken, bool bEnable = f
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr);
+extern "C" XHANDLE BTorrent_Parse_Init(LPCXSTR lpszAddr);
 /********************************************************************
 函数名称：BTorrent_Parse_GetNode
 函数功能：获取节点信息
@@ -257,7 +247,7 @@ extern "C" bool BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
+extern "C" bool BTorrent_Parse_GetNode(XHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
 /********************************************************************
 函数名称：BTorrent_Parse_GetTracker
 函数功能：获取TRACKER服务器列表
@@ -281,7 +271,7 @@ extern "C" bool BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
+extern "C" bool BTorrent_Parse_GetTracker(XHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
 /********************************************************************
 函数名称：BTorrent_Parse_GetSeeds
 函数功能：获取种子列表
@@ -305,7 +295,7 @@ extern "C" bool BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PARSEMAP*
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
+extern "C" bool BTorrent_Parse_GetSeeds(XHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount);
 /********************************************************************
 函数名称：BTorrent_Parse_GetPiece
 函数功能：获取块信息
@@ -329,7 +319,7 @@ extern "C" bool BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARSEMAP***
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Parse_GetPiece(XNETHANDLE xhToken, int* pInt_PieceLen, int* pInt_PieceCount);
+extern "C" bool BTorrent_Parse_GetPiece(XHANDLE xhToken, int* pInt_PieceLen, int* pInt_PieceCount);
 /********************************************************************
 函数名称：BTorrent_Parse_GetInfo
 函数功能：获取块信息
@@ -358,7 +348,7 @@ extern "C" bool BTorrent_Parse_GetPiece(XNETHANDLE xhToken, int* pInt_PieceLen, 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Parse_GetInfo(XNETHANDLE xhToken, XCHAR* ptszHash = NULL, XCHAR* ptszCreator = NULL, XCHAR* ptszComment = NULL);
+extern "C" bool BTorrent_Parse_GetInfo(XHANDLE xhToken, XCHAR* ptszHash = NULL, XCHAR* ptszCreator = NULL, XCHAR* ptszComment = NULL);
 /********************************************************************
 函数名称：BTorrent_Parse_GetMagnet
 函数功能：获取种子文件的磁力链接
@@ -377,7 +367,7 @@ extern "C" bool BTorrent_Parse_GetInfo(XNETHANDLE xhToken, XCHAR* ptszHash = NUL
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Parse_GetMagnet(XNETHANDLE xhToken, XCHAR* ptszMagnet);
+extern "C" bool BTorrent_Parse_GetMagnet(XHANDLE xhToken, XCHAR* ptszMagnet);
 /********************************************************************
 函数名称：BTorrent_Parse_GetFile
 函数功能：获取文件信息
@@ -406,7 +396,7 @@ extern "C" bool BTorrent_Parse_GetMagnet(XNETHANDLE xhToken, XCHAR* ptszMagnet);
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* pszFilePath, BTORRENT_FILEINFO*** pppSt_FileList, int* pInt_ListCount);
+extern "C" bool BTorrent_Parse_GetFile(XHANDLE xhToken, XCHAR* pszFilePath, BTORRENT_FILEINFO*** pppSt_FileList, int* pInt_ListCount);
 /********************************************************************
 函数名称：BTorrent_Parse_Destory
 函数功能：销毁种子解析器
@@ -420,34 +410,29 @@ extern "C" bool BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* pszFilePath, B
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Parse_Destory(XNETHANDLE xhToken);
+extern "C" bool BTorrent_Parse_Destory(XHANDLE xhToken);
 /************************************************************************/
 /*                          BT种子制作导出函数                          */
 /************************************************************************/
 /********************************************************************
 函数名称：BTorrent_Creator_Init
 函数功能：初始化一个制作工具
- 参数.一：pxhToken
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：导出一个句柄
- 参数.二：lpszBTPath
+ 参数.一：lpszBTPath
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：要制作的文件地址路径
- 参数.三：nPieceSize
+ 参数.二：nPieceSize
   In/Out：In
   类型：整数型
   可空：N
   意思：块大小,默认16K
 返回值
-  类型：逻辑型
-  意思：是否成功
+  类型：句柄
+  意思：导出一个句柄
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Creator_Init(XNETHANDLE* pxhToken, LPCXSTR lpszBTPath, int nPieceSize = 0);
+extern "C" XHANDLE BTorrent_Creator_Init(LPCXSTR lpszBTPath, int nPieceSize = 0);
 /********************************************************************
 函数名称：BTorrent_Creator_AddNode
 函数功能：添加种子DHT节点地址
@@ -471,7 +456,7 @@ extern "C" bool BTorrent_Creator_Init(XNETHANDLE* pxhToken, LPCXSTR lpszBTPath, 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Creator_AddNode(XNETHANDLE xhToken, LPCXSTR lpszAddr, int nIndex);
+extern "C" bool BTorrent_Creator_AddNode(XHANDLE xhToken, LPCXSTR lpszAddr, int nIndex);
 /********************************************************************
 函数名称：BTorrent_Creator_AddTracker
 函数功能：设置TRACKER服务器地址
@@ -495,7 +480,7 @@ extern "C" bool BTorrent_Creator_AddNode(XNETHANDLE xhToken, LPCXSTR lpszAddr, i
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Creator_AddTracker(XNETHANDLE xhToken, LPCXSTR lpszAddr, int nIndex = 0);
+extern "C" bool BTorrent_Creator_AddTracker(XHANDLE xhToken, LPCXSTR lpszAddr, int nIndex = 0);
 /********************************************************************
 函数名称：BTorrent_Creator_AddSeeds
 函数功能：添加URL种子到制作器
@@ -519,7 +504,7 @@ extern "C" bool BTorrent_Creator_AddTracker(XNETHANDLE xhToken, LPCXSTR lpszAddr
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Creator_AddSeeds(XNETHANDLE xhToken, LPCXSTR lpszAddr, bool bSingle = false);
+extern "C" bool BTorrent_Creator_AddSeeds(XHANDLE xhToken, LPCXSTR lpszAddr, bool bSingle = false);
 /********************************************************************
 函数名称：BTorrent_Creator_SetInfo
 函数功能：设置种子信息
@@ -548,7 +533,7 @@ extern "C" bool BTorrent_Creator_AddSeeds(XNETHANDLE xhToken, LPCXSTR lpszAddr, 
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Creator_SetInfo(XNETHANDLE xhToken, LPCXSTR lpszCreator, LPCXSTR lpszComment = NULL, LPCXSTR lpszCertBuffer = NULL);
+extern "C" bool BTorrent_Creator_SetInfo(XHANDLE xhToken, LPCXSTR lpszCreator, LPCXSTR lpszComment = NULL, LPCXSTR lpszCertBuffer = NULL);
 /********************************************************************
 函数名称：BTorrent_Creator_GetTorrent
 函数功能：获取中心信息
@@ -577,7 +562,7 @@ extern "C" bool BTorrent_Creator_SetInfo(XNETHANDLE xhToken, LPCXSTR lpszCreator
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Creator_GetTorrent(XNETHANDLE xhToken, LPCXSTR lpszBTFile = NULL, XCHAR * ptszMsgBuffer = NULL, int* pInt_MsgLen = NULL);
+extern "C" bool BTorrent_Creator_GetTorrent(XHANDLE xhToken, LPCXSTR lpszBTFile = NULL, XCHAR * ptszMsgBuffer = NULL, int* pInt_MsgLen = NULL);
 /********************************************************************
 函数名称：BTorrent_Creator_Destory
 函数功能：销毁
@@ -591,4 +576,4 @@ extern "C" bool BTorrent_Creator_GetTorrent(XNETHANDLE xhToken, LPCXSTR lpszBTFi
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool BTorrent_Creator_Destory(XNETHANDLE xhToken);
+extern "C" bool BTorrent_Creator_Destory(XHANDLE xhToken);

@@ -152,6 +152,13 @@ int main(int argc, char** argv)
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 
 	SetUnhandledExceptionFilter(Coredump_ExceptionFilter);
+#ifndef _DEBUG
+	if (setlocale(LC_ALL, ".UTF8") == NULL)
+	{
+		fprintf(stderr, "Error setting locale.\n");
+		return 1;
+	}
+#endif
 #endif
 	bIsRun = true;
 	int nRet = -1;
@@ -184,9 +191,9 @@ int main(int argc, char** argv)
 	}
 	st_XLogConfig.XLog_MaxBackupFile = st_ServiceCfg.st_XLog.nMaxCount;
 	st_XLogConfig.XLog_MaxSize = st_ServiceCfg.st_XLog.nMaxSize;
-	_tcsxcpy(st_XLogConfig.tszFileName, _X("./XEngine_XLog/XEngine_StorageApp.log"));
+	_tcsxcpy(st_XLogConfig.tszFileName, st_ServiceCfg.st_XLog.tszLogFile);
 
-	xhLog = HelpComponents_XLog_Init(HELPCOMPONENTS_XLOG_OUTTYPE_FILE | HELPCOMPONENTS_XLOG_OUTTYPE_STD, &st_XLogConfig);
+	xhLog = HelpComponents_XLog_Init(st_ServiceCfg.st_XLog.nLogType, &st_XLogConfig);
 	if (NULL == xhLog)
 	{
 		printf("启动服务器失败，启动日志失败，错误：%lX", XLog_GetLastError());
@@ -568,10 +575,9 @@ int main(int argc, char** argv)
 	//发送信息报告
 	if (st_ServiceCfg.st_XReport.bEnable && !bIsTest)
 	{
-		if (InfoReport_APIMachine_Send(st_ServiceCfg.st_XReport.tszAPIUrl, st_ServiceCfg.st_XReport.tszServiceName))
+		__int64x nTimeCount = 0;
+		if (InfoReport_APIMachine_Send(st_ServiceCfg.st_XReport.tszAPIUrl, st_ServiceCfg.st_XReport.tszServiceName, &nTimeCount))
 		{
-			__int64x nTimeCount = 0;
-			InfoReport_APIMachine_GetTime(st_ServiceCfg.st_XReport.tszAPIUrl, st_ServiceCfg.st_XReport.tszServiceName, &nTimeCount);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动信息报告给API服务器:%s 成功,报告次数:%lld"), st_ServiceCfg.st_XReport.tszAPIUrl, nTimeCount);
 		}
 		else

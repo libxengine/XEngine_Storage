@@ -268,7 +268,7 @@ bool CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCXSTR lpszMsgBu
 {
     Protocol_IsErrorOccur = false;
 
-    if ((NULL == lpszMsgBuffer) || (NULL == ptszUserDir))
+    if ((NULL == lpszMsgBuffer))
     {
         Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
@@ -289,9 +289,15 @@ bool CProtocol_StorageParse::Protocol_StorageParse_DirOperator(LPCXSTR lpszMsgBu
     delete pSt_JsonReader;
     pSt_JsonReader = NULL;
 
-    *pInt_Operator = st_JsonRoot["nOPerator"].asInt();
-    _tcsxcpy(ptszBuckKey, st_JsonRoot["lpszBuckKey"].asCString());
-    if (!st_JsonRoot["lpszUserDir"].isNull())
+	if (!st_JsonRoot["nOPerator"].isNull() && NULL != pInt_Operator)
+	{
+		*pInt_Operator = st_JsonRoot["nOPerator"].asInt();
+	}
+    if (!st_JsonRoot["lpszBuckKey"].isNull() && NULL != ptszBuckKey)
+    {
+		_tcsxcpy(ptszBuckKey, st_JsonRoot["lpszBuckKey"].asCString());
+    }
+    if (!st_JsonRoot["lpszUserDir"].isNull() && NULL != ptszUserDir)
     {
         _tcsxcpy(ptszUserDir, st_JsonRoot["lpszUserDir"].asCString());
     }

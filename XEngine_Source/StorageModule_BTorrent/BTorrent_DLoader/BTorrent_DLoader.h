@@ -32,16 +32,13 @@ public:
     CBTorrent_DLoader();
     ~CBTorrent_DLoader();
 public:
-    bool BTorrent_DLoader_Create(XNETHANDLE* pxhToken, LPCXSTR lpszAddr, LPCXSTR lpszSavePath, LPCXSTR lpszTempFile = NULL);
-    bool BTorrent_DLoader_Query(XNETHANDLE xhToken, ENUM_BTORRENT_EVENT_TYPE*** pppenEventList, int* pInt_ListCount);
-    bool BTorrent_DLoader_GetStatus(XNETHANDLE xhToken, BTORRENT_DLOADER* pSt_DLStatus);
-    bool BTorrent_DLoader_SaveResume(XNETHANDLE xhToken);
-    bool BTorrent_DLoader_Close(XNETHANDLE xhToken);
+    XHANDLE BTorrent_DLoader_Create(LPCXSTR lpszAddr, LPCXSTR lpszSavePath, LPCXSTR lpszTempFile = NULL);
+    bool BTorrent_DLoader_Query(XHANDLE xhToken, ENUM_BTORRENT_EVENT_TYPE*** pppenEventList, int* pInt_ListCount);
+    bool BTorrent_DLoader_GetStatus(XHANDLE xhToken, BTORRENT_DLOADER* pSt_DLStatus);
+    bool BTorrent_DLoader_SaveResume(XHANDLE xhToken);
+    bool BTorrent_DLoader_Close(XHANDLE xhToken);
 public:
-    bool BTorrent_DLoader_SetPause(XNETHANDLE xhToken, bool bPause);
-    bool BTorrent_DLoader_UPNPEnable(XNETHANDLE xhToken, bool bEnable = false);
+    bool BTorrent_DLoader_SetPause(XHANDLE xhToken, bool bPause);
+    bool BTorrent_DLoader_UPNPEnable(XHANDLE xhToken, bool bEnable = false);
 private:
-	shared_mutex st_Locker;
-private:
-    unordered_map<XNETHANDLE, BTORRENT_DLOADINFO*> stl_MapDLoader;
 };

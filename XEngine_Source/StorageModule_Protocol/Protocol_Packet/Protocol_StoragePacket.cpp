@@ -23,6 +23,55 @@ CProtocol_StoragePacket::~CProtocol_StoragePacket()
 //                           公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
+函数名称：Protocol_StoragePacket_HTTPPacket
+函数功能：查询回复打包协议
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：nCode
+  In/Out：In
+  类型：整数型
+  可空：Y
+  意思：输入HTTP错误码
+ 参数.四：lpszMSGInfo
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入返回的消息信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StoragePacket::Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode /* = 0 */, LPCXSTR lpszMSGInfo /* = NULL */)
+{
+	Protocol_IsErrorOccur = false;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return false;
+	}
+	Json::Value st_JsonRoot;
+	st_JsonRoot["code"] = nCode;
+	if (NULL != lpszMSGInfo)
+	{
+		st_JsonRoot["msg"] = lpszMSGInfo;
+	}
+	//打包输出信息
+	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
+	return true;
+}
+/********************************************************************
 函数名称：Protocol_StoragePacket_QueryFile
 函数功能：查询回复打包协议
  参数.一：ptszMsgBuffer
@@ -110,8 +159,8 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(XCHAR* ptszMsgBuf
     {
         st_JsonRoot["xhToken"] = (Json::Value::UInt64)xhToken;
     }
-    st_JsonRoot["Code"] = 0;
-    st_JsonRoot["Msg"] = _X("ok");
+	st_JsonRoot["code"] = 0;
+	st_JsonRoot["msg"] = _X("success");
     //打包输出信息
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
@@ -201,8 +250,8 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, 
 	st_JsonRoot["DLList"] = st_JsonDLArray;
     st_JsonRoot["UPList"] = st_JsonUPArray;
 
-	st_JsonRoot["Code"] = 0;
-	st_JsonRoot["Msg"] = _X("ok");
+	st_JsonRoot["code"] = 0;
+	st_JsonRoot["msg"] = _X("success");
 	//打包输出信息
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
 	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
@@ -257,8 +306,8 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgB
     }
     st_JsonRoot["Count"] = st_JsonArray.size();
     st_JsonRoot["List"] = st_JsonArray;
-    st_JsonRoot["Code"] = 0;
-    st_JsonRoot["Msg"] = _X("ok");
+	st_JsonRoot["code"] = 0;
+	st_JsonRoot["msg"] = _X("success");
     //打包输出信息
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
@@ -324,7 +373,8 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(LPCXSTR lpszMetho
     st_JsonRoot["lpszClientAddr"] = lpszClientAddr;
     st_JsonRoot["lpszUser"] = lpszUser;
     st_JsonRoot["lpszPass"] = lpszPass;
-
+	st_JsonRoot["code"] = 0;
+	st_JsonRoot["msg"] = _X("success");
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     _tcsxcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
     return true;
@@ -402,7 +452,8 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(XCHAR* ptszMsgBuffer
     {
         st_JsonRoot["lpszFileHash"] = lpszFileHash;
     }
-
+	st_JsonRoot["code"] = 0;
+	st_JsonRoot["msg"] = _X("success");
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
     _tcsxcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str());
     return true;
@@ -465,6 +516,8 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_REQFile(XCHAR* ptszMsgBuffe
 	}
 	st_JsonRoot["unOperatorType"] = ENUM_XENGINE_COMMUNICATION_PROTOCOL_TYPE_STORAGE;
 	st_JsonRoot["unOperatorCode"] = XENGINE_COMMUNICATION_PROTOCOL_OPERATOR_CODE_STORAGE_REQQUERY;
+	st_JsonRoot["code"] = 0;
+	st_JsonRoot["msg"] = _X("success");
 	//打包输出信息
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
 	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
@@ -515,6 +568,72 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer
 	st_JsonRoot["tszFileUrl"] = pSt_ActionInfo->tszFileUrl;
     st_JsonRoot["byType"] = pSt_ActionInfo->byType;
     st_JsonRoot["tszBucketStr"] = pSt_ActionInfo->tszBucketStr;
+	st_JsonRoot["code"] = 0;
+	st_JsonRoot["msg"] = _X("success");
+	//打包输出信息
+	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
+	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);
+	return true;
+}
+/********************************************************************
+函数名称：Protocol_StoragePacket_Bucket
+函数功能：获取bucket信息
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出组好包的请求缓冲区
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出缓冲区大小
+ 参数.三：pStl_ListBucket
+  In/Out：In
+  类型：STL容器指针
+  可空：N
+  意思：输入要打包的信息
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Bucket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket)
+{
+	Protocol_IsErrorOccur = false;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return false;
+	}
+	Json::Value st_JsonRoot;
+	Json::Value st_JsonArray;
+
+	auto stl_ListIterator = pStl_ListBucket->begin();
+	for (int i = 0; stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
+	{
+		Json::Value st_JsonObject;
+		Json::Value st_JsonSub;
+
+		st_JsonObject["bEnable"] = stl_ListIterator->bEnable;
+		st_JsonObject["nLevel"] = stl_ListIterator->nLevel;
+		st_JsonObject["tszBuckSize"] = stl_ListIterator->tszBuckSize;
+		st_JsonObject["tszBuckKey"] = stl_ListIterator->tszBuckKey;
+		st_JsonObject["tszFilePath"] = stl_ListIterator->tszFilePath;
+
+		st_JsonSub["bCreateDir"] = stl_ListIterator->st_PermissionFlags.bCreateDir;
+		st_JsonSub["bRewrite"] = stl_ListIterator->st_PermissionFlags.bRewrite;
+		st_JsonSub["bUPLimit"] = stl_ListIterator->st_PermissionFlags.bUPLimit;
+		st_JsonSub["bUPReady"] = stl_ListIterator->st_PermissionFlags.bUPReady;
+		st_JsonObject["st_PermissionFlags"] = st_JsonSub;
+		st_JsonArray.append(st_JsonObject);
+	}
+	st_JsonRoot["code"] = 0;
+	st_JsonRoot["msg"] = "success";
+	st_JsonRoot["size"] = st_JsonArray.size();
+	st_JsonRoot["array"] = st_JsonArray;
 	//打包输出信息
 	*pInt_MsgLen = st_JsonRoot.toStyledString().length();
 	memcpy(ptszMsgBuffer, st_JsonRoot.toStyledString().c_str(), *pInt_MsgLen);

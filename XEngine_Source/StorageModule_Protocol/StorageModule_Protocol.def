@@ -14,6 +14,7 @@ EXPORTS
 	Protocol_StorageParse_WDLock
 	Protocol_StorageParse_WDPropPatch
 
+	Protocol_StoragePacket_HTTPPacket
 	Protocol_StoragePacket_BasicAuth
 	Protocol_StoragePacket_UPDown
 	Protocol_StoragePacket_QueryFile
@@ -21,6 +22,7 @@ EXPORTS
 	Protocol_StoragePacket_DirOperator
 	Protocol_StoragePacket_REQFile
 	Protocol_StoragePacket_Action
+	Protocol_StoragePacket_Bucket
 	Protocol_StoragePacket_WDPropfind
 	Protocol_StoragePacket_WDLock
 	Protocol_StoragePacket_WDPropPatch

@@ -65,16 +65,20 @@ extern XLONG APIHelp_dwErrorCode;
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi")
 #ifdef _DEBUG
-#ifdef _WIN64
-#pragma comment(lib,"../x64/Debug/jsoncpp")
-#else
-#pragma comment(lib,"../Debug/jsoncpp")
+#ifdef _M_X64
+#pragma comment(lib,"../x64/Debug/jsoncpp.lib")
+#elif _M_ARM64
+#pragma comment(lib,"../ARM64/Debug/jsoncpp.lib")
+#elif _M_IX86
+#pragma comment(lib,"../Debug/jsoncpp.lib")
 #endif
 #else
-#ifdef _WIN64
-#pragma comment(lib,"../x64/Release/jsoncpp")
-#else
-#pragma comment(lib,"../Release/jsoncpp")
+#ifdef _M_X64
+#pragma comment(lib,"../x64/Release/jsoncpp.lib")
+#elif _M_ARM64
+#pragma comment(lib,"../ARM64/Release/jsoncpp.lib")
+#elif _M_IX86
+#pragma comment(lib,"../Release/jsoncpp.lib")
 #endif
 #endif
 #endif

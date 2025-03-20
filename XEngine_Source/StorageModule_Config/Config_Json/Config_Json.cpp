@@ -117,7 +117,7 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XTime.nStorageTimeOut = st_JsonXTime["nStorageTimeOut"].asInt();
 	pSt_ServerConfig->st_XTime.nWebdavTimeOut = st_JsonXTime["nWebdavTimeOut"].asInt();
 
-	if (st_JsonRoot["XLog"].empty() || (3 != st_JsonRoot["XLog"].size()))
+	if (st_JsonRoot["XLog"].empty() || (5 != st_JsonRoot["XLog"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XLOG;
@@ -127,6 +127,8 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XLog.nMaxSize = st_JsonXLog["MaxSize"].asInt();
 	pSt_ServerConfig->st_XLog.nMaxCount = st_JsonXLog["MaxCount"].asInt();
 	pSt_ServerConfig->st_XLog.nLogLeave = st_JsonXLog["LogLeave"].asInt();
+	pSt_ServerConfig->st_XLog.nLogType = st_JsonXLog["LogType"].asInt();
+	_tcsxcpy(pSt_ServerConfig->st_XLog.tszLogFile, st_JsonXLog["LogFile"].asCString());
 
 	if (st_JsonRoot["XSql"].empty() || (5 != st_JsonRoot["XSql"].size()))
 	{

@@ -23,12 +23,7 @@ CBTorrent_Parse::~CBTorrent_Parse()
 /********************************************************************
 函数名称：BTorrent_Parse_Init
 函数功能：初始化一个解析器
- 参数.一：pxhToken
-  In/Out：In
-  类型：句柄
-  可空：N
-  意思：导出一个下载句柄
- 参数.二：lpszAddr
+ 参数.一：lpszAddr
   In/Out：In
   类型：常量字符指针
   可空：N
@@ -38,27 +33,26 @@ CBTorrent_Parse::~CBTorrent_Parse()
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_Parse::BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr)
+XHANDLE CBTorrent_Parse::BTorrent_Parse_Init(LPCXSTR lpszAddr)
 {
     BTDload_IsErrorOccur = false;
 
-    if ((NULL == pxhToken) || (NULL == lpszAddr))
+    if ((NULL == lpszAddr))
     {
         BTDload_IsErrorOccur = true;
         BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_INIT_PARAMENT;
-        return false;
+        return NULL;
     }
-#if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
 	//申请空间
 	BTORRENT_PARSEINFO* pSt_BTParse = new BTORRENT_PARSEINFO;
-    if (NULL == pSt_BTParse)
-    {
-        BTDload_IsErrorOccur = true;
-        BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_INIT_MALLOC;
-        return false;
-    }
-    memset(pSt_BTParse,'\0',sizeof(BTORRENT_PARSEINFO));
-
+	if (NULL == pSt_BTParse)
+	{
+		BTDload_IsErrorOccur = true;
+		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_INIT_MALLOC;
+		return NULL;
+	}
+	memset(pSt_BTParse, '\0', sizeof(BTORRENT_PARSEINFO));
+#if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
 	LPCXSTR lpszFindStr = _X("magnet:?xt=urn:");
 	if (NULL == _tcsxstr(lpszAddr, lpszFindStr))
 	{
@@ -71,7 +65,7 @@ bool CBTorrent_Parse::BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr
 			BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_INIT_MALLOC;
 			delete pSt_BTParse;
 			pSt_BTParse = NULL;
-			return false;
+			return NULL;
 		}
 		m_FStream.seekg(0, std::ios_base::end);
 		size_t nSize = size_t(m_FStream.tellg());
@@ -89,13 +83,8 @@ bool CBTorrent_Parse::BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr
 	{
 		//如果是磁力
 	}
-	
-	BaseLib_Handle_Create(pxhToken);
-    st_Locker.lock();
-    stl_MapBTParse.insert(make_pair(*pxhToken, pSt_BTParse));
-    st_Locker.unlock();
 #endif
-    return true;
+    return pSt_BTParse;
 }
 /********************************************************************
 函数名称：BTorrent_Parse_GetNode
@@ -120,7 +109,7 @@ bool CBTorrent_Parse::BTorrent_Parse_Init(XNETHANDLE* pxhToken, LPCXSTR lpszAddr
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_Parse::BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
+bool CBTorrent_Parse::BTorrent_Parse_GetNode(XHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
 {
     BTDload_IsErrorOccur = false;
 
@@ -130,26 +119,23 @@ bool CBTorrent_Parse::BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEM
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETNODE_PARAMENT;
 		return false;
 	}
-    st_Locker.lock_shared();
-    unordered_map<XNETHANDLE, BTORRENT_PARSEINFO*>::const_iterator stl_MapIterator = stl_MapBTParse.find(xhToken);
-    if (stl_MapIterator == stl_MapBTParse.end())
+	BTORRENT_PARSEINFO* pSt_BTParse = (BTORRENT_PARSEINFO*)xhToken;
+	if (NULL == pSt_BTParse)
     {
 		BTDload_IsErrorOccur = true;
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETNODE_NOTFOUND;
-        st_Locker.unlock_shared();
         return false;
     }
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
-    *pInt_ListCount = stl_MapIterator->second->m_BTInfo->nodes().size();
-    BaseLib_Memory_Malloc((XPPPMEM)pppSt_Parse, stl_MapIterator->second->m_BTInfo->nodes().size(), sizeof(BTORRENT_PARSEMAP));
-    std::vector<std::pair<std::string, int>>::const_iterator stl_ListIterator = stl_MapIterator->second->m_BTInfo->nodes().begin();
-    for (int i = 0; stl_ListIterator != stl_MapIterator->second->m_BTInfo->nodes().end(); stl_ListIterator++, i++)
+    *pInt_ListCount = pSt_BTParse->m_BTInfo->nodes().size();
+    BaseLib_Memory_Malloc((XPPPMEM)pppSt_Parse, pSt_BTParse->m_BTInfo->nodes().size(), sizeof(BTORRENT_PARSEMAP));
+    std::vector<std::pair<std::string, int>>::const_iterator stl_ListIterator = pSt_BTParse->m_BTInfo->nodes().begin();
+    for (int i = 0; stl_ListIterator != pSt_BTParse->m_BTInfo->nodes().end(); stl_ListIterator++, i++)
     {
         (*pppSt_Parse)[i]->nValue = stl_ListIterator->second;
         _tcsxcpy((*pppSt_Parse)[i]->tszValue, stl_ListIterator->first.c_str());
     }
 #endif
-    st_Locker.unlock_shared();
     return true;
 }
 /********************************************************************
@@ -175,7 +161,7 @@ bool CBTorrent_Parse::BTorrent_Parse_GetNode(XNETHANDLE xhToken, BTORRENT_PARSEM
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_Parse::BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
+bool CBTorrent_Parse::BTorrent_Parse_GetTracker(XHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
 {
     BTDload_IsErrorOccur = false;
 
@@ -185,28 +171,25 @@ bool CBTorrent_Parse::BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PAR
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETTRACKER_PARAMENT;
 		return false;
 	}
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_PARSEINFO*>::const_iterator stl_MapIterator = stl_MapBTParse.find(xhToken);
-	if (stl_MapIterator == stl_MapBTParse.end())
+	BTORRENT_PARSEINFO* pSt_BTParse = (BTORRENT_PARSEINFO*)xhToken;
+	if (NULL == pSt_BTParse)
 	{
 		BTDload_IsErrorOccur = true;
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETTRACKER_NOTFOUND;
-		st_Locker.unlock_shared();
 		return false;
 	}
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
 	int i = 0;
-	*pInt_ListCount = stl_MapIterator->second->m_BTInfo->trackers().size();
-	BaseLib_Memory_Malloc((XPPPMEM)pppSt_Parse, stl_MapIterator->second->m_BTInfo->trackers().size(), sizeof(BTORRENT_PARSEMAP));
+	*pInt_ListCount = pSt_BTParse->m_BTInfo->trackers().size();
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_Parse, pSt_BTParse->m_BTInfo->trackers().size(), sizeof(BTORRENT_PARSEMAP));
     
-    for (auto const& stl_ListIterator : stl_MapIterator->second->m_BTInfo->trackers())
+    for (auto const& stl_ListIterator : pSt_BTParse->m_BTInfo->trackers())
     {
 		(*pppSt_Parse)[i]->nValue = stl_ListIterator.tier;
 		_tcsxcpy((*pppSt_Parse)[i]->tszValue, stl_ListIterator.url.c_str());
 		i++;
     }
 #endif
-	st_Locker.unlock_shared();
 	return true;
 }
 /********************************************************************
@@ -232,7 +215,7 @@ bool CBTorrent_Parse::BTorrent_Parse_GetTracker(XNETHANDLE xhToken, BTORRENT_PAR
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_Parse::BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
+bool CBTorrent_Parse::BTorrent_Parse_GetSeeds(XHANDLE xhToken, BTORRENT_PARSEMAP*** pppSt_Parse, int* pInt_ListCount)
 {
 	BTDload_IsErrorOccur = false;
 
@@ -242,28 +225,25 @@ bool CBTorrent_Parse::BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARSE
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETSEED_PARAMENT;
 		return false;
 	}
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_PARSEINFO*>::const_iterator stl_MapIterator = stl_MapBTParse.find(xhToken);
-	if (stl_MapIterator == stl_MapBTParse.end())
+	BTORRENT_PARSEINFO* pSt_BTParse = (BTORRENT_PARSEINFO*)xhToken;
+	if (NULL == pSt_BTParse)
 	{
 		BTDload_IsErrorOccur = true;
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETSEED_NOTFOUND;
-		st_Locker.unlock_shared();
 		return false;
 	}
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
 	int i = 0;
-	*pInt_ListCount = stl_MapIterator->second->m_BTInfo->web_seeds().size();
-	BaseLib_Memory_Malloc((XPPPMEM)pppSt_Parse, stl_MapIterator->second->m_BTInfo->web_seeds().size(), sizeof(BTORRENT_PARSEMAP));
+	*pInt_ListCount = pSt_BTParse->m_BTInfo->web_seeds().size();
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_Parse, pSt_BTParse->m_BTInfo->web_seeds().size(), sizeof(BTORRENT_PARSEMAP));
 	
-	for (auto const& stl_ListIterator : stl_MapIterator->second->m_BTInfo->web_seeds())
+	for (auto const& stl_ListIterator : pSt_BTParse->m_BTInfo->web_seeds())
 	{
 		(*pppSt_Parse)[i]->nValue = stl_ListIterator.type;
 		_tcsxcpy((*pppSt_Parse)[i]->tszValue, stl_ListIterator.url.c_str());
 		i++;
 	}
 #endif
-	st_Locker.unlock_shared();
 	return true;
 }
 /********************************************************************
@@ -289,7 +269,7 @@ bool CBTorrent_Parse::BTorrent_Parse_GetSeeds(XNETHANDLE xhToken, BTORRENT_PARSE
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_Parse::BTorrent_Parse_GetPiece(XNETHANDLE xhToken, int* pInt_PieceLen, int* pInt_PieceCount)
+bool CBTorrent_Parse::BTorrent_Parse_GetPiece(XHANDLE xhToken, int* pInt_PieceLen, int* pInt_PieceCount)
 {
     BTDload_IsErrorOccur = false;
 
@@ -299,20 +279,17 @@ bool CBTorrent_Parse::BTorrent_Parse_GetPiece(XNETHANDLE xhToken, int* pInt_Piec
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETSEED_PARAMENT;
 		return false;
 	}
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_PARSEINFO*>::const_iterator stl_MapIterator = stl_MapBTParse.find(xhToken);
-	if (stl_MapIterator == stl_MapBTParse.end())
+	BTORRENT_PARSEINFO* pSt_BTParse = (BTORRENT_PARSEINFO*)xhToken;
+	if (NULL == pSt_BTParse)
 	{
 		BTDload_IsErrorOccur = true;
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETSEED_PARAMENT;
-		st_Locker.unlock_shared();
 		return false;
 	}
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
-    *pInt_PieceLen = stl_MapIterator->second->m_BTInfo->piece_length();
-    *pInt_PieceCount = stl_MapIterator->second->m_BTInfo->num_pieces();
+    *pInt_PieceLen = pSt_BTParse->m_BTInfo->piece_length();
+    *pInt_PieceCount = pSt_BTParse->m_BTInfo->num_pieces();
 #endif
-	st_Locker.unlock_shared();
 	return true;
 }
 /********************************************************************
@@ -343,29 +320,27 @@ bool CBTorrent_Parse::BTorrent_Parse_GetPiece(XNETHANDLE xhToken, int* pInt_Piec
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_Parse::BTorrent_Parse_GetInfo(XNETHANDLE xhToken, XCHAR* ptszHash /* = NULL */, XCHAR* ptszCreator /* = NULL */, XCHAR* ptszComment /* = NULL */)
+bool CBTorrent_Parse::BTorrent_Parse_GetInfo(XHANDLE xhToken, XCHAR* ptszHash /* = NULL */, XCHAR* ptszCreator /* = NULL */, XCHAR* ptszComment /* = NULL */)
 {
 	BTDload_IsErrorOccur = false;
 
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_PARSEINFO*>::const_iterator stl_MapIterator = stl_MapBTParse.find(xhToken);
-	if (stl_MapIterator != stl_MapBTParse.end())
+	BTORRENT_PARSEINFO* pSt_BTParse = (BTORRENT_PARSEINFO*)xhToken;
+	if (NULL == pSt_BTParse)
 	{
 		if (NULL != ptszHash)
 		{
-			_tcsxcpy(ptszHash, stl_MapIterator->second->m_BTInfo->info_hash().to_string().c_str());
+			_tcsxcpy(ptszHash, pSt_BTParse->m_BTInfo->info_hash().to_string().c_str());
 		}
 		if (NULL != ptszCreator)
 		{
-			_tcsxcpy(ptszCreator, stl_MapIterator->second->m_BTInfo->creator().c_str());
+			_tcsxcpy(ptszCreator, pSt_BTParse->m_BTInfo->creator().c_str());
 		}
 		if (NULL != ptszComment)
 		{
-			_tcsxcpy(ptszComment, stl_MapIterator->second->m_BTInfo->comment().c_str());
+			_tcsxcpy(ptszComment, pSt_BTParse->m_BTInfo->comment().c_str());
 		}
 	}
-	st_Locker.unlock_shared();
 #endif
 	return true;
 }
@@ -387,18 +362,16 @@ bool CBTorrent_Parse::BTorrent_Parse_GetInfo(XNETHANDLE xhToken, XCHAR* ptszHash
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_Parse::BTorrent_Parse_GetMagnet(XNETHANDLE xhToken, XCHAR* ptszMagnet)
+bool CBTorrent_Parse::BTorrent_Parse_GetMagnet(XHANDLE xhToken, XCHAR* ptszMagnet)
 {
 	BTDload_IsErrorOccur = false;
 
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_PARSEINFO*>::const_iterator stl_MapIterator = stl_MapBTParse.find(xhToken);
-	if (stl_MapIterator != stl_MapBTParse.end())
+	BTORRENT_PARSEINFO* pSt_BTParse = (BTORRENT_PARSEINFO*)xhToken;
+	if (NULL == pSt_BTParse)
 	{
-		_tcsxcpy(ptszMagnet, make_magnet_uri(*stl_MapIterator->second->m_BTInfo).c_str());
+		_tcsxcpy(ptszMagnet, make_magnet_uri(*pSt_BTParse->m_BTInfo).c_str());
 	}
-	st_Locker.unlock_shared();
 #endif
 	return true;
 }
@@ -430,7 +403,7 @@ bool CBTorrent_Parse::BTorrent_Parse_GetMagnet(XNETHANDLE xhToken, XCHAR* ptszMa
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFilePath, BTORRENT_FILEINFO*** pppSt_FileList, int* pInt_ListCount)
+bool CBTorrent_Parse::BTorrent_Parse_GetFile(XHANDLE xhToken, XCHAR* ptszFilePath, BTORRENT_FILEINFO*** pppSt_FileList, int* pInt_ListCount)
 {
 	BTDload_IsErrorOccur = false;
 
@@ -440,23 +413,21 @@ bool CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFile
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETFILE_PARAMENT;
 		return false;
 	}
-	st_Locker.lock_shared();
-	unordered_map<XNETHANDLE, BTORRENT_PARSEINFO*>::const_iterator stl_MapIterator = stl_MapBTParse.find(xhToken);
-	if (stl_MapIterator == stl_MapBTParse.end())
+	BTORRENT_PARSEINFO* pSt_BTParse = (BTORRENT_PARSEINFO*)xhToken;
+	if (NULL == pSt_BTParse)
 	{
 		BTDload_IsErrorOccur = true;
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_PARSE_GETFILE_NOTFOUND;
-		st_Locker.unlock_shared();
 		return false;
 	}
 #if 1 == _XENGIEN_STORAGE_BUILDSWITCH_BTORRENT
-	int nUTFLen = stl_MapIterator->second->m_BTInfo->name().length();
-	BaseLib_Charset_UTFToAnsi(stl_MapIterator->second->m_BTInfo->name().c_str(), ptszFilePath, &nUTFLen);
+	int nUTFLen = pSt_BTParse->m_BTInfo->name().length();
+	BaseLib_Charset_UTFToAnsi(pSt_BTParse->m_BTInfo->name().c_str(), ptszFilePath, &nUTFLen);
 
-	*pInt_ListCount = stl_MapIterator->second->m_BTInfo->num_files();
-	BaseLib_Memory_Malloc((XPPPMEM)pppSt_FileList, stl_MapIterator->second->m_BTInfo->num_files(), sizeof(BTORRENT_FILEINFO));
+	*pInt_ListCount = pSt_BTParse->m_BTInfo->num_files();
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_FileList, pSt_BTParse->m_BTInfo->num_files(), sizeof(BTORRENT_FILEINFO));
 	
-	lt::file_storage const& m_FileStorage = stl_MapIterator->second->m_BTInfo->files();
+	lt::file_storage const& m_FileStorage = pSt_BTParse->m_BTInfo->files();
 	int i = 0;
 	for (auto const stl_ListIterator : m_FileStorage.file_range())
 	{
@@ -506,7 +477,6 @@ bool CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFile
 		i++;
 	}
 #endif
-	st_Locker.unlock_shared();
 	return true;
 }
 /********************************************************************
@@ -522,19 +492,16 @@ bool CBTorrent_Parse::BTorrent_Parse_GetFile(XNETHANDLE xhToken, XCHAR* ptszFile
   意思：是否成功
 备注：
 *********************************************************************/
-bool CBTorrent_Parse::BTorrent_Parse_Destory(XNETHANDLE xhToken)
+bool CBTorrent_Parse::BTorrent_Parse_Destory(XHANDLE xhToken)
 {
 	BTDload_IsErrorOccur = false;
 
-	st_Locker.lock();
-	unordered_map<XNETHANDLE, BTORRENT_PARSEINFO*>::iterator stl_MapIterator = stl_MapBTParse.find(xhToken);
-	if (stl_MapIterator != stl_MapBTParse.end())
+	BTORRENT_PARSEINFO* pSt_BTParse = (BTORRENT_PARSEINFO*)xhToken;
+	if (NULL != pSt_BTParse)
 	{
-		delete stl_MapIterator->second;
-		stl_MapIterator->second = NULL;
-		stl_MapBTParse.erase(stl_MapIterator);
+		delete pSt_BTParse;
+		pSt_BTParse = NULL;
 	}
-	st_Locker.unlock();
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////

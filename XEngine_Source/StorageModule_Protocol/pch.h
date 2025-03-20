@@ -68,24 +68,34 @@ extern XLONG Protocol_dwErrorCode;
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #ifdef _DEBUG
-#ifdef _WIN64
+#ifdef _M_X64
 #pragma comment(lib,"../x64/Debug/jsoncpp")
 #pragma comment(lib,"../x64/Debug/tinyxml2")
 #pragma comment(lib,"../x64/Debug/StorageModule_Session.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_APIHelp.lib")
-#else
+#elif _M_ARM64
+#pragma comment(lib,"../ARM64/Debug/jsoncpp")
+#pragma comment(lib,"../ARM64/Debug/tinyxml2")
+#pragma comment(lib,"../ARM64/Debug/StorageModule_Session.lib")
+#pragma comment(lib,"../ARM64/Debug/StorageModule_APIHelp.lib")
+#elif _M_IX86
 #pragma comment(lib,"../Debug/jsoncpp")
 #pragma comment(lib,"../Debug/tinyxml2")
 #pragma comment(lib,"../Debug/StorageModule_Session.lib")
 #pragma comment(lib,"../Debug/StorageModule_APIHelp.lib")
 #endif
 #else
-#ifdef _WIN64
+#ifdef _M_X64
 #pragma comment(lib,"../x64/Release/jsoncpp")
 #pragma comment(lib,"../x64/Release/tinyxml2")
 #pragma comment(lib,"../x64/Release/StorageModule_Session.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_APIHelp.lib")
-#else
+#elif _M_ARM64
+#pragma comment(lib,"../ARM64/Release/jsoncpp")
+#pragma comment(lib,"../ARM64/Release/tinyxml2")
+#pragma comment(lib,"../ARM64/Release/StorageModule_Session.lib")
+#pragma comment(lib,"../ARM64/Release/StorageModule_APIHelp.lib")
+#elif _M_IX86
 #pragma comment(lib,"../Release/jsoncpp")
 #pragma comment(lib,"../Release/tinyxml2")
 #pragma comment(lib,"../Release/StorageModule_Session.lib")

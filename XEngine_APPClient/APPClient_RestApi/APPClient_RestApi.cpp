@@ -34,6 +34,21 @@ using namespace std;
 
 XCHAR tszBaseBuffer[MAX_PATH];
 XCHAR tszHdrBuffer[MAX_PATH];
+void API_Manage_Bucket()
+{
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Bucket");
+	int nLen = 0;
+	int nCode = 0;
+	XCHAR* ptszMsgBuffer = NULL;
+
+	if (!APIClient_Http_Request(_X("POST"), lpszUrl, NULL, &nCode, &ptszMsgBuffer, &nLen, tszHdrBuffer))
+	{
+		_xtprintf("API_Manage_Bucket:%lX\n", APIClient_GetLastError());
+		return;
+	}
+	_xtprintf("API_Manage_Bucket:%d,%s\n", nCode, ptszMsgBuffer);
+	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
+}
 //查询
 void API_Manage_Query()
 {
@@ -175,6 +190,7 @@ int main()
 	WSAStartup(MAKEWORD(2, 2), &st_WSAData);
 #endif
 
+	API_Manage_Bucket();
 	API_Manage_Query();
 	API_Manage_Insert();
 	API_Manage_Delete();
