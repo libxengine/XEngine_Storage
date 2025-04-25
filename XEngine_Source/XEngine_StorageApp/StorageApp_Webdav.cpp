@@ -310,6 +310,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		_tcsxcpy(tszCreateDir, pSt_HTTPParam->tszHttpUri + 1);
 		BaseLib_String_Replace(tszCreateDir, &nALen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath, true);
 
+		SystemApi_File_CreateMutilFolder(tszCreateDir);
 		st_HDRParam.nHttpCode = 201;
 		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
