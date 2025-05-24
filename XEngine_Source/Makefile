@@ -16,18 +16,18 @@ BASE_BTORRENT_PATH = ./StorageModule_BTorrent
 
 APPSERVICE_STORAGE_PATH = ./XEngine_StorageApp
 
+ifeq ($(PLATFORM),linux)
+	FILEEXT = so
+else ifeq ($(PLATFORM),mac)
+	FILEEXT = dylib
+endif
+
 XENGINE_MODULES = libjsoncpp.so libtinyxml2.so libXEngine_InfoReport.so                                   \
                 libStorageModule_Database.so libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so libStorageModule_Protocol.so libStorageModule_BTorrent.so    \
 		 		XEngine_StorageApp.exe 
 
 .PHONY:MakeAll 
 MakeAll:$(XENGINE_MODULES)
-	
-ifeq ($(PLATFORM),linux)
-	FILEEXT = so
-else ifeq ($(PLATFORM),mac)
-	FILEEXT = dylib
-endif
 
 libjsoncpp.so:
 ifeq ($(FLAGS), InstallAll)
