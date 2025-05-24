@@ -1,11 +1,7 @@
-CC = g++ -Wall -std=c++17 -fPIC
-PLATFORM = linux
+CC = g++ -Wall -std=c++20 -fPIC
 PLATVER = 
-PLATDIR = 
 FILEEXT = 
 LIBFLAG = 
-RELEASE = 0
-UNICODE = 0
 LOADHDR = -I ./
 LIB = -lXEngine_BaseLib
 LIBEX = 
@@ -18,13 +14,30 @@ ifeq ($(MACRO_VALUE),1)
     LIB += -ltorrent-rasterbar
 endif
 
+ifeq ($(RELEASE),1)
+FLAGS = -c -D _RELEASE
+DEBUG = -O2
+else
+	ifeq ($(PLATFORM),mac)
+		FLAGS = -c
+		DEBUG = -g -D _DEBUG
+	else
+		FLAGS = -c -lc_p
+		DEBUG = -g -pg -D _DEBUG
+	endif
+endif
+
+ifeq ($(UNICODE),1)
+override UNICODE := -D __UNICODE__
+else
+override UNICODE := -D __ANSI__
+endif
+
 ifeq ($(PLATFORM),linux)
 	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
 		PLATVER = -D __CENTOS__
-		PLATDIR = XEngine_Linux/Centos
 	else
 		PLATVER = -D __UBUNTU__
-		PLATDIR = XEngine_Linux/Ubuntu
 	endif
 	FILEEXT = so
 	LIBFLAG = -shared
@@ -33,30 +46,10 @@ ifeq ($(PLATFORM),linux)
 else ifeq ($(PLATFORM),mac)
 	CC += -Wno-deprecated-declarations
 	PLATVER = -D __MACOS__
-	PLATDIR = XEngine_Mac
 	FILEEXT = dylib
 	LIBFLAG = -dynamiclib
 	LIBEX = -lpthread -ldl
 	LOADBIN = -Wl,-rpath,@loader_path/../XEngine_BaseLib/
-endif
-
-ifeq ($(RELEASE),1)
-FLAGS = -c 
-DEBUG = 
-else
-	ifeq ($(PLATFORM),mac)
-		FLAGS = -c
-		DEBUG = -g 
-	else
-		FLAGS = -c -lc_p
-		DEBUG = -g -pg 
-	endif
-endif
-
-ifeq ($(UNICODE),1)
-UNICODE = -D _UNICODE
-else
-UNICODE = 
 endif
 
 all:$(OBJECTS)

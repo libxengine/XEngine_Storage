@@ -1,11 +1,7 @@
-CC = g++ -Wall -std=c++17 -fPIC
-PLATFORM = linux
+CC = g++ -Wall -std=c++20 -fPIC
 PLATVER = 
-PLATDIR = 
 FILEEXT = 
 LIBFLAG = 
-RELEASE = 0
-UNICODE = 0
 LOADHDR = -I ./ -I ../XEngine_Depend/XEngine_Module/jsoncpp -I ../XEngine_Depend/XEngine_Module/tinyxml2
 LOADSO = -L ../XEngine_Depend/XEngine_Module/jsoncpp -L ../XEngine_Depend/XEngine_Module/tinyxml2 -L ../StorageModule_Session -L ../StorageModule_APIHelp
 LIB = -lXEngine_BaseLib -lXEngine_SystemApi -ljsoncpp -ltinyxml2 -lStorageModule_Session -lStorageModule_APIHelp
@@ -13,31 +9,29 @@ LIBEX =
 OBJECTS = Protocol_StoragePacket.o Protocol_StorageParse.o pch.o
 
 ifeq ($(RELEASE),1)
-FLAGS = -c 
-DEBUG = 
+FLAGS = -c -D _RELEASE
+DEBUG = -O2
 else
 	ifeq ($(PLATFORM),mac)
 		FLAGS = -c
-		DEBUG = -g 
+		DEBUG = -g -D _DEBUG
 	else
 		FLAGS = -c -lc_p
-		DEBUG = -g -pg 
+		DEBUG = -g -pg -D _DEBUG
 	endif
 endif
 
 ifeq ($(UNICODE),1)
-UNICODE = -D _UNICODE
+override UNICODE := -D __UNICODE__
 else
-UNICODE = 
+override UNICODE := -D __ANSI__
 endif
 
 ifeq ($(PLATFORM),linux)
 	ifeq (/etc/redhat-release,$(wildcard /etc/redhat-release))
 		PLATVER = -D __CENTOS__
-		PLATDIR = XEngine_Linux/Centos
 	else
 		PLATVER = -D __UBUNTU__
-		PLATDIR = XEngine_Linux/Ubuntu
 	endif
 	FILEEXT = so
 	LIBFLAG = -shared
@@ -46,7 +40,6 @@ ifeq ($(PLATFORM),linux)
 else ifeq ($(PLATFORM),mac)
 	CC += -Wno-deprecated-declarations
 	PLATVER = -D __MACOS__
-	PLATDIR = XEngine_Mac
 	FILEEXT = dylib
 	LIBFLAG = -dynamiclib
 	LIBEX = -lpthread -ldl
