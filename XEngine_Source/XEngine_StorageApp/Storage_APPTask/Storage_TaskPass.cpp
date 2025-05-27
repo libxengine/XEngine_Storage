@@ -1,6 +1,6 @@
 ﻿#include "../StorageApp_Hdr.h"
 
-bool XEngine_Task_Pass(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount)
+bool XEngine_Task_Pass(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam)
 {
 	int nSDLen = 2048;
 	XCHAR tszSDBuffer[2048];
