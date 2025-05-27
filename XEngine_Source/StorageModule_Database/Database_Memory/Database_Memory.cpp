@@ -288,10 +288,10 @@ bool CDatabase_Memory::Database_Memory_Flush()
 			int nHashLen = 0;
 			struct _xtstat st_FileStatus;
 
-			XBYTE tszHashStr[MAX_PATH];
+			XBYTE tszHashStr[XPATH_MAX];
 			XSTORAGECORE_DBFILE st_DBFile;
 
-			memset(tszHashStr, '\0', MAX_PATH);
+			memset(tszHashStr, '\0', XPATH_MAX);
 			memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
             _xtstat(pptszListFile[i], &st_FileStatus);

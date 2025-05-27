@@ -55,12 +55,12 @@ bool CAPIHelp_Api::APIHelp_Api_ProxyAuth(XCHAR* ptszUser, XCHAR* ptszPass, XCHAR
 	APIHelp_IsErrorOccur = false;
 
 	int nAuthType = 0;
-	int nAuthLen = MAX_PATH;
+	int nAuthLen = XPATH_MAX;
 
-	XCHAR tszAuthStr[MAX_PATH];
+	XCHAR tszAuthStr[XPATH_MAX];
 	XCHAR tszSDBuffer[1024];
 
-	memset(tszAuthStr, '\0', MAX_PATH);
+	memset(tszAuthStr, '\0', XPATH_MAX);
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 	//是否有验证信息
 	if (!HttpProtocol_ServerHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
@@ -207,8 +207,8 @@ bool CAPIHelp_Api::APIHelp_Api_VerHash(LPCXSTR lpszFileHash, XCHAR** pptszListHd
 	APIHelp_IsErrorOccur = false;
 
 	LPCXSTR lpszKeyStr = _X("FileHash");
-	XCHAR tszValueStr[MAX_PATH];
-	memset(tszValueStr, '\0', MAX_PATH);
+	XCHAR tszValueStr[XPATH_MAX];
+	memset(tszValueStr, '\0', XPATH_MAX);
 
 	if (!HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, lpszKeyStr, tszValueStr))
 	{
@@ -321,11 +321,11 @@ bool CAPIHelp_Api::APIHelp_Api_UrlParse(XCHAR*** ppptszList, int nListCount, XCH
 
 	for (int i = 0; i < nListCount; i++)
 	{
-		XCHAR tszKey[MAX_PATH];
-		XCHAR tszValue[MAX_PATH];
+		XCHAR tszKey[XPATH_MAX];
+		XCHAR tszValue[XPATH_MAX];
 
-		memset(tszKey, '\0', MAX_PATH);
-		memset(tszValue, '\0', MAX_PATH);
+		memset(tszKey, '\0', XPATH_MAX);
+		memset(tszValue, '\0', XPATH_MAX);
 
 		BaseLib_String_GetKeyValue((*ppptszList)[i], _X("="), tszKey, tszValue);
 
@@ -333,8 +333,8 @@ bool CAPIHelp_Api::APIHelp_Api_UrlParse(XCHAR*** ppptszList, int nListCount, XCH
 		{
 			//编码格式是utf8,需要转为ansi
 #ifdef _MSC_BUILD
-			XCHAR tszFileName[MAX_PATH];
-			memset(tszFileName, '\0', MAX_PATH);
+			XCHAR tszFileName[XPATH_MAX];
+			memset(tszFileName, '\0', XPATH_MAX);
 
 			Cryption_Codec_UrlDeCodec(tszValue, _tcsxlen(tszValue), tszFileName);
 
@@ -383,15 +383,15 @@ bool CAPIHelp_Api::APIHelp_Api_Boundary(XCHAR*** ppptszList, int nListCount, XCH
 	//Content-Type: multipart/form-data; boundary=AaB03x
 	for (int i = 0; i < nListCount; i++)
 	{
-		XCHAR tszKeyStr[MAX_PATH] = {};
-		XCHAR tszVluStr[MAX_PATH] = {};
+		XCHAR tszKeyStr[XPATH_MAX] = {};
+		XCHAR tszVluStr[XPATH_MAX] = {};
 
 		BaseLib_String_GetKeyValue((*ppptszList)[i], _X(": "), tszKeyStr, tszVluStr);
 
 		if (0 == _tcsxnicmp(lpszHDRContent, tszKeyStr, _tcsxlen(lpszHDRContent)))
 		{
-			XCHAR tszKeySub[MAX_PATH] = {};
-			XCHAR tszVluSub[MAX_PATH] = {};
+			XCHAR tszKeySub[XPATH_MAX] = {};
+			XCHAR tszVluSub[XPATH_MAX] = {};
 			//multipart/form-data; boundary=AaB03x
 			if (BaseLib_String_GetKeyValue(tszVluStr, _X(";"), tszKeySub, tszVluSub))
 			{
@@ -465,7 +465,7 @@ bool CAPIHelp_Api::APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl)
 {
 	APIHelp_IsErrorOccur = false;
 
-	XCHAR tszUrlStr[MAX_PATH] = {};
+	XCHAR tszUrlStr[XPATH_MAX] = {};
 	_tcsxcpy(tszUrlStr, lpszUrl);
 	// 查找第一个 '/' 的位置
 	XCHAR *ptszFirstStr = _tcsxchr(tszUrlStr, '/');

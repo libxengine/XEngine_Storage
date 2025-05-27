@@ -612,7 +612,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Bucket(XCHAR* ptszMsgBuffer
 	Json::Value st_JsonArray;
 
 	auto stl_ListIterator = pStl_ListBucket->begin();
-	for (int i = 0; stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
+	for (; stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
 	{
 		Json::Value st_JsonObject;
 		Json::Value st_JsonSub;
@@ -700,7 +700,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBu
 	
     for (int i = 0; i < nFileCount; i++)
     {
-		XCHAR tszFileName[MAX_PATH] = {};
+		XCHAR tszFileName[XPATH_MAX] = {};
 		SYSTEMAPI_FILE_ATTR st_FileAttr = {};
 		BaseLib_String_GetFileAndPath((*ppptszListFile)[i], NULL, tszFileName);
 		SystemApi_File_GetFileAttr((*ppptszListFile)[i], &st_FileAttr);
@@ -714,7 +714,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBu
         //文件
         XCHAR tszSourceStr[128] = {};
         XCHAR tszDestStr[128] = {};
-        XCHAR tszFileAlis[MAX_PATH] = {};
+        XCHAR tszFileAlis[XPATH_MAX] = {};
         _tcsxcpy(tszFileAlis, (*ppptszListFile)[i] + 1);
 
         APIHelp_Api_UrlStr(tszSourceStr, (*ppptszListFile)[i]);

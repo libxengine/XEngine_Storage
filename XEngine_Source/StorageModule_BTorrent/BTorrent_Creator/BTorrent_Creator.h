@@ -14,8 +14,8 @@ typedef struct
 {
 	XCHAR tszComment[4096];
 	XCHAR tszPEMCert[4096];
-	XCHAR tszBTPath[MAX_PATH];
-	XCHAR tszCreate[MAX_PATH];
+	XCHAR tszBTPath[XPATH_MAX];
+	XCHAR tszCreate[XPATH_MAX];
 	int m_nPieceSize;
 
 	list<BTORRENT_PARSEMAP>* pStl_ListNode;

@@ -10,5 +10,5 @@
 //    Purpose:     WEBDAV
 //    History:
 *********************************************************************/
-XHTHREAD CALLBACK XEngine_Webdav_HTTPThread(XPVOID lParam);
+XHTHREAD XCALLBACK XEngine_Webdav_HTTPThread(XPVOID lParam);
 bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount);

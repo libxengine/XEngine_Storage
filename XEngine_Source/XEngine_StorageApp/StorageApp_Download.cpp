@@ -1,6 +1,6 @@
 ﻿#include "StorageApp_Hdr.h"
 
-XHTHREAD CALLBACK XEngine_Download_HTTPThread(XPVOID lParam)
+XHTHREAD XCALLBACK XEngine_Download_HTTPThread(XPVOID lParam)
 {
 	int nThreadPos = *(int*)lParam;
 	nThreadPos++;
@@ -40,7 +40,7 @@ XHTHREAD CALLBACK XEngine_Download_HTTPThread(XPVOID lParam)
 	return 0;
 }
 
-void CALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	int nMsgLen = 4096;
 	int nListCount = 0;
@@ -69,12 +69,12 @@ void CALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, X
 		{
 			if (st_ServiceCfg.st_XProxy.bDLPass)
 			{
-				int nPLen = MAX_PATH;
+				int nPLen = XPATH_MAX;
 				int nHttpCode = 0;
-				XCHAR tszProxyStr[MAX_PATH];
+				XCHAR tszProxyStr[XPATH_MAX];
 				SESSION_STORAGEINFO st_StorageInfo;
 
-				memset(tszProxyStr, '\0', MAX_PATH);
+				memset(tszProxyStr, '\0', XPATH_MAX);
 				memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
 				Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
@@ -191,7 +191,7 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 		}
 		Protocol_StorageParse_SpeedLimit(ptszBody, nSDLen, &nCode, &nLimit);
-		BaseLib_Memory_FreeCStyle((VOID**)&ptszBody);
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszBody);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s,值:%d"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass, nCode);
 		st_HDRParam.bAuth = true;
 	}
@@ -264,11 +264,11 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	BaseLib_String_FixPath(tszFileDir, nPathType);
 
 	int nHashLen = 0;
-	XBYTE tszHashKey[MAX_PATH];
-	XCHAR tszFieldStr[MAX_PATH];
+	XBYTE tszHashKey[XPATH_MAX];
+	XCHAR tszFieldStr[XPATH_MAX];
 	XCHAR tszHashStr[128];
-	memset(tszHashKey, '\0', MAX_PATH);
-	memset(tszFieldStr, '\0', MAX_PATH);
+	memset(tszHashKey, '\0', XPATH_MAX);
+	memset(tszFieldStr, '\0', XPATH_MAX);
 	memset(tszHashStr, '\0', sizeof(tszHashStr));
 	//得到文件HASH
 	Cryption_Api_Digest(tszFileDir, tszHashKey, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);

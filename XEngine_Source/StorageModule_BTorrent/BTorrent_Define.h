@@ -39,7 +39,7 @@ typedef enum
 //////////////////////////////////////////////////////////////////////////
 typedef struct 
 {
-	XCHAR tszFileName[MAX_PATH];                                          //文件名
+	XCHAR tszFileName[XPATH_MAX];                                          //文件名
 	__int64x nDLoadTotal;                                                 //总大小
 	__int64x nDLCount;                                                    //已下载大小
 	__int64x nUPCount;                                                    //已上传大小
@@ -51,15 +51,15 @@ typedef struct
 }BTORRENT_DLOADER;
 typedef struct
 {
-	XCHAR tszValue[MAX_PATH];
+	XCHAR tszValue[XPATH_MAX];
 	int nValue;
 }BTORRENT_PARSEMAP;
 typedef struct
 {
-	XCHAR tszFileHash[MAX_PATH];                                          //文件HASH
-	XCHAR tszFilePath[MAX_PATH];                                          //文件路径
-	XCHAR tszFileName[MAX_PATH];                                          //文件名称
-	XCHAR tszFileLink[MAX_PATH];                                          //文件连接,如果有的话
+	XCHAR tszFileHash[XPATH_MAX];                                          //文件HASH
+	XCHAR tszFilePath[XPATH_MAX];                                          //文件路径
+	XCHAR tszFileName[XPATH_MAX];                                          //文件名称
+	XCHAR tszFileLink[XPATH_MAX];                                          //文件连接,如果有的话
 	__int64x nFileOffset;                                                 //文件偏移
 	__int64x nFileSize;                                                   //文件大小
 	time_t nFileTime;                                                     //文件时间戳

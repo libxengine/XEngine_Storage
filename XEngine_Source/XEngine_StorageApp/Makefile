@@ -1,4 +1,4 @@
-CC = g++ -Wall -std=c++20 -fPIC
+CC = g++ -Wall -std=c++20 -fPIC -Wno-format-overflow
 PLATVER = 
 LOADHDR = -I ./ 
 LOADSO =  -L ../XEngine_Depend/XEngine_Module/jsoncpp -L ../XEngine_Depend/XEngine_Module/tinyxml2 -L ../XEngine_Depend/XEngine_Module/XEngine_InfoReport \

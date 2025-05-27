@@ -1,6 +1,6 @@
 ﻿#include "StorageApp_Hdr.h"
 
-XHTHREAD CALLBACK XEngine_Center_HTTPThread(XPVOID lParam)
+XHTHREAD XCALLBACK XEngine_Center_HTTPThread(XPVOID lParam)
 {
 	int nThreadPos = *(int*)lParam;
 	nThreadPos++;
@@ -43,11 +43,9 @@ XHTHREAD CALLBACK XEngine_Center_HTTPThread(XPVOID lParam)
 bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount)
 {
 	int nSDLen = 2048;
-	int nRVLen = 2048;
 	XCHAR tszSDBuffer[2048] = {};
-	XCHAR tszRVBuffer[2048] = {};
-	XCHAR tszStrKey[MAX_PATH] = {};
-	XCHAR tszStrVlu[MAX_PATH] = {};
+	XCHAR tszStrKey[XPATH_MAX] = {};
+	XCHAR tszStrVlu[XPATH_MAX] = {};
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam = {};
 
 	LPCXSTR lpszMethodPost = _X("POST");
@@ -60,7 +58,7 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	HttpProtocol_ServerHelp_GetParament(pSt_HTTPParam->tszHttpUri, &pptszUrlList, &nUrlCount, tszUrlName);
 	if (nUrlCount < 1)
 	{
-		st_HDRParam.nHttpCode = 404;
+		st_HDRParam.nHttpCode = 400;
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen);
 		BaseLib_Memory_Free((XPPPMEM)&pptszUrlList, nUrlCount);
@@ -78,7 +76,6 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		memset(tszUserPass, '\0', sizeof(tszUserPass));
 		if (!APIHelp_Api_ProxyAuth(tszUserName, tszUserPass, pptszListHdr, nHdrCount))
 		{
-			st_HDRParam.bIsClose = true;
 			st_HDRParam.bAuth = true;
 			st_HDRParam.nHttpCode = 401;
 
@@ -94,7 +91,6 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszAuthPass, tszSDBuffer, &nResponseCode, &ptszBody, &nSDLen);
 		if (200 != nResponseCode)
 		{
-			st_HDRParam.bIsClose = true;
 			st_HDRParam.bAuth = true;
 			st_HDRParam.nHttpCode = nResponseCode;
 
@@ -102,7 +98,7 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 		}
-		BaseLib_Memory_FreeCStyle((VOID**)&ptszBody);
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszBody);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass);
 		st_HDRParam.bAuth = true;
 	}

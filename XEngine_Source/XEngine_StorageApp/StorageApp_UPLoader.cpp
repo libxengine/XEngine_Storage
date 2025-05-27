@@ -1,6 +1,6 @@
 ﻿#include "StorageApp_Hdr.h"
 
-XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(XPVOID lParam)
+XHTHREAD XCALLBACK XEngine_UPLoader_HTTPThread(XPVOID lParam)
 {
 	int nThreadPos = *(int*)lParam;
 	nThreadPos++;
@@ -39,7 +39,7 @@ XHTHREAD CALLBACK XEngine_UPLoader_HTTPThread(XPVOID lParam)
 	}
 	return 0;
 }
-void CALLBACK XEngine_UPLoader_UPFlow(XHANDLE xhToken, bool bSDFlow, bool bRVFlow, bool bTime, __int64u nSDFlow, __int64u nRVFlow, __int64u nTimeFlow, XPVOID lParam)
+void XCALLBACK XEngine_UPLoader_UPFlow(XHANDLE xhToken, bool bSDFlow, bool bRVFlow, bool bTime, __int64u nSDFlow, __int64u nRVFlow, __int64u nTimeFlow, XPVOID lParam)
 {
 	XCHAR tszIPAddr[128] = {};
 	_tcsxcpy(tszIPAddr, (LPCXSTR)lParam);
@@ -128,7 +128,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
 		}
 		Protocol_StorageParse_SpeedLimit(ptszBody, nSDLen, &nCode, &nLimit);
-		BaseLib_Memory_FreeCStyle((VOID**)&ptszBody);
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszBody);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass);
 		st_HDRParam.bAuth = true;
 	}
@@ -155,10 +155,10 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	int nRVMode = 0;
 	int nRVCount = 0;
 	int nHDSize = 0;
-	XCHAR tszFileName[MAX_PATH];
+	XCHAR tszFileName[XPATH_MAX];
 	XENGINE_STORAGEBUCKET st_StorageBucket;
 
-	memset(tszFileName, '\0', MAX_PATH);
+	memset(tszFileName, '\0', XPATH_MAX);
 	memset(&st_StorageBucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
 	//解析参数
 	XCHAR** pptszParamList;
@@ -287,8 +287,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 				return false;
 			}
 		}
-		XCHAR tszTmpPath[MAX_PATH];
-		memset(tszTmpPath, '\0', MAX_PATH);
+		XCHAR tszTmpPath[XPATH_MAX];
+		memset(tszTmpPath, '\0', XPATH_MAX);
 
 		BaseLib_String_GetFileAndPath(tszFileDir, tszTmpPath);
 		if (0 != _xtaccess(tszTmpPath, 0))
@@ -310,7 +310,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		if (nLimit > 0 || (st_ServiceCfg.st_XLimit.bLimitMode && st_ServiceCfg.st_XLimit.nMaxUPLoader > 0))
 		{
 			//处理限速情况
-			XCHAR* ptszIPClient = (XCHAR*)malloc(MAX_PATH);
+			XCHAR* ptszIPClient = (XCHAR*)malloc(XPATH_MAX);
 			if (NULL == ptszIPClient)
 			{
 				st_HDRParam.bIsClose = true;
@@ -321,7 +321,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,插入用户请求失败,文件:%s,内存申请失败,服务器错误"), lpszClientAddr, tszFileDir);
 				return false;
 			}
-			memset(ptszIPClient, '\0', MAX_PATH);
+			memset(ptszIPClient, '\0', XPATH_MAX);
 			_tcsxcpy(ptszIPClient, lpszClientAddr);
 
 			nLimit = nLimit == 0 ? st_ServiceCfg.st_XLimit.nMaxUPLoader : nLimit;
@@ -341,7 +341,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			return false;
 		}
 		//检查上传模式
-		XCHAR tszBoundStr[MAX_PATH] = {};
+		XCHAR tszBoundStr[XPATH_MAX] = {};
 		if (APIHelp_Api_Boundary(&pptszListHdr, nHdrCount, tszBoundStr))
 		{
 			Session_UPStroage_SetBoundary(lpszClientAddr, tszBoundStr);
@@ -396,8 +396,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	HttpProtocol_Server_GetRecvModeEx(xhUPHttp, lpszClientAddr, &nRVMode, &nRVCount, &nHDSize);
 	if (nHDSize >= nRVCount)
 	{
-		int nPLen = MAX_PATH;
-		XCHAR tszPassNotify[MAX_PATH] = {};
+		int nPLen = XPATH_MAX;
+		XCHAR tszPassNotify[XPATH_MAX] = {};
 
 		Session_UPStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
 		if (!st_StorageInfo.st_Boundary.bBoundMode)
@@ -415,10 +415,10 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			}
 		}
 		int nHashLen = 0;
-		XBYTE tszHashStr[MAX_PATH];
+		XBYTE tszHashStr[XPATH_MAX];
 		XSTORAGECORE_DBFILE st_ProtocolFile;
 
-		memset(tszHashStr, '\0', MAX_PATH);
+		memset(tszHashStr, '\0', XPATH_MAX);
 		memset(&st_ProtocolFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
 		_tcsxcpy(st_ProtocolFile.st_ProtocolFile.tszFilePath, st_StorageBucket.tszFilePath);

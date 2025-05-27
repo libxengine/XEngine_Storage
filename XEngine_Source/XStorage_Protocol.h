@@ -34,9 +34,9 @@
 //文件传输头文件,可用于P2XP文件传输和组包管理模块文件传输
 typedef struct tag_XEngine_Protocol_File
 {
-	XCHAR tszFilePath[MAX_PATH];                                           //文件路径
-	XCHAR tszFileName[MAX_PATH];                                           //文件名称,文件传输的时候才需要,其他时候不需要
-	XCHAR tszFileHash[MAX_PATH];                                           //文件HASH值,MD5或者HASH1 256等...不能超过260字节大小
+	XCHAR tszFilePath[XPATH_MAX];                                           //文件路径
+	XCHAR tszFileName[XPATH_MAX];                                           //文件名称,文件传输的时候才需要,其他时候不需要
+	XCHAR tszFileHash[XPATH_MAX];                                           //文件HASH值,MD5或者HASH1 256等...不能超过260字节大小
 	XCHAR tszFileUser[128];                                                //文件所属用户
 	XCHAR tszFileTime[64];                                                 //文件创建时间，如果这个参数不填,那么服务器将会设置为接受到的文件时间
 	__int64x nFileSize;                                                   //文件大小
@@ -77,15 +77,15 @@ typedef struct
 //服务器动作处理
 typedef struct
 {
-	XCHAR tszFileUrl[MAX_PATH];      //文件的URL
-	XCHAR tszFileName[MAX_PATH];     //本地文件路径
-	XCHAR tszBucketStr[MAX_PATH];    //存储的KEY
+	XCHAR tszFileUrl[XPATH_MAX];      //文件的URL
+	XCHAR tszFileName[XPATH_MAX];     //本地文件路径
+	XCHAR tszBucketStr[XPATH_MAX];    //存储的KEY
 	XBYTE byType;                    //操作类型,0 HTTP,1 FTP,2 BT
 }XENGINE_ACTIONINFO;
 //WEBDAV协议
 typedef struct
 {
-	XCHAR tszToken[MAX_PATH];                 //令牌
+	XCHAR tszToken[XPATH_MAX];                 //令牌
 	XCHAR tszOwner[128];                 //所属用户
 	XCHAR tszTimeout[64];                //超时时间
 	XBYTE byLockType;                    //0未知,1独占,2共享

@@ -203,23 +203,23 @@ bool CAPIHelp_Cryption::APIHelp_Cryption_Digest(XCHAR* ptszResponseStr, LPCXSTR 
 {
     APIHelp_IsErrorOccur = false;
 
-    XCHAR tszResponseStr[2048];
+    XCHAR tszResponseStr[4096];
     XBYTE tszResponseMD5[2048];
-    XBYTE tszUserMD5[MAX_PATH];
-    XBYTE tszUrlMD5[MAX_PATH];
-    XCHAR tszUserStr[MAX_PATH];
-    XCHAR tszUrlStr[MAX_PATH];
-    XCHAR tszUserHex[MAX_PATH];
-    XCHAR tszUrlHex[MAX_PATH];
+    XBYTE tszUserMD5[XPATH_MAX];
+    XBYTE tszUrlMD5[XPATH_MAX];
+    XCHAR tszUserStr[XPATH_MAX];
+    XCHAR tszUrlStr[XPATH_MAX];
+    XCHAR tszUserHex[XPATH_MAX];
+    XCHAR tszUrlHex[XPATH_MAX];
 
     memset(tszResponseStr, '\0', sizeof(tszResponseStr));
     memset(tszResponseMD5, '\0', sizeof(tszResponseMD5));
-    memset(tszUserMD5, '\0', MAX_PATH);
-    memset(tszUrlMD5, '\0', MAX_PATH);
-    memset(tszUserStr, '\0', MAX_PATH);
-    memset(tszUrlStr, '\0', MAX_PATH);
-    memset(tszUserHex, '\0', MAX_PATH);
-    memset(tszUrlHex, '\0', MAX_PATH);
+    memset(tszUserMD5, '\0', XPATH_MAX);
+    memset(tszUrlMD5, '\0', XPATH_MAX);
+    memset(tszUserStr, '\0', XPATH_MAX);
+    memset(tszUrlStr, '\0', XPATH_MAX);
+    memset(tszUserHex, '\0', XPATH_MAX);
+    memset(tszUrlHex, '\0', XPATH_MAX);
 
 	//计算HA1 的MD5字符串 MD5(USER:PASS:REAL)
 	int nRet = _xstprintf(tszUserStr, _X("%s:%s:%s"), lpszUser, lpszRealm, lpszPass);

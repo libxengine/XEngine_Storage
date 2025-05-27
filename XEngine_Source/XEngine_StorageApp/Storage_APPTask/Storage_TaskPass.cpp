@@ -29,14 +29,14 @@ bool XEngine_Task_Pass(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lpsz
 	else if (0 == _tcsxnicmp(lpszAPIDLFile, lpszAPIName, _tcsxlen(lpszAPIDLFile)))
 	{
 		__int64x nFileSize = 0;
-		XCHAR tszPathKey[MAX_PATH];
-		XCHAR tszFileName[MAX_PATH];
-		XCHAR tszFileHash[MAX_PATH];
+		XCHAR tszPathKey[XPATH_MAX];
+		XCHAR tszFileName[XPATH_MAX];
+		XCHAR tszFileHash[XPATH_MAX];
 		XCHAR tszClientAddr[128];
 
-		memset(tszPathKey, '\0', MAX_PATH);
-		memset(tszFileName, '\0', MAX_PATH);
-		memset(tszFileHash, '\0', MAX_PATH);
+		memset(tszPathKey, '\0', XPATH_MAX);
+		memset(tszFileName, '\0', XPATH_MAX);
+		memset(tszFileHash, '\0', XPATH_MAX);
 		memset(tszClientAddr, '\0', sizeof(tszClientAddr));
 
 		Protocol_StorageParse_ProxyNotify(lpszMsgBuffer, nMsgLen, tszClientAddr, tszPathKey, tszFileName, tszFileHash, &nFileSize);

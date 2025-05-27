@@ -1,6 +1,6 @@
 ﻿#include "StorageApp_Hdr.h"
 
-XHTHREAD CALLBACK XEngine_Webdav_HTTPThread(XPVOID lParam)
+XHTHREAD XCALLBACK XEngine_Webdav_HTTPThread(XPVOID lParam)
 {
 	int nThreadPos = *(int*)lParam;
 	nThreadPos++;
@@ -94,7 +94,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		}
 		int nListCount = 0;
 		XCHAR** pptszListFile;
-		XCHAR tszFindStr[MAX_PATH] = {};
+		XCHAR tszFindStr[XPATH_MAX] = {};
 		//得到是否是文件
 		if (APIHelp_Api_UrlStr(st_StorageBucket.tszBuckKey, pSt_HTTPParam->tszHttpUri))
 		{
@@ -103,7 +103,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			BaseLib_String_Replace(tszFindStr, &nALen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath, true);
 			//如果是文件
 			nListCount = 1;
-			BaseLib_Memory_Malloc((XPPPMEM)&pptszListFile, nListCount, MAX_PATH);
+			BaseLib_Memory_Malloc((XPPPMEM)&pptszListFile, nListCount, XPATH_MAX);
 			_tcsxcpy(pptszListFile[0], tszFindStr);
 		}
 		else
@@ -178,8 +178,8 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		int nRLen = 0;
 		BaseLib_String_Replace(tszHostStr, &nRLen, tszPortWebdav, tszPortDownload, true);
 		//转换地址
-		XCHAR tszStroageKey[MAX_PATH] = {};
-		XCHAR tszFileName[MAX_PATH] = {};
+		XCHAR tszStroageKey[XPATH_MAX] = {};
+		XCHAR tszFileName[XPATH_MAX] = {};
 
 		int nRet = _stxscanf(pSt_HTTPParam->tszHttpUri + 1, _X("%99[^/]/%199[^\n]"), tszStroageKey, tszFileName);
 		if (2 != nRet)
@@ -259,7 +259,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			return false;
 		}
 		int nFLen = 0;
-		XCHAR tszFileName[MAX_PATH] = {};
+		XCHAR tszFileName[XPATH_MAX] = {};
 		_tcsxcpy(tszFileName, pSt_HTTPParam->tszHttpUri + 1);
 		BaseLib_String_Replace(tszFileName, &nFLen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath);
 
@@ -306,7 +306,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			return false;
 		}
 		int nALen = 0;
-		XCHAR tszCreateDir[MAX_PATH] = {};
+		XCHAR tszCreateDir[XPATH_MAX] = {};
 		_tcsxcpy(tszCreateDir, pSt_HTTPParam->tszHttpUri + 1);
 		BaseLib_String_Replace(tszCreateDir, &nALen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath, true);
 

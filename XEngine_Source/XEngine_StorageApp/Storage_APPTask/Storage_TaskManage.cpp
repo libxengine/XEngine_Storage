@@ -34,16 +34,16 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 		int nMode = 0;
 		int nListCount = 0;
 		int nMsgLen = 10240;
-		XCHAR tszFileName[MAX_PATH];
-		XCHAR tszFileHash[MAX_PATH];
+		XCHAR tszFileName[XPATH_MAX];
+		XCHAR tszFileHash[XPATH_MAX];
 		XCHAR tszBucketKey[128];
 		XCHAR tszTimeStart[128];
 		XCHAR tszTimeEnd[128];
 		XCHAR tszMsgBuffer[10240];
 		XSTORAGECORE_DBFILE** ppSt_ListFile;
 
-		memset(tszFileName, '\0', MAX_PATH);
-		memset(tszFileHash, '\0', MAX_PATH);
+		memset(tszFileName, '\0', XPATH_MAX);
+		memset(tszFileHash, '\0', XPATH_MAX);
 		memset(tszBucketKey, '\0', sizeof(tszBucketKey));
 		memset(tszTimeStart, '\0', sizeof(tszTimeStart));
 		memset(tszTimeEnd, '\0', sizeof(tszTimeEnd));
@@ -280,14 +280,14 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 		int nOPCode = 0;
 		int nListCount = 0;
 		XCHAR** ppszListDir = NULL;
-		XCHAR tszUserDir[MAX_PATH];
-		XCHAR tszBuckKey[MAX_PATH];
-		XCHAR tszBuckPath[MAX_PATH];
+		XCHAR tszUserDir[XPATH_MAX];
+		XCHAR tszBuckKey[XPATH_MAX];
+		XCHAR tszBuckPath[XPATH_MAX];
 		XCHAR tszRealDir[1024];
 
-		memset(tszUserDir, '\0', MAX_PATH);
-		memset(tszBuckKey, '\0', MAX_PATH);
-		memset(tszBuckPath, '\0', MAX_PATH);
+		memset(tszUserDir, '\0', XPATH_MAX);
+		memset(tszBuckKey, '\0', XPATH_MAX);
+		memset(tszBuckPath, '\0', XPATH_MAX);
 		memset(tszRealDir, '\0', sizeof(tszRealDir));
 
 		Protocol_StorageParse_DirOperator(lpszMsgBuffer, tszUserDir, tszBuckKey, &nOPCode);
@@ -343,7 +343,7 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 	}
 	else if (0 == _tcsxnicmp(lpszAPIBucket, lpszAPIName, _tcsxlen(lpszAPIBucket)))
 	{
-		XCHAR tszBuckKey[MAX_PATH] = {};
+		XCHAR tszBuckKey[XPATH_MAX] = {};
 		Protocol_StorageParse_DirOperator(lpszMsgBuffer, NULL, tszBuckKey, NULL);
 		if (_tcsxlen(tszBuckKey) > 0)
 		{
