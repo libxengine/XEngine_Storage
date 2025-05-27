@@ -46,19 +46,27 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	int nRVLen = 2048;
 	XCHAR tszSDBuffer[2048] = {};
 	XCHAR tszRVBuffer[2048] = {};
-	XCHAR tszAPIVersion[64];
-	XCHAR tszAPIMethod[64];
-	XCHAR tszAPIName[64];
-	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
-
-	memset(tszAPIVersion, '\0', sizeof(tszAPIVersion));
-	memset(tszAPIMethod, '\0', sizeof(tszAPIMethod));
-	memset(tszAPIName, '\0', sizeof(tszAPIName));
-	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
+	XCHAR tszStrKey[MAX_PATH] = {};
+	XCHAR tszStrVlu[MAX_PATH] = {};
+	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam = {};
 
 	LPCXSTR lpszMethodPost = _X("POST");
-	LPCXSTR lpszMethodOption = _X("OPTIONS");
+	LPCXSTR lpszMethodGet = _X("GET");
 
+	XCHAR** pptszUrlList;
+	XCHAR tszUrlName[128];
+	int nUrlCount = 0;
+	//得到URL参数个数
+	HttpProtocol_ServerHelp_GetParament(pSt_HTTPParam->tszHttpUri, &pptszUrlList, &nUrlCount, tszUrlName);
+	if (nUrlCount < 1)
+	{
+		st_HDRParam.nHttpCode = 404;
+		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen);
+		BaseLib_Memory_Free((XPPPMEM)&pptszUrlList, nUrlCount);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,发送的URL请求参数不正确:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+		return false;
+	}
 	st_HDRParam.bIsClose = true;
 	st_HDRParam.nHttpCode = 200;
 	if (st_ServiceCfg.st_XProxy.bAuthPass)
@@ -101,39 +109,48 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 
 	if (0 == _tcsxnicmp(lpszMethodPost, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPost)))
 	{
-		LPCXSTR lpszMethodPass = _X("Pass");
-		LPCXSTR lpszMehtodManage = _X("Manage");
-		LPCXSTR lpszMehtodAction = _X("Action");
+		LPCXSTR lpszAPIPass = _X("Pass");
+		LPCXSTR lpszAPIManage = _X("Manage");
+		LPCXSTR lpszAPIAction = _X("Action");
 
-		if (!HttpProtocol_ServerHelp_GetUrlApi(pSt_HTTPParam->tszHttpUri, tszAPIVersion, tszAPIMethod, tszAPIName))
-		{
-			Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_APINAME, "api name is incorrect");
-			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,请求的API不支持"), lpszClientAddr);
-			return false;
-		}
+		BaseLib_String_GetKeyValueA(pptszUrlList[0], "=", tszStrKey, tszStrVlu);
 		//通知类型.用于多服务器
-		if (0 == _tcsxnicmp(lpszMethodPass, tszAPIMethod, _tcsxlen(lpszMethodPass)))
+		if (0 == _tcsxnicmp(lpszAPIPass, tszStrVlu, _tcsxlen(lpszAPIPass)))
 		{
-			XEngine_Task_Pass(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
+			//http://127.0.0.1:5100/api?function=pass&param=xxx
+			memset(tszStrVlu, '\0', sizeof(tszStrVlu));
+			BaseLib_String_GetKeyValueA(pptszUrlList[1], "=", tszStrKey, tszStrVlu);
+			XEngine_Task_Pass(tszStrVlu, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
 		}
-		else if (0 == _tcsxnicmp(lpszMehtodManage, tszAPIMethod, _tcsxlen(lpszMehtodManage)))
+		else if (0 == _tcsxnicmp(lpszAPIManage, tszStrVlu, _tcsxlen(lpszAPIManage)))
 		{
-			XEngine_Task_Manage(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
+			//http://127.0.0.1:5100/api?function=pass&param=xxx
+			memset(tszStrVlu, '\0', sizeof(tszStrVlu));
+			BaseLib_String_GetKeyValueA(pptszUrlList[1], "=", tszStrKey, tszStrVlu);
+			XEngine_Task_Manage(tszStrVlu, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
 		}
-		else if (0 == _tcsxnicmp(lpszMehtodAction, tszAPIMethod, _tcsxlen(lpszMehtodAction)))
+		else if (0 == _tcsxnicmp(lpszAPIAction, tszStrVlu, _tcsxlen(lpszAPIAction)))
 		{
-			Storage_TaskAction(tszAPIName, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam);
+			//http://127.0.0.1:5100/api?function=pass&param=xxx
+			memset(tszStrVlu, '\0', sizeof(tszStrVlu));
+			BaseLib_String_GetKeyValueA(pptszUrlList[1], "=", tszStrKey, tszStrVlu);
+			Storage_TaskAction(tszStrVlu, lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam);
 		}
 	}
-	else if (0 == _tcsxnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOption)))
+	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
 	{
 		//用于心跳
-		LPCXSTR lpszHdrBuffer = _X("Allow: POST GET PUT\r\n");
-		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求OPTIONS心跳方法成功"), lpszClientAddr);
+		//http://127.0.0.1:5100/api?function=heart
+		LPCXSTR lpszAPIHeart = _X("heart");
+
+		BaseLib_String_GetKeyValueA(pptszUrlList[0], "=", tszStrKey, tszStrVlu);
+		if (0 == _tcsxnicmp(lpszAPIHeart, tszStrVlu, _tcsxlen(lpszAPIHeart)))
+		{
+			LPCXSTR lpszHdrBuffer = _X("Allow: POST GET PUT\r\n");
+			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, lpszHdrBuffer);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求GET心跳方法成功"), lpszClientAddr);
+		}
 	}
 	else
 	{
