@@ -572,6 +572,7 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，转录动作没有启用"));
 	}
+#ifndef _DEBUG
 	//发送信息报告
 	if (st_ServiceCfg.st_XReport.bEnable && !bIsTest)
 	{
@@ -589,7 +590,7 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，信息报告给API服务器没有启用"));
 	}
-
+#endif
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("所有服务成功启动，存储中心服务运行中，发行版本次数:%d,XEngine版本:%s%s 当前运行版本：%s。。。"), st_ServiceCfg.st_XVer.pStl_ListStorage->size(), BaseLib_Version_XNumberStr(), BaseLib_Version_XTypeStr(), st_ServiceCfg.st_XVer.pStl_ListStorage->front().c_str());
 
 	while (true)
