@@ -60,7 +60,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 
 	st_HDRParam.bIsClose = false;
 	st_HDRParam.nHttpCode = 200;
-
+	//http://127.0.0.1:5103/storagekey1
 	if (0 == _tcsxnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOption)))
 	{
 		//用于心跳
@@ -162,39 +162,46 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	}
 	else if (0 == _tcsxnicmp(lpszMethodPut, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPut)))
 	{
-		//使用重定向实现上传
-		st_HDRParam.bIsClose = false;
-		st_HDRParam.nHttpCode = 302;
-
-		XCHAR tszRequestAddr[1024] = {};
-		XCHAR tszHostStr[128] = {};
-		HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, _X("Host"), tszHostStr);
-
-		XCHAR tszPortWebdav[64] = {};
-		XCHAR tszPortDownload[64] = {};
-		_xstprintf(tszPortWebdav, _X("%d"), st_ServiceCfg.nWebdavPort);
-		_xstprintf(tszPortDownload, _X("%d"), st_ServiceCfg.nStorageUPPort);
-		//转换端口
-		int nRLen = 0;
-		BaseLib_String_Replace(tszHostStr, &nRLen, tszPortWebdav, tszPortDownload, true);
-		//转换地址
-		XCHAR tszStroageKey[XPATH_MAX] = {};
-		XCHAR tszFileName[XPATH_MAX] = {};
-
-		int nRet = _stxscanf(pSt_HTTPParam->tszHttpUri + 1, _X("%99[^/]/%199[^\n]"), tszStroageKey, tszFileName);
-		if (2 != nRet)
+		if (st_ServiceCfg.st_XStorage.bWDLocation)
 		{
-			st_HDRParam.nHttpCode = 413;
-			HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,处理WEBDAV协议上传方法失败,文件请求路径不正确,URL:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
-			return false;
-		}
-		_xstprintf(tszRequestAddr, _X("Location: http://%s/api?filename=%s&storeagekey=%s\r\n"), tszHostStr, tszFileName, tszStroageKey);
+			//使用重定向实现上传
+			st_HDRParam.bIsClose = false;
+			st_HDRParam.nHttpCode = 302;
 
-		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszRequestAddr);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,请求文件上传被重定向到:%s"), lpszClientAddr, tszRequestAddr);
+			XCHAR tszRequestAddr[1024] = {};
+			XCHAR tszHostStr[128] = {};
+			HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, _X("Host"), tszHostStr);
+
+			XCHAR tszPortWebdav[64] = {};
+			XCHAR tszPortDownload[64] = {};
+			_xstprintf(tszPortWebdav, _X("%d"), st_ServiceCfg.nWebdavPort);
+			_xstprintf(tszPortDownload, _X("%d"), st_ServiceCfg.nStorageUPPort);
+			//转换端口
+			int nRLen = 0;
+			BaseLib_String_Replace(tszHostStr, &nRLen, tszPortWebdav, tszPortDownload, true);
+			//转换地址
+			XCHAR tszStroageKey[XPATH_MAX] = {};
+			XCHAR tszFileName[XPATH_MAX] = {};
+
+			int nRet = _stxscanf(pSt_HTTPParam->tszHttpUri + 1, _X("%99[^/]/%199[^\n]"), tszStroageKey, tszFileName);
+			if (2 != nRet)
+			{
+				st_HDRParam.nHttpCode = 413;
+				HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,处理WEBDAV协议上传方法失败,文件请求路径不正确,URL:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+				return false;
+			}
+			_xstprintf(tszRequestAddr, _X("Location: http://%s/api?filename=%s&storeagekey=%s\r\n"), tszHostStr, tszFileName, tszStroageKey);
+
+			HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszRequestAddr);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,请求文件上传被重定向到:%s"), lpszClientAddr, tszRequestAddr);
+		}
+		else
+		{
+			XEngine_Task_HttpUPLoader(lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
+		}
 	}
 	else if (0 == _tcsxnicmp(lpszMethodLock, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodLock)))
 	{

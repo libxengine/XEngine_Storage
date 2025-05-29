@@ -104,7 +104,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(XEngine_Include);../XEngine_Depend/XEngine_Module/jsoncpp;../XEngine_Depend/XEngine_Module/tinyxml2;$(IncludePath)</IncludePath>
+    <IncludePath>$(XEngine_Include);../XEngine_Depend/XEngine_Module/jsoncpp;../XEngine_Depend/XEngine_Module/tinyxml2;..\StorageModule_Protocol;$(IncludePath)</IncludePath>
     <LibraryPath>$(XEngine_Lib32);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -119,7 +119,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(XEngine_Include);../XEngine_Depend/XEngine_Module/jsoncpp;../XEngine_Depend/XEngine_Module/tinyxml2;$(IncludePath)</IncludePath>
+    <IncludePath>$(XEngine_Include);../XEngine_Depend/XEngine_Module/jsoncpp;../XEngine_Depend/XEngine_Module/tinyxml2;..\StorageModule_Protocol;$(IncludePath)</IncludePath>
     <LibraryPath>$(XEngine_Lib64);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">

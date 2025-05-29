@@ -488,3 +488,43 @@ bool CAPIHelp_Api::APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl)
 
 	return true;
 }
+/********************************************************************
+函数名称：APIHelp_Api_GetLastName
+函数功能：获取最后文件名
+ 参数.一：ptszLastName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的文件名
+ 参数.二：lpszPathStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要获取的字符串
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAPIHelp_Api::APIHelp_Api_GetLastName(XCHAR* ptszLastName, LPCXSTR lpszPathStr)
+{
+	APIHelp_IsErrorOccur = false;
+
+	xstring m_StrPath = lpszPathStr;
+	// 如果以斜杠结尾，去掉末尾的斜杠
+	if (!m_StrPath.empty() && m_StrPath.back() == '/')
+	{
+		m_StrPath.pop_back();
+	}
+	// 找到最后一个斜杠的位置
+	size_t nPos = m_StrPath.find_last_of('/');
+	if (nPos == std::string::npos)
+	{
+		_tcsxcpy(ptszLastName, m_StrPath.c_str());
+	}
+	else
+	{
+		_tcsxcpy(ptszLastName, m_StrPath.substr(nPos + 1).c_str());
+	}
+	return true;
+}

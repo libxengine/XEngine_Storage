@@ -66,6 +66,7 @@ typedef struct tag_XEngine_ServerConfig
 	{
         bool bResumable;
         bool bUPHash;
+        bool bWDLocation;
         int nHashMode;
     }st_XStorage;
     struct  

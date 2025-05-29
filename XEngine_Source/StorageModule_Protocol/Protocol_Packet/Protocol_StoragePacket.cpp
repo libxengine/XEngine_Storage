@@ -733,21 +733,25 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBu
         pSt_XMLPropstat->InsertEndChild(pSt_XMLProp);
 		//属性名称
 		XMLElement* pSt_XMLPropName = m_XMLDocument.NewElement("d:displayname");
-        pSt_XMLPropName->SetText(tszFileName);
+		if (_tcsxlen(tszFileName) <= 0)
+		{
+			APIHelp_Api_GetLastName(tszFileName, (*ppptszListFile)[i]);
+		}
+		pSt_XMLPropName->SetText(tszFileName);
         pSt_XMLProp->InsertEndChild(pSt_XMLPropName);
 
+		XCHAR tszFileSize[128] = {};
+		_xstprintf(tszFileSize, _X("%llu"), st_FileAttr.nFileSize);
+		//属性大小
+		XMLElement* pSt_XMLLength = m_XMLDocument.NewElement("d:getcontentlength");
+		pSt_XMLLength->SetText(tszFileSize);
+		pSt_XMLProp->InsertEndChild(pSt_XMLLength);
+		//属性修改时间
+		XMLElement* pSt_XMLModifyTime = m_XMLDocument.NewElement("d:getlastmodified");
+		pSt_XMLModifyTime->SetText(tszGMTTime);
+		pSt_XMLProp->InsertEndChild(pSt_XMLModifyTime);
         if (st_FileAttr.bFile)
         {
-            XCHAR tszFileSize[128] = {};
-            _xstprintf(tszFileSize, _X("%llu"), st_FileAttr.nFileSize);
-			//属性大小
-			XMLElement* pSt_XMLLength = m_XMLDocument.NewElement("d:getcontentlength");
-            pSt_XMLLength->SetText(tszFileSize);
-			pSt_XMLProp->InsertEndChild(pSt_XMLLength);
-			//属性修改时间
-			XMLElement* pSt_XMLModifyTime = m_XMLDocument.NewElement("d:getlastmodified");
-			pSt_XMLModifyTime->SetText(tszGMTTime);
-			pSt_XMLProp->InsertEndChild(pSt_XMLModifyTime);
 			//增加会话属性
 			//获得会话
 			XENGINE_WEBDAVLOCK st_WDLocker = {};

@@ -135,7 +135,7 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	_tcsxcpy(pSt_ServerConfig->st_XSql.tszSQLUser, st_JsonXSql["SQLUser"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XSql.tszSQLPass, st_JsonXSql["SQLPass"].asCString());
 
-	if (st_JsonRoot["XStorage"].empty() || (3 != st_JsonRoot["XStorage"].size()))
+	if (st_JsonRoot["XStorage"].empty() || (4 != st_JsonRoot["XStorage"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
@@ -145,6 +145,7 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XStorage.nHashMode = st_JsonXStorage["nHashMode"].asInt();
 	pSt_ServerConfig->st_XStorage.bUPHash = st_JsonXStorage["bUPHash"].asBool();
 	pSt_ServerConfig->st_XStorage.bResumable = st_JsonXStorage["bResumable"].asBool();
+	pSt_ServerConfig->st_XStorage.bWDLocation = st_JsonXStorage["bWDLocation"].asBool();
 
 	if (st_JsonRoot["XProxy"].empty() || (6 != st_JsonRoot["XProxy"].size()))
 	{
