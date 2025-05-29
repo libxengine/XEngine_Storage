@@ -39,6 +39,7 @@
     "XStorage":{
         "bResumable":true,
         "bUPHash":false,
+        "bWDLocation":false,
         "nHashMode":2
     },
     "XProxy":{
@@ -65,7 +66,7 @@
     "XCert":{
         "bDLEnable":false,
         "bUPEnable":false,
-        "bCHEnable":false,
+        "bCHEnable":true,
         "bWDEnable":false,
         "tszCertChain":"./XEngine_Cert/server.crt",
         "tszCertServer":"",
