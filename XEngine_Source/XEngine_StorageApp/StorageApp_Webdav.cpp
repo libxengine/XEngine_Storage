@@ -200,7 +200,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		}
 		else
 		{
-			XEngine_Task_HttpUPLoader(lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount);
+			XEngine_Task_HttpUPLoader(lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPWEBDAV);
 		}
 	}
 	else if (0 == _tcsxnicmp(lpszMethodLock, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodLock)))
