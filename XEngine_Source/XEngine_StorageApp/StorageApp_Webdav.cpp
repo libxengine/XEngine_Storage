@@ -200,6 +200,11 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		}
 		else
 		{
+			//转换参数格式:/storagekey1/webdav/clash-verge-rev-backup/backup.zip 为 /api?filename=webdav/clash-verge-rev-backup/backup.zip&storeagekey=storagekey1
+			XCHAR tszConvertStr[XPATH_MAX] = {};
+			APIHelp_Api_WDToUrl(pSt_HTTPParam->tszHttpUri, tszConvertStr);
+			memset(pSt_HTTPParam->tszHttpUri, '\0', sizeof(pSt_HTTPParam->tszHttpUri));
+			_tcsxcpy(pSt_HTTPParam->tszHttpUri, tszConvertStr);
 			XEngine_Task_HttpUPLoader(lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPWEBDAV);
 		}
 	}

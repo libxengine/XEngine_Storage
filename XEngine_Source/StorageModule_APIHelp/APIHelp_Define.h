@@ -390,6 +390,25 @@ extern "C" bool APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl);
 备注：
 *********************************************************************/
 extern "C" bool APIHelp_Api_GetLastName(XCHAR* ptszLastName, LPCXSTR lpszPathStr);
+/********************************************************************
+函数名称：APIHelp_Api_WDToUrl
+函数功能：webdav的路径转为存储服务标准路径
+ 参数.一：lpszUrl
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要转换的路径
+ 参数.二：ptszUrl
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出转换后的路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl);
 /************************************************************************/
 /*                       加解密函数                                     */
 /************************************************************************/

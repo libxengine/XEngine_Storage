@@ -528,3 +528,51 @@ bool CAPIHelp_Api::APIHelp_Api_GetLastName(XCHAR* ptszLastName, LPCXSTR lpszPath
 	}
 	return true;
 }
+/********************************************************************
+函数名称：APIHelp_Api_WDToUrl
+函数功能：webdav的路径转为存储服务标准路径
+ 参数.一：lpszUrl
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要转换的路径
+ 参数.二：ptszUrl
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出转换后的路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAPIHelp_Api::APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl)
+{
+	APIHelp_IsErrorOccur = false;
+
+	xstring m_StrUrl = lpszUrl;
+	// 确保路径以 "/" 开头
+	if (m_StrUrl.empty() || m_StrUrl[0] != '/') 
+	{
+		return false;
+	}
+	if (0 == _tcsxnicmp("api", m_StrUrl.c_str() + 1, 3))
+	{
+		_tcsxcpy(ptszUrl, lpszUrl);
+		return true;
+	}
+	// 找到第一个 '/' 和第二个 '/'
+	size_t nFirstSlash = m_StrUrl.find('/', 1);
+	if (nFirstSlash == std::string::npos) 
+	{
+		return false;
+	}
+	//提取bucket
+	xstring m_StrBucket = m_StrUrl.substr(1, nFirstSlash - 1);
+	//提取剩余路径
+	xstring m_StrFile = m_StrUrl.substr(nFirstSlash + 1);
+	// 构造目标URL
+	xstring m_XUrl = "/api?filename=" + m_StrFile + "&storeagekey=" + m_StrBucket;
+	_tcsxcpy(ptszUrl, m_XUrl.c_str());
+	return true;
+}

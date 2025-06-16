@@ -96,6 +96,10 @@ extern "C" bool APIHelp_Api_GetLastName(XCHAR* ptszLastName, LPCXSTR lpszPathStr
 {
 	return m_APIHelp.APIHelp_Api_GetLastName(ptszLastName, lpszPathStr);
 }
+extern "C" bool APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl)
+{
+	return m_APIHelp.APIHelp_Api_WDToUrl(lpszUrl, ptszUrl);
+}
 /************************************************************************/
 /*                       加解密函数                                     */
 /************************************************************************/
