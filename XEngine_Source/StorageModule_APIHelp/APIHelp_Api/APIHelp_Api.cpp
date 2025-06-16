@@ -471,12 +471,16 @@ bool CAPIHelp_Api::APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl)
 	XCHAR *ptszFirstStr = _tcsxchr(tszUrlStr, '/');
 	if (ptszFirstStr == NULL) 
 	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_FORMAT;
 		return false;
 	}
 	// 查找第二个 '/' 的位置
 	XCHAR* ptszSecondStr = _tcsxchr(ptszFirstStr + 1, '/');
 	if (ptszSecondStr == NULL)
 	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_FORMAT;
 		return false;
 	}
 	// 计算提取字符串的长度
@@ -554,6 +558,8 @@ bool CAPIHelp_Api::APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl)
 	// 确保路径以 "/" 开头
 	if (m_StrUrl.empty() || m_StrUrl[0] != '/') 
 	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_FORMAT;
 		return false;
 	}
 	if (0 == _tcsxnicmp("api", m_StrUrl.c_str() + 1, 3))
@@ -565,6 +571,8 @@ bool CAPIHelp_Api::APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl)
 	size_t nFirstSlash = m_StrUrl.find('/', 1);
 	if (nFirstSlash == std::string::npos) 
 	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_FORMAT;
 		return false;
 	}
 	//提取bucket
