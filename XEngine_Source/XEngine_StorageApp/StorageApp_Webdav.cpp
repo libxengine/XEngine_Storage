@@ -144,6 +144,10 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	{
 		if (st_ServiceCfg.st_XStorage.bWDLocation)
 		{
+			XEngine_Task_HttpDownload(lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPWEBDAV);
+		}
+		else
+		{
 			//使用重定向实现下载
 			st_HDRParam.bIsClose = true;
 			st_HDRParam.nHttpCode = 302;
@@ -165,14 +169,19 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,请求文件下载被重定向到:%s"), lpszClientAddr, tszRequestAddr);
 		}
-		else
-		{
-			XEngine_Task_HttpDownload(lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPWEBDAV);
-		}
 	}
 	else if (0 == _tcsxnicmp(lpszMethodPut, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPut)))
 	{
 		if (st_ServiceCfg.st_XStorage.bWDLocation)
+		{
+			//转换参数格式:/storagekey1/webdav/clash-verge-rev-backup/backup.zip 为 /api?filename=webdav/clash-verge-rev-backup/backup.zip&storeagekey=storagekey1
+			XCHAR tszConvertStr[XPATH_MAX] = {};
+			APIHelp_Api_WDToUrl(pSt_HTTPParam->tszHttpUri, tszConvertStr);
+			memset(pSt_HTTPParam->tszHttpUri, '\0', sizeof(pSt_HTTPParam->tszHttpUri));
+			_tcsxcpy(pSt_HTTPParam->tszHttpUri, tszConvertStr);
+			XEngine_Task_HttpUPLoader(lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPWEBDAV);
+		}
+		else
 		{
 			//使用重定向实现上传
 			st_HDRParam.bIsClose = false;
@@ -207,15 +216,6 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszRequestAddr);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,请求文件上传被重定向到:%s"), lpszClientAddr, tszRequestAddr);
-		}
-		else
-		{
-			//转换参数格式:/storagekey1/webdav/clash-verge-rev-backup/backup.zip 为 /api?filename=webdav/clash-verge-rev-backup/backup.zip&storeagekey=storagekey1
-			XCHAR tszConvertStr[XPATH_MAX] = {};
-			APIHelp_Api_WDToUrl(pSt_HTTPParam->tszHttpUri, tszConvertStr);
-			memset(pSt_HTTPParam->tszHttpUri, '\0', sizeof(pSt_HTTPParam->tszHttpUri));
-			_tcsxcpy(pSt_HTTPParam->tszHttpUri, tszConvertStr);
-			XEngine_Task_HttpUPLoader(lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPWEBDAV);
 		}
 	}
 	else if (0 == _tcsxnicmp(lpszMethodLock, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodLock)))

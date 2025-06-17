@@ -44,7 +44,7 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 {
 	int nMsgLen = 4096;
 	int nListCount = 0;
-	int nNetType = *(int*)lParam;
+	int nNetType = 0;
 	__int64u nTimeWait = 0;
 	XCHAR tszMsgBuffer[4096];
 	SESSION_STORAGEINFO st_StorageInfo;
@@ -52,7 +52,15 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 	memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 	memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
 
-	Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo);
+	if (NULL != lParam)
+	{
+		nNetType = *(int*)lParam;
+	}
+	if (!Session_DLStroage_GetInfo(lpszClientAddr, &st_StorageInfo))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,获取用户对应文件内容失败,错误：%lX"), lpszClientAddr, Session_GetLastError());
+		return;
+	}
 	if (st_ServiceCfg.st_XLimit.bLimitMode && st_StorageInfo.nLimit > 0)
 	{
 		__int64u nLimitTime = 0;
@@ -104,7 +112,7 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 			{
 				NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr);
 			}
-			
+			free(lParam);
 			Session_DLStroage_Delete(lpszClientAddr);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,文件已经发送完毕,用户已经被移除发送列表"), lpszClientAddr);
 		}
@@ -116,18 +124,14 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 			}
 			XEngine_Task_SendDownload(lpszClientAddr, tszMsgBuffer, nMsgLen, nNetType);
 		}
-	}
-	else
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,获取用户对应文件内容失败,错误：%lX"), lpszClientAddr, Session_GetLastError());
-	}
-	//限速,如果没有单独限速,默认全局限速
-	if (st_ServiceCfg.st_XLimit.bLimitMode && (0 == st_StorageInfo.nLimit))
-	{
-		Session_DLStroage_GetCount(&nListCount);
-		Algorithm_Calculation_SleepFlow(xhLimit, &nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, nListCount, 4096);
-		//WINDOWS下sleep_for精度可能不准
-		std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
+		//限速,如果没有单独限速,默认全局限速
+		if (st_ServiceCfg.st_XLimit.bLimitMode && (0 == st_StorageInfo.nLimit))
+		{
+			Session_DLStroage_GetCount(&nListCount);
+			Algorithm_Calculation_SleepFlow(xhLimit, &nTimeWait, st_ServiceCfg.st_XLimit.nMaxDNLoader, nListCount, 4096);
+			//WINDOWS下sleep_for精度可能不准
+			std::this_thread::sleep_for(std::chrono::microseconds(nTimeWait));
+		}
 	}
 }
 
@@ -326,14 +330,19 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	}
 	_xstprintf(tszFieldStr, _X("FileHash: %s\r\n"), tszHashStr);
 	//不能在send之前调用
+	HttpProtocol_Server_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize, tszFieldStr);
+	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+	//发送
 	bool bRet = false;
+	int* pInt_NetType = (int*)malloc(sizeof(int));
+	*pInt_NetType = nNetType;
 	if (STORAGE_NETTYPE_HTTPWEBDAV == nNetType)
 	{
-		bRet = NetCore_TCPXCore_CBSendEx(xhNetWebdav, lpszClientAddr, XEngine_Download_CBSend, &nNetType);
+		bRet = NetCore_TCPXCore_CBSendEx(xhNetWebdav, lpszClientAddr, XEngine_Download_CBSend, pInt_NetType);
 	}
 	else
 	{
-		bRet = NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend, &nNetType);
+		bRet = NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend, pInt_NetType);
 	}
 	if (!bRet)
 	{
@@ -345,8 +354,6 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,设置回调下载失败,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
 		return false;
 	}
-	HttpProtocol_Server_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize, tszFieldStr);
-	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,请求下载文件成功,文件名:%s,总大小:%llu,发送大小:%llu,范围:%d - %d"), lpszClientAddr, tszFileDir, ullCount, ullSize, nPosStart, nPosEnd);
 	return true;
 }
