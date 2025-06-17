@@ -820,6 +820,15 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBu
 		XMLElement* pSt_XMLModifyTime = m_XMLDocument.NewElement("d:getlastmodified");
 		pSt_XMLModifyTime->SetText(tszGMTTime);
 		pSt_XMLProp->InsertEndChild(pSt_XMLModifyTime);
+		//属性创建时间
+#if XENGINE_VERSION_KERNEL >= 9 && XENGINE_VERSION_MAIN >= 22
+		XCHAR tszISOTime[128] = {};
+		BaseLib_Time_ISOTime(tszISOTime, st_FileAttr.nCreateTime);
+
+		XMLElement* pSt_XMLCreateTime = m_XMLDocument.NewElement("d:creationdate");
+		pSt_XMLCreateTime->SetText(tszISOTime);
+		pSt_XMLProp->InsertEndChild(pSt_XMLCreateTime);
+#endif
         if (st_FileAttr.bFile)
         {
 			//增加会话属性
@@ -879,6 +888,29 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBu
 				XMLElement* pSt_XMHTokenRef = m_XMLDocument.NewElement("D:href");
 				pSt_XMHTokenRef->SetText(st_WDLocker.tszToken);
 				pSt_XMLLockToken->InsertEndChild(pSt_XMHTokenRef);
+			}
+			else
+			{
+				//没有锁定
+				// 子元素 <supportedlock>
+				XMLElement* pSt_XMLLockSupport = m_XMLDocument.NewElement("d:supportedlock");
+				pSt_XMLProp->InsertEndChild(pSt_XMLLockSupport);
+
+				XMLElement* pSt_XMLLockEntry = m_XMLDocument.NewElement("d:lockentry");
+				pSt_XMLLockSupport->InsertEndChild(pSt_XMLLockEntry);
+
+				XMLElement* pSt_XMLLockScope = m_XMLDocument.NewElement("d:lockscope");
+				pSt_XMLLockEntry->InsertEndChild(pSt_XMLLockScope);
+				XMLElement* pSt_XMLLockExclusive = m_XMLDocument.NewElement("d:exclusive");
+				pSt_XMLLockScope->InsertEndChild(pSt_XMLLockExclusive);
+
+				XMLElement* pSt_XMLLockType = m_XMLDocument.NewElement("d:locktype");
+				pSt_XMLLockEntry->InsertEndChild(pSt_XMLLockType);
+				XMLElement* pSt_XMLLockWrite = m_XMLDocument.NewElement("d:write");
+				pSt_XMLLockType->InsertEndChild(pSt_XMLLockWrite);
+
+				XMLElement* pSt_XMLLockDiscovery = m_XMLDocument.NewElement("d:lockdiscovery");
+				pSt_XMLProp->InsertEndChild(pSt_XMLLockDiscovery);
 			}
         }
         else

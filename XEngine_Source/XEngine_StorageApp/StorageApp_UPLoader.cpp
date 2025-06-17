@@ -324,7 +324,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			memset(ptszIPClient, '\0', XPATH_MAX);
 			_tcsxcpy(ptszIPClient, lpszClientAddr);
 
-			nLimit = nLimit == 0 ? st_ServiceCfg.st_XLimit.nMaxUPLoader : nLimit;
+			nLimit = nLimit == 0 ? (int)st_ServiceCfg.st_XLimit.nMaxUPLoader : nLimit;
 			xhUPSpeed = Algorithm_Calculation_Create();
 			Algorithm_Calculation_PassiveOPen(xhUPSpeed, XEngine_UPLoader_UPFlow, nLimit, 0, 0, false, ptszIPClient);
 			NetCore_TCPXCore_PasueRecvEx(xhNetUPLoader, lpszClientAddr, false);
