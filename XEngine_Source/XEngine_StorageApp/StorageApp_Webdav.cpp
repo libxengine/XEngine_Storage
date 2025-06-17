@@ -60,6 +60,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 
 	st_HDRParam.bIsClose = false;
 	st_HDRParam.nHttpCode = 200;
+	_tcsxcpy(st_HDRParam.tszMimeType, _X("xml"));
 	//http://127.0.0.1:5103/storagekey1
 	if (0 == _tcsxnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOption)))
 	{
@@ -94,17 +95,28 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		}
 		int nListCount = 0;
 		XCHAR** pptszListFile;
-		XCHAR tszFindStr[XPATH_MAX] = {};
 		//得到是否是文件
-		if (APIHelp_Api_UrlStr(st_StorageBucket.tszBuckKey, pSt_HTTPParam->tszHttpUri))
+		int nALen = 0;
+		XCHAR tszFileUrl[XPATH_MAX] = {};
+		SYSTEMAPI_FILE_ATTR st_FileAttr = {};
+		_tcsxcpy(tszFileUrl, pSt_HTTPParam->tszHttpUri + 1);
+		BaseLib_String_Replace(tszFileUrl, &nALen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath);
+
+		if (!SystemApi_File_GetFileAttr(tszFileUrl, &st_FileAttr))
 		{
-			int nALen = 0;
-			_tcsxcpy(tszFindStr, pSt_HTTPParam->tszHttpUri + 1);
-			BaseLib_String_Replace(tszFindStr, &nALen, st_StorageBucket.tszBuckKey, st_StorageBucket.tszFilePath, true);
+			st_HDRParam.nHttpCode = 404;
+			Protocol_StoragePacket_Notfound(tszRVBuffer, &nRVLen, pSt_HTTPParam->tszHttpUri);
+			HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,处理WEBDAV协议PROPFIND方法失败,文件没有找到,URL:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
+			return false;
+		}
+		if (st_FileAttr.bFile)
+		{
 			//如果是文件
 			nListCount = 1;
 			BaseLib_Memory_Malloc((XPPPMEM)&pptszListFile, nListCount, XPATH_MAX);
-			_tcsxcpy(pptszListFile[0], tszFindStr);
+			_tcsxcpy(pptszListFile[0], tszFileUrl);
 		}
 		else
 		{
@@ -113,21 +125,12 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, _X("Depth"), tszVluStr);
 			if (1 == _ttxoi(tszVluStr))
 			{
-				SystemApi_File_EnumFile(tszFindStr, &pptszListFile, &nListCount, false, 3);
+				SystemApi_File_EnumFile(tszFileUrl, &pptszListFile, &nListCount, false, 3);
 			}
 			else
 			{
-				SystemApi_File_EnumFile(tszFindStr, &pptszListFile, &nListCount);
+				SystemApi_File_EnumFile(tszFileUrl, &pptszListFile, &nListCount);
 			}
-		}
-		//枚举文件
-		if (0 == nListCount)
-		{
-			st_HDRParam.nHttpCode = 404;
-			HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,处理WEBDAV协议PROPFIND方法失败,文件没有找到,URL:%s"), lpszClientAddr, pSt_HTTPParam->tszHttpUri);
-			return false;
 		}
 		Protocol_StoragePacket_WDPropfind(tszRVBuffer, &nRVLen, &pptszListFile, nListCount, st_StorageBucket.tszFilePath, st_StorageBucket.tszBuckKey);
 
@@ -135,7 +138,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 		_tcsxcpy(st_HDRParam.tszMimeType, _X("xml"));
 		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议PROPFIND方法成功,文件名称:%s"), lpszClientAddr, tszFindStr);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,处理WEBDAV协议PROPFIND方法成功,文件名称:%s"), lpszClientAddr, tszFileUrl);
 	}
 	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
 	{

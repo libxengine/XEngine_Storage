@@ -27,6 +27,7 @@ public:
     bool Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XNETHANDLE xhToken, XENGINE_ACTIONINFO* pSt_ActionInfo);
     bool Protocol_StoragePacket_Bucket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket);
 public:
+    bool Protocol_StoragePacket_Notfound(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName);
     bool Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount, LPCXSTR lpszBucketPath, LPCXSTR lpszBucketKey);
     bool Protocol_StoragePacket_WDLock(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XENGINE_WEBDAVLOCK* pSt_WDLock);
     bool Protocol_StoragePacket_WDPropPatch(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName, std::list<string>* pStl_ListName);

@@ -640,6 +640,70 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Bucket(XCHAR* ptszMsgBuffer
 	return true;
 }
 /********************************************************************
+函数名称：Protocol_StoragePacket_Notfound
+函数功能：没有找到
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出打好包的XML数据
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出大小
+ 参数.三：lpszFileName
+  In/Out：Out
+  类型：常量字符指针
+  可空：N
+  意思：输入要打包的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Notfound(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName)
+{
+	Protocol_IsErrorOccur = false;
+
+	if ((NULL == ptszMsgBuffer) || (NULL == pInt_MsgLen))
+	{
+		Protocol_IsErrorOccur = true;
+		Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
+		return false;
+	}
+	// 创建一个 XML 文档
+	XMLDocument m_XMLDocument;
+	// XML 声明
+	XMLDeclaration* pSt_XMLDeclaration = m_XMLDocument.NewDeclaration(R"(xml version="1.0" encoding="utf-8")");
+	m_XMLDocument.InsertFirstChild(pSt_XMLDeclaration);
+
+	// 根元素 <multistatus>
+	XMLElement* pSt_XMLRoot = m_XMLDocument.NewElement("d:error");
+	pSt_XMLRoot->SetAttribute("xmlns:d", "DAV:");
+	m_XMLDocument.InsertEndChild(pSt_XMLRoot);
+
+	// 子元素 <href>
+	XMLElement* pSt_XMLHerf = m_XMLDocument.NewElement("d:href");
+	pSt_XMLHerf->SetText(lpszFileName);
+	pSt_XMLRoot->InsertEndChild(pSt_XMLHerf);
+	// 子元素 <status>
+	XMLElement* pSt_XMLStatus = m_XMLDocument.NewElement("d:status");
+	pSt_XMLStatus->SetText(_X("HTTP/1.1 404 Not Found"));
+	pSt_XMLRoot->InsertEndChild(pSt_XMLStatus);
+	// 子元素 <responsedescription>
+	XMLElement* pSt_XMLResponseDesc = m_XMLDocument.NewElement("d:responsedescription");
+	pSt_XMLResponseDesc->SetText(_X("Not found"));
+	pSt_XMLRoot->InsertEndChild(pSt_XMLResponseDesc);
+	// 将 XML 数据保存到字符串
+	XMLPrinter m_XMLPrinter;
+	m_XMLDocument.Print(&m_XMLPrinter);
+
+	*pInt_MsgLen = m_XMLPrinter.CStrSize() - 1;
+	memcpy(ptszMsgBuffer, m_XMLPrinter.CStr(), *pInt_MsgLen);
+	return true;
+}
+/********************************************************************
 函数名称：Protocol_StoragePacket_WDPropfind
 函数功能：propfind协议打包处理函数
  参数.一：ptszMsgBuffer
