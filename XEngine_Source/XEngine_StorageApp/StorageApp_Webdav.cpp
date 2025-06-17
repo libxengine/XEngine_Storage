@@ -142,26 +142,33 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	}
 	else if (0 == _tcsxnicmp(lpszMethodGet, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodGet)))
 	{
-		//使用重定向实现下载
-		st_HDRParam.bIsClose = true;
-		st_HDRParam.nHttpCode = 302;
+		if (st_ServiceCfg.st_XStorage.bWDLocation)
+		{
+			//使用重定向实现下载
+			st_HDRParam.bIsClose = true;
+			st_HDRParam.nHttpCode = 302;
 
-		XCHAR tszRequestAddr[512] = {};
-		XCHAR tszHostStr[128] = {};
-		HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, _X("Host"), tszHostStr);
+			XCHAR tszRequestAddr[512] = {};
+			XCHAR tszHostStr[128] = {};
+			HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, _X("Host"), tszHostStr);
 
-		XCHAR tszPortWebdav[64] = {};
-		XCHAR tszPortDownload[64] = {};
-		_xstprintf(tszPortWebdav, _X("%d"), st_ServiceCfg.nWebdavPort);
-		_xstprintf(tszPortDownload, _X("%d"), st_ServiceCfg.nStorageDLPort);
-		//转换端口
-		int nReplaceLen = 0;
-		BaseLib_String_Replace(tszHostStr, &nReplaceLen, tszPortWebdav, tszPortDownload, true);
-		_xstprintf(tszRequestAddr, _X("Location: http://%s%s\r\n"), tszHostStr, pSt_HTTPParam->tszHttpUri);
+			XCHAR tszPortWebdav[64] = {};
+			XCHAR tszPortDownload[64] = {};
+			_xstprintf(tszPortWebdav, _X("%d"), st_ServiceCfg.nWebdavPort);
+			_xstprintf(tszPortDownload, _X("%d"), st_ServiceCfg.nStorageDLPort);
+			//转换端口
+			int nReplaceLen = 0;
+			BaseLib_String_Replace(tszHostStr, &nReplaceLen, tszPortWebdav, tszPortDownload, true);
+			_xstprintf(tszRequestAddr, _X("Location: http://%s%s\r\n"), tszHostStr, pSt_HTTPParam->tszHttpUri);
 
-		HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszRequestAddr);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,请求文件下载被重定向到:%s"), lpszClientAddr, tszRequestAddr);
+			HttpProtocol_Server_SendMsgEx(xhWebdavHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszRequestAddr);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,请求文件下载被重定向到:%s"), lpszClientAddr, tszRequestAddr);
+		}
+		else
+		{
+			XEngine_Task_HttpDownload(lpszClientAddr, lpszMsgBuffer, nMsgLen, pSt_HTTPParam, pptszListHdr, nHdrCount, STORAGE_NETTYPE_HTTPWEBDAV);
+		}
 	}
 	else if (0 == _tcsxnicmp(lpszMethodPut, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodPut)))
 	{

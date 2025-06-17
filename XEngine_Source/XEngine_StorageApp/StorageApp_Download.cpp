@@ -60,7 +60,14 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 		if (nLimitTime > (__int64u)st_StorageInfo.nLimit)
 		{
 			//当前平均速度大于限制速度,不做处理
-			NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend, lParam);
+			if (STORAGE_NETTYPE_HTTPWEBDAV == nNetType)
+			{
+				NetCore_TCPXCore_CBSendEx(xhNetWebdav, lpszClientAddr, XEngine_Download_CBSend, lParam);
+			}
+			else
+			{
+				NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend, lParam);
+			}
 			return;
 		}
 	}
@@ -89,7 +96,15 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,请求完成通知失败,可能对方服务没有开启,文件:%s,地址:%s"), lpszClientAddr, st_StorageInfo.tszFileDir, st_ServiceCfg.st_XProxy.tszDLPass);
 				}
 			}
-			NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr);
+			if (STORAGE_NETTYPE_HTTPWEBDAV == nNetType)
+			{
+				NetCore_TCPXCore_CBSendEx(xhNetWebdav, lpszClientAddr);
+			}
+			else
+			{
+				NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr);
+			}
+			
 			Session_DLStroage_Delete(lpszClientAddr);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,文件已经发送完毕,用户已经被移除发送列表"), lpszClientAddr);
 		}
@@ -310,10 +325,17 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		st_HDRParam.bIsClose = true;
 	}
 	_xstprintf(tszFieldStr, _X("FileHash: %s\r\n"), tszHashStr);
-	HttpProtocol_Server_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize, tszFieldStr);
-	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
 	//不能在send之前调用
-	if (!NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend, &nNetType))
+	bool bRet = false;
+	if (STORAGE_NETTYPE_HTTPWEBDAV == nNetType)
+	{
+		bRet = NetCore_TCPXCore_CBSendEx(xhNetWebdav, lpszClientAddr, XEngine_Download_CBSend, &nNetType);
+	}
+	else
+	{
+		bRet = NetCore_TCPXCore_CBSendEx(xhNetDownload, lpszClientAddr, XEngine_Download_CBSend, &nNetType);
+	}
+	if (!bRet)
 	{
 		st_HDRParam.bIsClose = true;
 		st_HDRParam.nHttpCode = 404;
@@ -323,6 +345,8 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,设置回调下载失败,文件:%s,错误：%lX"), lpszClientAddr, tszFileDir, Session_GetLastError());
 		return false;
 	}
+	HttpProtocol_Server_SendMsgEx(xhDLHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, ullSize, tszFieldStr);
+	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,请求下载文件成功,文件名:%s,总大小:%llu,发送大小:%llu,范围:%d - %d"), lpszClientAddr, tszFileDir, ullCount, ullSize, nPosStart, nPosEnd);
 	return true;
 }
