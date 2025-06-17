@@ -61,6 +61,42 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	st_HDRParam.bIsClose = false;
 	st_HDRParam.nHttpCode = 200;
 	_tcsxcpy(st_HDRParam.tszMimeType, _X("xml"));
+
+	if (st_ServiceCfg.st_XProxy.bAuthPass)
+	{
+		XCHAR tszUserName[64];
+		XCHAR tszUserPass[64];
+
+		memset(tszUserName, '\0', sizeof(tszUserName));
+		memset(tszUserPass, '\0', sizeof(tszUserPass));
+		if (!APIHelp_Api_ProxyAuth(tszUserName, tszUserPass, pptszListHdr, nHdrCount))
+		{
+			st_HDRParam.bAuth = true;
+			st_HDRParam.nHttpCode = 401;
+
+			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPWEBDAV);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,用户验证失败,错误:%lX"), lpszClientAddr, StorageHelp_GetLastError());
+			return false;
+		}
+		int nResponseCode = 0;
+		XCHAR* ptszBody = NULL;
+
+		Protocol_StoragePacket_BasicAuth(STORAGE_NETTYPE_HTTPWEBDAV, pSt_HTTPParam->tszHttpMethod, pSt_HTTPParam->tszHttpUri, lpszClientAddr, tszUserName, tszUserPass, tszSDBuffer, &nSDLen);
+		APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszAuthPass, tszSDBuffer, &nResponseCode, &ptszBody, &nSDLen);
+		if (200 != nResponseCode)
+		{
+			st_HDRParam.bAuth = true;
+			st_HDRParam.nHttpCode = nResponseCode;
+
+			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端:%s,用户验证失败,用户名:%s,密码:%s,错误码:%d,错误内容:%s"), tszUserName, tszUserPass, tszUserPass, nResponseCode, ptszBody);
+		}
+		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszBody);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端:%s,代理服务:%s 验证通过,用户名:%s,密码:%s"), lpszClientAddr, st_ServiceCfg.st_XProxy.tszAuthPass, tszUserName, tszUserPass);
+		st_HDRParam.bAuth = true;
+	}
 	//http://127.0.0.1:5103/storagekey1
 	if (0 == _tcsxnicmp(lpszMethodOption, pSt_HTTPParam->tszHttpMethod, _tcsxlen(lpszMethodOption)))
 	{
