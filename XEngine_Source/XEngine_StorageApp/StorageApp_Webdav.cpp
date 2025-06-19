@@ -167,6 +167,13 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 			{
 				SystemApi_File_EnumFile(tszFileUrl, &pptszListFile, &nListCount);
 			}
+			//如果是空的文件夹
+			if (0 == nListCount)
+			{
+				nListCount = 1;
+				BaseLib_Memory_Malloc((XPPPMEM)&pptszListFile, nListCount, XPATH_MAX);
+				_tcsxcpy(pptszListFile[0], tszFileUrl);
+			}
 		}
 		Protocol_StoragePacket_WDPropfind(tszRVBuffer, &nRVLen, &pptszListFile, nListCount, st_StorageBucket.tszFilePath, st_StorageBucket.tszBuckKey);
 
