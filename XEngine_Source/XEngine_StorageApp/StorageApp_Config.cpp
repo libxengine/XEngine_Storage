@@ -59,10 +59,6 @@ bool StorageApp_Config_Parament(int argc,char **argv)
             printf("Version：%s\n", m_StrVersion.c_str());
             return false;
         }
-        else if (0 == _tcsxcmp("-l", argv[i]))
-        {
-            st_ServiceCfg.st_XLog.nLogLeave = _ttxoi(argv[++i]);
-        }
         else if (0 == _tcsxcmp("-d", argv[i]))
         {
             st_ServiceCfg.bDeamon = _ttxoi(argv[++i]);
@@ -75,6 +71,10 @@ bool StorageApp_Config_Parament(int argc,char **argv)
         {
             st_ServiceCfg.bReuseraddr = true;
         }
+		else if (0 == _tcsxcmp("-t", argv[i]))
+		{
+			bIsTest = true;
+		}
         else if (0 == _tcsxcmp("-lt", argv[i]))
         {
             st_ServiceCfg.st_XLog.nLogType = _ttxoi(argv[++i]);
@@ -82,10 +82,6 @@ bool StorageApp_Config_Parament(int argc,char **argv)
         else if (0 == _tcsxcmp("-ll", argv[i]))
         {
             st_ServiceCfg.st_XLog.nLogLeave = _ttxoi(argv[++i]);
-        }
-        else if (0 == _tcsxcmp("-t", argv[i]))
-        {
-            bIsTest = true;
         }
 		else if (0 == _tcsxcmp("-l", argv[i]))
 		{
