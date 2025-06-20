@@ -48,49 +48,49 @@ bool StorageApp_Config_Parament(int argc,char **argv)
 
     for (int i = 0;i < argc;i++)
     {
-        if ((0 == _tcsxicmp("-h",argv[i])) || (0 == _tcsxcmp("-H",argv[i])))
+        if ((0 == _tcsxcmp("-h",argv[i])) || (0 == _tcsxcmp("-H",argv[i])))
         {
             StorageApp_Config_ParamentHelp();
             return false;
         }
-        if ((0 == _tcsxicmp("-v", argv[i])) || (0 == _tcsxcmp("-V", argv[i])))
+        if ((0 == _tcsxcmp("-v", argv[i])) || (0 == _tcsxcmp("-V", argv[i])))
         {
             string m_StrVersion = st_ServiceCfg.st_XVer.pStl_ListStorage->front();
             printf("Version：%s\n", m_StrVersion.c_str());
             return false;
         }
-        else if (0 == _tcsxicmp("-d", argv[i]))
+        else if (0 == _tcsxcmp("-d", argv[i]))
         {
             st_ServiceCfg.bDeamon = _ttxoi(argv[++i]);
         }
-        else if (0 == _tcsxicmp("-r", argv[i]))
+        else if (0 == _tcsxcmp("-r", argv[i]))
         {
             st_ServiceCfg.st_Memory.bReload = true;
         }
-        else if (0 == _tcsxicmp("-u", argv[i]))
+        else if (0 == _tcsxcmp("-u", argv[i]))
         {
             st_ServiceCfg.bReuseraddr = true;
         }
-		else if (0 == _tcsxicmp("-t", argv[i]))
+		else if (0 == _tcsxcmp("-t", argv[i]))
 		{
 			bIsTest = true;
 		}
-        else if (0 == _tcsxicmp("-lt", argv[i]))
+        else if (0 == _tcsxcmp("-lt", argv[i]))
         {
             st_ServiceCfg.st_XLog.nLogType = _ttxoi(argv[++i]);
         }
-        else if (0 == _tcsxicmp("-ll", argv[i]))
+        else if (0 == _tcsxcmp("-ll", argv[i]))
         {
             st_ServiceCfg.st_XLog.nLogLeave = _ttxoi(argv[++i]);
         }
-		else if (0 == _tcsxicmp("-l", argv[i]))
+		else if (0 == _tcsxcmp("-l", argv[i]))
 		{
 			LPCXSTR lpszLogLevel = argv[++i];
-			if (0 == _tcsxicmp("debug", lpszLogLevel))
+			if (0 == _tcsxcmp("debug", lpszLogLevel))
 			{
                 st_ServiceCfg.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG;
 			}
-			else if (0 == _tcsxicmp("info", lpszLogLevel))
+			else if (0 == _tcsxcmp("info", lpszLogLevel))
 			{
                 st_ServiceCfg.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO;
 			}

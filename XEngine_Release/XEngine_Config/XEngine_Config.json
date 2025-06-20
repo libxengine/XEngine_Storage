@@ -1,85 +1,85 @@
 {
-    "tszIPAddr":"10.0.1.88",
-    "bDeamon":0,
-    "nCenterPort":5100,
-    "nStorageDLPort":5101,
-    "nStorageUPPort":5102,
-    "nWebdavPort":5103,
-    "XMax":{
-        "MaxClient":10000,
-        "MaxQueue":10000,
-        "IOThread":2,
-        "CenterThread":2,
-        "nStorageUPThread":2,
-        "nStorageDLThread":2,
-        "nWebdavThread":2
+    "tszIPAddr": "10.0.1.88",
+    "bDeamon": 0,
+    "nCenterPort": 5100,
+    "nStorageDLPort": 5101,
+    "nStorageUPPort": 5102,
+    "nWebdavPort": 5103,
+    "XMax": {
+        "MaxClient": 10000,
+        "MaxQueue": 10000,
+        "IOThread": 2,
+        "CenterThread": 2,
+        "nStorageUPThread": 2,
+        "nStorageDLThread": 2,
+        "nWebdavThread": 2
     },
-    "XTime":{
-        "bHBTime":0,
-        "nDBMonth":3,
-        "nTimeCheck":3,
-        "nCenterTimeOut":5,
-        "nStorageTimeOut":5,
-        "nWebdavTimeOut":5
+    "XTime": {
+        "bHBTime": 0,
+        "nDBMonth": 3,
+        "nTimeCheck": 3,
+        "nCenterTimeOut": 5,
+        "nStorageTimeOut": 5,
+        "nWebdavTimeOut": 5
     },
-    "XLog":{
-        "LogFile":"./XEngine_XLog/XEngine_StorageApp.log",
-        "MaxSize":1024000,
-        "MaxCount":10,
-        "LogLeave":32,
-        "LogType":17
+    "XLog": {
+        "LogFile": "./XEngine_XLog/XEngine_StorageApp.log",
+        "MaxSize": 1024000,
+        "MaxCount": 10,
+        "LogLeave": 32,
+        "LogType": 17
     },
-    "XSql":{
-        "SQLEnable":false,
-        "SQLAddr":"192.168.1.10",
-        "SQLPort":3306,
-        "SQLUser":"root",
-        "SQLPass":"123123aa"
+    "XSql": {
+        "SQLEnable": false,
+        "SQLAddr": "192.168.1.10",
+        "SQLPort": 3306,
+        "SQLUser": "root",
+        "SQLPass": "123123aa"
     },
-    "XStorage":{
-        "bResumable":true,
-        "bUPHash":false,
-        "bWDLocation":false,
-        "nHashMode":2
+    "XStorage": {
+        "bResumable": true,
+        "bUPHash": false,
+        "bWDLocation": false,
+        "nHashMode": 2
     },
-    "XProxy":{
-        "bUPPass":false,
-        "bDLPass":false,
-        "bAuthPass":false,
-        "tszUPPass":"http://192.168.1.7:5200/Api/Pass/UPFile",
-        "tszDLPass":"http://192.168.1.7:5200/Api/Pass/UPFile",
-        "tszAuthPass":""
+    "XProxy": {
+        "bUPPass": false,
+        "bDLPass": false,
+        "bAuthPass": false,
+        "tszUPPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
+        "tszDLPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
+        "tszAuthPass": ""
     },
-    "XLimit":{
-        "bLimitMode":true,
-        "nMaxUPLoad":0,
-        "nMaxDNLoad":4096000,
-        "nMaxUPConnect":2,
-        "nMaxDNConnect":2
+    "XLimit": {
+        "bLimitMode": true,
+        "nMaxUPLoad": 0,
+        "nMaxDNLoad": 4096000,
+        "nMaxUPConnect": 2,
+        "nMaxDNConnect": 2
     },
-    "XP2xp":{
-        "bEnable":true,
-        "nTime":2,
-        "nRVPort":15000,
-        "nSDPort":15001
+    "XP2xp": {
+        "bEnable": true,
+        "nTime": 2,
+        "nRVPort": 15000,
+        "nSDPort": 15001
     },
-    "XCert":{
-        "bDLEnable":false,
-        "bUPEnable":false,
-        "bCHEnable":true,
-        "bWDEnable":false,
-        "tszCertChain":"./XEngine_Cert/server.crt",
-        "tszCertServer":"",
-        "tszCertKey":"./XEngine_Cert/server.key"
+    "XCert": {
+        "bDLEnable": false,
+        "bUPEnable": false,
+        "bCHEnable": false,
+        "bWDEnable": false,
+        "tszCertChain": "./XEngine_Cert/server.crt",
+        "tszCertServer": "",
+        "tszCertKey": "./XEngine_Cert/server.key"
     },
-    "XReport":{
-        "bEnable":true,
-        "tszServiceName":"XEngine_Storage",
-        "tszAPIUrl":"http://app.xyry.org:5501/api?function=machine"
+    "XReport": {
+        "bEnable": true,
+        "tszServiceName": "XEngine_Storage",
+        "tszAPIUrl": "http://app.xyry.org:5501/api?function=machine"
     },
-    "XAction":{
-        "bEnable":true,
-        "nSDMax":1024000,
-        "nRVMax":1024000
+    "XAction": {
+        "bEnable": true,
+        "nSDMax": 1024000,
+        "nRVMax": 1024000
     }
 }
