@@ -47,7 +47,7 @@ typedef struct tag_XEngine_ServerConfig
     }st_XTime;
     struct
     {
-        XCHAR tszLogFile[MAX_PATH];
+        XCHAR tszLogFile[XPATH_MAX];
         int nMaxSize;
         int nMaxCount;
         int nLogLeave;
@@ -66,6 +66,7 @@ typedef struct tag_XEngine_ServerConfig
 	{
         bool bResumable;
         bool bUPHash;
+        bool bWDLocation;
         int nHashMode;
     }st_XStorage;
     struct  
@@ -73,9 +74,9 @@ typedef struct tag_XEngine_ServerConfig
 		bool bUPPass;
 		bool bDLPass;
         bool bAuthPass;
-		XCHAR tszUPPass[MAX_PATH];
-		XCHAR tszDLPass[MAX_PATH];
-        XCHAR tszAuthPass[MAX_PATH];
+		XCHAR tszUPPass[XPATH_MAX];
+		XCHAR tszDLPass[XPATH_MAX];
+        XCHAR tszAuthPass[XPATH_MAX];
     }st_XProxy;
 	struct
 	{
@@ -94,9 +95,9 @@ typedef struct tag_XEngine_ServerConfig
     }st_P2xp;
     struct  
     {
-        XCHAR tszCertChain[MAX_PATH];
-        XCHAR tszCertServer[MAX_PATH];
-        XCHAR tszCertKey[MAX_PATH];
+        XCHAR tszCertChain[XPATH_MAX];
+        XCHAR tszCertServer[XPATH_MAX];
+        XCHAR tszCertKey[XPATH_MAX];
         bool bDLEnable;
         bool bUPEnable;
         bool bCHEnable;
@@ -104,7 +105,7 @@ typedef struct tag_XEngine_ServerConfig
     }st_XCert;
     struct  
     {
-        XCHAR tszAPIUrl[MAX_PATH];
+        XCHAR tszAPIUrl[XPATH_MAX];
         XCHAR tszServiceName[128];
         bool bEnable;
     }st_XReport;
@@ -122,8 +123,8 @@ typedef struct tag_XEngine_ServerConfig
 
 typedef struct  
 {
-    XCHAR tszFilePath[MAX_PATH];
-    XCHAR tszFileName[MAX_PATH];
+    XCHAR tszFilePath[XPATH_MAX];
+    XCHAR tszFileName[XPATH_MAX];
     XCHAR tszBuckKey[128];
     XCHAR tszBuckSize[64];
     int nLevel;

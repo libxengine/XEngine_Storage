@@ -328,37 +328,42 @@ extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pIn
 /********************************************************************
 函数名称：Protocol_StoragePacket_BasicAuth
 函数功能：基本验证协议代理转发
- 参数.一：lpszMethod
+ 参数.一：lpszRequestType
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：请求的业务类型
+ 参数.二：lpszMethod
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：方法名称
- 参数.二：lpszPostUrl
+ 参数.三：lpszPostUrl
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：用户提交的地址
- 参数.三：lpszClientAddr
+ 参数.四：lpszClientAddr
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：用户发送的客户端地址
- 参数.四：lpszUser
+ 参数.五：lpszUser
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：用户
- 参数.五：lpszPass
+ 参数.六：lpszPass
   In/Out：In
   类型：常量字符指针
   可空：N
   意思：密码
- 参数.六：ptszMsgBuffer
+ 参数.七：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：转发数据包
- 参数.七：pInt_MsgLen
+ 参数.八：pInt_MsgLen
   In/Out：Out
   类型：整数型
   可空：N
@@ -368,7 +373,7 @@ extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pIn
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Protocol_StoragePacket_BasicAuth(LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR * ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" bool Protocol_StoragePacket_BasicAuth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR * ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：Protocol_StoragePacket_UPDown
 函数功能：上传下载完成代理通知协议
@@ -617,6 +622,30 @@ extern "C" bool Protocol_StoragePacket_Action(XCHAR* ptszMsgBuffer, int* pInt_Ms
 备注：
 *********************************************************************/
 extern "C" bool Protocol_StoragePacket_Bucket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket);
+/********************************************************************
+函数名称：Protocol_StoragePacket_Notfound
+函数功能：没有找到
+ 参数.一：ptszMsgBuffer
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出打好包的XML数据
+ 参数.二：pInt_MsgLen
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出大小
+ 参数.三：lpszFileName
+  In/Out：Out
+  类型：常量字符指针
+  可空：N
+  意思：输入要打包的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Protocol_StoragePacket_Notfound(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName);
 /********************************************************************
 函数名称：Protocol_StoragePacket_WDPropfind
 函数功能：propfind协议打包处理函数

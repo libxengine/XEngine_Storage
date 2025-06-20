@@ -232,8 +232,8 @@ bool CDatabase_Help::Database_Help_Packet(XCHAR* ptszSQLBuffer, LPCXSTR lpszBuck
 	Database_IsErrorOccur = false;
 
 	bool bInit = false;
-	XCHAR tszSQLQuery[MAX_PATH];
-	memset(tszSQLQuery, '\0', MAX_PATH);
+	XCHAR tszSQLQuery[XPATH_MAX];
+	memset(tszSQLQuery, '\0', XPATH_MAX);
 	//文件所属BUCKET
 	if (NULL != lpszBuckKey)
 	{
@@ -247,7 +247,7 @@ bool CDatabase_Help::Database_Help_Packet(XCHAR* ptszSQLBuffer, LPCXSTR lpszBuck
 			{
 				_tcsxcat(ptszSQLBuffer, _X(" WHERE "));
 			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
+			memset(tszSQLQuery, '\0', XPATH_MAX);
 			_xstprintf(tszSQLQuery, _X("BuckKey = '%s'"), lpszBuckKey);
 			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
@@ -266,7 +266,7 @@ bool CDatabase_Help::Database_Help_Packet(XCHAR* ptszSQLBuffer, LPCXSTR lpszBuck
 			{
 				_tcsxcat(ptszSQLBuffer, _X("WHERE "));
 			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
+			memset(tszSQLQuery, '\0', XPATH_MAX);
 			_xstprintf(tszSQLQuery, _X("FilePath = '%s'"), lpszFilePath);
 			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
@@ -285,7 +285,7 @@ bool CDatabase_Help::Database_Help_Packet(XCHAR* ptszSQLBuffer, LPCXSTR lpszBuck
 			{
 				_tcsxcat(ptszSQLBuffer, _X("WHERE "));
 			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
+			memset(tszSQLQuery, '\0', XPATH_MAX);
 			_xstprintf(tszSQLQuery, _X("FileName = '%s'"), lpszFileName);
 			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
@@ -304,7 +304,7 @@ bool CDatabase_Help::Database_Help_Packet(XCHAR* ptszSQLBuffer, LPCXSTR lpszBuck
 			{
 				_tcsxcat(ptszSQLBuffer, _X("WHERE "));
 			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
+			memset(tszSQLQuery, '\0', XPATH_MAX);
 			_xstprintf(tszSQLQuery, _X("FileHash = '%s'"), lpszFileHash);
 			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
@@ -323,7 +323,7 @@ bool CDatabase_Help::Database_Help_Packet(XCHAR* ptszSQLBuffer, LPCXSTR lpszBuck
 			{
 				_tcsxcat(ptszSQLBuffer, _X("WHERE "));
 			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
+			memset(tszSQLQuery, '\0', XPATH_MAX);
 			_xstprintf(tszSQLQuery, _X("FileUser = '%s'"), lpszFileUser);
 			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;
@@ -342,7 +342,7 @@ bool CDatabase_Help::Database_Help_Packet(XCHAR* ptszSQLBuffer, LPCXSTR lpszBuck
 			{
 				_tcsxcat(ptszSQLBuffer, _X("WHERE "));
 			}
-			memset(tszSQLQuery, '\0', MAX_PATH);
+			memset(tszSQLQuery, '\0', XPATH_MAX);
 			_xstprintf(tszSQLQuery, _X("BETWEEN '%s' AND '%s'"), lpszTimeStart, lpszTimeEnd);
 			_tcsxcat(ptszSQLBuffer, tszSQLQuery);
 			bInit = true;

@@ -19,9 +19,9 @@ typedef struct
 #endif
     BTORRENT_DLOADER st_DLStatus;                                         //下载状态
 
-    XCHAR tszAddr[MAX_PATH];                                              //下载地址
-    XCHAR tszFile[MAX_PATH];                                              //保存地址
-	XCHAR tszTemp[MAX_PATH];                                              //临时文件
+    XCHAR tszAddr[XPATH_MAX];                                              //下载地址
+    XCHAR tszFile[XPATH_MAX];                                              //保存地址
+	XCHAR tszTemp[XPATH_MAX];                                              //临时文件
     bool bIsResume;                                                       //是否续传
     XPVOID lPClass;                                                       //指向类的指针
 }BTORRENT_DLOADINFO, * LPBTORRENT_DLOADINFO;

@@ -67,7 +67,6 @@ using namespace std;
 #include "../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
 #include "../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
 
-
 #define STORAGE_LEAVETYPE_HEARTBEAT 1
 #define STORAGE_LEAVETYPE_BYSELF 2
 #define STORAGE_LEAVETYPE_CLOSE 3

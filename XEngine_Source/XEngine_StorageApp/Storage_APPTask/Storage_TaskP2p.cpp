@@ -6,9 +6,9 @@ XHTHREAD XEngine_Task_P2PThread()
 	XCHAR tszIPAddr[128];
 	XCHAR tszTimeStart[64];
 	XCHAR tszTimeEnd[64];
-	XCHAR tszBuckKey[MAX_PATH];
-	XCHAR tszFileName[MAX_PATH];
-	XCHAR tszFileHash[MAX_PATH];
+	XCHAR tszBuckKey[XPATH_MAX];
+	XCHAR tszFileName[XPATH_MAX];
+	XCHAR tszFileHash[XPATH_MAX];
 
 	while (bIsRun)
 	{
@@ -17,9 +17,9 @@ XHTHREAD XEngine_Task_P2PThread()
 		memset(tszIPAddr, '\0', sizeof(tszIPAddr));
 		memset(tszTimeStart, '\0', sizeof(tszTimeStart));
 		memset(tszTimeEnd, '\0', sizeof(tszTimeEnd));
-		memset(tszBuckKey, '\0', MAX_PATH);
-		memset(tszFileName, '\0', MAX_PATH);
-		memset(tszFileHash, '\0', MAX_PATH);
+		memset(tszBuckKey, '\0', XPATH_MAX);
+		memset(tszFileName, '\0', XPATH_MAX);
+		memset(tszFileHash, '\0', XPATH_MAX);
 
 		if (NetCore_BroadCast_Recv(hBroadSocket, tszMsgBuffer, &nMsgLen, tszIPAddr))
 		{

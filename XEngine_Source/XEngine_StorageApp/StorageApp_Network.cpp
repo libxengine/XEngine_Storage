@@ -1,6 +1,6 @@
 ﻿#include "StorageApp_Hdr.h"
 
-bool CALLBACK XEngine_Callback_DownloadLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+bool XCALLBACK XEngine_Callback_DownloadLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	if (st_ServiceCfg.st_XCert.bDLEnable)
 	{
@@ -11,7 +11,7 @@ bool CALLBACK XEngine_Callback_DownloadLogin(LPCXSTR lpszClientAddr, XSOCKET hSo
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端：%s，进入了服务器"), lpszClientAddr);
 	return true;
 }
-void CALLBACK XEngine_Callback_DownloadRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+void XCALLBACK XEngine_Callback_DownloadRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
 {
 	if (st_ServiceCfg.st_XCert.bDLEnable)
 	{
@@ -36,12 +36,12 @@ void CALLBACK XEngine_Callback_DownloadRecv(LPCXSTR lpszClientAddr, XSOCKET hSoc
 	SocketOpt_HeartBeat_ActiveAddrEx(xhHBDownload, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("下载客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
 }
-void CALLBACK XEngine_Callback_DownloadLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+void XCALLBACK XEngine_Callback_DownloadLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPDOWNLOAD);
 }
 //////////////////////////////////////////////////////////////////////////
-bool CALLBACK XEngine_Callback_UPLoaderLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+bool XCALLBACK XEngine_Callback_UPLoaderLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	if (st_ServiceCfg.st_XCert.bUPEnable)
 	{
@@ -53,7 +53,7 @@ bool CALLBACK XEngine_Callback_UPLoaderLogin(LPCXSTR lpszClientAddr, XSOCKET hSo
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端：%s，进入了服务器"), lpszClientAddr);
 	return true;
 }
-void CALLBACK XEngine_Callback_UPLoaderRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+void XCALLBACK XEngine_Callback_UPLoaderRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
 {
 	if (st_ServiceCfg.st_XCert.bUPEnable)
 	{
@@ -78,12 +78,12 @@ void CALLBACK XEngine_Callback_UPLoaderRecv(LPCXSTR lpszClientAddr, XSOCKET hSoc
 	SocketOpt_HeartBeat_ActiveAddrEx(xhHBUPLoader, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("上传客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
 }
-void CALLBACK XEngine_Callback_UPLoaderLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+void XCALLBACK XEngine_Callback_UPLoaderLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPUPLOADER);
 }
 //////////////////////////////////////////////////////////////////////////
-bool CALLBACK XEngine_Callback_CenterLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+bool XCALLBACK XEngine_Callback_CenterLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	if (st_ServiceCfg.st_XCert.bCHEnable)
 	{
@@ -94,7 +94,7 @@ bool CALLBACK XEngine_Callback_CenterLogin(LPCXSTR lpszClientAddr, XSOCKET hSock
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端：%s，进入了服务器"), lpszClientAddr);
 	return true;
 }
-void CALLBACK XEngine_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+void XCALLBACK XEngine_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
 {
 	if (st_ServiceCfg.st_XCert.bCHEnable)
 	{
@@ -119,12 +119,12 @@ void CALLBACK XEngine_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSocke
 	SocketOpt_HeartBeat_ActiveAddrEx(xhHBCenter, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("业务客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
 }
-void CALLBACK XEngine_Callback_CenterLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+void XCALLBACK XEngine_Callback_CenterLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPCENTER);
 }
 //////////////////////////////////////////////////////////////////////////
-bool CALLBACK XEngine_Callback_WebdavLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+bool XCALLBACK XEngine_Callback_WebdavLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	if (st_ServiceCfg.st_XCert.bWDEnable)
 	{
@@ -135,7 +135,7 @@ bool CALLBACK XEngine_Callback_WebdavLogin(LPCXSTR lpszClientAddr, XSOCKET hSock
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("WEBDAV客户端：%s，进入了服务器"), lpszClientAddr);
 	return true;
 }
-void CALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+void XCALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
 {
 	if (st_ServiceCfg.st_XCert.bWDEnable)
 	{
@@ -160,24 +160,24 @@ void CALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSocke
 	SocketOpt_HeartBeat_ActiveAddrEx(xhHBWebdav, lpszClientAddr);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("WEBDAV客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
 }
-void CALLBACK XEngine_Callback_WebdavLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+void XCALLBACK XEngine_Callback_WebdavLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPWEBDAV);
 }
 //////////////////////////////////////////////////////////////////////////
-void CALLBACK XEngine_Callback_HBDownload(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+void XCALLBACK XEngine_Callback_HBDownload(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPDOWNLOAD);
 }
-void CALLBACK XEngine_Callback_HBUPLoader(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+void XCALLBACK XEngine_Callback_HBUPLoader(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPUPLOADER);
 }
-void CALLBACK XEngine_Callback_HBCenter(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+void XCALLBACK XEngine_Callback_HBCenter(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPCENTER);
 }
-void CALLBACK XEngine_Callback_HBWebdav(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+void XCALLBACK XEngine_Callback_HBWebdav(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPWEBDAV);
 }

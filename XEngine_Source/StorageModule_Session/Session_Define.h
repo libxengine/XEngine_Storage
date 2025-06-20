@@ -17,11 +17,11 @@ typedef struct
 {
 	struct  
 	{
-		XCHAR tszBoundStr[MAX_PATH];                                          //boundary信息
+		XCHAR tszBoundStr[XPATH_MAX];                                          //boundary信息
 		bool bBoundMode;                                                      //是否是bound上传模式
 		bool bBoundStart;
 	}st_Boundary;
-	XCHAR tszFileDir[MAX_PATH];                                           //文件地址
+	XCHAR tszFileDir[XPATH_MAX];                                           //文件地址
 	XCHAR tszClientAddr[128];                                             //操作的用户地址
 	XCHAR tszFileHash[128];                                               //文件HASH值
 	XCHAR tszBuckKey[128];                                                //BUCKKey

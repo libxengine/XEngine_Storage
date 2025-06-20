@@ -59,7 +59,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_RandomAddr(list<string>* pStl_Lis
 	if (1 == nMode)
 	{
 		XNETHANDLE xhToken = 0;
-		BaseLib_Handle_Create(&xhToken, 0, pStl_ListAddr->size(), false);
+		BaseLib_Handle_Create(&xhToken, 0, pStl_ListAddr->size());
 		if (xhToken == pStl_ListAddr->size())
 		{
 			xhToken--;
@@ -392,7 +392,7 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 		if (1 == nMode)
 		{
 			XNETHANDLE xhToken = 0;
-			BaseLib_Handle_Create(&xhToken, 0, stl_BuckSelect.size(), false);
+			BaseLib_Handle_Create(&xhToken, 0, stl_BuckSelect.size());
 			if (xhToken == stl_BuckSelect.size())
 			{
 				xhToken--;

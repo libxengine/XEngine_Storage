@@ -72,9 +72,9 @@ extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pIn
 {
 	return m_StoragePacket.Protocol_StoragePacket_HTTPPacket(ptszMsgBuffer, pInt_MsgLen, nCode, lpszMSGInfo);
 }
-extern "C" bool Protocol_StoragePacket_BasicAuth(LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR * ptszMsgBuffer, int* pInt_MsgLen)
+extern "C" bool Protocol_StoragePacket_BasicAuth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
-	return m_StoragePacket.Protocol_StoragePacket_BasicAuth(lpszMethod, lpszPostUrl, lpszClientAddr, lpszUser, lpszPass, ptszMsgBuffer, pInt_MsgLen);
+	return m_StoragePacket.Protocol_StoragePacket_BasicAuth(nRequestType, lpszMethod, lpszPostUrl, lpszClientAddr, lpszUser, lpszPass, ptszMsgBuffer, pInt_MsgLen);
 }
 extern "C" bool Protocol_StoragePacket_UPDown(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszBuckKey, LPCXSTR lpszFileName, LPCXSTR lpszClientAddr, __int64x nFileSize, bool bDown, LPCXSTR lpszFileHash)
 {
@@ -103,6 +103,10 @@ extern "C" bool Protocol_StoragePacket_Action(XCHAR * ptszMsgBuffer, int* pInt_M
 extern "C" bool Protocol_StoragePacket_Bucket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, list<XENGINE_STORAGEBUCKET>* pStl_ListBucket)
 {
 	return m_StoragePacket.Protocol_StoragePacket_Bucket(ptszMsgBuffer, pInt_MsgLen, pStl_ListBucket);
+}
+extern "C" bool Protocol_StoragePacket_Notfound(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszFileName)
+{
+	return m_StoragePacket.Protocol_StoragePacket_Notfound(ptszMsgBuffer, pInt_MsgLen, lpszFileName);
 }
 extern "C" bool Protocol_StoragePacket_WDPropfind(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, XCHAR*** ppptszListFile, int nFileCount, LPCXSTR lpszBucketPath, LPCXSTR lpszBucketKey)
 {

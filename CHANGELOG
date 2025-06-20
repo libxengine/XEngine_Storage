@@ -1,3 +1,54 @@
+XEngine_Storage V3.20.0.1001
+
+增加:更多的系统发布支持
+增加:webdav没有找到文件的时候响应问题
+增加:webdav用户授权验证
+增加:http hook 验证字段类型
+增加:webdav响应文件锁定类型和创建时间属性
+更新:g++版本
+更新:依赖库
+优化:编译选项
+优化:设置日志级别通过启动命令
+优化:回调发送失败处理
+修改:仅发布版本发送报告
+修改:center请求url方法
+修改:option方法改为get
+修改:PROPFIND响应内存时间和大小
+修改:上传下载代码支持指定网络类型了
+修改:上传下载复用消息支持
+修正:http验证函数没有导出
+修正:帮助模块没有错误码的问题
+修正:webdav响应类型错误
+修正:webdav mkloc没有创建目录问题
+修正:webdav名词空间不正确
+修正:webdav空目录处理问题
+删除:http管理接口多余参数
+
+added:ci debian and fedora system build support
+added:not found file response for web dav
+added:user verification for webdav
+added:pass authorize type field
+added:file lock and create time attribute support for webdav
+update:make file g++ version
+update:depend library
+improved:make file build flags
+improved:set log level though start command
+improved:cb send get failure process
+modify:just release report info
+modify:request url method for center
+modify:option method name to get
+modify:PROPFIND reply contact modify time and size
+modify:download and upload support specifies the network type
+modify:upload and download method mix support
+fixed:http verification function not export
+fixed:have no error code export for help module
+fixed:webdav response type is incorrect
+fixed:webdav mkloc not create dir
+fixed:PROPFIND sometime have no name field
+fixed:name space is incorrect for web dav
+fixed:empty Folders handle incorrect
+delete:more parameter for manage and pass
+======================================================================================
 XEngine_Storage V3.19.0.1001
 
 增加:获取bucket列表信息功能

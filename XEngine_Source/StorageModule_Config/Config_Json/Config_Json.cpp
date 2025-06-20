@@ -61,21 +61,12 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARAMENT;
 		return false;
 	}
-	int nCount = 0;
-	XCHAR tszMsgBuffer[4096];
-	while (1)
-	{
-		int nRet = fread(tszMsgBuffer + nCount, 1, 2048, pSt_File);
-		if (nRet <= 0)
-		{
-			break;
-		}
-		nCount += nRet;
-	}
+	XCHAR tszMsgBuffer[8192] = {};
+	size_t nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_File);
 	fclose(pSt_File);
 
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
-	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nCount, &st_JsonRoot, &st_JsonError))
+	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nRet, &st_JsonRoot, &st_JsonError))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARSE;
@@ -144,7 +135,7 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	_tcsxcpy(pSt_ServerConfig->st_XSql.tszSQLUser, st_JsonXSql["SQLUser"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XSql.tszSQLPass, st_JsonXSql["SQLPass"].asCString());
 
-	if (st_JsonRoot["XStorage"].empty() || (3 != st_JsonRoot["XStorage"].size()))
+	if (st_JsonRoot["XStorage"].empty() || (4 != st_JsonRoot["XStorage"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XSTORAGE;
@@ -154,6 +145,7 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XStorage.nHashMode = st_JsonXStorage["nHashMode"].asInt();
 	pSt_ServerConfig->st_XStorage.bUPHash = st_JsonXStorage["bUPHash"].asBool();
 	pSt_ServerConfig->st_XStorage.bResumable = st_JsonXStorage["bResumable"].asBool();
+	pSt_ServerConfig->st_XStorage.bWDLocation = st_JsonXStorage["bWDLocation"].asBool();
 
 	if (st_JsonRoot["XProxy"].empty() || (6 != st_JsonRoot["XProxy"].size()))
 	{
@@ -282,21 +274,12 @@ bool CConfig_Json::Config_Json_Version(LPCXSTR lpszConfigFile, XENGINE_SERVERCON
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARAMENT;
 		return false;
 	}
-	int nCount = 0;
-	XCHAR tszMsgBuffer[4096];
-	while (1)
-	{
-		int nRet = fread(tszMsgBuffer + nCount, 1, 2048, pSt_File);
-		if (nRet <= 0)
-		{
-			break;
-		}
-		nCount += nRet;
-	}
+	XCHAR tszMsgBuffer[8192] = {};
+	size_t nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_File);
 	fclose(pSt_File);
 
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
-	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nCount, &st_JsonRoot, &st_JsonError))
+	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nRet, &st_JsonRoot, &st_JsonError))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARSE;
@@ -356,21 +339,12 @@ bool CConfig_Json::Config_Json_LoadBalance(LPCXSTR lpszConfigFile, XENGINE_LBCON
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARAMENT;
 		return false;
 	}
-	int nCount = 0;
-	XCHAR tszMsgBuffer[4096];
-	while (1)
-	{
-		int nRet = fread(tszMsgBuffer + nCount, 1, 2048, pSt_File);
-		if (nRet <= 0)
-		{
-			break;
-		}
-		nCount += nRet;
-	}
+	XCHAR tszMsgBuffer[8192] = {};
+	size_t nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_File);
 	fclose(pSt_File);
 
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
-	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nCount, &st_JsonRoot, &st_JsonError))
+	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nRet, &st_JsonRoot, &st_JsonError))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARSE;

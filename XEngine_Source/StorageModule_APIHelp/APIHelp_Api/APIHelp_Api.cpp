@@ -55,12 +55,12 @@ bool CAPIHelp_Api::APIHelp_Api_ProxyAuth(XCHAR* ptszUser, XCHAR* ptszPass, XCHAR
 	APIHelp_IsErrorOccur = false;
 
 	int nAuthType = 0;
-	int nAuthLen = MAX_PATH;
+	int nAuthLen = XPATH_MAX;
 
-	XCHAR tszAuthStr[MAX_PATH];
+	XCHAR tszAuthStr[XPATH_MAX];
 	XCHAR tszSDBuffer[1024];
 
-	memset(tszAuthStr, '\0', MAX_PATH);
+	memset(tszAuthStr, '\0', XPATH_MAX);
 	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
 	//是否有验证信息
 	if (!HttpProtocol_ServerHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
@@ -207,8 +207,8 @@ bool CAPIHelp_Api::APIHelp_Api_VerHash(LPCXSTR lpszFileHash, XCHAR** pptszListHd
 	APIHelp_IsErrorOccur = false;
 
 	LPCXSTR lpszKeyStr = _X("FileHash");
-	XCHAR tszValueStr[MAX_PATH];
-	memset(tszValueStr, '\0', MAX_PATH);
+	XCHAR tszValueStr[XPATH_MAX];
+	memset(tszValueStr, '\0', XPATH_MAX);
 
 	if (!HttpProtocol_ServerHelp_GetField(&pptszListHdr, nHdrCount, lpszKeyStr, tszValueStr))
 	{
@@ -321,11 +321,11 @@ bool CAPIHelp_Api::APIHelp_Api_UrlParse(XCHAR*** ppptszList, int nListCount, XCH
 
 	for (int i = 0; i < nListCount; i++)
 	{
-		XCHAR tszKey[MAX_PATH];
-		XCHAR tszValue[MAX_PATH];
+		XCHAR tszKey[XPATH_MAX];
+		XCHAR tszValue[XPATH_MAX];
 
-		memset(tszKey, '\0', MAX_PATH);
-		memset(tszValue, '\0', MAX_PATH);
+		memset(tszKey, '\0', XPATH_MAX);
+		memset(tszValue, '\0', XPATH_MAX);
 
 		BaseLib_String_GetKeyValue((*ppptszList)[i], _X("="), tszKey, tszValue);
 
@@ -333,8 +333,8 @@ bool CAPIHelp_Api::APIHelp_Api_UrlParse(XCHAR*** ppptszList, int nListCount, XCH
 		{
 			//编码格式是utf8,需要转为ansi
 #ifdef _MSC_BUILD
-			XCHAR tszFileName[MAX_PATH];
-			memset(tszFileName, '\0', MAX_PATH);
+			XCHAR tszFileName[XPATH_MAX];
+			memset(tszFileName, '\0', XPATH_MAX);
 
 			Cryption_Codec_UrlDeCodec(tszValue, _tcsxlen(tszValue), tszFileName);
 
@@ -383,15 +383,15 @@ bool CAPIHelp_Api::APIHelp_Api_Boundary(XCHAR*** ppptszList, int nListCount, XCH
 	//Content-Type: multipart/form-data; boundary=AaB03x
 	for (int i = 0; i < nListCount; i++)
 	{
-		XCHAR tszKeyStr[MAX_PATH] = {};
-		XCHAR tszVluStr[MAX_PATH] = {};
+		XCHAR tszKeyStr[XPATH_MAX] = {};
+		XCHAR tszVluStr[XPATH_MAX] = {};
 
 		BaseLib_String_GetKeyValue((*ppptszList)[i], _X(": "), tszKeyStr, tszVluStr);
 
 		if (0 == _tcsxnicmp(lpszHDRContent, tszKeyStr, _tcsxlen(lpszHDRContent)))
 		{
-			XCHAR tszKeySub[MAX_PATH] = {};
-			XCHAR tszVluSub[MAX_PATH] = {};
+			XCHAR tszKeySub[XPATH_MAX] = {};
+			XCHAR tszVluSub[XPATH_MAX] = {};
 			//multipart/form-data; boundary=AaB03x
 			if (BaseLib_String_GetKeyValue(tszVluStr, _X(";"), tszKeySub, tszVluSub))
 			{
@@ -465,18 +465,22 @@ bool CAPIHelp_Api::APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl)
 {
 	APIHelp_IsErrorOccur = false;
 
-	XCHAR tszUrlStr[MAX_PATH] = {};
+	XCHAR tszUrlStr[XPATH_MAX] = {};
 	_tcsxcpy(tszUrlStr, lpszUrl);
 	// 查找第一个 '/' 的位置
 	XCHAR *ptszFirstStr = _tcsxchr(tszUrlStr, '/');
 	if (ptszFirstStr == NULL) 
 	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_FORMAT;
 		return false;
 	}
 	// 查找第二个 '/' 的位置
 	XCHAR* ptszSecondStr = _tcsxchr(ptszFirstStr + 1, '/');
 	if (ptszSecondStr == NULL)
 	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_FORMAT;
 		return false;
 	}
 	// 计算提取字符串的长度
@@ -486,5 +490,97 @@ bool CAPIHelp_Api::APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl)
 	// 添加字符串结束符
 	ptszKeyStr[nLen] = '\0';
 
+	return true;
+}
+/********************************************************************
+函数名称：APIHelp_Api_GetLastName
+函数功能：获取最后文件名
+ 参数.一：ptszLastName
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出获取到的文件名
+ 参数.二：lpszPathStr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要获取的字符串
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAPIHelp_Api::APIHelp_Api_GetLastName(XCHAR* ptszLastName, LPCXSTR lpszPathStr)
+{
+	APIHelp_IsErrorOccur = false;
+
+	xstring m_StrPath = lpszPathStr;
+	// 如果以斜杠结尾，去掉末尾的斜杠
+	if (!m_StrPath.empty() && m_StrPath.back() == '/')
+	{
+		m_StrPath.pop_back();
+	}
+	// 找到最后一个斜杠的位置
+	size_t nPos = m_StrPath.find_last_of('/');
+	if (nPos == std::string::npos)
+	{
+		_tcsxcpy(ptszLastName, m_StrPath.c_str());
+	}
+	else
+	{
+		_tcsxcpy(ptszLastName, m_StrPath.substr(nPos + 1).c_str());
+	}
+	return true;
+}
+/********************************************************************
+函数名称：APIHelp_Api_WDToUrl
+函数功能：webdav的路径转为存储服务标准路径
+ 参数.一：lpszUrl
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要转换的路径
+ 参数.二：ptszUrl
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出转换后的路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAPIHelp_Api::APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl)
+{
+	APIHelp_IsErrorOccur = false;
+
+	xstring m_StrUrl = lpszUrl;
+	// 确保路径以 "/" 开头
+	if (m_StrUrl.empty() || m_StrUrl[0] != '/') 
+	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_FORMAT;
+		return false;
+	}
+	if (0 == _tcsxnicmp("api", m_StrUrl.c_str() + 1, 3))
+	{
+		_tcsxcpy(ptszUrl, lpszUrl);
+		return true;
+	}
+	// 找到第一个 '/' 和第二个 '/'
+	size_t nFirstSlash = m_StrUrl.find('/', 1);
+	if (nFirstSlash == std::string::npos) 
+	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_FORMAT;
+		return false;
+	}
+	//提取bucket
+	xstring m_StrBucket = m_StrUrl.substr(1, nFirstSlash - 1);
+	//提取剩余路径
+	xstring m_StrFile = m_StrUrl.substr(nFirstSlash + 1);
+	// 构造目标URL
+	xstring m_XUrl = "/api?filename=" + m_StrFile + "&storeagekey=" + m_StrBucket;
+	_tcsxcpy(ptszUrl, m_XUrl.c_str());
 	return true;
 }

@@ -18,3 +18,9 @@ EXPORTS
 	APIHelp_Api_Boundary
 	APIHelp_Api_GetDIRSize
 	APIHelp_Api_UrlStr
+	APIHelp_Api_GetLastName
+	APIHelp_Api_WDToUrl
+
+	APIHelp_Cryption_BasicEncoder
+	APIHelp_Cryption_BasicDecoder
+	APIHelp_Cryption_Digest
