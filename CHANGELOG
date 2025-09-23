@@ -1,3 +1,33 @@
+XEngine_Storage V3.21.0.1001
+
+added:get use and left size when start log
+added:ci rocky and centos and alma and debian linux support
+added:flush bucket size
+added:webdav verification configure
+added:auto now bucket size Calculate
+added:get bucket info reply bucket now size for http api
+modify:depend library direction name
+modify:start parameter are not case sensitive
+modify:http verification use verification module instead and http ver support basic and digest
+modify:up and download action unlimited speed support
+modify:reply when disable action
+improved:Statistics bucket size
+update:depend library
+
+增加:启动的时候输出bucket剩余大小
+增加:ci支持rocky centos alma debian 系统
+增加:刷新Bucket统计大小支持
+增加:webdav验证配置
+增加:自动计算bucket大小
+增加:获取bucket信息返回bucket当前使用大小
+修改:依赖库目录名称
+修改:启动参数不区分大小写
+修改:http验证使用了验证模块替代并且支持basic和digest
+修改:上传下载动作支持限速了
+修改:用户动作禁用支持正确返回
+优化:统计bucket大小
+更新:依赖库
+======================================================================================
 XEngine_Storage V3.20.0.1001
 
 增加:更多的系统发布支持

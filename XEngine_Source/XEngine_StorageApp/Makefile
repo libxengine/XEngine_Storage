@@ -1,11 +1,11 @@
 CC = g++ -Wall -std=c++20 -fPIC -Wno-format-overflow
 PLATVER = 
 LOADHDR = -I ./ 
-LOADSO =  -L ../XEngine_Depend/XEngine_Module/jsoncpp -L ../XEngine_Depend/XEngine_Module/tinyxml2 -L ../XEngine_Depend/XEngine_Module/XEngine_InfoReport \
+LOADSO =  -L ../XEngine_DependLibrary/XEngine_Module/jsoncpp -L ../XEngine_DependLibrary/XEngine_Module/tinyxml2 -L ../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport -L ../XEngine_DependLibrary/XEngine_Module/XEngine_Verification \
           -L ../StorageModule_Database -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp -L ../StorageModule_Protocol -L ../StorageModule_BTorrent
 LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_Cryption -lXClient_APIHelp -lXEngine_ProcFile -lXEngine_SystemApi -lHelpComponents_XLog -lHelpComponents_Packets -lRfcComponents_HttpProtocol \
       -lStorageModule_Database -lStorageModule_Config -lStorageModule_Session -lStorageModule_APIHelp -lStorageModule_Protocol -lStorageModule_BTorrent  \
-	  -ljsoncpp -ltinyxml2 -lXEngine_InfoReport
+	  -ljsoncpp -ltinyxml2 -lXEngine_InfoReport -lXEngine_Verification
 LIBEX = 
 OBJECTS = Storage_TaskPass.o Storage_TaskManage.o Storage_TaskP2p.o Storage_TaskAction.o \
 		  StorageApp_Config.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o StorageApp_Webdav.o XEngine_StorageApp.o

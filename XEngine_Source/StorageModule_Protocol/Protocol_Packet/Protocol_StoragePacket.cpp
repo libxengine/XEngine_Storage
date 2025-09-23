@@ -626,6 +626,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Bucket(XCHAR* ptszMsgBuffer
 		st_JsonObject["bEnable"] = stl_ListIterator->bEnable;
 		st_JsonObject["nLevel"] = stl_ListIterator->nLevel;
 		st_JsonObject["tszBuckSize"] = stl_ListIterator->tszBuckSize;
+		st_JsonObject["nNowSize"] = (Json::Value::UInt64)stl_ListIterator->nBuckSize;
 		st_JsonObject["tszBuckKey"] = stl_ListIterator->tszBuckKey;
 		st_JsonObject["tszFilePath"] = stl_ListIterator->tszFilePath;
 

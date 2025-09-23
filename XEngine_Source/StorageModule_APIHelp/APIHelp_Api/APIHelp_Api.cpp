@@ -23,63 +23,6 @@ CAPIHelp_Api::~CAPIHelp_Api()
 //                               公有函数
 //////////////////////////////////////////////////////////////////////////
 /********************************************************************
-函数名称：APIHelp_Api_ProxyAuth
-函数功能：代理验证
- 参数.一：ptszUser
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出用户名
- 参数.二：ptszPass
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出密码
- 参数.三：pptszListHdr
-  In/Out：In
-  类型：指向指针的指针
-  可空：N
-  意思：输入要解析的HTTP头
- 参数.四：nHdrCount
-  In/Out：In
-  类型：整数型
-  可空：N
-  意思：输入要解析的HTTP头列表个数
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：
-*********************************************************************/
-bool CAPIHelp_Api::APIHelp_Api_ProxyAuth(XCHAR* ptszUser, XCHAR* ptszPass, XCHAR** pptszListHdr, int nHdrCount)
-{
-	APIHelp_IsErrorOccur = false;
-
-	int nAuthType = 0;
-	int nAuthLen = XPATH_MAX;
-
-	XCHAR tszAuthStr[XPATH_MAX];
-	XCHAR tszSDBuffer[1024];
-
-	memset(tszAuthStr, '\0', XPATH_MAX);
-	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
-	//是否有验证信息
-	if (!HttpProtocol_ServerHelp_GetAuthInfo(&pptszListHdr, nHdrCount, tszAuthStr, &nAuthLen, &nAuthType))
-	{
-		APIHelp_IsErrorOccur = true;
-		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTAUTH;
-		return false;
-	}
-	//是否是BASIC
-	if (1 != nAuthType)
-	{
-		APIHelp_IsErrorOccur = true;
-		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTSUPPORT;
-		return false;
-	}
-	APIHelp_Cryption_BasicDecoder(tszAuthStr, ptszUser, ptszPass);
-	return true;
-}
-/********************************************************************
 函数名称：APIHelp_Api_RangeFile
 函数功能：获取HTTP的范围
  参数.一：pInt_SPos

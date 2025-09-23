@@ -166,38 +166,47 @@ extern "C" bool APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUCKET>* pStl_
 备注：
 *********************************************************************/
 extern "C" bool APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCXSTR lpszBuckKey, XCHAR* ptszFilePath);
-/************************************************************************/
-/*                       帮助函数                                       */
-/************************************************************************/
 /********************************************************************
-函数名称：APIHelp_Api_ProxyAuth
-函数功能：代理验证
- 参数.一：ptszUser
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出用户名
- 参数.二：ptszPass
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出密码
- 参数.三：pptszListHdr
+函数名称：APIHelp_Distributed_GetSize
+函数功能：获取存储设置大小
+ 参数.一：lpszMsgBuffer
   In/Out：In
-  类型：指向指针的指针
+  类型：常量字符指针
   可空：N
-  意思：输入要解析的HTTP头
- 参数.四：nHdrCount
+  意思：输入要获取的缓冲区
+返回值
+  类型：整数型
+  意思：获取到的大小字节
+备注：
+*********************************************************************/
+extern "C" __int64u APIHelp_Distributed_GetSize(LPCXSTR lpszMsgBuffer);
+/********************************************************************
+函数名称：APIHelp_Distributed_SetSize
+函数功能：设置指定BUCKET当前大小
+ 参数.一：pStl_ListBucket
+  In/Out：In
+  类型：STL容器
+  可空：N
+  意思：输入BUCKET列表
+ 参数.二：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要查询的BUCKET名称
+ 参数.三：nSize
   In/Out：In
   类型：整数型
   可空：N
-  意思：输入要解析的HTTP头列表个数
+  意思：支持+ - 操作
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool APIHelp_Api_ProxyAuth(XCHAR* ptszUser, XCHAR* ptszPass, XCHAR** pptszListHdr, int nHdrCount);
+extern "C" bool APIHelp_Distributed_SetSize(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCXSTR lpszBuckKey, __int64x nSize);
+/************************************************************************/
+/*                       帮助函数                                       */
+/************************************************************************/
 /********************************************************************
 函数名称：APIHelp_Api_RangeFile
 函数功能：获取HTTP的范围
@@ -409,114 +418,3 @@ extern "C" bool APIHelp_Api_GetLastName(XCHAR* ptszLastName, LPCXSTR lpszPathStr
 备注：
 *********************************************************************/
 extern "C" bool APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl);
-/************************************************************************/
-/*                       加解密函数                                     */
-/************************************************************************/
-/********************************************************************
-函数名称：APIHelp_Cryption_BasicEncoder
-函数功能：HTTP基本验证加密函数
- 参数.一：lpszUser
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入用户名
- 参数.二：lpszPass
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入密码
- 参数.三：ptszMsgBuffer
-  In/Out：In
-  类型：字符指针
-  可空：N
-  意思：输出加密后的缓冲区
- 参数.四：bADD
-  In/Out：In
-  类型：逻辑型
-  可空：N
-  意思：是否添加验证算法类型
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：格式:Basic BASE64
-*********************************************************************/
-extern "C" bool APIHelp_Cryption_BasicEncoder(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszMsgBuffer, bool bADD = true);
-/********************************************************************
-函数名称：APIHelp_Cryption_BasicDecoder
-函数功能：HTTP基本验证解密函数
- 参数.一：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要解密的缓冲区
- 参数.二：ptszUser
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出用户名
- 参数.三：ptszPass
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出密码
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：HttpProtocol_ServerHelp_GetAuthInfo 返回的内容
-	  格式:Basic BASE64
-*********************************************************************/
-extern "C" bool APIHelp_Cryption_BasicDecoder(LPCXSTR lpszMsgBuffer, XCHAR* ptszUser, XCHAR* ptszPass);
-/********************************************************************
-函数名称：APIHelp_Cryption_Digest
-函数功能：摘要计算函数
- 参数.一：ptszResponseStr
-  In/Out：Out
-  类型：字符指针
-  可空：N
-  意思：输出计算后的RESPONSE字符串
- 参数.二：lpszUser
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入用户名
- 参数.三：lpszPass
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入密码
- 参数.四：lpszRealm
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入作用域,服务器发送的
- 参数.五：lpszMethod
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入请求的方法
- 参数.六：lpszUrl
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入请求的URL地址
- 参数.七：lpszNonce
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：服务器生成并且发送的
- 参数.八：lpszCNonce
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：客户端生成的随机字符串
- 参数.九：lpszNC
-  In/Out：In
-  类型：常量字符指针
-  可空：Y
-  意思：验证的次数,建议为NULL.
-返回值
-  类型：逻辑型
-  意思：是否成功
-备注：信息摘要支持QOP=AUTH 算法MD5的验证模式
-*********************************************************************/
-extern "C" bool APIHelp_Cryption_Digest(XCHAR* ptszResponseStr, LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszRealm, LPCXSTR lpszMethod, LPCXSTR lpszUrl, LPCXSTR lpszNonce, LPCXSTR lpszCNonce, LPCXSTR lpszNC = NULL);

@@ -45,9 +45,12 @@
     "XProxy": {
         "bUPPass": false,
         "bDLPass": false,
+        "bWDPass": false,
         "bAuthPass": false,
+        "nVType": 1,
         "tszUPPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
         "tszDLPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
+        "tszWDPass": "http://192.168.1.7:5200/Api/Pass/WDFile",
         "tszAuthPass": ""
     },
     "XLimit": {
@@ -79,7 +82,7 @@
     },
     "XAction": {
         "bEnable": true,
-        "nSDMax": 1024000,
-        "nRVMax": 1024000
+        "nSDMax": 0,
+        "nRVMax": 0
     }
 }

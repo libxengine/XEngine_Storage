@@ -64,8 +64,10 @@ using namespace std;
 #include "../StorageModule_APIHelp/APIHelp_Error.h"
 #include "../StorageModule_BTorrent/BTorrent_Define.h"
 #include "../StorageModule_BTorrent/BTorrent_Error.h"
-#include "../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
-#include "../XEngine_Depend/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
+#include "../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport/InfoReport_Define.h"
+#include "../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport/InfoReport_Error.h"
+#include "../XEngine_DependLibrary/XEngine_Module/XEngine_Verification/Verification_Define.h"
+#include "../XEngine_DependLibrary/XEngine_Module/XEngine_Verification/Verification_Error.h"
 
 #define STORAGE_LEAVETYPE_HEARTBEAT 1
 #define STORAGE_LEAVETYPE_BYSELF 2
@@ -146,6 +148,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../x64/Debug/StorageModule_Database.lib")
 #pragma comment(lib,"../x64/Debug/StorageModule_BTorrent.lib")
 #pragma comment(lib,"../x64/Debug/XEngine_InfoReport.lib")
+#pragma comment(lib,"../x64/Debug/XEngine_Verification.lib")
 #elif _M_ARM64
 #pragma comment(lib,"../ARM64/Debug/StorageModule_Session.lib")
 #pragma comment(lib,"../ARM64/Debug/StorageModule_Config.lib")
@@ -154,6 +157,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../ARM64/Debug/StorageModule_Database.lib")
 #pragma comment(lib,"../ARM64/Debug/StorageModule_BTorrent.lib")
 #pragma comment(lib,"../ARM64/Debug/XEngine_InfoReport.lib")
+#pragma comment(lib,"../ARM64/Debug/XEngine_Verification.lib")
 #elif _M_IX86
 #pragma comment(lib,"../Debug/StorageModule_Session.lib")
 #pragma comment(lib,"../Debug/StorageModule_Config.lib")
@@ -162,6 +166,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../Debug/StorageModule_Database.lib")
 #pragma comment(lib,"../Debug/StorageModule_BTorrent.lib")
 #pragma comment(lib,"../Debug/XEngine_InfoReport.lib")
+#pragma comment(lib,"../Debug/XEngine_Verification.lib")
 #endif
 #else
 #ifdef _M_X64
@@ -172,6 +177,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../x64/Release/StorageModule_Database.lib")
 #pragma comment(lib,"../x64/Release/StorageModule_BTorrent.lib")
 #pragma comment(lib,"../x64/Release/XEngine_InfoReport.lib")
+#pragma comment(lib,"../x64/Release/XEngine_Verification.lib")
 #elif _M_ARM64
 #pragma comment(lib,"../ARM64/Release/StorageModule_Session.lib")
 #pragma comment(lib,"../ARM64/Release/StorageModule_Config.lib")
@@ -180,6 +186,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../ARM64/Release/StorageModule_Database.lib")
 #pragma comment(lib,"../ARM64/Release/StorageModule_BTorrent.lib")
 #pragma comment(lib,"../ARM64/Release/XEngine_InfoReport.lib")
+#pragma comment(lib,"../ARM64/Release/XEngine_Verification.lib")
 #elif _M_IX86
 #pragma comment(lib,"../Release/StorageModule_Session.lib")
 #pragma comment(lib,"../Release/StorageModule_Config.lib")
@@ -188,6 +195,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"../Release/StorageModule_Database.lib")
 #pragma comment(lib,"../Release/StorageModule_BTorrent.lib")
 #pragma comment(lib,"../Release/XEngine_InfoReport.lib")
+#pragma comment(lib,"../Release/XEngine_Verification.lib")
 #endif
 #endif
 #endif

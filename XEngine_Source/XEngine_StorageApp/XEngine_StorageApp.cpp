@@ -572,6 +572,13 @@ int main(int argc, char** argv)
 	{
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_WARN, _X("启动服务中，转录动作没有启用"));
 	}
+	//统计大小
+	for (auto stl_ListIterator = st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket->begin(); stl_ListIterator != st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket->end(); stl_ListIterator++)
+	{
+		__int64u nSetSize = APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize);
+		APIHelp_Api_GetDIRSize(stl_ListIterator->tszFilePath, &stl_ListIterator->nBuckSize);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，检查文件目录:%s,名称;%s,可用大小:%lld,使用大小:%lld,剩余大小:%lld"), stl_ListIterator->tszFilePath, stl_ListIterator->tszBuckKey, nSetSize, stl_ListIterator->nBuckSize, nSetSize - stl_ListIterator->nBuckSize);
+	}
 #ifndef _DEBUG
 	//发送信息报告
 	if (st_ServiceCfg.st_XReport.bEnable && !bIsTest)

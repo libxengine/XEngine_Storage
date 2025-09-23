@@ -333,10 +333,8 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 				APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_DISABLE;
 				return false;
 			}
-			__int64u nDirCount = 0;   //当前目录大小
-			APIHelp_Api_GetDIRSize(pSt_StorageBucket->tszFilePath, &nDirCount);
 			//如果当前目录大小大于设定的大小.
-			if (nDirCount >= APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize))
+			if (pSt_StorageBucket->nBuckSize >= APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize))
 			{
 				APIHelp_IsErrorOccur = true;
 				APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_SIZE;
@@ -369,10 +367,8 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_UPStorage(list<XENGINE_STORAGEBUC
 				//处理优先级
 				if (stl_ListIterator->nLevel == nLastLevel)
 				{
-					__int64u nDirCount = 0;   //当前目录大小
-					APIHelp_Api_GetDIRSize(pSt_StorageBucket->tszFilePath, &nDirCount);
 					//如果当前目录大小大于设定的大小.那么忽略
-					if (nDirCount >= APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize))
+					if (pSt_StorageBucket->nBuckSize >= APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize))
 					{
 						continue;
 					}
@@ -479,6 +475,101 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBU
 	}
 	return true;
 }
+/********************************************************************
+函数名称：APIHelp_Distributed_GetSize
+函数功能：获取存储设置大小
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要获取的缓冲区
+返回值
+  类型：整数型
+  意思：获取到的大小字节
+备注：
+*********************************************************************/
+__int64u CAPIHelp_Distributed::APIHelp_Distributed_GetSize(LPCXSTR lpszMsgBuffer)
+{
+	APIHelp_IsErrorOccur = false;
+
+	XCHAR tszSizeStr[64];
+	XCHAR tszUnitStr[4];
+
+	memset(tszSizeStr, '\0', sizeof(tszSizeStr));
+	memset(tszUnitStr, '\0', sizeof(tszUnitStr));
+	//分别得到数字和单位
+	memcpy(tszSizeStr, lpszMsgBuffer, _tcsxlen(lpszMsgBuffer) - 2);
+	tszUnitStr[0] = lpszMsgBuffer[_tcsxlen(lpszMsgBuffer) - 2];
+	tszUnitStr[1] = lpszMsgBuffer[_tcsxlen(lpszMsgBuffer) - 1];
+
+	__int64u nllSize = _ttxoll(tszSizeStr);
+	//得到单位大小
+	if (0 == _tcsxncmp(tszUnitStr, _X("KB"), 2))
+	{
+		nllSize = nllSize * 1024;
+	}
+	else if (0 == _tcsxncmp(tszUnitStr, _X("MB"), 2))
+	{
+		nllSize = nllSize * 1024 * 1024;
+	}
+	else if (0 == _tcsxncmp(tszUnitStr, _X("GB"), 2))
+	{
+		nllSize = nllSize * 1024 * 1024 * 1024;
+	}
+
+	return nllSize;
+}
+/********************************************************************
+函数名称：APIHelp_Distributed_SetSize
+函数功能：设置指定BUCKET当前大小
+ 参数.一：pStl_ListBucket
+  In/Out：In
+  类型：STL容器
+  可空：N
+  意思：输入BUCKET列表
+ 参数.二：lpszBuckKey
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要查询的BUCKET名称
+ 参数.三：nSize
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：支持+ - 操作
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAPIHelp_Distributed::APIHelp_Distributed_SetSize(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCXSTR lpszBuckKey, __int64x nSize)
+{
+	APIHelp_IsErrorOccur = false;
+
+	if ((NULL == pStl_ListBucket) || (NULL == lpszBuckKey))
+	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_PARAMENT;
+		return false;
+	}
+	bool bFound = false;
+	for (auto stl_ListIterator = pStl_ListBucket->begin(); stl_ListIterator != pStl_ListBucket->end(); stl_ListIterator++)
+	{
+		if (0 == _tcsxncmp(lpszBuckKey, stl_ListIterator->tszBuckKey, _tcsxlen(stl_ListIterator->tszBuckKey)))
+		{
+			stl_ListIterator->nBuckSize += nSize;
+			bFound = true;
+			break;
+		}
+	}
+	if (!bFound)
+	{
+		APIHelp_IsErrorOccur = true;
+		APIHelp_dwErrorCode = ERROR_STORAGE_MODULE_APIHELP_NOTFOUND;
+		return false;
+	}
+	return true;
+}
 //////////////////////////////////////////////////////////////////////////
 //                               保护函数
 //////////////////////////////////////////////////////////////////////////
@@ -538,48 +629,4 @@ bool CAPIHelp_Distributed::APIHelp_Distributed_FileListParse(LPCXSTR lpszMsgBuff
 		break;
 	}
 	return true;
-}
-/********************************************************************
-函数名称：APIHelp_Distributed_GetSize
-函数功能：获取存储设置大小
- 参数.一：lpszMsgBuffer
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：输入要获取的缓冲区
-返回值
-  类型：整数型
-  意思：获取到的大小字节
-备注：
-*********************************************************************/
-__int64u CAPIHelp_Distributed::APIHelp_Distributed_GetSize(LPCXSTR lpszMsgBuffer)
-{
-	APIHelp_IsErrorOccur = false;
-
-	XCHAR tszSizeStr[64];
-	XCHAR tszUnitStr[4];
-
-	memset(tszSizeStr, '\0', sizeof(tszSizeStr));
-	memset(tszUnitStr, '\0', sizeof(tszUnitStr));
-	//分别得到数字和单位
-	memcpy(tszSizeStr, lpszMsgBuffer, _tcsxlen(lpszMsgBuffer) - 2);
-	tszUnitStr[0] = lpszMsgBuffer[_tcsxlen(lpszMsgBuffer) - 2];
-	tszUnitStr[1] = lpszMsgBuffer[_tcsxlen(lpszMsgBuffer) - 1];
-
-	__int64u nllSize = _ttxoll(tszSizeStr);
-	//得到单位大小
-	if (0 == _tcsxncmp(tszUnitStr, _X("KB"), 2))
-	{
-		nllSize = nllSize * 1024;
-	}
-	else if (0 == _tcsxncmp(tszUnitStr, _X("MB"), 2))
-	{
-		nllSize = nllSize * 1024 * 1024;
-	}
-	else if (0 == _tcsxncmp(tszUnitStr, _X("GB"), 2))
-	{
-		nllSize = nllSize * 1024 * 1024 * 1024;
-	}
-
-	return nllSize;
 }

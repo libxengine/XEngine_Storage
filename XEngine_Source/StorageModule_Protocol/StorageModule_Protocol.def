@@ -11,6 +11,7 @@ EXPORTS
 	Protocol_StorageParse_SpeedLimit
 	Protocol_StorageParse_P2PToken
 	Protocol_StorageParse_Action
+	Protocol_StorageParse_User
 	Protocol_StorageParse_WDLock
 	Protocol_StorageParse_WDPropPatch
 

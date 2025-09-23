@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "APIHelp_Distributed/APIHelp_Distributed.h"
 #include "APIHelp_Api/APIHelp_Api.h"
-#include "APIHelp_Cryption/APIHelp_Cryption.h"
 /********************************************************************
 //    Created:     2021/07/08  16:40:04
 //    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_APIHelp\pch.cpp
@@ -18,7 +17,6 @@ XLONG APIHelp_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CAPIHelp_Distributed m_APIDistributed;
 CAPIHelp_Api m_APIHelp;
-CAPIHelp_Cryption m_APICryption;
 //////////////////////////////////////////////////////////////////////////
 //                       导出函数
 //////////////////////////////////////////////////////////////////////////
@@ -57,13 +55,17 @@ extern "C" bool APIHelp_Distributed_GetPathKey(list<XENGINE_STORAGEBUCKET>*pStl_
 {
 	return m_APIDistributed.APIHelp_Distributed_GetPathKey(pStl_ListBucket, lpszBuckKey, ptszFilePath);
 }
+extern "C" __int64u APIHelp_Distributed_GetSize(LPCXSTR lpszMsgBuffer)
+{
+	return m_APIDistributed.APIHelp_Distributed_GetSize(lpszMsgBuffer);
+}
+extern "C" bool APIHelp_Distributed_SetSize(list<XENGINE_STORAGEBUCKET>* pStl_ListBucket, LPCXSTR lpszBuckKey, __int64x nSize)
+{
+	return m_APIDistributed.APIHelp_Distributed_SetSize(pStl_ListBucket, lpszBuckKey, nSize);
+}
 /************************************************************************/
 /*                       帮助函数                                       */
 /************************************************************************/
-extern "C" bool APIHelp_Api_ProxyAuth(XCHAR * ptszUser, XCHAR * ptszPass, XCHAR * *pptszListHdr, int nHdrCount)
-{
-	return m_APIHelp.APIHelp_Api_ProxyAuth(ptszUser, ptszPass, pptszListHdr, nHdrCount);
-}
 extern "C" bool APIHelp_Api_RangeFile(int* pInt_SPos, int* pInt_EPos, __int64x * pInt_Count, XCHAR * *pptszListHdr, int nHdrCount)
 {
 	return m_APIHelp.APIHelp_Api_RangeFile(pInt_SPos, pInt_EPos, pInt_Count, pptszListHdr, nHdrCount);
@@ -99,19 +101,4 @@ extern "C" bool APIHelp_Api_GetLastName(XCHAR* ptszLastName, LPCXSTR lpszPathStr
 extern "C" bool APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl)
 {
 	return m_APIHelp.APIHelp_Api_WDToUrl(lpszUrl, ptszUrl);
-}
-/************************************************************************/
-/*                       加解密函数                                     */
-/************************************************************************/
-extern "C" bool APIHelp_Cryption_BasicEncoder(LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszMsgBuffer, bool bADD)
-{
-	return m_APICryption.APIHelp_Cryption_BasicEncoder(lpszUser, lpszPass, ptszMsgBuffer, bADD);
-}
-extern "C" bool APIHelp_Cryption_BasicDecoder(LPCXSTR lpszMsgBuffer, XCHAR* ptszUser, XCHAR* ptszPass)
-{
-	return m_APICryption.APIHelp_Cryption_BasicDecoder(lpszMsgBuffer, ptszUser, ptszPass);
-}
-extern "C" bool APIHelp_Cryption_Digest(XCHAR* ptszResponseStr, LPCXSTR lpszUser, LPCXSTR lpszPass, LPCXSTR lpszRealm, LPCXSTR lpszMethod, LPCXSTR lpszUrl, LPCXSTR lpszNonce, LPCXSTR lpszCNonce, LPCXSTR lpszNC)
-{
-	return m_APICryption.APIHelp_Cryption_Digest(ptszResponseStr, lpszUser, lpszPass, lpszRealm, lpszMethod, lpszUrl, lpszNonce, lpszCNonce, lpszNC);
 }

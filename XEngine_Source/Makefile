@@ -3,9 +3,10 @@ UNICODE = 0
 PLATFORM=linux
 FLAGS= 
 
-THIRD_JSONCPP_PATH = ./XEngine_Depend/XEngine_Module/jsoncpp
-THIRD_TINYXML_PATH = ./XEngine_Depend/XEngine_Module/tinyxml2
-THIRD_REPORT_PATH = ./XEngine_Depend/XEngine_Module/XEngine_InfoReport
+THIRD_JSONCPP_PATH = ./XEngine_DependLibrary/XEngine_Module/jsoncpp
+THIRD_TINYXML_PATH = ./XEngine_DependLibrary/XEngine_Module/tinyxml2
+THIRD_REPORT_PATH = ./XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport
+THIRD_VERIFICATION_PATH = ./XEngine_DependLibrary/XEngine_Module/XEngine_Verification
 
 BASE_SQL_PATH = ./StorageModule_Database
 BASE_CONFIG_PATH = ./StorageModule_Config
@@ -22,7 +23,7 @@ else ifeq ($(PLATFORM),mac)
 	FILEEXT = dylib
 endif
 
-XENGINE_MODULES = libjsoncpp.so libtinyxml2.so libXEngine_InfoReport.so                                   \
+XENGINE_MODULES = libjsoncpp.so libtinyxml2.so libXEngine_InfoReport.so libXEngine_Verification.so                             \
                 libStorageModule_Database.so libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so libStorageModule_Protocol.so libStorageModule_BTorrent.so    \
 		 		XEngine_StorageApp.exe 
 
@@ -46,6 +47,12 @@ ifeq ($(FLAGS), InstallAll)
 	cp $(THIRD_REPORT_PATH)/libXEngine_InfoReport.$(FILEEXT) ../XEngine_Release/
 else
 	make -C $(THIRD_REPORT_PATH) PLATFORM=$(PLATFORM) UNICODE=$(UNICODE) RELEASE=$(RELEASE) $(FLAGS)
+endif
+libXEngine_Verification.so:
+ifeq ($(FLAGS), InstallAll)
+	cp $(THIRD_VERIFICATION_PATH)/libXEngine_Verification.$(FILEEXT) ../XEngine_Release/
+else
+	make -C $(THIRD_VERIFICATION_PATH) PLATFORM=$(PLATFORM) UNICODE=$(UNICODE) RELEASE=$(RELEASE) $(FLAGS)
 endif
 
 libStorageModule_Database.so:

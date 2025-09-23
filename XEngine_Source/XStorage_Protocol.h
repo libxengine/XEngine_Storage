@@ -26,6 +26,9 @@
 #define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_NOTFOUND 0x103                 //请求的内容不存在
 #define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_SERVER 0x104                   //内部错误,执行失败
 #define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_NOENABLE 0x105                 //功能没有启用
+#define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_SERVERDOWN 0x106               //服务器不可用
+#define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_AUTHFAIL 0x107                 //用户验证失败
+#define ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_DISABLE 0x108                  //功能被禁用
 //////////////////////////////////////////////////////////////////////////
 //                         协议结构体
 //////////////////////////////////////////////////////////////////////////

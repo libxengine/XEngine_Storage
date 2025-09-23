@@ -246,6 +246,30 @@ extern "C" bool Protocol_StorageParse_P2PToken(LPCXSTR lpszMsgBuffer, int nMsgLe
 *********************************************************************/
 extern "C" bool Protocol_StorageParse_Action(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_ACTIONINFO * pSt_ActionInfo);
 /********************************************************************
+函数名称：Protocol_StorageParse_User
+函数功能：用户信息解析函数
+ 参数.一：lpszMsgBuffer
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要解析的内容
+ 参数.二：nMsgLen
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要解析的大小
+ 参数.三：pSt_UserInfo
+  In/Out：Out
+  类型：数据结构指针
+  可空：N
+  意思：输出解析的数据
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Protocol_StorageParse_User(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_PROTOCOL_USERAUTH* pSt_UserInfo);
+/********************************************************************
 函数名称：Protocol_StorageParse_WDLock
 函数功能：WEBDAV加锁协议解析函数
  参数.一：lpszMsgBuffer

@@ -57,6 +57,10 @@ extern "C" bool Protocol_StorageParse_Action(LPCXSTR lpszMsgBuffer, int nMsgLen,
 {
 	return m_StorageParse.Protocol_StorageParse_Action(lpszMsgBuffer, nMsgLen, pSt_ActionInfo);
 }
+extern "C" bool Protocol_StorageParse_User(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_PROTOCOL_USERAUTH* pSt_UserInfo)
+{
+	return m_StorageParse.Protocol_StorageParse_User(lpszMsgBuffer, nMsgLen, pSt_UserInfo);
+}
 extern "C" bool Protocol_StorageParse_WDLock(LPCXSTR lpszMsgBuffer, int nMsgLen, XENGINE_WEBDAVLOCK* pSt_WDLock)
 {
 	return m_StorageParse.Protocol_StorageParse_WDLock(lpszMsgBuffer, nMsgLen, pSt_WDLock);

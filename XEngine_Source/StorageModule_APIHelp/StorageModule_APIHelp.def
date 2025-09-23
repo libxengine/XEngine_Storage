@@ -9,8 +9,9 @@ EXPORTS
 	APIHelp_Distributed_CTStorage
 	APIHelp_Distributed_UPStorage
 	APIHelp_Distributed_GetPathKey
+	APIHelp_Distributed_GetSize
+	APIHelp_Distributed_SetSize
 
-	APIHelp_Api_ProxyAuth
 	APIHelp_Api_RangeFile
 	APIHelp_Api_VerHash
 	APIHelp_Api_GetIPInfo
@@ -20,7 +21,3 @@ EXPORTS
 	APIHelp_Api_UrlStr
 	APIHelp_Api_GetLastName
 	APIHelp_Api_WDToUrl
-
-	APIHelp_Cryption_BasicEncoder
-	APIHelp_Cryption_BasicDecoder
-	APIHelp_Cryption_Digest
