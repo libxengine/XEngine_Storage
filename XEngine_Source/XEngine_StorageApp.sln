@@ -73,6 +73,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_InfoReport", "XEngi
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XEngine_Verification", "XEngine_DependLibrary\XEngine_Module\XEngine_Verification\XEngine_Verification.vcxproj", "{A8E43EC0-698A-4807-8A61-B2BE5FAB7256}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F1736B3F-03A2-4FC7-B045-A12BA8D724FB} = {F1736B3F-03A2-4FC7-B045-A12BA8D724FB}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -102,3 +102,7 @@ extern "C" bool APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl)
 {
 	return m_APIHelp.APIHelp_Api_WDToUrl(lpszUrl, ptszUrl);
 }
+extern "C" bool APIHelp_Api_BSizeToStr(__int64x nSize, XCHAR* ptszSizeStr, int nType)
+{
+	return m_APIHelp.APIHelp_Api_BSizeToStr(nSize, ptszSizeStr, nType);
+}

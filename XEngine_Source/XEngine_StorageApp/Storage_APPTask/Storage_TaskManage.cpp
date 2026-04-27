@@ -4,8 +4,8 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 {
 	int nSDLen = 10240;
 	int nRVLen = 10240;
-	XCHAR tszSDBuffer[10240];
-	XCHAR tszRVBuffer[10240];
+	XCHAR tszSDBuffer[10240] = {};
+	XCHAR tszRVBuffer[10240] = {};
 	LPCXSTR lpszAPIConfig = _X("Config");
 	LPCXSTR lpszAPIInsert = _X("Insert");
 	LPCXSTR lpszAPIDelete = _X("Delete");
@@ -14,11 +14,7 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 	LPCXSTR lpszAPIBucket = _X("Bucket");
 	LPCXSTR lpszAPITask = _X("Task");
 	LPCXSTR lpszAPIFlushSize = _X("flushsize");
-	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
-
-	memset(tszSDBuffer, '\0', sizeof(tszSDBuffer));
-	memset(tszRVBuffer, '\0', sizeof(tszRVBuffer));
-	memset(&st_HDRParam, '\0', sizeof(RFCCOMPONENTS_HTTP_HDRPARAM));
+	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam = {};
 
 	st_HDRParam.bIsClose = true;
 	st_HDRParam.nHttpCode = 200;

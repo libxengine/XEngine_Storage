@@ -47,8 +47,6 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
-#include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
-#include <XEngine_Include/XEngine_SystemSdk/ProcFile_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 #include "../XStorage_Protocol.h"
@@ -117,6 +115,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 
 #include "StorageApp_Network.h"
 #include "StorageApp_Config.h"
+#include "StorageApp_HTTPHelp.h"
 #include "StorageApp_Download.h"
 #include "StorageApp_UPLoader.h"
 #include "StorageApp_Center.h"

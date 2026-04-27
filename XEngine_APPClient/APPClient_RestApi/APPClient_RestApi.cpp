@@ -30,13 +30,13 @@ using namespace std;
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
 //linux使用下面的命令编译
-//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -I ../../XEngine_Source/XEngine_Depend/XEngine_Module/jsoncpp -L ../../XEngine_Release -lXEngine_BaseLib -lXClient_APIHelp -ljsoncpp -Wl,-rpath=../../XEngine_Release
+//g++ -std=c++17 -Wall -g APPClient_RestApi.cpp -o APPClient_RestApi.exe -I ../../XEngine_Source/XEngine_DependLibrary/XEngine_Module/jsoncpp -L ../../XEngine_Release -lXEngine_BaseLib -lXClient_APIHelp -ljsoncpp -Wl,-rpath=../../XEngine_Release
 
 XCHAR tszBaseBuffer[MAX_PATH];
 XCHAR tszHdrBuffer[MAX_PATH];
 void API_Manage_Bucket()
 {
-	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Bucket");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/api?function=manage&param=bucket");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
@@ -49,10 +49,24 @@ void API_Manage_Bucket()
 	_xtprintf("API_Manage_Bucket:%d,%s\n", nCode, ptszMsgBuffer);
 	BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMsgBuffer);
 }
+void API_Manage_FileSize()
+{
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/storagekey1/DekTec.zip");
+	int nCode = 0;
+	XCLIENT_APIHTTP st_APIHttp = {};
+
+	st_APIHttp.bNOBody = true;
+	if (!APIClient_Http_Request(_X("HEAD"), lpszUrl, NULL, &nCode, NULL, NULL, NULL, tszHdrBuffer, &st_APIHttp))
+	{
+		_xtprintf("API_Manage_FileSize:%lX\n", APIClient_GetLastError());
+		return;
+	}
+	_xtprintf("API_Manage_FileSize:%d,%s\n", nCode, tszHdrBuffer);
+}
 //查询
 void API_Manage_Query()
 {
-	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/QueryFile");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/api?function=manage&param=query");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
@@ -73,7 +87,7 @@ void API_Manage_Query()
 //插入
 void API_Manage_Insert()
 {
-	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Insert");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/api?function=manage&param=insert");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
@@ -101,7 +115,7 @@ void API_Manage_Insert()
 //删除
 void API_Manage_Delete()
 {
-	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Delete");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/api?function=manage&param=delete");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
@@ -126,7 +140,7 @@ void API_Manage_Delete()
 //文件夹
 void API_Manage_Dir()
 {
-	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Dir");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/api?function=manage&param=dir");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
@@ -170,7 +184,7 @@ void API_Manage_Dir()
 //任务管理
 void API_Manage_Task()
 {
-	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Task");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/api?function=manage&param=task");
 	int nLen = 0;
 	int nCode = 0;
 	XCHAR* ptszMsgBuffer = NULL;
@@ -191,6 +205,7 @@ int main()
 #endif
 
 	API_Manage_Bucket();
+	API_Manage_FileSize();
 	API_Manage_Query();
 	API_Manage_Insert();
 	API_Manage_Delete();

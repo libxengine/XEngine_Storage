@@ -27,6 +27,7 @@ public:
 	bool APIHelp_Api_UrlStr(XCHAR* ptszKeyStr, LPCXSTR lpszUrl);
 	bool APIHelp_Api_GetLastName(XCHAR* ptszLastName, LPCXSTR lpszPathStr);
 	bool APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl);
+	bool APIHelp_Api_BSizeToStr(__int64x nSize, XCHAR* ptszSizeStr, int nType);
 protected:
 private:
 };

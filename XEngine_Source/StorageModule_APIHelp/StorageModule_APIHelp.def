@@ -21,3 +21,4 @@ EXPORTS
 	APIHelp_Api_UrlStr
 	APIHelp_Api_GetLastName
 	APIHelp_Api_WDToUrl
+	APIHelp_Api_BSizeToStr

@@ -1,3 +1,27 @@
+XEngine_Storage V3.22.0.1001
+
+增加:当启动的时候打印占用硬盘空间信息
+增加:支持HTTP头获取文件大小
+ci:更新了macos系统版本
+ci:更新了编译库
+更新:依赖库
+修改:启动参数不在区分大小写
+修改:必须设置发送消息类型
+修改:http验证接口统一
+修正:处理没有找到api名称的问题
+修正:获取文件大小处理失败
+
+added:The spatial data information displayed when starting printing is more intuitive
+added:get file size thought head method for http center
+ci:update macos system version
+ci:update last version
+update:depend library
+modify:start parameter and http request name does not case-sensitive
+modify:must set type for http send message
+modify:http restful api verification Unification
+fixed:process not found api name
+fixed:process failure when get file size 
+======================================================================================
 XEngine_Storage V3.21.0.1001
 
 added:get use and left size when start log

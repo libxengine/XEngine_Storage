@@ -3,12 +3,12 @@ PLATVER =
 LOADHDR = -I ./ 
 LOADSO =  -L ../XEngine_DependLibrary/XEngine_Module/jsoncpp -L ../XEngine_DependLibrary/XEngine_Module/tinyxml2 -L ../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport -L ../XEngine_DependLibrary/XEngine_Module/XEngine_Verification \
           -L ../StorageModule_Database -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp -L ../StorageModule_Protocol -L ../StorageModule_BTorrent
-LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_Cryption -lXClient_APIHelp -lXEngine_ProcFile -lXEngine_SystemApi -lHelpComponents_XLog -lHelpComponents_Packets -lRfcComponents_HttpProtocol \
+LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_Cryption -lXClient_APIHelp -lXEngine_SystemApi -lHelpComponents_XLog -lHelpComponents_Packets -lRfcComponents_HttpProtocol \
       -lStorageModule_Database -lStorageModule_Config -lStorageModule_Session -lStorageModule_APIHelp -lStorageModule_Protocol -lStorageModule_BTorrent  \
-	  -ljsoncpp -ltinyxml2 -lXEngine_InfoReport -lXEngine_Verification
+	  -ljsoncpp -ltinyxml2 -lXEngine_InfoReport -lXEngine_Verification 
 LIBEX = 
 OBJECTS = Storage_TaskPass.o Storage_TaskManage.o Storage_TaskP2p.o Storage_TaskAction.o \
-		  StorageApp_Config.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o StorageApp_Webdav.o XEngine_StorageApp.o
+		  StorageApp_Config.o StorageApp_HTTPHelp.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o StorageApp_Webdav.o XEngine_StorageApp.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -D _RELEASE
@@ -49,6 +49,8 @@ all:$(OBJECTS)
   
 StorageApp_Config.o:./StorageApp_Config.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StorageApp_Config.cpp 
+StorageApp_HTTPHelp.o:./StorageApp_HTTPHelp.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StorageApp_HTTPHelp.cpp 
 StorageApp_Download.o:./StorageApp_Download.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StorageApp_Download.cpp
 StorageApp_Network.o:./StorageApp_Network.cpp

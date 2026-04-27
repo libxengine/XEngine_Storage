@@ -113,7 +113,7 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 
 	if (0 == st_ActionInfo.byType || 1 == st_ActionInfo.byType)
 	{
-		if (0 == _tcsxnicmp(lpszAPIDownload, lpszAPIName, _tcsxlen(lpszAPIDownload)))
+		if (0 == _tcsxncmp(lpszAPIDownload, lpszAPIName, _tcsxlen(lpszAPIDownload)))
 		{
 			XNETHANDLE xhToken = 0;
 			BaseLib_Handle_Create(&xhToken);
@@ -138,7 +138,7 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,处理用户下载动作成功,URL:%s,路径:%s,句柄:%lld,类型:%d"), lpszClientAddr, st_ActionInfo.tszFileUrl, tszFileName, xhToken, st_ActionInfo.byType);
 		}
-		else if (0 == _tcsxnicmp(lpszAPIUPload, lpszAPIName, _tcsxlen(lpszAPIUPload)))
+		else if (0 == _tcsxncmp(lpszAPIUPload, lpszAPIName, _tcsxlen(lpszAPIUPload)))
 		{
 			XNETHANDLE xhToken = 0;
 			BaseLib_Handle_Create(&xhToken);

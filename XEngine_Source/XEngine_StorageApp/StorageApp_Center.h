@@ -11,4 +11,5 @@
 //    History:
 *********************************************************************/
 XHTHREAD XCALLBACK XEngine_Center_HTTPThread(XPVOID lParam);
+
 bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount);

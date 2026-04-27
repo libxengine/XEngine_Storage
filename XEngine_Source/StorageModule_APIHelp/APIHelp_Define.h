@@ -418,3 +418,27 @@ extern "C" bool APIHelp_Api_GetLastName(XCHAR* ptszLastName, LPCXSTR lpszPathStr
 备注：
 *********************************************************************/
 extern "C" bool APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl);
+/********************************************************************
+函数名称：APIHelp_Api_BSizeToStr
+函数功能：大小转字符串函数
+ 参数.一：nSize
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要转换大小
+ 参数.二：ptszSizeStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出转换后的字符串
+ 参数.三：nType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入转换的类型 0-B 1-KB 2-MB 3-GB
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool APIHelp_Api_BSizeToStr(__int64x nSize, XCHAR* ptszSizeStr, int nType);

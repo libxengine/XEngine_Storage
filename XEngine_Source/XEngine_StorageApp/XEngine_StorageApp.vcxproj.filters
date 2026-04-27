@@ -54,6 +54,9 @@
     <ClCompile Include="StorageApp_Webdav.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="StorageApp_HTTPHelp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StorageApp_Config.h">
@@ -87,6 +90,9 @@
       <Filter>头文件\Storage_APPTask</Filter>
     </ClInclude>
     <ClInclude Include="StorageApp_Webdav.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StorageApp_HTTPHelp.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -577,7 +577,15 @@ int main(int argc, char** argv)
 	{
 		__int64u nSetSize = APIHelp_Distributed_GetSize(stl_ListIterator->tszBuckSize);
 		APIHelp_Api_GetDIRSize(stl_ListIterator->tszFilePath, &stl_ListIterator->nBuckSize);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，检查文件目录:%s,名称;%s,可用大小:%lld,使用大小:%lld,剩余大小:%lld"), stl_ListIterator->tszFilePath, stl_ListIterator->tszBuckKey, nSetSize, stl_ListIterator->nBuckSize, nSetSize - stl_ListIterator->nBuckSize);
+
+		XCHAR tszAviSize[XPATH_MIN] = {};
+		XCHAR tszUseSize[XPATH_MIN] = {};
+		XCHAR tszLeftSize[XPATH_MIN] = {};
+		APIHelp_Api_BSizeToStr(nSetSize, tszAviSize, 2);
+		APIHelp_Api_BSizeToStr(stl_ListIterator->nBuckSize, tszUseSize, 2);
+		APIHelp_Api_BSizeToStr(nSetSize - stl_ListIterator->nBuckSize, tszLeftSize, 2);
+
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，检查文件目录:%s,名称;%s,可用大小:%s,使用大小:%s,剩余大小:%s"), stl_ListIterator->tszFilePath, stl_ListIterator->tszBuckKey, tszAviSize, tszUseSize, tszLeftSize);
 	}
 #ifndef _DEBUG
 	//发送信息报告

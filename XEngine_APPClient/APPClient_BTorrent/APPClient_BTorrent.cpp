@@ -22,9 +22,9 @@
 
 int BTorrent_Parse(LPCXSTR lpszFile)
 {
-	XNETHANDLE xhToken;
+	XHANDLE xhToken = BTorrent_Parse_Init(lpszFile);
 
-	if (!BTorrent_Parse_Init(&xhToken, lpszFile))
+	if (NULL == xhToken)
 	{
 		printf("BTorrent_Parse_Init:%lX\n", BTorrent_GetLastError());
 		return -1;
@@ -110,14 +110,14 @@ int BTorrent_Parse(LPCXSTR lpszFile)
 }
 int BTorrent_Creator(LPCXSTR lpszFile)
 {
-	XNETHANDLE xhToken;
 #ifdef _MSC_BUILD
 	LPCXSTR lpszFileDir = _X("D:\\321");
 #else
 	LPCXSTR lpszFileDir = _X("./321");
 #endif
 
-	if (!BTorrent_Creator_Init(&xhToken, lpszFileDir))
+	XHANDLE xhToken = BTorrent_Creator_Init(lpszFileDir);
+	if (NULL == xhToken)
 	{
 		printf("BTorrent_Creator_Init:%lX\n", BTorrent_GetLastError());
 		return -1;
@@ -136,7 +136,6 @@ int BTorrent_Creator(LPCXSTR lpszFile)
 }
 int BTorrent_Download()
 {
-	XNETHANDLE xhToken;
 #ifdef _MSC_BUILD
 	LPCXSTR lpszBTFile = _X("D:\\123.torrent");
 	LPCXSTR lpszFileDir = _X("D:\\321");
@@ -145,7 +144,8 @@ int BTorrent_Download()
 	LPCXSTR lpszFileDir = _X("./321");
 #endif
 
-	if (!BTorrent_DLoader_Create(&xhToken, lpszBTFile, lpszFileDir))
+	XHANDLE xhToken = BTorrent_DLoader_Create(lpszBTFile, lpszFileDir);
+	if (NULL == xhToken)
 	{
 		printf("BTorrent_Creator_Init:%lX\n", BTorrent_GetLastError());
 		return -1;

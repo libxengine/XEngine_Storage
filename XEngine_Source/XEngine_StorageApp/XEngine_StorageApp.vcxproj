@@ -225,6 +225,7 @@
     <ClCompile Include="StorageApp_Center.cpp" />
     <ClCompile Include="StorageApp_Config.cpp" />
     <ClCompile Include="StorageApp_Download.cpp" />
+    <ClCompile Include="StorageApp_HTTPHelp.cpp" />
     <ClCompile Include="StorageApp_Network.cpp" />
     <ClCompile Include="StorageApp_UPLoader.cpp" />
     <ClCompile Include="StorageApp_Webdav.cpp" />
@@ -239,6 +240,7 @@
     <ClInclude Include="StorageApp_Config.h" />
     <ClInclude Include="StorageApp_Download.h" />
     <ClInclude Include="StorageApp_Hdr.h" />
+    <ClInclude Include="StorageApp_HTTPHelp.h" />
     <ClInclude Include="StorageApp_Network.h" />
     <ClInclude Include="StorageApp_UPLoader.h" />
     <ClInclude Include="StorageApp_Webdav.h" />

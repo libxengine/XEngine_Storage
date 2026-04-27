@@ -25,7 +25,6 @@ using namespace std;
 #include <XEngine_Include/XEngine_Types.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
@@ -103,10 +102,10 @@ bool HelpModule_Api_BuildVer(XCHAR* ptszLocalBuffer, XCHAR* ptszRemoteBuffer, in
 	Json::StreamWriterBuilder st_JsonBuilder;
 	//判断是否是自定义版本
 	XCHAR tszTimer[64];
-	XENGINE_LIBTIMER st_Timer;
+	XENGINE_LIBTIME st_Timer;
 
 	memset(tszTimer, '\0', sizeof(tszTimer));
-	memset(&st_Timer, '\0', sizeof(XENGINE_LIBTIMER));
+	memset(&st_Timer, '\0', sizeof(XENGINE_LIBTIME));
 
 	BaseLib_Time_GetSysTime(&st_Timer);
 	_xstprintf(tszTimer, _X("%04d%02d%02d%02d%02d%02d"), st_Timer.wYear, st_Timer.wMonth, st_Timer.wDay, st_Timer.wHour, st_Timer.wMinute, st_Timer.wSecond);

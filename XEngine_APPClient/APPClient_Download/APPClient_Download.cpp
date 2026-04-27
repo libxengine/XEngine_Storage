@@ -26,7 +26,6 @@
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
-#include <XEngine_Include/XEngine_SystemSdk/ProcFile_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 #include "../../XEngine_Source/XStorage_Protocol.h"
@@ -34,7 +33,7 @@ using namespace std;
 
 //需要优先配置XEngine
 //WINDOWS使用VS2022 x86 或者 x64 debug 编译
-//linux macos::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_Depend/XEngine_Module/jsoncpp -L ../../XEngine_Release -lXEngine_BaseLib -lXClient_APIHelp -lXEngine_SystemApi -ljsoncpp -Wl,-rpath=../../XEngine_Release
+//linux macos::g++ -std=c++17 -Wall -g APPClient_Download.cpp -o APPClient_Download.exe -I ../../XEngine_Source/XEngine_DependLibrary/XEngine_Module/jsoncpp -L ../../XEngine_Release -lXEngine_BaseLib -lXClient_APIHelp -lXEngine_SystemApi -ljsoncpp -Wl,-rpath=../../XEngine_Release
 
 typedef struct 
 {
@@ -136,7 +135,7 @@ void P2PFile_Create(list<P2PFILE_INFO>* pStl_ListFile, LPCXSTR lpszFile)
 			{
 				bComplete = FALSE;
 			}
-			_xtprintf("DLToken:%p DLTotal:%lf DLNow:%lf DLStatus:%d\n", pSt_P2PFile[i].xhToken, st_TaskInfo.dlTotal, st_TaskInfo.dlNow, st_TaskInfo.en_DownStatus);
+			_xtprintf("DLToken:%p DLTotal:%lld DLNow:%lld DLStatus:%d\n", pSt_P2PFile[i].xhToken, st_TaskInfo.dlTotal, st_TaskInfo.dlNow, st_TaskInfo.en_DownStatus);
 		}
 		if (bComplete)
 		{
@@ -164,7 +163,7 @@ int main()
 	int nBodyLen = 0;
 	XCHAR *ptszMsgBody = NULL;
 	//请求分布式存储文件所有位置
-	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/Api/Manage/Query");
+	LPCXSTR lpszUrl = _X("http://127.0.0.1:5100/api?function=manage&param=query");
 	LPCXSTR lpszFile = _X("D:\\XEngine_Storage\\XEngine_APPClient\\Debug\\qq.exe");
 
 	Json::Value st_JsonRoot;

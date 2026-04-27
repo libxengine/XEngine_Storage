@@ -527,3 +527,49 @@ bool CAPIHelp_Api::APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl)
 	_tcsxcpy(ptszUrl, m_XUrl.c_str());
 	return true;
 }
+/********************************************************************
+函数名称：APIHelp_Api_BSizeToStr
+函数功能：大小转字符串函数
+ 参数.一：nSize
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入要转换大小
+ 参数.二：ptszSizeStr
+  In/Out：Out
+  类型：字符指针
+  可空：N
+  意思：输出转换后的字符串
+ 参数.三：nType
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入转换的类型 0-B 1-KB 2-MB 3-GB
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CAPIHelp_Api::APIHelp_Api_BSizeToStr(__int64x nSize, XCHAR* ptszSizeStr, int nType)
+{
+	APIHelp_IsErrorOccur = false;
+
+	const char* units[] = { "B", "KB", "MB", "GB" };
+	if (0 == nType)
+	{
+		_xstprintf(ptszSizeStr, _X("%lld %s"), nSize, units[nType]);
+	}
+	else if (1 == nType)
+	{
+		_xstprintf(ptszSizeStr, _X("%lld %s"), nSize / 1024, units[nType]);
+	}
+	else if (2 == nType)
+	{
+		_xstprintf(ptszSizeStr, _X("%lld %s"), nSize / 1024 / 1024, units[nType]);
+	}
+	else if (3 == nType)
+	{
+		_xstprintf(ptszSizeStr, _X("%lld %s"), nSize / 1024 / 1024 / 1024, units[nType]);
+	}
+	return true;
+}
