@@ -1,8 +1,5 @@
 ﻿#include "StorageApp_Hdr.h"
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <stdio.h>
+
 
 XHTHREAD XCALLBACK XEngine_UPLoader_HTTPThread(XPVOID lParam)
 {
@@ -196,7 +193,11 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 					return true;
 				}
 				//文件是否可写
-				int nFileFD = open(tszFileDir, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+#ifdef _MSC_BUILD
+				int nFileFD = _xtopen(tszFileDir, _O_WRONLY | _O_CREAT | _O_TRUNC, _S_IREAD | _S_IWRITE);
+#else
+				int nFileFD = _xtopen(tszFileDir, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+#endif
 				if (nFileFD < 0)
 				{
 					st_HDRParam.bIsClose = true;
@@ -206,10 +207,10 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,准备上传文件:%s 失败,创建文件失败"), lpszClientAddr, tszFileDir);
 					return true;
 				}
-				FILE* pSt_File = fdopen(nFileFD, "wb");
+				FILE* pSt_File = _fdopen(nFileFD, "wb");
 				if (NULL == pSt_File)
 				{
-					close(nFileFD);
+					_close(nFileFD);
 					st_HDRParam.bIsClose = true;
 					st_HDRParam.nHttpCode = 403;
 					HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);

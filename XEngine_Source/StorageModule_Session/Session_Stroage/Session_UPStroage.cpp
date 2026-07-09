@@ -191,7 +191,11 @@ bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXST
 			return false;
 		}
 
-		int nFileHandle = _open(lpszFileDir, _O_CREAT | _O_WRONLY | _O_TRUNC, _S_IREAD | _S_IWRITE);
+#ifdef _MSC_BUILD
+		int nFileHandle = _xtopen(lpszFileDir, _O_WRONLY | _O_CREAT | _O_TRUNC, _S_IREAD | _S_IWRITE);
+#else
+		int nFileHandle = _xtopen(lpszFileDir, _O_CREAT | _O_WRONLY | _O_TRUNC, _S_IREAD | _S_IWRITE);
+#endif
 		if (nFileHandle < 0)
 		{
 			Session_IsErrorOccur = true;

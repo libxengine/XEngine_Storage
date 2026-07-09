@@ -150,10 +150,10 @@ bool CSession_DLStroage::Session_DLStroage_Insert(LPCXSTR lpszClientAddr, LPCXST
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 		return false;
 	}
-	int nRet = _xtfstat(_xtfileno(st_Client.pSt_File), &st_FStat);
+	int nRet = _fstat(_fileno(st_Client.pSt_File), &st_FStat);
 	if (-1 == nRet)
 	{
-		xtfclose(st_Client.pSt_File);
+		fclose(st_Client.pSt_File);
 		st_Client.pSt_File = NULL;
 		Session_IsErrorOccur = true;
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;

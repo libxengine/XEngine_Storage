@@ -12,8 +12,11 @@
 #include "framework.h"
 #include <tchar.h>
 #include <io.h>
+#include <fcntl.h>
 #else
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif
 #endif //PCH_H
 #include <stdio.h>
