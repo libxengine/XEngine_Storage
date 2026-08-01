@@ -525,11 +525,7 @@ bool CSession_UPStroage::Session_UPStroage_MaxConnect(LPCXSTR lpszClientAddr)
 
 	int nExistNumber = 0;
 	st_Locker.lock_shared();
-	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
-	if (stl_MapIterator == stl_MapStroage.end())
-	{
-
-	}
+	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.begin();
 	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
 	{
 		XCHAR tszIPSource[128];
