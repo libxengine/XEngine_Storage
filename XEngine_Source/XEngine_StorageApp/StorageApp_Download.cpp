@@ -138,13 +138,11 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount, int nNetType)
 {
 	int nSDLen = 2048;
-	int nRVLen = 2048;
 	int nLimit = 0;
 	XHANDLE xhLimit = NULL;
 	__int64x ullCount = 0;     //总大小
 	__int64x ullSize = 0;      //需要下载大小
 	XCHAR tszSDBuffer[2048] = {};
-	XCHAR tszRVBuffer[2048] = {};
 	XCHAR tszFileDir[1024];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 

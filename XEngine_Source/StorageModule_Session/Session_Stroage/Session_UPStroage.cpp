@@ -194,7 +194,7 @@ bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXST
 #ifdef _MSC_BUILD
 		int nFileHandle = _xtopen(lpszFileDir, _O_WRONLY | _O_CREAT | _O_TRUNC, _S_IREAD | _S_IWRITE);
 #else
-		int nFileHandle = _xtopen(lpszFileDir, _O_CREAT | _O_WRONLY | _O_TRUNC, _S_IREAD | _S_IWRITE);
+		int nFileHandle = _xtopen(lpszFileDir, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
 #endif
 		if (nFileHandle < 0)
 		{
@@ -202,7 +202,11 @@ bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXST
 			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 			return false;
 		}
+#ifdef _MSC_BUILD
 		st_Client.st_StorageInfo.pSt_File = _fdopen(nFileHandle, "wb");
+#else
+		st_Client.st_StorageInfo.pSt_File = fdopen(nFileHandle, "wb");
+#endif
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
 			_close(nFileHandle);

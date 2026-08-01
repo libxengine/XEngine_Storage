@@ -12,17 +12,15 @@
 #include "framework.h"
 #include <tchar.h>
 #include <io.h>
-#include <fcntl.h>
 #else
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #endif
 #endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>

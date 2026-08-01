@@ -57,10 +57,8 @@ void XCALLBACK XEngine_UPLoader_UPFlow(XHANDLE xhToken, bool bSDFlow, bool bRVFl
 bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount, int nNetType)
 {
 	int nSDLen = 2048;
-	int nRVLen = 2048;
 	int nLimit = 0;
 	XCHAR tszSDBuffer[2048] = {};
-	XCHAR tszRVBuffer[2048] = {};
 	XCHAR tszFileDir[1024] = {};
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam = {};
 
@@ -207,7 +205,11 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,准备上传文件:%s 失败,创建文件失败"), lpszClientAddr, tszFileDir);
 					return true;
 				}
+#ifdef _MSC_BUILD
 				FILE* pSt_File = _fdopen(nFileFD, "wb");
+#else
+				FILE* pSt_File = fdopen(nFileFD, "wb");
+#endif
 				if (NULL == pSt_File)
 				{
 					_close(nFileFD);
