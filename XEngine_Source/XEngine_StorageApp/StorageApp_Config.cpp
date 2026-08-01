@@ -53,7 +53,7 @@ bool StorageApp_Config_Parament(int argc,char **argv)
             StorageApp_Config_ParamentHelp();
             return false;
         }
-        if (0 == _tcsxicmp("-v", argv[i]))
+        else if (0 == _tcsxicmp("-v", argv[i]))
         {
             string m_StrVersion = st_ServiceCfg.st_XVer.pStl_ListStorage->front();
             printf("Version：%s\n", m_StrVersion.c_str());

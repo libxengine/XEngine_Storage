@@ -88,7 +88,6 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 				int nPLen = XPATH_MAX;
 				int nHttpCode = 0;
 				XCHAR tszProxyStr[XPATH_MAX];
-				SESSION_STORAGEINFO st_StorageInfo;
 
 				memset(tszProxyStr, '\0', XPATH_MAX);
 				memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));

@@ -172,7 +172,6 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Query(XHANDLE xhToken, ENUM_BTORRENT_EV
 		//是否接受到错误的信号
 		if (lt::alert_cast<lt::torrent_error_alert>(stl_ListElement))
 		{
-			//std::cout << stl_ListElement->message() << std::endl;
 			*((*pppenEventList)[i]) = ENUM_BTORRENT_EVENT_TYPE_ERROR;
 		}
 		//接受到临时文件保存请求,需要保存他
@@ -192,7 +191,6 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Query(XHANDLE xhToken, ENUM_BTORRENT_EV
 		//UPNP信息
 		if (lt::alert_cast<lt::portmap_error_alert>(stl_ListElement))
 		{
-			//stl_ListElement->message().c_str();
 			*((*pppenEventList)[i]) = ENUM_BTORRENT_EVENT_TYPE_UPNPERROR;
 		}
 		else if (lt::alert_cast<lt::portmap_alert>(stl_ListElement))
