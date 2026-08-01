@@ -291,7 +291,16 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			SystemApi_File_CreateMutilFolder(tszTmpPath);
 		}
 		XHANDLE xhUPSpeed = NULL;
-		if (nLimit > 0 || (st_ServiceCfg.st_XLimit.bLimitMode && st_ServiceCfg.st_XLimit.nMaxUPLoader > 0))
+		int nEffectiveLimit = 0;
+		if (nLimit > 0)
+		{
+			nEffectiveLimit = nLimit;
+		}
+		else if (st_ServiceCfg.st_XLimit.bLimitMode && st_ServiceCfg.st_XLimit.nMaxUPLoader > 0)
+		{
+			nEffectiveLimit = (int)st_ServiceCfg.st_XLimit.nMaxUPLoader;
+		}
+		if (nEffectiveLimit > 0)
 		{
 			//处理限速情况
 			XCHAR* ptszIPClient = (XCHAR*)malloc(XPATH_MAX);
@@ -308,7 +317,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			memset(ptszIPClient, '\0', XPATH_MAX);
 			_tcsxcpy(ptszIPClient, lpszClientAddr);
 
-			nLimit = nLimit == 0 ? (int)st_ServiceCfg.st_XLimit.nMaxUPLoader : nLimit;
+			nLimit = nEffectiveLimit;
 			xhUPSpeed = Algorithm_Calculation_Create();
 			Algorithm_Calculation_PassiveOPen(xhUPSpeed, XEngine_UPLoader_UPFlow, nLimit, 0, 0, false, ptszIPClient);
 			NetCore_TCPXCore_PasueRecvEx(xhNetUPLoader, lpszClientAddr, false);
