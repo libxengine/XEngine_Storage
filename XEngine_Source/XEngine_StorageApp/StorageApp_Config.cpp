@@ -61,6 +61,11 @@ bool StorageApp_Config_Parament(int argc,char **argv)
         }
         else if (0 == _tcsxicmp("-d", argv[i]))
         {
+            if (i + 1 >= argc)
+            {
+                printf("Parameter error: lost value\n");
+                return false;
+            }
             st_ServiceCfg.bDeamon = _ttxoi(argv[++i]);
         }
         else if (0 == _tcsxicmp("-r", argv[i]))
@@ -77,10 +82,20 @@ bool StorageApp_Config_Parament(int argc,char **argv)
 		}
         else if (0 == _tcsxicmp("-lt", argv[i]))
         {
+            if (i + 1 >= argc)
+            {
+                printf("Parameter error: lost value\n");
+                return false;
+            }
             st_ServiceCfg.st_XLog.nLogType = _ttxoi(argv[++i]);
         }
 		else if (0 == _tcsxicmp("-l", argv[i]))
 		{
+            if (i + 1 >= argc)
+            {
+                printf("Parameter error: lost value\n");
+                return false;
+            }
 			LPCXSTR lpszLogLevel = argv[++i];
 			if (0 == _tcsxicmp("debug", lpszLogLevel))
 			{
