@@ -260,7 +260,7 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	Cryption_Api_Digest(tszFileDir, tszHashKey, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
 	BaseLib_String_StrToHex((char*)tszHashKey, nHashLen, tszHashStr);
 	BaseLib_String_GetFileAndPath(tszFileDir, NULL, NULL, NULL, st_HDRParam.tszMimeType);
-	int nEffectiveLimit = nLimit > 0 ? nLimit : 0;
+	int nEffectiveLimit = 0;
 	xhLimit = NULL;
 	if (nEffectiveLimit > 0)
 	{
