@@ -262,10 +262,7 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	BaseLib_String_GetFileAndPath(tszFileDir, NULL, NULL, NULL, st_HDRParam.tszMimeType);
 	int nEffectiveLimit = 0;
 	xhLimit = NULL;
-	if (nEffectiveLimit > 0)
-	{
-		xhLimit = Algorithm_Calculation_Create();
-	}
+	// 当前逻辑下不限速：nEffectiveLimit 固定为 0，xhLimit 保持为 NULL
 	//插入数据
 	if (!Session_DLStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, &ullCount, &ullSize, nPosStart, nPosEnd, tszHashStr, nEffectiveLimit, xhLimit))
 	{
