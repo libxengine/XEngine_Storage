@@ -260,14 +260,13 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	Cryption_Api_Digest(tszFileDir, tszHashKey, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
 	BaseLib_String_StrToHex((char*)tszHashKey, nHashLen, tszHashStr);
 	BaseLib_String_GetFileAndPath(tszFileDir, NULL, NULL, NULL, st_HDRParam.tszMimeType);
-	int nEffectiveLimit = 0;
-	xhLimit = NULL;
-	if (nEffectiveLimit > 0)
+	nLimit = st_ServiceCfg.st_XLimit.bLimitMode ? st_ServiceCfg.st_XLimit.nMaxDNLoader : 0;
+	if (nLimit > 0)
 	{
 		xhLimit = Algorithm_Calculation_Create();
 	}
 	//插入数据
-	if (!Session_DLStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, &ullCount, &ullSize, nPosStart, nPosEnd, tszHashStr, nEffectiveLimit, xhLimit))
+	if (!Session_DLStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, &ullCount, &ullSize, nPosStart, nPosEnd, tszHashStr, nLimit, xhLimit))
 	{
 		st_HDRParam.bIsClose = true;
 		st_HDRParam.nHttpCode = 404;

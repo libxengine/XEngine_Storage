@@ -58,6 +58,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 {
 	int nSDLen = 2048;
 	int nLimit = 0;
+	XHANDLE xhLimit = NULL;
 	XCHAR tszSDBuffer[2048] = {};
 	XCHAR tszFileDir[1024] = {};
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam = {};
@@ -290,17 +291,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			}
 			SystemApi_File_CreateMutilFolder(tszTmpPath);
 		}
-		XHANDLE xhUPSpeed = NULL;
-		int nEffectiveLimit = 0;
+		nLimit = st_ServiceCfg.st_XLimit.bLimitMode ? st_ServiceCfg.st_XLimit.nMaxUPLoader : 0;
 		if (nLimit > 0)
-		{
-			nEffectiveLimit = nLimit;
-		}
-		else if (st_ServiceCfg.st_XLimit.bLimitMode && st_ServiceCfg.st_XLimit.nMaxUPLoader > 0)
-		{
-			nEffectiveLimit = (int)st_ServiceCfg.st_XLimit.nMaxUPLoader;
-		}
-		if (nEffectiveLimit > 0)
 		{
 			//处理限速情况
 			XCHAR* ptszIPClient = (XCHAR*)malloc(XPATH_MAX);
@@ -317,13 +309,12 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			memset(ptszIPClient, '\0', XPATH_MAX);
 			_tcsxcpy(ptszIPClient, lpszClientAddr);
 
-			nLimit = nEffectiveLimit;
-			xhUPSpeed = Algorithm_Calculation_Create();
-			Algorithm_Calculation_PassiveOPen(xhUPSpeed, XEngine_UPLoader_UPFlow, nLimit, 0, 0, false, ptszIPClient);
+			xhLimit = Algorithm_Calculation_Create();
+			Algorithm_Calculation_PassiveOPen(xhLimit, XEngine_UPLoader_UPFlow, nLimit, 0, 0, false, ptszIPClient);
 			NetCore_TCPXCore_PasueRecvEx(xhNetUPLoader, lpszClientAddr, false);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("上传客户端:%s,上传限速被启用,文件:%s,限速:%d"), lpszClientAddr, tszFileDir, nLimit);
 		}
-		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, xhUPSpeed, nPosCount, st_StorageBucket.st_PermissionFlags.bRewrite, nLimit, nPosStart, nPosEnd))
+		if (!Session_UPStroage_Insert(lpszClientAddr, st_StorageBucket.tszBuckKey, tszFileDir, xhLimit, nPosCount, st_StorageBucket.st_PermissionFlags.bRewrite, nLimit, nPosStart, nPosEnd))
 		{
 			st_HDRParam.bIsClose = true;
 			st_HDRParam.nHttpCode = 500;
