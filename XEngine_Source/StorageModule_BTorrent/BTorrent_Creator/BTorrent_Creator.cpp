@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "BTorrent_Creator.h"
+#include <new>
 /********************************************************************
 //    Created:     2023/02/02  16:26:25
 //    File Name:   D:\XEngine\XEngine_SourceCode\XEngine_NetHelp\NetHelp_BTorrent\BTorrent_Creator\BTorrent_Creator.cpp
@@ -49,7 +50,7 @@ XHANDLE CBTorrent_Creator::BTorrent_Creator_Init(LPCXSTR lpszBTPath, int nPieceS
         return NULL;
     }
 	//申请空间
-	BTORRENT_CREATORINFO* pSt_BTCreator = new BTORRENT_CREATORINFO;
+	BTORRENT_CREATORINFO* pSt_BTCreator = new(std::nothrow) BTORRENT_CREATORINFO;
 	if (NULL == pSt_BTCreator)
 	{
 		BTDload_IsErrorOccur = true;
@@ -58,11 +59,15 @@ XHANDLE CBTorrent_Creator::BTorrent_Creator_Init(LPCXSTR lpszBTPath, int nPieceS
 	}
 	*pSt_BTCreator = {};
 	//申请内存
-	pSt_BTCreator->pStl_ListNode = new list<BTORRENT_PARSEMAP>;
-	pSt_BTCreator->pStl_ListSeeds = new list<BTORRENT_PARSEMAP>;
-	pSt_BTCreator->pStl_ListTracker = new list<BTORRENT_PARSEMAP>;
+	pSt_BTCreator->pStl_ListNode = new(std::nothrow) list<BTORRENT_PARSEMAP>;
+	pSt_BTCreator->pStl_ListSeeds = new(std::nothrow) list<BTORRENT_PARSEMAP>;
+	pSt_BTCreator->pStl_ListTracker = new(std::nothrow) list<BTORRENT_PARSEMAP>;
 	if ((NULL == pSt_BTCreator->pStl_ListNode) || (NULL == pSt_BTCreator->pStl_ListSeeds) || (NULL == pSt_BTCreator->pStl_ListTracker))
 	{
+		delete pSt_BTCreator->pStl_ListNode;
+		delete pSt_BTCreator->pStl_ListSeeds;
+		delete pSt_BTCreator->pStl_ListTracker;
+		delete pSt_BTCreator;
 		BTDload_IsErrorOccur = true;
 		BTDload_dwErrorCode = ERROR_STORAGE_MODULE_BTORRENT_CREATOR_INIT_MALLOC;
 		return NULL;

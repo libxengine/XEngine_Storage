@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "BTorrent_Parse.h"
+#include <new>
 /********************************************************************
 //    Created:     2023/02/02  16:26:41
 //    File Name:   D:\XEngine\XEngine_SourceCode\XEngine_NetHelp\NetHelp_BTorrent\BTorrent_Parse\BTorrent_Parse.cpp
@@ -44,7 +45,7 @@ XHANDLE CBTorrent_Parse::BTorrent_Parse_Init(LPCXSTR lpszAddr)
         return NULL;
     }
 	//申请空间
-	BTORRENT_PARSEINFO* pSt_BTParse = new BTORRENT_PARSEINFO;
+	BTORRENT_PARSEINFO* pSt_BTParse = new (std::nothrow) BTORRENT_PARSEINFO;
 	if (NULL == pSt_BTParse)
 	{
 		BTDload_IsErrorOccur = true;

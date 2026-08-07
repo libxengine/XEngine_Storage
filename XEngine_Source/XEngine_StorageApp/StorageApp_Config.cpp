@@ -2,10 +2,14 @@
 
 bool StorageApp_Config_Parament(int argc,char **argv)
 {
+    // 默认配置文件路径：基础服务配置、版本配置、负载均衡配置。
+    // 当启动参数未指定替代路径时，按以下默认文件进行加载。
     LPCXSTR lpszBaseCfg = _X("./XEngine_Config/XEngine_Config.json");
     LPCXSTR lpszVerCfg = _X("./XEngine_Config/XEngine_VersionConfig.json");
     LPCXSTR lpszLoadCfg = _X("./XEngine_Config/XEngine_LBConfig.json");
 
+    // 重新加载配置前先释放历史配置中可能已分配的动态容器，
+    // 避免重复加载时发生内存泄漏或悬挂旧数据。
     if (NULL != st_ServiceCfg.st_XVer.pStl_ListStorage)
     {
         delete st_ServiceCfg.st_XVer.pStl_ListStorage;
@@ -27,9 +31,11 @@ bool StorageApp_Config_Parament(int argc,char **argv)
         st_LoadbalanceCfg.st_LoadBalance.pStl_ListUPLoader = NULL;
 	}
 
+    // 清空全局配置结构体，确保后续解析在干净状态下执行。
     memset(&st_ServiceCfg, '\0', sizeof(XENGINE_SERVERCONFIG));
     memset(&st_LoadbalanceCfg, '\0', sizeof(XENGINE_LBCONFIG));
 
+    // 依次解析三类配置文件；任一步失败都立即返回并输出错误码。
     if (!Config_Json_File(lpszBaseCfg, &st_ServiceCfg))
     {
         printf("解析配置文件失败,Config_Json_File:%lX\n",Config_GetLastError());
@@ -53,7 +59,7 @@ bool StorageApp_Config_Parament(int argc,char **argv)
             StorageApp_Config_ParamentHelp();
             return false;
         }
-        if (0 == _tcsxicmp("-v", argv[i]))
+        else if (0 == _tcsxicmp("-v", argv[i]))
         {
             string m_StrVersion = st_ServiceCfg.st_XVer.pStl_ListStorage->front();
             printf("Version：%s\n", m_StrVersion.c_str());
@@ -61,6 +67,11 @@ bool StorageApp_Config_Parament(int argc,char **argv)
         }
         else if (0 == _tcsxicmp("-d", argv[i]))
         {
+            if (i + 1 >= argc)
+            {
+                printf("Parameter error: lost value\n");
+                return false;
+            }
             st_ServiceCfg.bDeamon = _ttxoi(argv[++i]);
         }
         else if (0 == _tcsxicmp("-r", argv[i]))
@@ -77,10 +88,20 @@ bool StorageApp_Config_Parament(int argc,char **argv)
 		}
         else if (0 == _tcsxicmp("-lt", argv[i]))
         {
+            if (i + 1 >= argc)
+            {
+                printf("Parameter error: lost value\n");
+                return false;
+            }
             st_ServiceCfg.st_XLog.nLogType = _ttxoi(argv[++i]);
         }
 		else if (0 == _tcsxicmp("-l", argv[i]))
 		{
+            if (i + 1 >= argc)
+            {
+                printf("Parameter error: lost value\n");
+                return false;
+            }
 			LPCXSTR lpszLogLevel = argv[++i];
 			if (0 == _tcsxicmp("debug", lpszLogLevel))
 			{

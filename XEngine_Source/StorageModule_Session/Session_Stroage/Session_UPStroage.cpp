@@ -151,13 +151,9 @@ bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXST
 	_tcsxcpy(st_Client.st_StorageInfo.tszFileDir, lpszFileDir);
 	_tcsxcpy(st_Client.st_StorageInfo.tszClientAddr, lpszClientAddr);
 	//文件是否存在
-	if ((m_bResume) && ((0 != nPosStart) || (0 != nPostEnd)) && (0 == _xtaccess(lpszFileDir, 0)))
+	if ((m_bResume) && ((0 != nPosStart) || (0 != nPostEnd)))
 	{
-		struct _xtstat st_FStat;
-		memset(&st_FStat, '\0', sizeof(struct _xtstat));
-		_xtstat(st_Client.st_StorageInfo.tszFileDir, &st_FStat);
-		st_Client.st_StorageInfo.ullRWLen = st_FStat.st_size;
-		//追加打开
+		//直接打开，避免先检查再使用导致TOCTOU
 		st_Client.st_StorageInfo.pSt_File = _xtfopen(lpszFileDir, _X("rb+"));
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
@@ -165,6 +161,11 @@ bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXST
 			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 			return false;
 		}
+
+		//基于已打开的文件句柄获取文件长度
+		fseek(st_Client.st_StorageInfo.pSt_File, 0, SEEK_END);
+		st_Client.st_StorageInfo.ullRWLen = ftell(st_Client.st_StorageInfo.pSt_File);
+
 		//是不是覆写?
 		if (st_Client.st_StorageInfo.ullRWLen > nPosStart)
 		{
@@ -190,9 +191,25 @@ bool CSession_UPStroage::Session_UPStroage_Insert(LPCXSTR lpszClientAddr, LPCXST
 			return false;
 		}
 
-		st_Client.st_StorageInfo.pSt_File = _xtfopen(lpszFileDir, _X("wb"));
+#ifdef _MSC_BUILD
+		int nFileHandle = _xtopen(lpszFileDir, _O_WRONLY | _O_CREAT | _O_TRUNC, _S_IREAD | _S_IWRITE);
+#else
+		int nFileHandle = _xtopen(lpszFileDir, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+#endif
+		if (nFileHandle < 0)
+		{
+			Session_IsErrorOccur = true;
+			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
+			return false;
+		}
+#ifdef _MSC_BUILD
+		st_Client.st_StorageInfo.pSt_File = _fdopen(nFileHandle, "wb");
+#else
+		st_Client.st_StorageInfo.pSt_File = fdopen(nFileHandle, "wb");
+#endif
 		if (NULL == st_Client.st_StorageInfo.pSt_File)
 		{
+			_close(nFileHandle);
 			Session_IsErrorOccur = true;
 			Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_OPENFILE;
 			return false;
@@ -508,11 +525,7 @@ bool CSession_UPStroage::Session_UPStroage_MaxConnect(LPCXSTR lpszClientAddr)
 
 	int nExistNumber = 0;
 	st_Locker.lock_shared();
-	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.find(lpszClientAddr);
-	if (stl_MapIterator == stl_MapStroage.end())
-	{
-
-	}
+	unordered_map<string, SESSION_STORAGEUPLOADER>::iterator stl_MapIterator = stl_MapStroage.begin();
 	for (; stl_MapIterator != stl_MapStroage.end(); stl_MapIterator++)
 	{
 		XCHAR tszIPSource[128];

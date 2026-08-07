@@ -1,6 +1,7 @@
 RELEASE = 0
 UNICODE = 0
 PLATFORM=linux
+BUILDTYPE=0
 FLAGS= 
 
 THIRD_JSONCPP_PATH = ./XEngine_DependLibrary/XEngine_Module/jsoncpp
@@ -23,9 +24,22 @@ else ifeq ($(PLATFORM),mac)
 	FILEEXT = dylib
 endif
 
-XENGINE_MODULES = libjsoncpp.so libtinyxml2.so libXEngine_InfoReport.so libXEngine_Verification.so                             \
-                libStorageModule_Database.so libStorageModule_Config.so libStorageModule_Session.so libStorageModule_APIHelp.so libStorageModule_Protocol.so libStorageModule_BTorrent.so    \
-		 		XEngine_StorageApp.exe 
+# 第三方库模块
+MODULES_THIRD = libjsoncpp.so libtinyxml2.so libXEngine_InfoReport.so libXEngine_Verification.so
+
+# 业务模块 + 应用
+MODULES_STORAGE = libStorageModule_Database.so libStorageModule_Config.so libStorageModule_Session.so \
+                  libStorageModule_APIHelp.so libStorageModule_Protocol.so libStorageModule_BTorrent.so \
+                  XEngine_StorageApp.exe
+
+# 根据 BUILDTYPE 决定编译目标
+ifeq ($(BUILDTYPE),0)
+	XENGINE_MODULES = $(MODULES_THIRD) $(MODULES_STORAGE)
+else ifeq ($(BUILDTYPE),1)
+	XENGINE_MODULES = $(MODULES_THIRD)
+else ifeq ($(BUILDTYPE),2)
+	XENGINE_MODULES = $(MODULES_STORAGE)
+endif
 
 .PHONY:MakeAll 
 MakeAll:$(XENGINE_MODULES)

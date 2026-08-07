@@ -69,8 +69,13 @@ XHTHREAD Session_Action_Thread()
 	}
 	return 0;
 }
+// Handle action requests from business clients:
+// 1) validate service switch and parse request payload,
+// 2) resolve bucket routing and local file path,
+// 3) execute upload/download action and return unified HTTP result.
 bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam)
 {
+	// Fixed-size send/receive buffers used to build HTTP response packets.
 	int nSDLen = 10240;
 	int nRVLen = 10240;
 	XCHAR tszSDBuffer[10240] = {};
@@ -80,9 +85,11 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 	XENGINE_ACTIONINFO st_ActionInfo = {};
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam = {};
 
+	// Action API always returns an HTTP body; connection is closed after reply.
 	st_HDRParam.bIsClose = true;
 	st_HDRParam.nHttpCode = 200;
 
+	// Global service switch guard: reject all action requests when disabled.
 	if (!st_ServiceCfg.st_XAction.bEnable)
 	{
 		Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_DISABLE, "function is disable");
@@ -91,6 +98,7 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,功能被禁用"), lpszClientAddr);
 		return false;
 	}
+	// Parse incoming JSON/action payload into normalized action structure.
 	if (!Protocol_StorageParse_Action(lpszMsgBuffer, nMsgLen, &st_ActionInfo))
 	{
 		Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_PARSE, "parse json is incorrect");
@@ -101,6 +109,7 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 	}
 	XCHAR tszFileName[1024] = {};
 	XENGINE_STORAGEBUCKET st_StorageBucket = {};
+	// Resolve bucket to actual storage node/path from load-balance configuration.
 	if (!APIHelp_Distributed_CTStorage(st_ActionInfo.tszBucketStr, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
 	{
 		Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_NOTFOUND, "bucket name is incorrect");
@@ -109,6 +118,7 @@ bool Storage_TaskAction(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lps
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,处理用户转录动作失败,存储Key解析失败,URL:%s,路径:%s,Bucket:%s"), lpszClientAddr, st_ActionInfo.tszFileUrl, st_ActionInfo.tszFileName, st_ActionInfo.tszBucketStr);
 		return false;
 	}
+	// Build absolute/local target filename used by subsequent action handlers.
 	_xstprintf(tszFileName, _X("%s/%s"), st_StorageBucket.tszFilePath, st_ActionInfo.tszFileName);
 
 	if (0 == st_ActionInfo.byType || 1 == st_ActionInfo.byType)

@@ -16,8 +16,10 @@
 #include <windows.h>
 #include <tchar.h>
 #include <io.h>
+#include <fcntl.h>
 #include <minidumpapiset.h>
 #else
+#include <fcntl.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #endif

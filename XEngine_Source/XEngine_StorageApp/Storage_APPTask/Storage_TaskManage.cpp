@@ -30,13 +30,11 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 		//查询文件列表
 		int nMode = 0;
 		int nListCount = 0;
-		int nMsgLen = 10240;
 		XCHAR tszFileName[XPATH_MAX];
 		XCHAR tszFileHash[XPATH_MAX];
 		XCHAR tszBucketKey[128];
 		XCHAR tszTimeStart[128];
 		XCHAR tszTimeEnd[128];
-		XCHAR tszMsgBuffer[10240];
 		XSTORAGECORE_DBFILE** ppSt_ListFile;
 
 		memset(tszFileName, '\0', XPATH_MAX);
@@ -44,7 +42,6 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 		memset(tszBucketKey, '\0', sizeof(tszBucketKey));
 		memset(tszTimeStart, '\0', sizeof(tszTimeStart));
 		memset(tszTimeEnd, '\0', sizeof(tszTimeEnd));
-		memset(tszMsgBuffer, '\0', sizeof(tszMsgBuffer));
 
 		Protocol_StorageParse_QueryFile(lpszMsgBuffer, tszTimeStart, tszTimeEnd, tszBucketKey, tszFileName, tszFileHash, &nMode);
 		//根据使用模式来操作
@@ -68,8 +65,8 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,请求查询文件失败,没有找到文件,查找文件名:%s,文件HASH:%s!"), lpszClientAddr, tszFileName, tszFileHash);
 				return false;
 			}
-			Protocol_StoragePacket_QueryFile(tszMsgBuffer, &nMsgLen, &ppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
-			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszMsgBuffer, nMsgLen);
+			Protocol_StoragePacket_QueryFile(tszRVBuffer, &nRVLen, &ppSt_ListFile, nListCount, tszTimeStart, tszTimeEnd);
+			HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
 			BaseLib_Memory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求查询文件列表成功,列表个数:%d"), lpszClientAddr, nListCount);
@@ -148,7 +145,7 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 			}
 			else
 			{
-				int nListCount = 0;
+				nListCount = 0;
 				XSTORAGECORE_DBFILE** ppSt_ListPacket;
 				APIHelp_Distributed_FileList(&stl_ListFile, &ppSt_ListPacket, &nListCount);
 				Protocol_StoragePacket_QueryFile(tszRVBuffer, &nRVLen, &ppSt_ListPacket, nListCount);

@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "BTorrent_DLoader.h"
+#include <new>
 /********************************************************************
 //    Created:     2023/02/02  16:26:33
 //    File Name:   D:\XEngine\XEngine_SourceCode\XEngine_NetHelp\NetHelp_BTorrent\BTorrent_DLoader\BTorrent_DLoader.cpp
@@ -54,7 +55,7 @@ XHANDLE CBTorrent_DLoader::BTorrent_DLoader_Create(LPCXSTR lpszAddr, LPCXSTR lps
         return NULL;
     }
 	//申请空间
-	BTORRENT_DLOADINFO* pSt_BTDLoader = new BTORRENT_DLOADINFO;
+	BTORRENT_DLOADINFO* pSt_BTDLoader = new (std::nothrow) BTORRENT_DLOADINFO;
 	if (NULL == pSt_BTDLoader)
 	{
 		BTDload_IsErrorOccur = true;
@@ -171,7 +172,6 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Query(XHANDLE xhToken, ENUM_BTORRENT_EV
 		//是否接受到错误的信号
 		if (lt::alert_cast<lt::torrent_error_alert>(stl_ListElement))
 		{
-			//std::cout << stl_ListElement->message() << std::endl;
 			*((*pppenEventList)[i]) = ENUM_BTORRENT_EVENT_TYPE_ERROR;
 		}
 		//接受到临时文件保存请求,需要保存他
@@ -191,7 +191,6 @@ bool CBTorrent_DLoader::BTorrent_DLoader_Query(XHANDLE xhToken, ENUM_BTORRENT_EV
 		//UPNP信息
 		if (lt::alert_cast<lt::portmap_error_alert>(stl_ListElement))
 		{
-			//stl_ListElement->message().c_str();
 			*((*pppenEventList)[i]) = ENUM_BTORRENT_EVENT_TYPE_UPNPERROR;
 		}
 		else if (lt::alert_cast<lt::portmap_alert>(stl_ListElement))

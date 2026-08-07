@@ -1,3 +1,23 @@
+XEngine_Storage V3.23.0.1001
+
+ci:删除了多余的动作
+ci:增加新的AI代理问题处理工作流
+更新:vs的版本到2026
+更新:依赖库
+修改:ql扫描出的问题
+修改:匹配了vs的crt 运行时库解决某些问题
+修改:速度限制处理方法
+修正:没有参数检测的问题
+
+ci:delete cppcheck.yml and codeql.yml
+ci:add agentic workflows for issue triage and auto fix
+update:vs to 2026 version
+update:depend library
+modify:scan code ql problem
+modify:match runtime crt for every compiler choice
+modify:speed limit handle away
+fixed:lost paramter check
+======================================================================================
 XEngine_Storage V3.22.0.1001
 
 增加:当启动的时候打印占用硬盘空间信息

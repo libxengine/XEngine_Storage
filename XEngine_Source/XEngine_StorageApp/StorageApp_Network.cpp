@@ -182,30 +182,49 @@ void XCALLBACK XEngine_Callback_HBWebdav(LPCXSTR lpszClientAddr, XSOCKET hSocket
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPWEBDAV);
 }
 //////////////////////////////////////////////////////////////////////////
+/*
+ * 统一处理客户端离线后的资源清理逻辑。
+ * 参数说明：
+ *  - lpszClientAddr: 客户端地址（作为会话、心跳、连接资源的主键）
+ *  - nLeaveType: 离线原因（心跳超时/被动断开/主动关闭）
+ *  - nClientType: 客户端类型（上传/下载/中心/WebDAV）
+ *
+ * 处理内容：
+ *  1) 根据离线原因选择是否主动关闭底层连接；
+ *  2) 清理心跳跟踪；
+ *  3) 统计并回收会话信息；
+ *  4) 关闭对应 HTTP 与 SSL 资源；
+ *  5) 输出统一离线日志（在函数后续分支中完成）。
+ */
 bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClientType)
 {
 	string m_StrLeaveMsg;
 	string m_StrClient;
 
+	// 上传客户端离线处理分支
 	if (STORAGE_NETTYPE_HTTPUPLOADER == nClientType)
 	{
 		m_StrClient = _X("上传客户端");
+		// 心跳超时：由服务端主动关闭连接
 		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
 		{
 			m_StrLeaveMsg = _X("心跳超时");
 			NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
 		}
+		// 被动断开：连接已断开，仅清理心跳记录
 		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
 		{
 			m_StrLeaveMsg = _X("被动断开");
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
 		}
+		// 主动关闭：关闭连接并清理心跳记录
 		else
 		{
 			m_StrLeaveMsg = _X("主动关闭");
 			NetCore_TCPXCore_CloseForClientEx(xhNetUPLoader, lpszClientAddr);
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBUPLoader, lpszClientAddr);
 		}
+		// 关闭上传会话并更新统计信息
 		Algorithm_Calculation_PassiveClose(Session_UPStroage_GetSpeed(lpszClientAddr), true);
 		Algorithm_Calculation_Close(Session_UPStroage_GetSpeed(lpszClientAddr));
 		Session_UPStroage_Delete(lpszClientAddr);

@@ -42,18 +42,23 @@ CConfig_Json::~CConfig_Json()
 *********************************************************************/
 bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG* pSt_ServerConfig)
 {
+	// 初始化错误状态；函数开始默认“无错误”，出现任何失败分支时再设置错误码并返回。
 	Config_IsErrorOccur = false;
 
+	// 参数有效性检查：配置文件路径与输出结构体指针都不允许为空。
 	if ((NULL == lpszConfigFile) || (NULL == pSt_ServerConfig))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARAMENT;
 		return false;
 	}
+
+	// JSON 解析相关对象：错误信息、根节点、Reader 构造器。
 	JSONCPP_STRING st_JsonError;
 	Json::Value st_JsonRoot;
 	Json::CharReaderBuilder st_JsonBuilder;
 
+	// 以二进制只读方式打开配置文件；打开失败视为参数/路径错误。
 	FILE* pSt_File = _xtfopen(lpszConfigFile, _X("rb"));
 	if (NULL == pSt_File)
 	{
@@ -61,10 +66,13 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARAMENT;
 		return false;
 	}
+
+	// 读取文件内容到固定缓冲区，并在读取后立即关闭文件句柄。
 	XCHAR tszMsgBuffer[8192] = {};
 	size_t nRet = fread(tszMsgBuffer, 1, sizeof(tszMsgBuffer), pSt_File);
 	fclose(pSt_File);
 
+	// 执行 JSON 反序列化；解析失败时设置解析错误码并返回。
 	std::unique_ptr<Json::CharReader> const pSt_JsonReader(st_JsonBuilder.newCharReader());
 	if (!pSt_JsonReader->parse(tszMsgBuffer, tszMsgBuffer + nRet, &st_JsonRoot, &st_JsonError))
 	{
@@ -72,6 +80,8 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_PARSE;
 		return false;
 	}
+
+	// 将 JSON 节点字段映射到服务配置结构体。
 	_tcsxcpy(pSt_ServerConfig->tszIPAddr, st_JsonRoot["tszIPAddr"].asCString());
 	pSt_ServerConfig->bDeamon = st_JsonRoot["bDeamon"].asInt();
 	pSt_ServerConfig->nCenterPort = st_JsonRoot["nCenterPort"].asInt();

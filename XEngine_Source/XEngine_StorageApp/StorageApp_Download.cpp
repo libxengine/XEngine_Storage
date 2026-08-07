@@ -88,7 +88,6 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 				int nPLen = XPATH_MAX;
 				int nHttpCode = 0;
 				XCHAR tszProxyStr[XPATH_MAX];
-				SESSION_STORAGEINFO st_StorageInfo;
 
 				memset(tszProxyStr, '\0', XPATH_MAX);
 				memset(&st_StorageInfo, '\0', sizeof(SESSION_STORAGEINFO));
@@ -138,13 +137,11 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount, int nNetType)
 {
 	int nSDLen = 2048;
-	int nRVLen = 2048;
 	int nLimit = 0;
 	XHANDLE xhLimit = NULL;
 	__int64x ullCount = 0;     //总大小
 	__int64x ullSize = 0;      //需要下载大小
 	XCHAR tszSDBuffer[2048] = {};
-	XCHAR tszRVBuffer[2048] = {};
 	XCHAR tszFileDir[1024];
 	RFCCOMPONENTS_HTTP_HDRPARAM st_HDRParam;
 
@@ -263,6 +260,7 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	Cryption_Api_Digest(tszFileDir, tszHashKey, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
 	BaseLib_String_StrToHex((char*)tszHashKey, nHashLen, tszHashStr);
 	BaseLib_String_GetFileAndPath(tszFileDir, NULL, NULL, NULL, st_HDRParam.tszMimeType);
+	nLimit = st_ServiceCfg.st_XLimit.bLimitMode ? st_ServiceCfg.st_XLimit.nMaxDNLoader : 0;
 	if (nLimit > 0)
 	{
 		xhLimit = Algorithm_Calculation_Create();
