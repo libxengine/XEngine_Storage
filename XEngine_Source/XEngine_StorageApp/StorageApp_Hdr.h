@@ -49,6 +49,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_HelpComponents/Packets_Error.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Define.h>
 #include <XEngine_Include/XEngine_RfcComponents/HttpProtocol_Error.h>
+#include <XEngine_Include/XEngine_RfcComponents/FTPProtocol_Define.h>
+#include <XEngine_Include/XEngine_RfcComponents/FTPProtocol_Error.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Define.h>
 #include <XEngine_Include/XEngine_SystemSdk/SystemApi_Error.h>
 #include "../XStorage_Protocol.h"
@@ -77,6 +79,7 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPDOWNLOAD 2
 #define STORAGE_NETTYPE_HTTPCENTER 3
 #define STORAGE_NETTYPE_HTTPWEBDAV 4
+#define STORAGE_NETTYPE_FTP 5
 
 extern bool bIsRun;
 extern bool bIsTest;
@@ -86,16 +89,19 @@ extern XHANDLE xhHBDownload;
 extern XHANDLE xhHBUPLoader;
 extern XHANDLE xhHBCenter;
 extern XHANDLE xhHBWebdav;
+extern XHANDLE xhHBFTP;
 
 extern XHANDLE xhNetDownload;
 extern XHANDLE xhNetUPLoader;
 extern XHANDLE xhNetCenter;
 extern XHANDLE xhNetWebdav;
+extern XHANDLE xhNetFTP;
 
 extern XHANDLE xhUPPool;
 extern XHANDLE xhDLPool;
 extern XHANDLE xhCTPool;
 extern XHANDLE xhWDPool;
+extern XHANDLE xhFTPPool;
 
 extern XHANDLE xhDLSsl;
 extern XHANDLE xhUPSsl;
@@ -107,6 +113,7 @@ extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
 extern XHANDLE xhWebdavHttp;
+extern XHANDLE xhFTPPacket;
 
 extern XSOCKET hBroadSocket;
 extern shared_ptr<std::thread> pSTDThread;
@@ -122,6 +129,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #include "StorageApp_UPLoader.h"
 #include "StorageApp_Center.h"
 #include "StorageApp_Webdav.h"
+#include "StorageApp_FTP.h"
 #include "Storage_APPTask/Storage_TaskPass.h"
 #include "Storage_APPTask/Storage_TaskP2p.h"
 #include "Storage_APPTask/Storage_TaskManage.h"
@@ -139,6 +147,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets.lib")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")
+#pragma comment(lib,"XEngine_RfcComponents/RfcComponents_FTPProtocol.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #ifdef _DEBUG
 #ifdef _M_X64

@@ -8,7 +8,7 @@ LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool 
 	  -ljsoncpp -ltinyxml2 -lXEngine_InfoReport -lXEngine_Verification 
 LIBEX = 
 OBJECTS = Storage_TaskPass.o Storage_TaskManage.o Storage_TaskP2p.o Storage_TaskAction.o \
-		  StorageApp_Config.o StorageApp_HTTPHelp.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o StorageApp_Webdav.o XEngine_StorageApp.o
+		  StorageApp_Config.o StorageApp_HTTPHelp.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o StorageApp_Webdav.o XStorageApp_FTP.o Engine_StorageApp.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -D _RELEASE
@@ -61,6 +61,8 @@ StorageApp_UPLoader.o:./StorageApp_UPLoader.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StorageApp_UPLoader.cpp
 StorageApp_Webdav.o:./StorageApp_Webdav.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./StorageApp_Webdav.cpp
+XStorageApp_FTP.o:./XStorageApp_FTP.cpp
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./XStorageApp_FTP.cpp
 
 Storage_TaskPass.o:./Storage_APPTask/Storage_TaskPass.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Storage_APPTask/Storage_TaskPass.cpp

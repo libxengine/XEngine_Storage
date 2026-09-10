@@ -151,7 +151,7 @@ void XCALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 	}
 	else
 	{
-		if (!HttpProtocol_Server_InserQueueEx(xhWebdavHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhWebdavHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -163,6 +163,35 @@ void XCALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 void XCALLBACK XEngine_Callback_WebdavLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPWEBDAV);
+}
+//////////////////////////////////////////////////////////////////////////
+bool XCALLBACK XEngine_Callback_FTPLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+{
+	FTPProtocol_Parse_CreateClientEx(xhFTPPacket, lpszClientAddr, 0);
+	SocketOpt_HeartBeat_InsertAddrEx(xhHBFTP, lpszClientAddr);
+
+	int nSDLen = 0;
+	XCHAR tszSDBuffer[XPATH_MIN] = {};
+	XENGINE_KEYVALUE st_KeyValue = {};
+
+	FTPProtocol_Parse_SendPacketEx(xhFTPPacket, XENGINE_FTPROTOCOL_RESPONSE_220, tszSDBuffer, &nSDLen);
+	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_FTP);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端：%s，进入了服务器"), lpszClientAddr);
+	return true;
+}
+void XCALLBACK XEngine_Callback_FTPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+	if (!FTPProtocol_Parse_InsertQueueEx(xhFTPPacket, lpszClientAddr, lpszRecvMsg, nMsgLen))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, FTPProtocol_GetLastError());
+		return;
+	}
+	SocketOpt_HeartBeat_ActiveAddrEx(xhHBFTP, lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
+}
+void XCALLBACK XEngine_Callback_FTPLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+{
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_FTP);
 }
 //////////////////////////////////////////////////////////////////////////
 void XCALLBACK XEngine_Callback_HBDownload(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
@@ -180,6 +209,10 @@ void XCALLBACK XEngine_Callback_HBCenter(LPCXSTR lpszClientAddr, XSOCKET hSocket
 void XCALLBACK XEngine_Callback_HBWebdav(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPWEBDAV);
+}
+void XCALLBACK XEngine_Callback_HBFTP(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+{
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_FTP);
 }
 //////////////////////////////////////////////////////////////////////////
 /*
@@ -308,6 +341,28 @@ bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClient
 		HttpProtocol_Server_CloseClinetEx(xhWebdavHttp, lpszClientAddr);
 		Cryption_Server_CloseClientEx(xhWDSsl, lpszClientAddr);
 	}
+	else if (STORAGE_NETTYPE_FTP == nClientType)
+	{
+		m_StrClient = _X("FTP客户端");
+		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
+		{
+			m_StrLeaveMsg = _X("心跳超时");
+			NetCore_TCPXCore_CloseForClientEx(xhNetFTP, lpszClientAddr);
+		}
+		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
+		{
+			m_StrLeaveMsg = _X("被动断开");
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBFTP, lpszClientAddr);
+		}
+		else
+		{
+			m_StrLeaveMsg = _X("主动关闭");
+			NetCore_TCPXCore_CloseForClientEx(xhNetFTP, lpszClientAddr);
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBFTP, lpszClientAddr);
+		}
+		FTPProtocol_Parse_DeleteClientEx(xhFTPPacket, lpszClientAddr);
+	}
+	
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("%s：%s，与服务器断开，原因：%s"), m_StrClient.c_str(), lpszClientAddr, m_StrLeaveMsg.c_str());
 	return true;
 }
@@ -391,6 +446,14 @@ bool XEngine_Net_SendMsg(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsg
 		{
 			bRet = NetCore_TCPXCore_SendEx(xhNetWebdav, lpszClientAddr, lpszMsgBuffer, nMsgLen);
 		}
+		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
+		{
+			SocketOpt_HeartBeat_ActiveAddrEx(xhHBWebdav, lpszClientAddr);
+		}
+	}
+	else if (STORAGE_NETTYPE_FTP == nType)
+	{
+		bRet = NetCore_TCPXCore_SendEx(xhNetFTP, lpszClientAddr, lpszMsgBuffer, nMsgLen);
 		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBWebdav, lpszClientAddr);

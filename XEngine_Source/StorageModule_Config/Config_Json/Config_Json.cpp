@@ -88,8 +88,9 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->nWebdavPort = st_JsonRoot["nWebdavPort"].asInt();
 	pSt_ServerConfig->nStorageDLPort = st_JsonRoot["nStorageDLPort"].asInt();
 	pSt_ServerConfig->nStorageUPPort = st_JsonRoot["nStorageUPPort"].asInt();
+	pSt_ServerConfig->nFTPPort = st_JsonRoot["nFTPPort"].asInt();
 
-	if (st_JsonRoot["XMax"].empty() || (7 != st_JsonRoot["XMax"].size()))
+	if (st_JsonRoot["XMax"].empty() || (8 != st_JsonRoot["XMax"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XMAX;
@@ -103,8 +104,9 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XMax.nStorageUPThread = st_JsonXMax["nStorageUPThread"].asInt();
 	pSt_ServerConfig->st_XMax.nStorageDLThread = st_JsonXMax["nStorageDLThread"].asInt();
 	pSt_ServerConfig->st_XMax.nWebdavThread = st_JsonXMax["nWebdavThread"].asInt();
+	pSt_ServerConfig->st_XMax.nFTPThread = st_JsonXMax["nFTPThread"].asInt();
 
-	if (st_JsonRoot["XTime"].empty() || (6 != st_JsonRoot["XTime"].size()))
+	if (st_JsonRoot["XTime"].empty() || (7 != st_JsonRoot["XTime"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XTIME;
@@ -117,6 +119,7 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XTime.nCenterTimeOut = st_JsonXTime["nCenterTimeOut"].asInt();
 	pSt_ServerConfig->st_XTime.nStorageTimeOut = st_JsonXTime["nStorageTimeOut"].asInt();
 	pSt_ServerConfig->st_XTime.nWebdavTimeOut = st_JsonXTime["nWebdavTimeOut"].asInt();
+	pSt_ServerConfig->st_XTime.nFTPTimeOut = st_JsonXTime["nFTPTimeOut"].asInt();
 
 	if (st_JsonRoot["XLog"].empty() || (5 != st_JsonRoot["XLog"].size()))
 	{
