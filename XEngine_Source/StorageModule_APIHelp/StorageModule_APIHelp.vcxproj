@@ -250,12 +250,14 @@
     <ClInclude Include="APIHelp_Define.h" />
     <ClInclude Include="APIHelp_Distributed\APIHelp_Distributed.h" />
     <ClInclude Include="APIHelp_Error.h" />
+    <ClInclude Include="APIHelp_Port\APIHelp_Port.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APIHelp_Api\APIHelp_Api.cpp" />
     <ClCompile Include="APIHelp_Distributed\APIHelp_Distributed.cpp" />
+    <ClCompile Include="APIHelp_Port\APIHelp_Port.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

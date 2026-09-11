@@ -22,3 +22,8 @@ EXPORTS
 	APIHelp_Api_GetLastName
 	APIHelp_Api_WDToUrl
 	APIHelp_Api_BSizeToStr
+
+	APIHelp_Port_Init
+	APIHelp_Port_Destroy
+	APIHelp_Port_Get
+	APIHelp_Port_Free

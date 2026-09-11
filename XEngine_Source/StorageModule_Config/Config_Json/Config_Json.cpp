@@ -88,8 +88,8 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->nWebdavPort = st_JsonRoot["nWebdavPort"].asInt();
 	pSt_ServerConfig->nStorageDLPort = st_JsonRoot["nStorageDLPort"].asInt();
 	pSt_ServerConfig->nStorageUPPort = st_JsonRoot["nStorageUPPort"].asInt();
-	pSt_ServerConfig->nFTPCPort = st_JsonRoot["nFTPCPort"].asInt();
-	pSt_ServerConfig->nFTPDPort = st_JsonRoot["nFTPDPort"].asInt();
+	pSt_ServerConfig->nFTPDStart = st_JsonRoot["nFTPDStart"].asInt();
+	pSt_ServerConfig->nFTPDEnd = st_JsonRoot["nFTPDEnd"].asInt();
 
 	if (st_JsonRoot["XMax"].empty() || (8 != st_JsonRoot["XMax"].size()))
 	{

@@ -93,21 +93,18 @@ extern XHANDLE xhHBUPLoader;
 extern XHANDLE xhHBCenter;
 extern XHANDLE xhHBWebdav;
 extern XHANDLE xhHBFTPContral;
-extern XHANDLE xhHBFTPDatas;
 
 extern XHANDLE xhNetDownload;
 extern XHANDLE xhNetUPLoader;
 extern XHANDLE xhNetCenter;
 extern XHANDLE xhNetWebdav;
 extern XHANDLE xhNetFTPContral;
-extern XHANDLE xhNetFTPDatas;
 
 extern XHANDLE xhUPPool;
 extern XHANDLE xhDLPool;
 extern XHANDLE xhCTPool;
 extern XHANDLE xhWDPool;
 extern XHANDLE xhFTPPoolContral;
-extern XHANDLE xhFTPPoolDatas;
 
 extern XHANDLE xhDLSsl;
 extern XHANDLE xhUPSsl;
@@ -120,7 +117,6 @@ extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
 extern XHANDLE xhWebdavHttp;
 extern XHANDLE xhFTPContral;
-extern XHANDLE xhFTPDatas;
 
 extern XSOCKET hBroadSocket;
 extern shared_ptr<std::thread> pSTDThread;

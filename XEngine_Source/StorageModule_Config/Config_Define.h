@@ -21,7 +21,8 @@ typedef struct tag_XEngine_ServerConfig
     int nCenterPort;
     int nWebdavPort;
     int nFTPCPort;
-    int nFTPDPort;
+    int nFTPDStart;
+	int nFTPDEnd;
     int nStorageDLPort;
     int nStorageUPPort;
     struct 

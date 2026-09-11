@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "APIHelp_Distributed/APIHelp_Distributed.h"
 #include "APIHelp_Api/APIHelp_Api.h"
+#include "APIHelp_Port/APIHelp_Port.h"
 /********************************************************************
 //    Created:     2021/07/08  16:40:04
 //    File Name:   D:\XEngine_Storage\XEngine_Source\StorageModule_APIHelp\pch.cpp
@@ -17,6 +18,7 @@ XLONG APIHelp_dwErrorCode = 0;
 //////////////////////////////////////////////////////////////////////////
 CAPIHelp_Distributed m_APIDistributed;
 CAPIHelp_Api m_APIHelp;
+CAPIHelp_Port m_APIPort;
 //////////////////////////////////////////////////////////////////////////
 //                       导出函数
 //////////////////////////////////////////////////////////////////////////
@@ -105,4 +107,23 @@ extern "C" bool APIHelp_Api_WDToUrl(LPCXSTR lpszUrl, XCHAR* ptszUrl)
 extern "C" bool APIHelp_Api_BSizeToStr(__int64x nSize, XCHAR* ptszSizeStr, int nType)
 {
 	return m_APIHelp.APIHelp_Api_BSizeToStr(nSize, ptszSizeStr, nType);
+}
+/************************************************************************/
+/*                       端口函数                                       */
+/************************************************************************/
+extern "C" bool APIHelp_Port_Init(int nPortStart, int nPortEnd)
+{
+	return m_APIPort.APIHelp_Port_Init(nPortStart, nPortEnd);
+}
+extern "C" bool APIHelp_Port_Destroy()
+{
+	return m_APIPort.APIHelp_Port_Destroy();
+}
+extern "C" bool APIHelp_Port_Get(int* pInt_Port)
+{
+	return m_APIPort.APIHelp_Port_Get(pInt_Port);
+}
+extern "C" bool APIHelp_Port_Free(int nPort)
+{
+	return m_APIPort.APIHelp_Port_Free(nPort);
 }

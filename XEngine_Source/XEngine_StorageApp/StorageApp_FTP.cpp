@@ -31,37 +31,6 @@ XHTHREAD XCALLBACK XEngine_FTPContral_Thread(XPVOID lParam)
 	}
 	return 0;
 }
-XHTHREAD XCALLBACK XEngine_FTPDatas_Thread(XPVOID lParam)
-{
-	int nThreadPos = *(int*)lParam;
-	nThreadPos++;
-
-	while (bIsRun)
-	{
-		//等待指定线程事件触发
-		if (FTPProtocol_Parse_EventWaitEx(xhFTPDatas, nThreadPos))
-		{
-			int nListCount = 0;
-			XENGINE_MANAGEPOOL_TASKEVENT** ppSt_PKTClient;
-			//获取当前队列池中所有触发上传客户端
-			FTPProtocol_Parse_GetPoolEx(xhFTPDatas, nThreadPos, &ppSt_PKTClient, &nListCount);
-			for (int i = 0; i < nListCount; i++)
-			{
-				for (int j = 0; j < ppSt_PKTClient[i]->nPktCount; j++)
-				{
-					XENGINE_KEYVALUE st_KeyValue = {};
-					//获得指定上传客户端触发信息
-					if (FTPProtocol_Parse_GetClientEx(xhFTPDatas, ppSt_PKTClient[i]->tszClientAddr, &st_KeyValue))
-					{
-						XEngine_Task_FTP(ppSt_PKTClient[i]->tszClientAddr, &st_KeyValue, STORAGE_NETTYPE_FTPDATAS);
-					}
-				}
-			}
-			BaseLib_Memory_Free((XPPPMEM)&ppSt_PKTClient, nListCount);
-		}
-	}
-	return 0;
-}
 
 bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, int nNetType)
 {
@@ -95,18 +64,36 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 	{
 		//被动模式请求
 		int nPort = 0;
-		XCHAR tszIPAddr[XPATH_MIN] = {};
 		APIADDR_IPADDR st_IPAddr = {};
 
 		APIAddr_IPAddr_IsIPV4Addr(st_ServiceCfg.tszIPAddr, &st_IPAddr);
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_227, tszRVBuffer, &nRVLen, false);
-
-		int p1 = st_ServiceCfg.nFTPDPort / 256;
-		int p2 = st_ServiceCfg.nFTPDPort % 256;
+		if (!APIHelp_Port_Get(&nPort))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_425, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求被动模式失败,资源耗尽,请求信息:%s"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+			return false;
+		}
+		int p1 = nPort / 256;
+		int p2 = nPort % 256;
 		_xstprintf(tszSDBuffer, _X("%d %s (%d,%d,%d,%d,%d,%d)"), XENGINE_FTPROTOCOL_RESPONSE_227, tszRVBuffer, st_IPAddr.nIPAddr1, st_IPAddr.nIPAddr2, st_IPAddr.nIPAddr3, st_IPAddr.nIPAddr4, p1, p2);
 		
+		if (!NetCore_TCPSelect_StartEx(nPort, 100, true))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_425, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求被动模式失败,资源耗尽,请求信息:%s"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+			return false;
+		}
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,请求被动模式成功,请求信息:%s"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+	}
+	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_RETR, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_RETR)))
+	{
+		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_150, tszSDBuffer, &nSDLen);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,请求文件成功,请求信息:%s"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
 	}
 	else
 	{

@@ -11,5 +11,4 @@
 //    History:
 *********************************************************************/
 XHTHREAD XCALLBACK XEngine_FTPContral_Thread(XPVOID lParam);
-XHTHREAD XCALLBACK XEngine_FTPDatas_Thread(XPVOID lParam);
 bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE* pSt_KeyValue, int nNetType);
