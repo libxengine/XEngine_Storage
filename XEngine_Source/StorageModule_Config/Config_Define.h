@@ -20,7 +20,8 @@ typedef struct tag_XEngine_ServerConfig
     bool bReuseraddr;
     int nCenterPort;
     int nWebdavPort;
-    int nFTPPort;
+    int nFTPCPort;
+    int nFTPDPort;
     int nStorageDLPort;
     int nStorageUPPort;
     struct 

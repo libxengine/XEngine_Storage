@@ -41,6 +41,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_Core/Cryption_Error.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Define.h>
 #include <XEngine_Include/XEngine_Client/APIClient_Error.h>
+#include <XEngine_Include/XEngine_NetHelp/APIAddr_Define.h>
+#include <XEngine_Include/XEngine_NetHelp/APIAddr_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Define.h>
 #include <XEngine_Include/XEngine_HelpComponents/XLog_Error.h>
 #include <XEngine_Include/XEngine_HelpComponents/DataBase_Define.h>
@@ -79,7 +81,8 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPDOWNLOAD 2
 #define STORAGE_NETTYPE_HTTPCENTER 3
 #define STORAGE_NETTYPE_HTTPWEBDAV 4
-#define STORAGE_NETTYPE_FTP 5
+#define STORAGE_NETTYPE_FTPCONTRAL 5
+#define STORAGE_NETTYPE_FTPDATAS 6
 
 extern bool bIsRun;
 extern bool bIsTest;
@@ -89,19 +92,22 @@ extern XHANDLE xhHBDownload;
 extern XHANDLE xhHBUPLoader;
 extern XHANDLE xhHBCenter;
 extern XHANDLE xhHBWebdav;
-extern XHANDLE xhHBFTP;
+extern XHANDLE xhHBFTPContral;
+extern XHANDLE xhHBFTPDatas;
 
 extern XHANDLE xhNetDownload;
 extern XHANDLE xhNetUPLoader;
 extern XHANDLE xhNetCenter;
 extern XHANDLE xhNetWebdav;
-extern XHANDLE xhNetFTP;
+extern XHANDLE xhNetFTPContral;
+extern XHANDLE xhNetFTPDatas;
 
 extern XHANDLE xhUPPool;
 extern XHANDLE xhDLPool;
 extern XHANDLE xhCTPool;
 extern XHANDLE xhWDPool;
-extern XHANDLE xhFTPPool;
+extern XHANDLE xhFTPPoolContral;
+extern XHANDLE xhFTPPoolDatas;
 
 extern XHANDLE xhDLSsl;
 extern XHANDLE xhUPSsl;
@@ -113,7 +119,8 @@ extern XHANDLE xhUPHttp;
 extern XHANDLE xhDLHttp;
 extern XHANDLE xhCenterHttp;
 extern XHANDLE xhWebdavHttp;
-extern XHANDLE xhFTPPacket;
+extern XHANDLE xhFTPContral;
+extern XHANDLE xhFTPDatas;
 
 extern XSOCKET hBroadSocket;
 extern shared_ptr<std::thread> pSTDThread;
@@ -144,6 +151,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_Cryption.lib")
 #pragma comment(lib,"XEngine_Client/XClient_APIHelp.lib")
+#pragma comment(lib,"XEngine_NetHelp/NetHelp_APIAddr.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_XLog.lib")
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_Packets.lib")
 #pragma comment(lib,"XEngine_RfcComponents/RfcComponents_HttpProtocol.lib")

@@ -16,15 +16,20 @@ bool XCALLBACK XEngine_Callback_WebdavLogin(LPCXSTR lpszClientAddr, XSOCKET hSoc
 void XCALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam);
 void XCALLBACK XEngine_Callback_WebdavLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
 
-bool XCALLBACK XEngine_Callback_FTPLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
-void XCALLBACK XEngine_Callback_FTPRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam);
-void XCALLBACK XEngine_Callback_FTPLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
+bool XCALLBACK XEngine_Callback_FTPContralLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
+void XCALLBACK XEngine_Callback_FTPContralRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam);
+void XCALLBACK XEngine_Callback_FTPContralLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
+
+bool XCALLBACK XEngine_Callback_FTPDatasLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
+void XCALLBACK XEngine_Callback_FTPDatasRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam);
+void XCALLBACK XEngine_Callback_FTPDatasLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam);
 
 void XCALLBACK XEngine_Callback_HBDownload(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam);
 void XCALLBACK XEngine_Callback_HBUPLoader(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam);
 void XCALLBACK XEngine_Callback_HBCenter(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam);
 void XCALLBACK XEngine_Callback_HBWebdav(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam);
-void XCALLBACK XEngine_Callback_HBFTP(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam);
+void XCALLBACK XEngine_Callback_HBFTPContral(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam);
+void XCALLBACK XEngine_Callback_HBFTPDatas(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam);
 
 bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClientType);
 bool XEngine_Net_SendMsg(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsgLen, int nType);
