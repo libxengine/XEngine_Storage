@@ -83,7 +83,7 @@ static void XEngine_FTPDatas_Thread(LPCXSTR lpszClientAddr, LPCXSTR lpszFileName
 	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_FTPCONTRAL);
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,文件发送数据完毕,网络连接已断开"), lpszClientAddr);
 }
-static void XEngine_FTPFile_Thread(xstring lpszClientAddr, xstring lpszFilePath)
+static void XEngine_FTPFile_Thread(xstring lpszClientAddr, xstring lpszFilePath, xstring lpszAlisPath)
 {
 	int nPort = 0;
 	XHANDLE xhToken = Session_FTP_GetSocket(lpszClientAddr.c_str(), &nPort);
@@ -106,29 +106,14 @@ static void XEngine_FTPFile_Thread(xstring lpszClientAddr, xstring lpszFilePath)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,获取网络事件失败,错误码:%lX"), lpszClientAddr.c_str(), NetCore_GetLastError());
 		return;
 	}
-	
-	XCHAR tszCMDBuffer[XPATH_2MAX] = {}; 
-	_xstprintf(tszCMDBuffer, _X("dir %s"), lpszFilePath.c_str());
-	SystemApi_Process_ReadCmdReturn(tszCMDBuffer, tszMSGBuffer, 0, 6, &nMSGLen, 3);
-	/*
-	int nListCount = 0;
-	XCHAR** pptszFileList;
-	SystemApi_File_EnumFileA(lpszFilePath, &pptszFileList, &nListCount, false);
-	for (int i = 0; i < nListCount; i++)
-	{
-		XCHAR tszFileName[XPATH_MAX] = {};
-		XCHAR tszFileAttr[XPATH_2MAX] = {};
-		SYSTEMAPI_FILE_ATTR st_FileAttr = {};
-		SystemApi_File_GetFileAttr(pptszFileList[i], &st_FileAttr);
+	XCHAR tszDIRBuffer[XPATH_MAX] = {};
+	XCHAR tszCMDBuffer[XPATH_2MAX] = {};
+	_xstprintf(tszDIRBuffer, _X("%s%s"), lpszFilePath.c_str(), lpszAlisPath.c_str());
+	BaseLib_String_FixPath(tszDIRBuffer, 1);
 
-		BaseLib_String_GetFileAndPath(pptszFileList[i], NULL, tszFileName);
-		if (st_FileAttr.bFile)
-		{
-			
-		}
-		_xsntprintf(tszFileAttr, XPATH_2MAX, _X("%s 1 ftp ftp %lld %s %s "), pptszFileList[i], st_FileAttr.nFileSize, st_FileAttr.tszFileTime, st_FileAttr.tszFileDate);
-	}
-	*/
+	_xstprintf(tszCMDBuffer, _X("dir %s"), tszDIRBuffer);
+	SystemApi_Process_ReadCmdReturn(tszCMDBuffer, tszMSGBuffer, 0, 6, &nMSGLen, 3);
+
 	if (!NetCore_TCPSelect_SendEx(xhToken, tszClientAddr, tszMSGBuffer, nMSGLen))
 	{
 		//关闭连接
@@ -144,7 +129,7 @@ static void XEngine_FTPFile_Thread(xstring lpszClientAddr, xstring lpszFilePath)
 	XCHAR tszSDBuffer[1024] = {};
 	FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_226, tszSDBuffer, &nSDLen);
 	XEngine_Net_SendMsg(lpszClientAddr.c_str(), tszSDBuffer, nSDLen, STORAGE_NETTYPE_FTPCONTRAL);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,连接地址:%s,枚举发送数据完毕,网络连接已断开"), lpszClientAddr.c_str(), tszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,连接地址:%s,枚举目录:%s 发送数据完毕,网络连接已断开"), lpszClientAddr.c_str(), tszClientAddr, tszDIRBuffer);
 }
 
 bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, int nNetType)
@@ -165,6 +150,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 	{
 		//密码请求
 		Session_FTP_Insert(lpszClientAddr, false);
+		Session_FTP_Set(lpszClientAddr, NULL, st_ServiceCfg.st_XFtp.tszFTPDir);
 
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_230, tszSDBuffer, &nSDLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
@@ -241,41 +227,79 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_PWD, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_PWD)))
 	{
-#ifdef _MSC_BUILD
-		_getcwd(tszRVBuffer, nRVLen);
-#else
-		getcwd(tszRVBuffer, nRVLen);
-#endif
-		nSDLen = _xstprintf(tszSDBuffer, _X("257 \"%s\" is current directory.\r\n"), tszRVBuffer);
+		XCHAR tszFTPDir[XPATH_MAX] = {};
+		XCHAR tszAliDir[XPATH_MAX] = {};
+		Session_FTP_Get(lpszClientAddr, NULL, tszFTPDir, tszAliDir);
+
+		if (_tcsxlen(tszAliDir) > 0)
+		{
+			nSDLen = _xstprintf(tszSDBuffer, _X("257 \"%s\" is current directory.\r\n"), tszAliDir);
+		}
+		else
+		{
+			nSDLen = _xstprintf(tszSDBuffer, _X("257 \"/\" is current directory.\r\n"));
+		}
+		
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,查询当前目录:%s 成功"), lpszClientAddr, tszRVBuffer);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,查询当前目录:%s,别名:%s 成功"), lpszClientAddr, tszFTPDir, tszAliDir);
 	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_CWD, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_CWD)))
 	{
-		nSDLen = _xstprintf(tszSDBuffer, _X("250 Directory changed to %s\r\n"), pSt_KeyValue->tszStrVlu);
+		XCHAR tszAliDir[XPATH_MAX] = {};
+		Session_FTP_Get(lpszClientAddr, NULL, NULL, tszAliDir);
+
+		if (_tcsxlen(tszAliDir) > 1)
+		{
+			_tcsxcat(tszAliDir, _X("/"));
+			_tcsxcat(tszAliDir, pSt_KeyValue->tszStrVlu);
+		}
+		else
+		{
+			_tcsxcat(tszAliDir, pSt_KeyValue->tszStrVlu);
+		}
+		Session_FTP_Set(lpszClientAddr, NULL, NULL, tszAliDir);
+
+		nSDLen = _xstprintf(tszSDBuffer, _X("250 Directory changed to %s\r\n"), tszAliDir);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
-		Session_FTP_Set(lpszClientAddr, NULL, pSt_KeyValue->tszStrVlu);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,切换目录:%s 成功"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,切换目录:%s 成功"), lpszClientAddr, tszAliDir);
 	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_CDUP, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_CDUP)))
 	{
-		nSDLen = _xstprintf(tszSDBuffer, _X("200 Directory changed to %s\r\n"), pSt_KeyValue->tszStrVlu);
+		XCHAR tszPDir[XPATH_MAX] = {};
+		XCHAR tszAlisDir[XPATH_MAX] = {};
+		Session_FTP_Get(lpszClientAddr, NULL, NULL, tszAlisDir);
+		//是否设置过目录
+		if (_tcsxlen(tszAlisDir) <= 1)
+		{
+			//不允许切换更上级目录
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_550, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			return false;
+		}
+		else
+		{
+			//如果路径是父目录
+			BaseLib_String_GetFileAndPathA(tszAlisDir, tszPDir);
+			Session_FTP_Set(lpszClientAddr, NULL, NULL, tszPDir);
+		}
+
+		nSDLen = _xstprintf(tszSDBuffer, _X("200 Directory changed to %s\r\n"), tszPDir);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
-		Session_FTP_Set(lpszClientAddr, NULL, pSt_KeyValue->tszStrVlu);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,切换目录:%s 成功"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,切换上级目录:%s 成功"), lpszClientAddr, tszPDir);
 	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_LIST, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_LIST)))
 	{
 		//列举目录请求
 		XCHAR tszFilePath[XPATH_MAX] = {};
-		if (!Session_FTP_Get(lpszClientAddr, NULL, tszFilePath))
+		XCHAR tszAlisPath[XPATH_MAX] = {};
+		if (!Session_FTP_Get(lpszClientAddr, NULL, tszFilePath, tszAlisPath))
 		{
 			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求列举目录:%s 失败,执行顺序错误"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
 			return false;
 		}
-		if (_tcsxlen(tszFilePath) <= 0)
+		if (_tcsxlen(tszAlisPath) <= 0)
 		{
 			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
 			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
@@ -285,7 +309,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_150, tszSDBuffer, &nSDLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
 
-		std::thread m_ThreadFTPFiles(XEngine_FTPFile_Thread, xstring(lpszClientAddr), xstring(tszFilePath));
+		std::thread m_ThreadFTPFiles(XEngine_FTPFile_Thread, xstring(lpszClientAddr), xstring(tszFilePath), xstring(tszAlisPath));
 		m_ThreadFTPFiles.detach();
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,列举目录:%s 成功"), lpszClientAddr, tszFilePath);
 	}

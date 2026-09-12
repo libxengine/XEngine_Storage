@@ -174,13 +174,13 @@ extern "C" bool Session_FTP_Insert(LPCXSTR lpszClientAddr, bool bUPLoader)
 {
 	return m_FTPContral.Session_FTP_Insert(lpszClientAddr, bUPLoader);
 }
-extern "C" bool Session_FTP_Set(LPCXSTR lpszClientAddr, LPCXSTR lpszFileName, LPCXSTR lpszFilePath)
+extern "C" bool Session_FTP_Set(LPCXSTR lpszClientAddr, LPCXSTR lpszFileName, LPCXSTR lpszFilePath, LPCXSTR lpszAlisName)
 {
-	return m_FTPContral.Session_FTP_Set(lpszClientAddr, lpszFileName, lpszFilePath);
+	return m_FTPContral.Session_FTP_Set(lpszClientAddr, lpszFileName, lpszFilePath, lpszAlisName);
 }
-extern "C" bool Session_FTP_Get(LPCXSTR lpszClientAddr, XCHAR* ptszFileName, XCHAR* ptszFilePath)
+extern "C" bool Session_FTP_Get(LPCXSTR lpszClientAddr, XCHAR* ptszFileName, XCHAR* ptszFilePath, XCHAR* ptszAlisPath)
 {
-	return m_FTPContral.Session_FTP_Get(lpszClientAddr, ptszFileName, ptszFilePath);
+	return m_FTPContral.Session_FTP_Get(lpszClientAddr, ptszFileName, ptszFilePath, ptszAlisPath);
 }
 extern "C" bool Session_FTP_SetSocket(LPCXSTR lpszClientAddr, int nPort, XHANDLE xhToken)
 {

@@ -678,12 +678,17 @@ extern "C" bool Session_FTP_Insert(LPCXSTR lpszClientAddr, bool bUPLoader);
   类型：常量字符指针
   可空：Y
   意思：输入要操作的文件路径
+ 参数.四：lpszAlisName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入路径别名
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Session_FTP_Set(LPCXSTR lpszClientAddr, LPCXSTR lpszFileName = NULL, LPCXSTR lpszFilePath = NULL);
+extern "C" bool Session_FTP_Set(LPCXSTR lpszClientAddr, LPCXSTR lpszFileName = NULL, LPCXSTR lpszFilePath = NULL, LPCXSTR lpszAlisName = NULL);
 /********************************************************************
 函数名称：Session_FTP_Get
 函数功能：获取信息
@@ -702,12 +707,17 @@ extern "C" bool Session_FTP_Set(LPCXSTR lpszClientAddr, LPCXSTR lpszFileName = N
   类型：字符指针
   可空：Y
   意思：输出操作的文件路径
+ 参数.四：ptszAlisPath
+  In/Out：Out
+  类型：字符指针
+  可空：Y
+  意思：输出操作的路径别名
 返回值
   类型：逻辑型
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Session_FTP_Get(LPCXSTR lpszClientAddr, XCHAR* ptszFileName = NULL, XCHAR* ptszFilePath = NULL);
+extern "C" bool Session_FTP_Get(LPCXSTR lpszClientAddr, XCHAR* ptszFileName = NULL, XCHAR* ptszFilePath = NULL, XCHAR* ptszAlisPath = NULL);
 /********************************************************************
 函数名称：Session_FTP_SetSocket
 函数功能：设置网络句柄

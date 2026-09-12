@@ -88,9 +88,7 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->nWebdavPort = st_JsonRoot["nWebdavPort"].asInt();
 	pSt_ServerConfig->nStorageDLPort = st_JsonRoot["nStorageDLPort"].asInt();
 	pSt_ServerConfig->nStorageUPPort = st_JsonRoot["nStorageUPPort"].asInt();
-	pSt_ServerConfig->nFTPCPort = st_JsonRoot["nFTPCPort"].asInt();
-	pSt_ServerConfig->nFTPDStart = st_JsonRoot["nFTPDStart"].asInt();
-	pSt_ServerConfig->nFTPDEnd = st_JsonRoot["nFTPDEnd"].asInt();
+	pSt_ServerConfig->nFTPPort = st_JsonRoot["nFTPPort"].asInt();
 
 	if (st_JsonRoot["XMax"].empty() || (8 != st_JsonRoot["XMax"].size()))
 	{
@@ -233,7 +231,7 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	if (st_JsonRoot["XReport"].empty() || (3 != st_JsonRoot["XReport"].size()))
 	{
 		Config_IsErrorOccur = true;
-		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_CREPORT;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_REPORT;
 		return false;
 	}
 	Json::Value st_JsonReport = st_JsonRoot["XReport"];
@@ -244,13 +242,24 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	if (st_JsonRoot["XAction"].empty() || (3 != st_JsonRoot["XAction"].size()))
 	{
 		Config_IsErrorOccur = true;
-		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_CREPORT;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_ACTION;
 		return false;
 	}
 	Json::Value st_JsonXAction = st_JsonRoot["XAction"];
 	pSt_ServerConfig->st_XAction.bEnable = st_JsonXAction["bEnable"].asBool();
 	pSt_ServerConfig->st_XAction.nSDMax = st_JsonXAction["nSDMax"].asInt();
 	pSt_ServerConfig->st_XAction.nRVMax = st_JsonXAction["nRVMax"].asInt();
+
+	if (st_JsonRoot["XFtp"].empty() || (3 != st_JsonRoot["XFtp"].size()))
+	{
+		Config_IsErrorOccur = true;
+		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_FTP;
+		return false;
+	}
+	Json::Value st_JsonXFtp = st_JsonRoot["XFtp"];
+	pSt_ServerConfig->st_XFtp.nFTPStart = st_JsonXFtp["nFTPStart"].asInt();
+	pSt_ServerConfig->st_XFtp.nFTPEnd = st_JsonXFtp["nFTPEnd"].asInt();
+	_tcsxcpy(pSt_ServerConfig->st_XFtp.tszFTPDir, st_JsonXFtp["tszFTPDir"].asCString());
 	return true;
 }
 /********************************************************************

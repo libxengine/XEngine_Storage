@@ -20,9 +20,7 @@ typedef struct tag_XEngine_ServerConfig
     bool bReuseraddr;
     int nCenterPort;
     int nWebdavPort;
-    int nFTPCPort;
-    int nFTPDStart;
-	int nFTPDEnd;
+    int nFTPPort;
     int nStorageDLPort;
     int nStorageUPPort;
     struct 
@@ -123,6 +121,12 @@ typedef struct tag_XEngine_ServerConfig
         int nRVMax;
 		bool bEnable;
 	}st_XAction;
+    struct 
+    {
+        XCHAR tszFTPDir[XPATH_MID];
+        int nFTPStart;
+        int nFTPEnd;
+    }st_XFtp;
     struct
     {
         list<string> *pStl_ListStorage;

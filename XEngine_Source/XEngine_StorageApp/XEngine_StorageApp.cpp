@@ -551,7 +551,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动WEBDAV任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nWebdavThread);
 	}
 	//FTP
-	if (st_ServiceCfg.nFTPCPort > 0)
+	if (st_ServiceCfg.nFTPPort > 0)
 	{
 		//控制端口启用
 		xhFTPContral = FTPProtocol_Parse_InitEx(lpszFTPCodes, st_ServiceCfg.st_XMax.nFTPThread);
@@ -562,13 +562,13 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化FTP服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nFTPThread);
 
-		xhNetFTPContral = NetCore_TCPXCore_StartEx(st_ServiceCfg.nFTPCPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, false, st_ServiceCfg.bReuseraddr);
+		xhNetFTPContral = NetCore_TCPXCore_StartEx(st_ServiceCfg.nFTPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, false, st_ServiceCfg.bReuseraddr);
 		if (NULL == xhNetFTPContral)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动FTP网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nFTPCPort, NetCore_GetLastError());
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动FTP网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nFTPPort, NetCore_GetLastError());
 			goto XENGINE_EXITAPP;
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动FTP网络服务成功，端口：%d,IO线程个数:%d"), st_ServiceCfg.nFTPCPort, st_ServiceCfg.st_XMax.nIOThread);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动FTP网络服务成功，端口：%d,IO线程个数:%d"), st_ServiceCfg.nFTPPort, st_ServiceCfg.st_XMax.nIOThread);
 		NetCore_TCPXCore_RegisterCallBackEx(xhNetFTPContral, XEngine_Callback_FTPContralLogin, XEngine_Callback_FTPContralRecv, XEngine_Callback_FTPContralLeave);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，注册FTP网络服务事件成功！"));
 
@@ -589,8 +589,8 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动FTP任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nFTPThread);
 
-		APIHelp_Port_Init(st_ServiceCfg.nFTPDStart, st_ServiceCfg.nFTPDEnd);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化FTP数据端口成功,端口范围:%d-%d"), st_ServiceCfg.nFTPDStart, st_ServiceCfg.nFTPDEnd);
+		APIHelp_Port_Init(st_ServiceCfg.st_XFtp.nFTPStart, st_ServiceCfg.st_XFtp.nFTPEnd);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化FTP数据端口成功,端口范围:%d-%d"), st_ServiceCfg.st_XFtp.nFTPStart, st_ServiceCfg.st_XFtp.nFTPEnd);
 	}
 	//只有使用了数据库,才启用P2P
 	if (st_ServiceCfg.st_P2xp.bEnable)
