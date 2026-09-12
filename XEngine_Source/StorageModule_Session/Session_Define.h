@@ -638,3 +638,130 @@ extern "C" bool Session_Webdav_Get(LPCXSTR lpszFileName, XENGINE_WEBDAVLOCK* pSt
 备注：
 *********************************************************************/
 extern "C" bool Session_Webdav_Delete(LPCXSTR lpszFileName);
+/************************************************************************/
+/*                        FTP会话导出的函数                             */
+/************************************************************************/
+/********************************************************************
+函数名称：Session_FTP_Insert
+函数功能：插入一个会话
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：bUPLoader
+  In/Out：In
+  类型：逻辑型
+  可空：N
+  意思：输入是否为上传会话
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_FTP_Insert(LPCXSTR lpszClientAddr, bool bUPLoader);
+/********************************************************************
+函数名称：Session_FTP_Set
+函数功能：设置
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：lpszFileName
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要操作的文件
+ 参数.三：lpszFilePath
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入要操作的文件路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_FTP_Set(LPCXSTR lpszClientAddr, LPCXSTR lpszFileName = NULL, LPCXSTR lpszFilePath = NULL);
+/********************************************************************
+函数名称：Session_FTP_Get
+函数功能：获取信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端地址
+ 参数.二：ptszFileName
+  In/Out：Out
+  类型：字符指针
+  可空：Y
+  意思：输出操作的文件
+ 参数.三：ptszFilePath
+  In/Out：Out
+  类型：字符指针
+  可空：Y
+  意思：输出操作的文件路径
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_FTP_Get(LPCXSTR lpszClientAddr, XCHAR* ptszFileName = NULL, XCHAR* ptszFilePath = NULL);
+/********************************************************************
+函数名称：Session_FTP_SetSocket
+函数功能：设置网络句柄
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端地址
+ 参数.二：nPort
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入操作的端口
+ 参数.二：xhToken
+  In/Out：In
+  类型：句柄
+  可空：N
+  意思：输入操作的套接字句柄
+返回值
+  类型：逻辑型
+  意思：是否设置成功
+备注：
+*********************************************************************/
+extern "C" bool Session_FTP_SetSocket(LPCXSTR lpszClientAddr, int nPort, XHANDLE xhToken);
+/********************************************************************
+函数名称：Session_FTP_GetSocket
+函数功能：获取网络句柄
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端地址
+ 参数.二：pInt_Port
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出操作的端口
+返回值
+  类型：句柄
+  意思：返回获取到的网络句柄
+备注：
+*********************************************************************/
+extern "C" XHANDLE Session_FTP_GetSocket(LPCXSTR lpszClientAddr, int* pInt_Port = NULL);
+/********************************************************************
+函数名称：Session_FTP_Delete
+函数功能：删除一个会话
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端地址
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_FTP_Delete(LPCXSTR lpszClientAddr);

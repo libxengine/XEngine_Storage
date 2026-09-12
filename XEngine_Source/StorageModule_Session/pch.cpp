@@ -3,6 +3,7 @@
 #include "Session_Stroage/Session_UPStroage.h"
 #include "Session_Action/Session_Action.h"
 #include "Session_Webdav/Session_Webdav.h"
+#include "Session_FTPContral/Session_FTPContral.h"
 /********************************************************************
 //    Created:     2021/06/02  14:38:34
 //    File Name:   D:\XEngine_Storage\StorageModule_Session\pch.cpp
@@ -21,6 +22,7 @@ CSession_DLStroage m_DLStorage;
 CSession_UPStroage m_UPStorage;
 CSession_Action m_Action;
 CSession_Webdav m_Webdav;
+CSession_FTPContral m_FTPContral;
 //////////////////////////////////////////////////////////////////////////
 //                        导出函数定义机器
 //////////////////////////////////////////////////////////////////////////
@@ -164,4 +166,31 @@ extern "C" bool Session_Webdav_Get(LPCXSTR lpszFileName, XENGINE_WEBDAVLOCK* pSt
 extern "C" bool Session_Webdav_Delete(LPCXSTR lpszFileName)
 {
 	return m_Webdav.Session_Webdav_Delete(lpszFileName);
+}
+/************************************************************************/
+/*                        FTP会话导出的函数                             */
+/************************************************************************/
+extern "C" bool Session_FTP_Insert(LPCXSTR lpszClientAddr, bool bUPLoader)
+{
+	return m_FTPContral.Session_FTP_Insert(lpszClientAddr, bUPLoader);
+}
+extern "C" bool Session_FTP_Set(LPCXSTR lpszClientAddr, LPCXSTR lpszFileName, LPCXSTR lpszFilePath)
+{
+	return m_FTPContral.Session_FTP_Set(lpszClientAddr, lpszFileName, lpszFilePath);
+}
+extern "C" bool Session_FTP_Get(LPCXSTR lpszClientAddr, XCHAR* ptszFileName, XCHAR* ptszFilePath)
+{
+	return m_FTPContral.Session_FTP_Get(lpszClientAddr, ptszFileName, ptszFilePath);
+}
+extern "C" bool Session_FTP_SetSocket(LPCXSTR lpszClientAddr, int nPort, XHANDLE xhToken)
+{
+	return m_FTPContral.Session_FTP_SetSocket(lpszClientAddr, nPort, xhToken);
+}
+extern "C" XHANDLE Session_FTP_GetSocket(LPCXSTR lpszClientAddr, int* pInt_Port)
+{
+	return m_FTPContral.Session_FTP_GetSocket(lpszClientAddr, pInt_Port);
+}
+extern "C" bool Session_FTP_Delete(LPCXSTR lpszClientAddr)
+{
+	return m_FTPContral.Session_FTP_Delete(lpszClientAddr);
 }

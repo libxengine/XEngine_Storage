@@ -16,6 +16,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <io.h>
+#include <direct.h>
 #include <fcntl.h>
 #include <minidumpapiset.h>
 #else
@@ -82,7 +83,6 @@ using namespace std;
 #define STORAGE_NETTYPE_HTTPCENTER 3
 #define STORAGE_NETTYPE_HTTPWEBDAV 4
 #define STORAGE_NETTYPE_FTPCONTRAL 5
-#define STORAGE_NETTYPE_FTPDATAS 6
 
 extern bool bIsRun;
 extern bool bIsTest;

@@ -187,32 +187,11 @@ void XCALLBACK XEngine_Callback_FTPContralRecv(LPCXSTR lpszClientAddr, XSOCKET h
 		return;
 	}
 	SocketOpt_HeartBeat_ActiveAddrEx(xhHBFTPContral, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("FTP客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
 }
 void XCALLBACK XEngine_Callback_FTPContralLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_FTPCONTRAL);
-}
-bool XCALLBACK XEngine_Callback_FTPDatasLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
-{
-	FTPProtocol_Parse_CreateClientEx(xhFTPDatas, lpszClientAddr, 0);
-	SocketOpt_HeartBeat_InsertAddrEx(xhHBFTPDatas, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端：%s，进入了服务器"), lpszClientAddr);
-	return true;
-}
-void XCALLBACK XEngine_Callback_FTPDatasRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
-{
-	if (!FTPProtocol_Parse_InsertQueueEx(xhFTPDatas, lpszClientAddr, lpszRecvMsg, nMsgLen))
-	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, FTPProtocol_GetLastError());
-		return;
-	}
-	SocketOpt_HeartBeat_ActiveAddrEx(xhHBFTPDatas, lpszClientAddr);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
-}
-void XCALLBACK XEngine_Callback_FTPDatasLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
-{
-	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_FTPDATAS);
 }
 //////////////////////////////////////////////////////////////////////////
 void XCALLBACK XEngine_Callback_HBDownload(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
@@ -234,10 +213,6 @@ void XCALLBACK XEngine_Callback_HBWebdav(LPCXSTR lpszClientAddr, XSOCKET hSocket
 void XCALLBACK XEngine_Callback_HBFTPContral(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_FTPCONTRAL);
-}
-void XCALLBACK XEngine_Callback_HBFTPDatas(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
-{
-	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_FTPDATAS);
 }
 //////////////////////////////////////////////////////////////////////////
 /*
@@ -386,26 +361,7 @@ bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClient
 			SocketOpt_HeartBeat_DeleteAddrEx(xhHBFTPContral, lpszClientAddr);
 		}
 		FTPProtocol_Parse_DeleteClientEx(xhFTPContral, lpszClientAddr);
-	}
-	else if (STORAGE_NETTYPE_FTPDATAS == nClientType)
-	{
-		m_StrClient = _X("FTP数据客户端");
-		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
-		{
-			m_StrLeaveMsg = _X("心跳超时");
-			NetCore_TCPXCore_CloseForClientEx(xhNetFTPDatas, lpszClientAddr);
-		}
-		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
-		{
-			m_StrLeaveMsg = _X("被动断开");
-			SocketOpt_HeartBeat_DeleteAddrEx(xhHBFTPDatas, lpszClientAddr);
-		}
-		else
-		{
-			m_StrLeaveMsg = _X("主动关闭");
-			NetCore_TCPXCore_CloseForClientEx(xhNetFTPDatas, lpszClientAddr);
-			SocketOpt_HeartBeat_DeleteAddrEx(xhHBFTPDatas, lpszClientAddr);
-		}
+		Session_FTP_Delete(lpszClientAddr);
 	}
 	else
 	{
@@ -507,14 +463,6 @@ bool XEngine_Net_SendMsg(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsg
 		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBFTPContral, lpszClientAddr);
-		}
-	}
-	else if (STORAGE_NETTYPE_FTPDATAS == nType)
-	{
-		bRet = NetCore_TCPXCore_SendEx(xhNetFTPDatas, lpszClientAddr, lpszMsgBuffer, nMsgLen);
-		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
-		{
-			SocketOpt_HeartBeat_ActiveAddrEx(xhHBFTPDatas, lpszClientAddr);
 		}
 	}
 	if (!bRet)

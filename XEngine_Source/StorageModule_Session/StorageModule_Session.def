@@ -37,3 +37,10 @@ EXPORTS
 	Session_Webdav_Insert
 	Session_Webdav_Get
 	Session_Webdav_Delete
+
+	Session_FTP_Insert
+	Session_FTP_Set
+	Session_FTP_Get
+	Session_FTP_SetSocket
+	Session_FTP_GetSocket
+	Session_FTP_Delete

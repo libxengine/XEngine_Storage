@@ -590,6 +590,7 @@ int main(int argc, char** argv)
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动FTP任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nFTPThread);
 
 		APIHelp_Port_Init(st_ServiceCfg.nFTPDStart, st_ServiceCfg.nFTPDEnd);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化FTP数据端口成功,端口范围:%d-%d"), st_ServiceCfg.nFTPDStart, st_ServiceCfg.nFTPDEnd);
 	}
 	//只有使用了数据库,才启用P2P
 	if (st_ServiceCfg.st_P2xp.bEnable)

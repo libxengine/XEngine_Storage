@@ -31,6 +31,12 @@
     <Filter Include="源文件\Session_Webdav">
       <UniqueIdentifier>{ada350db-0019-4645-b441-fe09e2d37c31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Session_FTPContral">
+      <UniqueIdentifier>{525464d9-6fe5-4f5a-acf5-61f0d9219561}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Session_FTPContral">
+      <UniqueIdentifier>{ae4fe5fb-dab3-41d8-a51d-106684a4587c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -57,6 +63,9 @@
     <ClInclude Include="Session_Webdav\Session_Webdav.h">
       <Filter>头文件\Session_Webdav</Filter>
     </ClInclude>
+    <ClInclude Include="Session_FTPContral\Session_FTPContral.h">
+      <Filter>头文件\Session_FTPContral</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -76,6 +85,9 @@
     </ClCompile>
     <ClCompile Include="Session_Webdav\Session_Webdav.cpp">
       <Filter>源文件\Session_Webdav</Filter>
+    </ClCompile>
+    <ClCompile Include="Session_FTPContral\Session_FTPContral.cpp">
+      <Filter>源文件\Session_FTPContral</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
