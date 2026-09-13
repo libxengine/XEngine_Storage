@@ -43,4 +43,6 @@ EXPORTS
 	Session_FTP_Get
 	Session_FTP_SetSocket
 	Session_FTP_GetSocket
+	Session_FTP_SetRetr
+	Session_FTP_GetRetr
 	Session_FTP_Delete

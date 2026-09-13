@@ -37,7 +37,7 @@ static void XEngine_FTPDownload_Thread(xstring lpszClientAddr, xstring lpszFileN
 	XHANDLE xhToken = Session_FTP_GetSocket(lpszClientAddr.c_str(), &nPort);
 	if (NULL == xhToken)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,获取网络连接失败,错误码:%lX"), lpszClientAddr.c_str(), Session_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求下载文件失败,获取网络连接失败,错误码:%lX"), lpszClientAddr.c_str(), Session_GetLastError());
 		return;
 	}
 	int nMSGLen = 0;
@@ -49,19 +49,26 @@ static void XEngine_FTPDownload_Thread(xstring lpszClientAddr, xstring lpszFileN
 		//关闭连接
 		APIHelp_Port_Free(nPort);
 		NetCore_TCPSelect_StopEx(xhToken);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,获取网络事件失败,错误码:%lX"), lpszClientAddr.c_str(), NetCore_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求下载文件失败,获取网络事件失败,错误码:%lX"), lpszClientAddr.c_str(), NetCore_GetLastError());
 		return;
 	}
-
 	FILE* pSt_File = _xtfopen(lpszFileName.c_str(), _X("rb"));
 	if (NULL == pSt_File)
 	{
 		APIHelp_Port_Free(nPort);
 		NetCore_TCPSelect_StopEx(xhToken);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求被动模式失败,打开文件:%s失败"), lpszClientAddr.c_str(), lpszFileName.c_str());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求下载文件失败,打开文件:%s失败"), lpszClientAddr.c_str(), lpszFileName.c_str());
 		return;
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,准备数据文件:%s 完成,开始发送数据"), lpszClientAddr.c_str(), lpszFileName.c_str());
+	//设置断点续传
+	__int64u nPos = 0;
+	Session_FTP_GetRetr(lpszClientAddr.c_str(), &nPos);
+	if (nPos > 0)
+	{
+		fseek(pSt_File, (long)nPos, SEEK_SET);
+	}
+
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,准备数据文件:%s 完成,开始下载文件数据,下载位置:%llu"), lpszClientAddr.c_str(), lpszFileName.c_str(), nPos);
 
 	while (true)
 	{
@@ -81,7 +88,7 @@ static void XEngine_FTPDownload_Thread(xstring lpszClientAddr, xstring lpszFileN
 			{
 				if (ERROR_XENGINE_BASELIB_BASELIB_IO_CLOSE == NetCore_GetLastError())
 				{
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求被动模式失败,网络连接已断开"), lpszClientAddr.c_str());
+					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求下载文件失败,网络连接已断开"), lpszClientAddr.c_str());
 					break;
 				}
 				else
@@ -102,7 +109,7 @@ static void XEngine_FTPDownload_Thread(xstring lpszClientAddr, xstring lpszFileN
 	XCHAR tszSDBuffer[1024] = {};
 	FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_226, tszSDBuffer, &nSDLen);
 	XEngine_Net_SendMsg(lpszClientAddr.c_str(), tszSDBuffer, nSDLen, STORAGE_NETTYPE_FTPCONTRAL);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,连接地址:%s 文件发送数据完毕,网络连接已断开"), lpszClientAddr.c_str(), tszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,连接地址:%s 请求下载文件成功,网络连接已断开"), lpszClientAddr.c_str(), tszClientAddr);
 }
 static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileName)
 {
@@ -110,20 +117,38 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	XHANDLE xhToken = Session_FTP_GetSocket(lpszClientAddr.c_str(), &nPort);
 	if (NULL == xhToken)
 	{
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,获取网络连接失败,错误码:%lX"), lpszClientAddr.c_str(), Session_GetLastError());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件失败,获取网络连接失败,错误码:%lX"), lpszClientAddr.c_str(), Session_GetLastError());
 		return;
 	}
-
-	FILE* pSt_File = _xtfopen(lpszFileName.c_str(), _X("wb"));
-	if (NULL == pSt_File)
+	FILE* pSt_File = NULL;
+	//设置断点续传
+	__int64u nPos = 0;
+	Session_FTP_GetRetr(lpszClientAddr.c_str(), &nPos);
+	if (nPos > 0)
 	{
-		APIHelp_Port_Free(nPort);
-		NetCore_TCPSelect_StopEx(xhToken);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求被动模式失败,创建文件:%s失败"), lpszClientAddr.c_str(), lpszFileName.c_str());
-		return;
+		pSt_File = _xtfopen(lpszFileName.c_str(), _X("rb+"));
+		if (NULL == pSt_File)
+		{
+			APIHelp_Port_Free(nPort);
+			NetCore_TCPSelect_StopEx(xhToken);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件失败,续传文件不存在:%s"), lpszClientAddr.c_str(), lpszFileName.c_str());
+			return;
+		}
+		fseek(pSt_File, (long)nPos, SEEK_SET);
 	}
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,创建文件:%s 成功,开始接受数据"), lpszClientAddr.c_str(), lpszFileName.c_str());
-
+	else
+	{
+		pSt_File = _xtfopen(lpszFileName.c_str(), _X("wb"));
+		if (NULL == pSt_File)
+		{
+			APIHelp_Port_Free(nPort);
+			NetCore_TCPSelect_StopEx(xhToken);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件失败,创建文件:%s失败"), lpszClientAddr.c_str(), lpszFileName.c_str());
+			return;
+		}
+	}
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,创建文件:%s 成功,开始接受数据,位置:%llu"), lpszClientAddr.c_str(), lpszFileName.c_str(), nPos);
+	
 	while (true)
 	{
 		int nMSGLen = 0;
@@ -139,7 +164,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 		
 		if (XENGINE_NETCORE_TCP_SELECT_EVENT_LEAVE == dwEvent)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,获取网络事件,用户:%s 离开"), lpszClientAddr.c_str(), tszClientAddr);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件失败,获取网络事件,用户:%s 离开"), lpszClientAddr.c_str(), tszClientAddr);
 			break;
 		}
 		else if (XENGINE_NETCORE_TCP_SELECT_EVENT_RECV == dwEvent)
@@ -156,7 +181,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	XCHAR tszSDBuffer[1024] = {};
 	FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_226, tszSDBuffer, &nSDLen);
 	XEngine_Net_SendMsg(lpszClientAddr.c_str(), tszSDBuffer, nSDLen, STORAGE_NETTYPE_FTPCONTRAL);
-	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s 文件发送数据完毕,网络连接已断开"), lpszClientAddr.c_str());
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s 请求上传文件完毕,网络连接已断开"), lpszClientAddr.c_str());
 }
 static void XEngine_FTPFile_Thread(xstring lpszClientAddr, xstring lpszFilePath, xstring lpszAlisPath)
 {
@@ -349,6 +374,19 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_150, tszSDBuffer, &nSDLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,请求文件成功,请求信息:%s"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+	}
+	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_RETR, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_RETR)))
+	{
+		if (!Session_FTP_SetRetr(lpszClientAddr, _ttxoll(pSt_KeyValue->tszStrVlu)))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件:%s 失败,执行顺序错误"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+			return false;
+		}
+		nSDLen = _xstprintf(tszSDBuffer, _X("350 Restarting at %s. Send STORE or RETRIEVE to initiate transfer.\r\n"), pSt_KeyValue->tszStrVlu);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,请求断点续传位置:%s 成功"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
 	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_QUIT, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_QUIT)))
 	{

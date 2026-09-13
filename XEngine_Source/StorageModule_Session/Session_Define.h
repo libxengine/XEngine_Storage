@@ -762,6 +762,44 @@ extern "C" bool Session_FTP_SetSocket(LPCXSTR lpszClientAddr, int nPort, XHANDLE
 *********************************************************************/
 extern "C" XHANDLE Session_FTP_GetSocket(LPCXSTR lpszClientAddr, int* pInt_Port = NULL);
 /********************************************************************
+函数名称：Session_FTP_SetRetr
+函数功能：设置断点续传
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端地址
+ 参数.二：nPos
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：输入断点续传位置
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_FTP_SetRetr(LPCXSTR lpszClientAddr, __int64u nPos);
+/********************************************************************
+函数名称：Session_FTP_GetRetr
+函数功能：获取断点续传
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入要操作的客户端地址
+ 参数.二：pInt_Pos
+  In/Out：Out
+  类型：整数型指针
+  可空：Y
+  意思：输出断点续传位置
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_FTP_GetRetr(LPCXSTR lpszClientAddr, __int64u* pInt_Pos);
+/********************************************************************
 函数名称：Session_FTP_Delete
 函数功能：删除一个会话
  参数.一：lpszClientAddr

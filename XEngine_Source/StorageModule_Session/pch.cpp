@@ -190,6 +190,14 @@ extern "C" XHANDLE Session_FTP_GetSocket(LPCXSTR lpszClientAddr, int* pInt_Port)
 {
 	return m_FTPContral.Session_FTP_GetSocket(lpszClientAddr, pInt_Port);
 }
+extern "C" bool Session_FTP_SetRetr(LPCXSTR lpszClientAddr, __int64u nPos)
+{
+	return m_FTPContral.Session_FTP_SetRetr(lpszClientAddr, nPos);
+}
+extern "C" bool Session_FTP_GetRetr(LPCXSTR lpszClientAddr, __int64u* pInt_Pos)
+{
+	return m_FTPContral.Session_FTP_GetRetr(lpszClientAddr, pInt_Pos);
+}
 extern "C" bool Session_FTP_Delete(LPCXSTR lpszClientAddr)
 {
 	return m_FTPContral.Session_FTP_Delete(lpszClientAddr);
