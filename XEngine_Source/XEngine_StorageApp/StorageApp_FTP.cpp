@@ -424,6 +424,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_PWD, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_PWD)))
 	{
+		//列举目录
 		XCHAR tszFTPDir[XPATH_MAX] = {};
 		XCHAR tszAliDir[XPATH_MAX] = {};
 		Session_FTP_Get(lpszClientAddr, NULL, tszFTPDir, tszAliDir);
@@ -442,12 +443,18 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_CWD, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_CWD)))
 	{
+		//切换目录
 		XCHAR tszAliDir[XPATH_MAX] = {};
 		Session_FTP_Get(lpszClientAddr, NULL, NULL, tszAliDir);
 
-		if (_tcsxlen(tszAliDir) > 1)
+		if (_tcsxlen(tszAliDir) > 0)
 		{
-			if (0 != _tcsxncmp(pSt_KeyValue->tszStrVlu, tszAliDir, _tcsxlen(tszAliDir)))
+			//如果是根目录,//并且切换目标不是根目录
+			if (1 == _tcsxlen(tszAliDir) && 1 != _tcsxlen(pSt_KeyValue->tszStrVlu))
+			{
+				_tcsxcat(tszAliDir, pSt_KeyValue->tszStrVlu);
+			}
+			else if (0 != _tcsxncmp(pSt_KeyValue->tszStrVlu, tszAliDir, _tcsxlen(tszAliDir)))
 			{
 				_tcsxcat(tszAliDir, _X("/"));
 				_tcsxcat(tszAliDir, pSt_KeyValue->tszStrVlu);
@@ -462,6 +469,58 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		nSDLen = _xstprintf(tszSDBuffer, _X("250 Directory changed to %s\r\n"), tszAliDir);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,切换目录:%s 成功"), lpszClientAddr, tszAliDir);
+	}
+	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_MKD, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_MKD)))
+	{
+		//创建目录
+		XCHAR tszFilePath[XPATH_MAX] = {};
+		XCHAR tszAlisPath[XPATH_MAX] = {};
+		if (!Session_FTP_Get(lpszClientAddr, NULL, tszFilePath, tszAlisPath))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件:%s 失败,执行顺序错误"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+			return false;
+		}
+		XCHAR tszFileName[XPATH_MAX] = {};
+		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
+		BaseLib_String_FixPath(tszFileName, 1);
+		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		{
+			_tcsxcat(tszFileName, _X("\\"));
+		}
+		_tcsxcat(tszFileName, pSt_KeyValue->tszStrVlu);
+		SystemApi_File_CreateMutilFolderA(tszFileName);
+
+		nSDLen = _xstprintf(tszSDBuffer, _X("257 \"%s\" directory created\r\n"), pSt_KeyValue->tszStrVlu);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,创建目录:%s 成功"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+	}
+	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_RMD, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_RMD)))
+	{
+		//删除目录
+		XCHAR tszFilePath[XPATH_MAX] = {};
+		XCHAR tszAlisPath[XPATH_MAX] = {};
+		if (!Session_FTP_Get(lpszClientAddr, NULL, tszFilePath, tszAlisPath))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件:%s 失败,执行顺序错误"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+			return false;
+		}
+		XCHAR tszFileName[XPATH_MAX] = {};
+		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
+		BaseLib_String_FixPath(tszFileName, 1);
+		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		{
+			_tcsxcat(tszFileName, _X("\\"));
+		}
+		_tcsxcat(tszFileName, pSt_KeyValue->tszStrVlu);
+		SystemApi_File_DeleteMutilFolderA(tszFileName);
+
+		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_250, tszSDBuffer, &nSDLen);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,删除目录:%s 成功"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
 	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_CDUP, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_CDUP)))
 	{
