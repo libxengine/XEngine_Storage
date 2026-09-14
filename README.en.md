@@ -35,6 +35,7 @@ feature list:
 18. support convert record(service upload and download)
 19. webdav protocol download and upload file support
 20. preview file create
+21. FTP upload and download
 
 ## install
 

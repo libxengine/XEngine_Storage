@@ -377,6 +377,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_RETR, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_RETR)))
 	{
+		//断点续传
 		if (!Session_FTP_SetRetr(lpszClientAddr, _ttxoll(pSt_KeyValue->tszStrVlu)))
 		{
 			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
@@ -387,6 +388,33 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		nSDLen = _xstprintf(tszSDBuffer, _X("350 Restarting at %s. Send STORE or RETRIEVE to initiate transfer.\r\n"), pSt_KeyValue->tszStrVlu);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,请求断点续传位置:%s 成功"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+	}
+	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_DELE, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_DELE)))
+	{
+		//删除文件
+		XCHAR tszFilePath[XPATH_MAX] = {};
+		XCHAR tszAlisPath[XPATH_MAX] = {};
+		if (!Session_FTP_Get(lpszClientAddr, NULL, tszFilePath, tszAlisPath))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件:%s 失败,执行顺序错误"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+			return false;
+		}
+		XCHAR tszFileName[XPATH_MAX] = {};
+		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
+		BaseLib_String_FixPath(tszFileName, 1);
+
+		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		{
+			_tcsxcat(tszFileName, _X("\\"));
+		}
+		_tcsxcat(tszFileName, pSt_KeyValue->tszStrVlu);
+		_xtremove(tszFileName);
+
+		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_250, tszSDBuffer, &nSDLen);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,删除文件成功:%s"), lpszClientAddr, tszFileName);
 	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_QUIT, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_QUIT)))
 	{
