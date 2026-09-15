@@ -8,7 +8,7 @@ LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool 
 	  -ljsoncpp -ltinyxml2 -lXEngine_InfoReport -lXEngine_Verification 
 LIBEX = 
 OBJECTS = Storage_TaskPass.o Storage_TaskManage.o Storage_TaskP2p.o Storage_TaskAction.o \
-		  StorageApp_Config.o StorageApp_HTTPHelp.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o StorageApp_Webdav.o StorageApp_FTP.o Engine_StorageApp.o
+		  StorageApp_Config.o StorageApp_HTTPHelp.o StorageApp_Download.o StorageApp_Network.o StorageApp_Center.o StorageApp_UPLoader.o StorageApp_Webdav.o StorageApp_FTP.o XEngine_StorageApp.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -D _RELEASE
