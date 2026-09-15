@@ -3,7 +3,7 @@ PLATVER =
 LOADHDR = -I ./ 
 LOADSO =  -L ../XEngine_DependLibrary/XEngine_Module/jsoncpp -L ../XEngine_DependLibrary/XEngine_Module/tinyxml2 -L ../XEngine_DependLibrary/XEngine_Module/XEngine_InfoReport -L ../XEngine_DependLibrary/XEngine_Module/XEngine_Verification \
           -L ../StorageModule_Database -L ../StorageModule_Config -L ../StorageModule_Session -L ../StorageModule_APIHelp -L ../StorageModule_Protocol -L ../StorageModule_BTorrent
-LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_Cryption -lXClient_APIHelp -lXEngine_SystemApi -lHelpComponents_XLog -lHelpComponents_Packets -lRfcComponents_HttpProtocol \
+LIB = -lXEngine_BaseLib -lXEngine_Algorithm -lXEngine_Core -lXEngine_ManagePool -lXEngine_Cryption -lXClient_APIHelp -lNetHelp_APIAddr -lXEngine_SystemApi -lHelpComponents_XLog -lHelpComponents_Packets -lRfcComponents_HttpProtocol -lRfcComponents_FTPProtocol \
       -lStorageModule_Database -lStorageModule_Config -lStorageModule_Session -lStorageModule_APIHelp -lStorageModule_Protocol -lStorageModule_BTorrent  \
 	  -ljsoncpp -ltinyxml2 -lXEngine_InfoReport -lXEngine_Verification 
 LIBEX = 
