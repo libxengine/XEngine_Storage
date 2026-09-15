@@ -172,7 +172,6 @@ bool XCALLBACK XEngine_Callback_FTPContralLogin(LPCXSTR lpszClientAddr, XSOCKET 
 
 	int nSDLen = 0;
 	XCHAR tszSDBuffer[XPATH_MIN] = {};
-	XENGINE_KEYVALUE st_KeyValue = {};
 
 	FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_220, tszSDBuffer, &nSDLen);
 	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_FTPCONTRAL);
