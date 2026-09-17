@@ -138,9 +138,18 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	}
 	else
 	{
-		pSt_File = _xtfopen(lpszFileName.c_str(), _X("wb"));
+		int nFD = open(lpszFileName.c_str(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+		if (nFD < 0)
+		{
+			APIHelp_Port_Free(nPort);
+			NetCore_TCPSelect_StopEx(xhToken);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件失败,创建文件:%s失败"), lpszClientAddr.c_str(), lpszFileName.c_str());
+			return;
+		}
+		pSt_File = fdopen(nFD, "wb");
 		if (NULL == pSt_File)
 		{
+			close(nFD);
 			APIHelp_Port_Free(nPort);
 			NetCore_TCPSelect_StopEx(xhToken);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件失败,创建文件:%s失败"), lpszClientAddr.c_str(), lpszFileName.c_str());
