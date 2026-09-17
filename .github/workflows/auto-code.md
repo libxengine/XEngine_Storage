@@ -6,11 +6,11 @@ on:
 engine:
   id: copilot
   env:
-    COPILOT_PROVIDER_BASE_URL: ${{ vars.MODEL_AI_ADDR }}
+    COPILOT_PROVIDER_BASE_URL: ${{ vars.MODEL_AI_AGENT_ADDR }}
     COPILOT_PROVIDER_BEARER_TOKEN: ${{ secrets.OPENAI_API_KEY }}
-    COPILOT_MODEL: ${{ vars.MODEL_AI_NAME }}
-    COPILOT_PROVIDER_TYPE: openai
-    COPILOT_PROVIDER_WIRE_API: responses
+    COPILOT_MODEL: ${{ vars.MODEL_AI_AGENT_NAME }}
+    COPILOT_PROVIDER_TYPE: ${{ vars.MODEL_AI_AGENT_TYPE }}
+    COPILOT_PROVIDER_WIRE_API: ${{ vars.MODEL_AI_AGENT_API }}
 
 features:
   dangerously-disable-sandbox-agent: true
