@@ -6,16 +6,17 @@ on:
 engine:
   id: copilot
   env:
-    COPILOT_PROVIDER_BASE_URL: "https://ark.cn-beijing.volces.com/api/v3"
+    COPILOT_PROVIDER_BASE_URL: ${{ vars.MODEL_AI_NAME }}
     COPILOT_PROVIDER_BEARER_TOKEN: ${{ secrets.OPENAI_API_KEY }}
-    COPILOT_MODEL: doubao-seed-evolving
+    COPILOT_MODEL: ${{ vars.MODEL_AI_NAME }}
     COPILOT_PROVIDER_TYPE: openai
     COPILOT_PROVIDER_WIRE_API: responses
 
 features:
-  dangerously-disable-sandbox-agent: "controlled environment for issue triage automation"
+  dangerously-disable-sandbox-agent: true
 sandbox:
   agent: false
+  
 strict: false
 
 network:
@@ -25,7 +26,7 @@ network:
 
 tools:
   github:
-    min-integrity: none
+    min-integrity: approved
 
 permissions:
   contents: read

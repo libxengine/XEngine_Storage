@@ -81,7 +81,6 @@ jobs:
       - name: test
         run: |
             cd XEngine_Release
-            ldd ./XEngine_XStorageApp
             ./XEngine_XStorageApp -t
 
       - name: Upload folder as artifact with OPensuse
