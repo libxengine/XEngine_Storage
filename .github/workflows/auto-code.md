@@ -6,7 +6,7 @@ on:
 engine:
   id: copilot
   env:
-    COPILOT_PROVIDER_BASE_URL: ${{ vars.MODEL_AI_NAME }}
+    COPILOT_PROVIDER_BASE_URL: ${{ vars.MODEL_AI_ADDR }}
     COPILOT_PROVIDER_BEARER_TOKEN: ${{ secrets.OPENAI_API_KEY }}
     COPILOT_MODEL: ${{ vars.MODEL_AI_NAME }}
     COPILOT_PROVIDER_TYPE: openai
