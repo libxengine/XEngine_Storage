@@ -24,13 +24,33 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
             platform: linux/amd64
-            fedora-version: 42
+            fedora-version: 44
             artifact: x86-64
           - arch: amd64
             runner: ubuntu-24.04
             platform: linux/amd64
-            fedora-version: 41
+            fedora-version: 43
             artifact: x86-64
+          - arch: amd64
+            runner: ubuntu-24.04
+            platform: linux/amd64
+            fedora-version: 42
+            artifact: x86-64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            fedora-version: 44
+            artifact: arm64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            fedora-version: 43
+            artifact: arm64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            fedora-version: 42
+            artifact: arm64
 
     steps:
       - name: Checkout main repository code

@@ -18,7 +18,7 @@ void XCALLBACK XEngine_Callback_DownloadRecv(LPCXSTR lpszClientAddr, XSOCKET hSo
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
 		Cryption_Server_RecvMemoryEx(xhDLSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
-		if (!HttpProtocol_Server_InserQueueEx(xhDLHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhDLHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -27,7 +27,7 @@ void XCALLBACK XEngine_Callback_DownloadRecv(LPCXSTR lpszClientAddr, XSOCKET hSo
 	}
 	else
 	{
-		if (!HttpProtocol_Server_InserQueueEx(xhDLHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhDLHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -60,7 +60,7 @@ void XCALLBACK XEngine_Callback_UPLoaderRecv(LPCXSTR lpszClientAddr, XSOCKET hSo
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
 		Cryption_Server_RecvMemoryEx(xhUPSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
-		if (!HttpProtocol_Server_InserQueueEx(xhUPHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhUPHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -69,7 +69,7 @@ void XCALLBACK XEngine_Callback_UPLoaderRecv(LPCXSTR lpszClientAddr, XSOCKET hSo
 	}
 	else
 	{
-		if (!HttpProtocol_Server_InserQueueEx(xhUPHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhUPHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -101,7 +101,7 @@ void XCALLBACK XEngine_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
 		Cryption_Server_RecvMemoryEx(xhCHSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
-		if (!HttpProtocol_Server_InserQueueEx(xhCenterHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhCenterHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -110,7 +110,7 @@ void XCALLBACK XEngine_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 	}
 	else
 	{
-		if (!HttpProtocol_Server_InserQueueEx(xhCenterHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhCenterHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -142,7 +142,7 @@ void XCALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
 		Cryption_Server_RecvMemoryEx(xhWDSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
-		if (!HttpProtocol_Server_InserQueueEx(xhWebdavHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhWebdavHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;

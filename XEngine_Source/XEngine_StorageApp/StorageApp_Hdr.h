@@ -30,8 +30,8 @@ using namespace std;
 #include <XEngine_Include/XEngine_ProtocolHdr.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/BaseLib_Error.h>
-#include <XEngine_Include/XEngine_BaseLib/Algorithm_Define.h>
-#include <XEngine_Include/XEngine_BaseLib/Algorithm_Error.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseSafe_Define.h>
+#include <XEngine_Include/XEngine_BaseLib/BaseSafe_Error.h>
 #include <XEngine_Include/XEngine_BaseLib/Algorithm_Define.h>
 #include <XEngine_Include/XEngine_BaseLib/Algorithm_Error.h>
 #include <XEngine_Include/XEngine_Core/NetCore_Define.h>
@@ -142,6 +142,7 @@ extern XENGINE_LBCONFIG st_LoadbalanceCfg;
 #pragma comment(lib,"Ws2_32.lib")
 #pragma comment(lib,"Dbghelp.lib")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
+#pragma comment(lib,"XEngine_BaseLib/XEngine_BaseSafe.lib")
 #pragma comment(lib,"XEngine_BaseLib/XEngine_Algorithm.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_Core.lib")
 #pragma comment(lib,"XEngine_Core/XEngine_ManagePool.lib")

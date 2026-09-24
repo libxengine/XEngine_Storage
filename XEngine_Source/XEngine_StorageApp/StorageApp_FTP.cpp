@@ -126,7 +126,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	Session_FTP_GetRetr(lpszClientAddr.c_str(), &nPos);
 	if (nPos > 0)
 	{
-		pSt_File = _xtfopen(lpszFileName.c_str(), _X("rb+"));
+		pSt_File = _xfopenA(lpszFileName.c_str(), _X("rb+"), true);
 		if (NULL == pSt_File)
 		{
 			APIHelp_Port_Free(nPort);
@@ -138,7 +138,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	}
 	else
 	{
-		pSt_File = _xtfopen(lpszFileName.c_str(), _X("wb"));
+		pSt_File = _xfopenA(lpszFileName.c_str(), _X("wb"));
 		if (NULL == pSt_File)
 		{
 			APIHelp_Port_Free(nPort);
@@ -416,12 +416,6 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,删除文件成功:%s"), lpszClientAddr, tszFileName);
 	}
-	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_QUIT, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_QUIT)))
-	{
-		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_221, tszSDBuffer, &nSDLen);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,退出成功"), lpszClientAddr);
-	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_PWD, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_PWD)))
 	{
 		//列举目录
@@ -571,6 +565,12 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		std::thread m_ThreadFTPFiles(XEngine_FTPFile_Thread, xstring(lpszClientAddr), xstring(tszFilePath), xstring(tszAlisPath));
 		m_ThreadFTPFiles.detach();
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,列举目录:%s 成功"), lpszClientAddr, tszFilePath);
+	}
+	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_QUIT, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_QUIT)))
+	{
+		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_221, tszSDBuffer, &nSDLen);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,退出成功"), lpszClientAddr);
 	}
 	else
 	{
