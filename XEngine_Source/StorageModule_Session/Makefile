@@ -6,7 +6,7 @@ LOADHDR = -I ./
 LOADSO = 
 LIB = -lXEngine_BaseLib -lNetHelp_APIAddr
 LIBEX = 
-OBJECTS = Session_DLStroage.o Session_UPStroage.o Session_Action.o Session_Webdav.o pch.o
+OBJECTS = Session_DLStroage.o Session_UPStroage.o Session_Action.o Session_Webdav.o Session_FTPContral.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -D _RELEASE
@@ -58,6 +58,8 @@ Session_Action.o:./Session_Action/Session_Action.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Session_Action/Session_Action.cpp
 Session_Webdav.o:./Session_Webdav/Session_Webdav.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Session_Webdav/Session_Webdav.cpp
+Session_FTPContral.o:./Session_FTPContral/Session_FTPContral.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./Session_FTPContral/Session_FTPContral.cpp
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp

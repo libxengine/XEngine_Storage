@@ -6,7 +6,7 @@ LOADHDR = -I ./ -I ../XEngine_DependLibrary/XEngine_Module/jsoncpp
 LOADSO = -L ../XEngine_DependLibrary/XEngine_Module/jsoncpp
 LIB = -lXEngine_BaseLib -lXEngine_Cryption -lRfcComponents_HttpProtocol -lXEngine_SystemApi -ljsoncpp
 LIBEX = 
-OBJECTS = APIHelp_Distributed.o APIHelp_Api.o pch.o
+OBJECTS = APIHelp_Distributed.o APIHelp_Api.o APIHelp_Port.o pch.o
 
 ifeq ($(RELEASE),1)
 FLAGS = -c -D _RELEASE
@@ -55,6 +55,8 @@ APIHelp_Api.o:./APIHelp_Api/APIHelp_Api.cpp
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./APIHelp_Api/APIHelp_Api.cpp
 APIHelp_Cryption.o:./APIHelp_Cryption/APIHelp_Cryption.cpp             
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./APIHelp_Cryption/APIHelp_Cryption.cpp
+APIHelp_Port.o:./APIHelp_Port/APIHelp_Port.cpp             
+	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./APIHelp_Port/APIHelp_Port.cpp
 
 pch.o:./pch.cpp                 		       	    
 	$(CC) $(DEBUG) $(FLAGS) $(UNICODE) $(PLATVER) $(LOADHDR) ./pch.cpp

@@ -23,7 +23,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #endif
-#endif //PCH_H
 #include <json/json.h>
 #include <tinyxml2.h>
 #include <list>
@@ -103,3 +102,4 @@ extern XLONG Protocol_dwErrorCode;
 #endif
 #endif
 #endif
+#endif //PCH_H

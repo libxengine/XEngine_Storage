@@ -25,6 +25,12 @@
     <Filter Include="源文件\APIHelp_Api">
       <UniqueIdentifier>{70c91174-907f-422b-8db6-f8ee8298447c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\APIHelp_Port">
+      <UniqueIdentifier>{1331dd62-d795-488f-b5d4-f19a55b301b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\APIHelp_Port">
+      <UniqueIdentifier>{ec0c3ded-f887-448b-b9de-8ea580cefcbe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -45,6 +51,9 @@
     <ClInclude Include="APIHelp_Api\APIHelp_Api.h">
       <Filter>头文件\APIHelp_Api</Filter>
     </ClInclude>
+    <ClInclude Include="APIHelp_Port\APIHelp_Port.h">
+      <Filter>头文件\APIHelp_Port</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -58,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="APIHelp_Api\APIHelp_Api.cpp">
       <Filter>源文件\APIHelp_Api</Filter>
+    </ClCompile>
+    <ClCompile Include="APIHelp_Port\APIHelp_Port.cpp">
+      <Filter>源文件\APIHelp_Port</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

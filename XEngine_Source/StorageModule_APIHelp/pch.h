@@ -17,11 +17,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #endif
-#endif //PCH_H
 #include <string.h>
 #include <list>
 #include <string>
 #include <memory>
+#include <mutex>
 #include <json/json.h>
 using namespace std;
 #include <XEngine_Include/XEngine_CommHdr.h>
@@ -81,3 +81,4 @@ extern XLONG APIHelp_dwErrorCode;
 #endif
 #endif
 #endif
+#endif //PCH_H

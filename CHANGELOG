@@ -1,3 +1,15 @@
+XEngine_Storage V3.24.0.1001
+
+ci:增加了opnesuse系统支持
+增加:ftp协议文件操作支持
+更新:依赖库
+修改:vs编译器使用了c++20
+
+ci:add open suse support
+added:ftp protocol support
+update:depend library
+modify:change c++ version to 20 for msvc
+======================================================================================
 XEngine_Storage V3.23.0.1001
 
 ci:删除了多余的动作

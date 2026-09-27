@@ -18,7 +18,7 @@ void XCALLBACK XEngine_Callback_DownloadRecv(LPCXSTR lpszClientAddr, XSOCKET hSo
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
 		Cryption_Server_RecvMemoryEx(xhDLSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
-		if (!HttpProtocol_Server_InserQueueEx(xhDLHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhDLHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -27,7 +27,7 @@ void XCALLBACK XEngine_Callback_DownloadRecv(LPCXSTR lpszClientAddr, XSOCKET hSo
 	}
 	else
 	{
-		if (!HttpProtocol_Server_InserQueueEx(xhDLHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhDLHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -60,7 +60,7 @@ void XCALLBACK XEngine_Callback_UPLoaderRecv(LPCXSTR lpszClientAddr, XSOCKET hSo
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
 		Cryption_Server_RecvMemoryEx(xhUPSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
-		if (!HttpProtocol_Server_InserQueueEx(xhUPHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhUPHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -69,7 +69,7 @@ void XCALLBACK XEngine_Callback_UPLoaderRecv(LPCXSTR lpszClientAddr, XSOCKET hSo
 	}
 	else
 	{
-		if (!HttpProtocol_Server_InserQueueEx(xhUPHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhUPHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -101,7 +101,7 @@ void XCALLBACK XEngine_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
 		Cryption_Server_RecvMemoryEx(xhCHSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
-		if (!HttpProtocol_Server_InserQueueEx(xhCenterHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhCenterHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -110,7 +110,7 @@ void XCALLBACK XEngine_Callback_CenterRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 	}
 	else
 	{
-		if (!HttpProtocol_Server_InserQueueEx(xhCenterHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhCenterHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -142,7 +142,7 @@ void XCALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 		int nSLen = 0;
 		XCHAR* ptszMsgBuffer = NULL;
 		Cryption_Server_RecvMemoryEx(xhWDSsl, lpszClientAddr, &ptszMsgBuffer, &nSLen, lpszRecvMsg, nMsgLen);
-		if (!HttpProtocol_Server_InserQueueEx(xhWebdavHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhWebdavHttp, lpszClientAddr, ptszMsgBuffer, nSLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -151,7 +151,7 @@ void XCALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 	}
 	else
 	{
-		if (!HttpProtocol_Server_InserQueueEx(xhWebdavHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
+		if (!HttpProtocol_Server_InsertQueueEx(xhWebdavHttp, lpszClientAddr, lpszRecvMsg, nMsgLen))
 		{
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("WEBDAV客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, HttpProtocol_GetLastError());
 			return;
@@ -163,6 +163,34 @@ void XCALLBACK XEngine_Callback_WebdavRecv(LPCXSTR lpszClientAddr, XSOCKET hSock
 void XCALLBACK XEngine_Callback_WebdavLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_HTTPWEBDAV);
+}
+//////////////////////////////////////////////////////////////////////////
+bool XCALLBACK XEngine_Callback_FTPContralLogin(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+{
+	FTPProtocol_Parse_CreateClientEx(xhFTPContral, lpszClientAddr, 0);
+	SocketOpt_HeartBeat_InsertAddrEx(xhHBFTPContral, lpszClientAddr);
+
+	int nSDLen = 0;
+	XCHAR tszSDBuffer[XPATH_MIN] = {};
+
+	FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_220, tszSDBuffer, &nSDLen);
+	XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_FTPCONTRAL);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端：%s，进入了服务器"), lpszClientAddr);
+	return true;
+}
+void XCALLBACK XEngine_Callback_FTPContralRecv(LPCXSTR lpszClientAddr, XSOCKET hSocket, LPCXSTR lpszRecvMsg, int nMsgLen, XPVOID lParam)
+{
+	if (!FTPProtocol_Parse_InsertQueueEx(xhFTPContral, lpszClientAddr, lpszRecvMsg, nMsgLen))
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端：%s，投递数据失败,大小:%d,错误;%lX"), lpszClientAddr, nMsgLen, FTPProtocol_GetLastError());
+		return;
+	}
+	SocketOpt_HeartBeat_ActiveAddrEx(xhHBFTPContral, lpszClientAddr);
+	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG, _X("FTP客户端：%s，投递包成功，大小：%d"), lpszClientAddr, nMsgLen);
+}
+void XCALLBACK XEngine_Callback_FTPContralLeave(LPCXSTR lpszClientAddr, XSOCKET hSocket, XPVOID lParam)
+{
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_BYSELF, STORAGE_NETTYPE_FTPCONTRAL);
 }
 //////////////////////////////////////////////////////////////////////////
 void XCALLBACK XEngine_Callback_HBDownload(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
@@ -180,6 +208,10 @@ void XCALLBACK XEngine_Callback_HBCenter(LPCXSTR lpszClientAddr, XSOCKET hSocket
 void XCALLBACK XEngine_Callback_HBWebdav(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
 {
 	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_HTTPWEBDAV);
+}
+void XCALLBACK XEngine_Callback_HBFTPContral(LPCXSTR lpszClientAddr, XSOCKET hSocket, int nStatus, XPVOID lParam)
+{
+	XEngine_Net_CloseClient(lpszClientAddr, STORAGE_LEAVETYPE_HEARTBEAT, STORAGE_NETTYPE_FTPCONTRAL);
 }
 //////////////////////////////////////////////////////////////////////////
 /*
@@ -308,6 +340,34 @@ bool XEngine_Net_CloseClient(LPCXSTR lpszClientAddr, int nLeaveType, int nClient
 		HttpProtocol_Server_CloseClinetEx(xhWebdavHttp, lpszClientAddr);
 		Cryption_Server_CloseClientEx(xhWDSsl, lpszClientAddr);
 	}
+	else if (STORAGE_NETTYPE_FTPCONTRAL == nClientType)
+	{
+		m_StrClient = _X("FTP客户端");
+		if (STORAGE_LEAVETYPE_HEARTBEAT == nLeaveType)
+		{
+			m_StrLeaveMsg = _X("心跳超时");
+			NetCore_TCPXCore_CloseForClientEx(xhNetFTPContral, lpszClientAddr);
+		}
+		else if (STORAGE_LEAVETYPE_BYSELF == nLeaveType)
+		{
+			m_StrLeaveMsg = _X("被动断开");
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBFTPContral, lpszClientAddr);
+		}
+		else
+		{
+			m_StrLeaveMsg = _X("主动关闭");
+			NetCore_TCPXCore_CloseForClientEx(xhNetFTPContral, lpszClientAddr);
+			SocketOpt_HeartBeat_DeleteAddrEx(xhHBFTPContral, lpszClientAddr);
+		}
+		FTPProtocol_Parse_DeleteClientEx(xhFTPContral, lpszClientAddr);
+		Session_FTP_Delete(lpszClientAddr);
+	}
+	else
+	{
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("未知客户端类型：%s，无法处理离线逻辑"), lpszClientAddr);
+		return false;
+	}
+	
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("%s：%s，与服务器断开，原因：%s"), m_StrClient.c_str(), lpszClientAddr, m_StrLeaveMsg.c_str());
 	return true;
 }
@@ -394,6 +454,14 @@ bool XEngine_Net_SendMsg(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int nMsg
 		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
 		{
 			SocketOpt_HeartBeat_ActiveAddrEx(xhHBWebdav, lpszClientAddr);
+		}
+	}
+	else if (STORAGE_NETTYPE_FTPCONTRAL == nType)
+	{
+		bRet = NetCore_TCPXCore_SendEx(xhNetFTPContral, lpszClientAddr, lpszMsgBuffer, nMsgLen);
+		if (bRet && st_ServiceCfg.st_XTime.bHBTime)
+		{
+			SocketOpt_HeartBeat_ActiveAddrEx(xhHBFTPContral, lpszClientAddr);
 		}
 	}
 	if (!bRet)

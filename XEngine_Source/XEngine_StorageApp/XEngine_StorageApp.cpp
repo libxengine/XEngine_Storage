@@ -8,16 +8,19 @@ XHANDLE xhHBDownload = NULL;
 XHANDLE xhHBUPLoader = NULL;
 XHANDLE xhHBCenter = NULL;
 XHANDLE xhHBWebdav = NULL;
+XHANDLE xhHBFTPContral = NULL;
 
 XHANDLE xhNetDownload = NULL;
 XHANDLE xhNetUPLoader = NULL;
 XHANDLE xhNetCenter = NULL;
 XHANDLE xhNetWebdav = NULL;
+XHANDLE xhNetFTPContral = NULL;
 
 XHANDLE xhUPPool = NULL;
 XHANDLE xhDLPool = NULL;
 XHANDLE xhCTPool = NULL;
 XHANDLE xhWDPool = NULL;
+XHANDLE xhFTPPoolContral = NULL;
 
 XHANDLE xhDLSsl = NULL;
 XHANDLE xhUPSsl = NULL;
@@ -29,6 +32,7 @@ XHANDLE xhUPHttp = NULL;
 XHANDLE xhDLHttp = NULL;
 XHANDLE xhCenterHttp = NULL;
 XHANDLE xhWebdavHttp = NULL;
+XHANDLE xhFTPContral = NULL;
 
 XSOCKET hBroadSocket = 0;
 shared_ptr<std::thread> pSTDThread = NULL;
@@ -48,6 +52,7 @@ void ServiceApp_Stop(int signo)
 		HttpProtocol_Server_DestroyEx(xhDLHttp);
 		HttpProtocol_Server_DestroyEx(xhCenterHttp);
 		HttpProtocol_Server_DestroyEx(xhWebdavHttp);
+		FTPProtocol_Parse_DestroyEx(xhFTPContral);
 
 		Cryption_Server_StopEx(xhDLSsl);
 		Cryption_Server_StopEx(xhUPSsl);
@@ -58,16 +63,19 @@ void ServiceApp_Stop(int signo)
 		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
 		NetCore_TCPXCore_DestroyEx(xhNetCenter);
 		NetCore_TCPXCore_DestroyEx(xhNetWebdav);
+		NetCore_TCPXCore_DestroyEx(xhNetFTPContral);
 
 		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
 		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
 		SocketOpt_HeartBeat_DestoryEx(xhHBCenter);
 		SocketOpt_HeartBeat_DestoryEx(xhHBWebdav);
+		SocketOpt_HeartBeat_DestoryEx(xhHBFTPContral);
 
 		ManagePool_Thread_NQDestroy(xhUPPool);
 		ManagePool_Thread_NQDestroy(xhDLPool);
 		ManagePool_Thread_NQDestroy(xhCTPool);
 		ManagePool_Thread_NQDestroy(xhWDPool);
+		ManagePool_Thread_NQDestroy(xhFTPPoolContral);
 
 		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
@@ -76,6 +84,7 @@ void ServiceApp_Stop(int signo)
 		Session_UPStroage_Destory();
 		Database_File_Destory();
 		Database_Memory_Destory();
+		APIHelp_Port_Destroy();
 
 		if (NULL != pSTDThread)
 		{
@@ -174,11 +183,13 @@ int main(int argc, char** argv)
 	int nRet = -1;
 	LPCXSTR lpszHTTPMime = _X("./XEngine_Config/HttpMime.types");
 	LPCXSTR lpszHTTPCode = _X("./XEngine_Config/HttpCode.types");
+	LPCXSTR lpszFTPCodes = _X("./XEngine_Config/FTPCode.types");
 	HELPCOMPONENTS_XLOG_CONFIGURE st_XLogConfig;
 	THREADPOOL_PARAMENT** ppSt_ListUPThread;
 	THREADPOOL_PARAMENT** ppSt_ListDLThread;
 	THREADPOOL_PARAMENT** ppSt_ListCTThread;
 	THREADPOOL_PARAMENT** ppSt_ListWDThread;
+	THREADPOOL_PARAMENT** ppSt_ListFTPCThread;
 
 	memset(&st_XLogConfig, '\0', sizeof(HELPCOMPONENTS_XLOG_CONFIGURE));
 	memset(&st_ServiceCfg, '\0', sizeof(XENGINE_SERVERCONFIG));
@@ -539,6 +550,48 @@ int main(int argc, char** argv)
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动WEBDAV任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nWebdavThread);
 	}
+	//FTP
+	if (st_ServiceCfg.nFTPPort > 0)
+	{
+		//控制端口启用
+		xhFTPContral = FTPProtocol_Parse_InitEx(lpszFTPCodes, st_ServiceCfg.st_XMax.nFTPThread);
+		if (NULL == xhFTPContral)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，初始化FTP服务失败，错误：%lX"), FTPProtocol_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化FTP服务成功，IO线程个数:%d"), st_ServiceCfg.st_XMax.nFTPThread);
+
+		xhNetFTPContral = NetCore_TCPXCore_StartEx(st_ServiceCfg.nFTPPort, st_ServiceCfg.st_XMax.nMaxClient, st_ServiceCfg.st_XMax.nIOThread, false, st_ServiceCfg.bReuseraddr);
+		if (NULL == xhNetFTPContral)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动FTP网络服务失败,端口:%d，错误：%lX"), st_ServiceCfg.nFTPPort, NetCore_GetLastError());
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动FTP网络服务成功，端口：%d,IO线程个数:%d"), st_ServiceCfg.nFTPPort, st_ServiceCfg.st_XMax.nIOThread);
+		NetCore_TCPXCore_RegisterCallBackEx(xhNetFTPContral, XEngine_Callback_FTPContralLogin, XEngine_Callback_FTPContralRecv, XEngine_Callback_FTPContralLeave);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，注册FTP网络服务事件成功！"));
+
+		BaseLib_Memory_Malloc((XPPPMEM)&ppSt_ListFTPCThread, st_ServiceCfg.st_XMax.nFTPThread, sizeof(THREADPOOL_PARAMENT));
+		for (int i = 0; i < st_ServiceCfg.st_XMax.nFTPThread; i++)
+		{
+			int* pInt_Pos = new int;
+			*pInt_Pos = i;
+
+			ppSt_ListFTPCThread[i]->lParam = pInt_Pos;
+			ppSt_ListFTPCThread[i]->fpCall_ThreadsTask = XEngine_FTPContral_Thread;
+		}
+		xhFTPPoolContral = ManagePool_Thread_NQCreate(&ppSt_ListFTPCThread, st_ServiceCfg.st_XMax.nFTPThread);
+		if (NULL == xhFTPPoolContral)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，启动FTP处理线程池失败，错误：%d"), errno);
+			goto XENGINE_EXITAPP;
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，启动FTP任务处理线程池成功,线程池个数:%d"), st_ServiceCfg.st_XMax.nFTPThread);
+
+		APIHelp_Port_Init(st_ServiceCfg.st_XFtp.nFTPStart, st_ServiceCfg.st_XFtp.nFTPEnd);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化FTP数据端口成功,端口范围:%d-%d"), st_ServiceCfg.st_XFtp.nFTPStart, st_ServiceCfg.st_XFtp.nFTPEnd);
+	}
 	//只有使用了数据库,才启用P2P
 	if (st_ServiceCfg.st_P2xp.bEnable)
 	{
@@ -645,6 +698,7 @@ XENGINE_EXITAPP:
 		HttpProtocol_Server_DestroyEx(xhDLHttp);
 		HttpProtocol_Server_DestroyEx(xhCenterHttp);
 		HttpProtocol_Server_DestroyEx(xhWebdavHttp);
+		FTPProtocol_Parse_DestroyEx(xhFTPContral);
 
 		Cryption_Server_StopEx(xhDLSsl);
 		Cryption_Server_StopEx(xhUPSsl);
@@ -655,16 +709,19 @@ XENGINE_EXITAPP:
 		NetCore_TCPXCore_DestroyEx(xhNetUPLoader);
 		NetCore_TCPXCore_DestroyEx(xhNetCenter);
 		NetCore_TCPXCore_DestroyEx(xhNetWebdav);
+		NetCore_TCPXCore_DestroyEx(xhNetFTPContral);
 
 		SocketOpt_HeartBeat_DestoryEx(xhHBDownload);
 		SocketOpt_HeartBeat_DestoryEx(xhHBUPLoader);
 		SocketOpt_HeartBeat_DestoryEx(xhHBCenter);
 		SocketOpt_HeartBeat_DestoryEx(xhHBWebdav);
+		SocketOpt_HeartBeat_DestoryEx(xhHBFTPContral);
 
 		ManagePool_Thread_NQDestroy(xhUPPool);
 		ManagePool_Thread_NQDestroy(xhDLPool);
 		ManagePool_Thread_NQDestroy(xhCTPool);
 		ManagePool_Thread_NQDestroy(xhWDPool);
+		ManagePool_Thread_NQDestroy(xhFTPPoolContral);
 
 		Algorithm_Calculation_Close(xhLimit);
 		HelpComponents_XLog_Destroy(xhLog);
@@ -673,6 +730,7 @@ XENGINE_EXITAPP:
 		Session_UPStroage_Destory();
 		Database_File_Destory();
 		Database_Memory_Destory();
+		APIHelp_Port_Destroy();
 
 		if (NULL != pSTDThread)
 		{

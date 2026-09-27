@@ -15,7 +15,6 @@
 #else
 #include <unistd.h>
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +26,7 @@
 #include <list>
 #include <memory>
 #include <string>
+#include <mutex>
 #include <unordered_map>
 #include <shared_mutex>
 using namespace std;
@@ -58,3 +58,4 @@ extern XLONG Session_dwErrorCode;
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIAddr.lib")
 #endif
+#endif //PCH_H

@@ -1,10 +1,11 @@
 {
-    "tszIPAddr": "10.0.1.88",
+    "tszIPAddr": "127.0.0.1",
     "bDeamon": 0,
     "nCenterPort": 5100,
     "nStorageDLPort": 5101,
     "nStorageUPPort": 5102,
     "nWebdavPort": 5103,
+    "nFTPPort": 5104,
     "XMax": {
         "MaxClient": 10000,
         "MaxQueue": 10000,
@@ -12,7 +13,8 @@
         "CenterThread": 2,
         "nStorageUPThread": 2,
         "nStorageDLThread": 2,
-        "nWebdavThread": 2
+        "nWebdavThread": 2,
+        "nFTPThread": 2
     },
     "XTime": {
         "bHBTime": 0,
@@ -20,7 +22,8 @@
         "nTimeCheck": 3,
         "nCenterTimeOut": 5,
         "nStorageTimeOut": 5,
-        "nWebdavTimeOut": 5
+        "nWebdavTimeOut": 5,
+        "nFTPTimeOut": 5
     },
     "XLog": {
         "LogFile": "./XEngine_XLog/XEngine_StorageApp.log",
@@ -84,5 +87,10 @@
         "bEnable": true,
         "nSDMax": 0,
         "nRVMax": 0
+    },
+    "XFtp": {
+        "nFTPStart": 50051,
+        "nFTPEnd": 51051,
+        "tszFTPDir": "D:\\XEngine_Storage\\XEngine_Source\\Debug"
     }
 }
