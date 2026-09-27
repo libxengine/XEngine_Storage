@@ -566,6 +566,68 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		m_ThreadFTPFiles.detach();
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,列举目录:%s 成功"), lpszClientAddr, tszFilePath);
 	}
+	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_REFR, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_REFR)))
+	{
+		//准备重命名文件
+		XCHAR tszFilePath[XPATH_MAX] = {};
+		XCHAR tszAlisPath[XPATH_MAX] = {};
+		XCHAR tszFileName[XPATH_MAX] = {};
+		if (!Session_FTP_Get(lpszClientAddr, NULL, tszFilePath, tszAlisPath))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求修改文件名:%s 失败,执行顺序错误"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+			return false;
+		}
+		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
+		BaseLib_String_FixPath(tszFileName, 1);
+
+		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		{
+			_tcsxcat(tszFileName, _X("\\"));
+		}
+		_tcsxcat(tszFileName, pSt_KeyValue->tszStrVlu);
+		//得到文件属性
+		if (0 != _xtaccess(tszFileName, 0))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_550, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求修改文件名:%s 失败,文件不存在或者不可用"), lpszClientAddr, tszFileName);
+			return false;
+		}
+		if (!Session_FTP_Set(lpszClientAddr, tszFileName))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求修改文件名:%s 失败,执行顺序错误"), lpszClientAddr, tszFileName);
+			return false;
+		}
+
+		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_350, tszSDBuffer, &nSDLen);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,准备重命名文件:%s"), lpszClientAddr, tszFileName);
+	}
+	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_RETO, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_RETO)))
+	{
+		XCHAR tszFileOld[XPATH_MAX] = {};
+		XCHAR tszFileNew[XPATH_MAX] = {};
+
+		if (!Session_FTP_Get(lpszClientAddr, tszFileOld))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求修改文件名:%s 失败,执行顺序错误"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+			return false;
+		}
+		BaseLib_String_GetFileAndPath(tszFileOld, tszFileNew);
+		_tcsxcat(tszFileNew, _X("\\"));
+		_tcsxcat(tszFileNew, pSt_KeyValue->tszStrVlu);
+
+		_xtrename(tszFileOld, tszFileNew);
+		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_250, tszSDBuffer, &nSDLen);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,重命名文件:%s -> %s 完成"), lpszClientAddr, tszFileOld, tszFileNew);
+	}
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_QUIT, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_QUIT)))
 	{
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_221, tszSDBuffer, &nSDLen);
