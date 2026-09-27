@@ -12,7 +12,6 @@
 #include "framework.h"
 #include <tchar.h>
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,3 +58,4 @@ extern XLONG Config_dwErrorCode;
 #endif
 #endif
 #endif
+#endif //PCH_H

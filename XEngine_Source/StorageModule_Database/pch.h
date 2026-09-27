@@ -21,7 +21,6 @@
 #include <unistd.h>
 #include <pthread.h>
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -71,3 +70,4 @@ extern XLONG Database_dwErrorCode;
 #pragma comment(lib,"XEngine_HelpComponents/HelpComponents_DataBase.lib")
 #pragma comment(lib,"XEngine_SystemSdk/XEngine_SystemApi.lib")
 #endif
+#endif //PCH_H

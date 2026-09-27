@@ -15,7 +15,6 @@
 #else
 #include <unistd.h>
 #endif
-#endif //PCH_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,3 +58,4 @@ extern XLONG Session_dwErrorCode;
 #pragma comment(lib,"XEngine_BaseLib/XEngine_BaseLib.lib")
 #pragma comment(lib,"XEngine_NetHelp/NetHelp_APIAddr.lib")
 #endif
+#endif //PCH_H

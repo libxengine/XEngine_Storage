@@ -17,7 +17,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #endif
-#endif //PCH_H
 #include <string.h>
 #include <list>
 #include <string>
@@ -82,3 +81,4 @@ extern XLONG APIHelp_dwErrorCode;
 #endif
 #endif
 #endif
+#endif //PCH_H
