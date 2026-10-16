@@ -293,14 +293,12 @@ bool CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
         return false;
     }
     //查询
-    XNETHANDLE xhTable = 0;
-    __int64u nllLine = 0;
-    __int64u nllRow = 0;
+    int nllLine = 0;
+    int nllRow = 0;
+    XCHAR** pptszResult;
     list<XSTORAGECORE_DBFILE> stl_ListFile;
 
-    XCHAR tszSQLStatement[1024];
-    memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-
+    XCHAR tszSQLStatement[1024] = {};
     if (NULL == lpszTableName)
     {
 		//检查是否时间范围检索
@@ -319,121 +317,129 @@ bool CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
 		{
 			_xstprintf(tszSQLStatement, _X("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'XEngine_Storage'"));
 		}
-		if (!DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
+		if (!DataBase_MySQL_ExecQuery(xhDBSQL, tszSQLStatement, &pptszResult, &nllLine, &nllRow))
 		{
 			Database_IsErrorOccur = true;
 			Database_dwErrorCode = DataBase_GetLastError();
 			return false;
 		}
 		//轮训
-		for (__int64u i = 0; i < nllLine; i++)
+        int nFieldNumber = nllRow;
+		for (int i = 0; i < nllLine; i++)
 		{
-			XCHAR** pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
-			if (NULL == pptszResult[0])
-			{
-				continue;
-			}
-			__int64u dwLineResult = 0;
-			__int64u dwFieldResult = 0;
-			XNETHANDLE xhResult;
+            int dwLineResult = 0;
+            int dwFieldResult = 0;
+            XCHAR** pptszFileResult;
 			memset(tszSQLStatement, '\0', sizeof(tszSQLStatement));
-
-            Database_Help_Query(tszSQLStatement, pptszResult[0], lpszBuckKey, lpszFilePath, lpszFileName, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
+            Database_Help_Query(tszSQLStatement, pptszResult[nFieldNumber], lpszBuckKey, lpszFilePath, lpszFileName, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
 			//查询文件
-			if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhResult, tszSQLStatement, &dwLineResult, &dwFieldResult))
+			if (DataBase_MySQL_ExecQuery(xhDBSQL, tszSQLStatement, &pptszFileResult, &dwLineResult, &dwFieldResult))
 			{
+                int nFieldFile = dwFieldResult;
 				//循环获取所有查找到的文件
-				for (__int64u j = 0; j < dwLineResult; j++)
+				for (int j = 0; j < dwLineResult; j++)
 				{
-					XCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhResult);
+                    XSTORAGECORE_DBFILE st_DBFile = {};
 
-					XSTORAGECORE_DBFILE st_DBFile;
-					memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
-
-					_tcsxcpy(st_DBFile.tszTableName, pptszResult[0]);
-
-					if (NULL != pptszFileResult[1])
+                    nFieldFile++;
+					_tcsxcpy(st_DBFile.tszTableName, pptszResult[nFieldFile]);
+					if (NULL != pptszFileResult[nFieldFile])
 					{
-						_tcsxcpy(st_DBFile.tszBuckKey, pptszFileResult[1]);
+						_tcsxcpy(st_DBFile.tszBuckKey, pptszFileResult[nFieldFile]);
 					}
-					if (NULL != pptszFileResult[2])
+                    nFieldFile++;
+					if (NULL != pptszFileResult[nFieldFile])
 					{
-						_tcsxcpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[2]);
+						_tcsxcpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[nFieldFile]);
 					}
-					if (NULL != pptszFileResult[3])
+                    nFieldFile++;
+					if (NULL != pptszFileResult[nFieldFile])
 					{
-						_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileName, pptszFileResult[3]);
+						_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileName, pptszFileResult[nFieldFile]);
 					}
-					if (NULL != pptszFileResult[4])
+                    nFieldFile++;
+					if (NULL != pptszFileResult[nFieldFile])
 					{
-						_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileHash, pptszFileResult[4]);
+						_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileHash, pptszFileResult[nFieldFile]);
 					}
-					if (NULL != pptszFileResult[5])
+                    nFieldFile++;
+					if (NULL != pptszFileResult[nFieldFile])
 					{
-						_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[5]);
+						_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[nFieldFile]);
 					}
-					if (NULL != pptszFileResult[6])
+                    nFieldFile++;
+					if (NULL != pptszFileResult[nFieldFile])
 					{
-						st_DBFile.st_ProtocolFile.nFileSize = _ttxoll(pptszFileResult[6]);
+						st_DBFile.st_ProtocolFile.nFileSize = _ttxoll(pptszFileResult[nFieldFile]);
 					}
-					if (NULL != pptszFileResult[7])
+                    nFieldFile++;
+					if (NULL != pptszFileResult[nFieldFile])
 					{
-						_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileTime, pptszFileResult[7]);
+						_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileTime, pptszFileResult[nFieldFile]);
 					}
+                    nFieldFile++;
 					stl_ListFile.push_back(st_DBFile);
 				}
-				DataBase_MySQL_FreeResult(xhDBSQL, xhResult);
+				DataBase_MySQL_FreeResult(pptszFileResult, dwLineResult * dwFieldResult);
 			}
+            nFieldNumber++;
 		}
-		DataBase_MySQL_FreeResult(xhDBSQL, xhTable);
+		DataBase_MySQL_FreeResult(pptszResult, nllLine * nllRow);
     }
     else
     {
+        XCHAR** pptszFileResult;
         Database_Help_Query(tszSQLStatement, lpszTableName, lpszBuckKey, lpszFilePath, lpszFileName, lpszHash, NULL, lpszTimeStart, lpszTimeEnd);
 		//查询文件
-		if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTable, tszSQLStatement, &nllLine, &nllRow))
+		if (DataBase_MySQL_ExecQuery(xhDBSQL, tszSQLStatement, &pptszFileResult, &nllLine, &nllRow))
 		{
+            int nFieldFile = nllRow;
 			//循环获取所有查找到的文件
-			for (__int64u i = 0; i < nllLine; i++)
+			for (int i = 0; i < nllLine; i++)
 			{
-				XCHAR** pptszFileResult = DataBase_MySQL_GetResult(xhDBSQL, xhTable);
-
 				XSTORAGECORE_DBFILE st_DBFile;
 				memset(&st_DBFile, '\0', sizeof(XSTORAGECORE_DBFILE));
 
 				_tcsxcpy(st_DBFile.tszTableName, lpszTableName);
-
-				if (NULL != pptszFileResult[1])
+                nFieldFile++;
+				if (NULL != pptszFileResult[nFieldFile])
 				{
-					_tcsxcpy(st_DBFile.tszBuckKey, pptszFileResult[1]);
+					_tcsxcpy(st_DBFile.tszBuckKey, pptszFileResult[nFieldFile]);
 				}
-				if (NULL != pptszFileResult[2])
+                nFieldFile++;
+				if (NULL != pptszFileResult[nFieldFile])
 				{
-					_tcsxcpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[2]);
+					_tcsxcpy(st_DBFile.st_ProtocolFile.tszFilePath, pptszFileResult[nFieldFile]);
 				}
-				if (NULL != pptszFileResult[3])
+                nFieldFile++;
+				if (NULL != pptszFileResult[nFieldFile])
 				{
-					_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileName, pptszFileResult[3]);
+					_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileName, pptszFileResult[nFieldFile]);
 				}
-				if (NULL != pptszFileResult[4])
+                nFieldFile++;
+				if (NULL != pptszFileResult[nFieldFile])
 				{
-					_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileHash, pptszFileResult[4]);
+					_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileHash, pptszFileResult[nFieldFile]);
 				}
-				if (NULL != pptszFileResult[5])
+                nFieldFile++;
+				if (NULL != pptszFileResult[nFieldFile])
 				{
-					_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[5]);
+					_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileUser, pptszFileResult[nFieldFile]);
 				}
-				if (NULL != pptszFileResult[6])
+                nFieldFile++;
+				if (NULL != pptszFileResult[nFieldFile])
 				{
-					st_DBFile.st_ProtocolFile.nFileSize = _ttxoll(pptszFileResult[6]);
+					st_DBFile.st_ProtocolFile.nFileSize = _ttxoll(pptszFileResult[nFieldFile]);
 				}
-				if (NULL != pptszFileResult[7])
+                nFieldFile++;
+				if (NULL != pptszFileResult[nFieldFile])
 				{
-					_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileTime, pptszFileResult[7]);
+					_tcsxcpy(st_DBFile.st_ProtocolFile.tszFileTime, pptszFileResult[nFieldFile]);
 				}
+                nFieldFile++;
 				stl_ListFile.push_back(st_DBFile);
 			}
-			DataBase_MySQL_FreeResult(xhDBSQL, xhTable);
+			DataBase_MySQL_FreeResult(pptszFileResult, nllLine * nllRow);
 		}
     }
     //是否为空
@@ -572,51 +578,45 @@ bool CDatabase_File::Database_File_TimeDel()
 {
     Database_IsErrorOccur = false;
 
-    __int64u dwLine = 0;
-    __int64u dwField = 0;
-    XNETHANDLE xhTableResult;
-    XCHAR tszSQLQuery[2048];
+    int dwLine = 0;
+    int dwField = 0;
+    XCHAR** pptszResult;
+    XCHAR tszSQLQuery[2048] = {};
 
-    memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
     _xstprintf(tszSQLQuery, _X("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='XEngine_Storage' AND TABLE_TYPE='BASE TABLE'"));
-    if (DataBase_MySQL_ExecuteQuery(xhDBSQL, &xhTableResult, tszSQLQuery, &dwLine, &dwField))
+    if (DataBase_MySQL_ExecQuery(xhDBSQL, tszSQLQuery, &pptszResult, &dwLine, &dwField))
     {
-        for (__int64u i = 0; i < dwLine; i++)
+        int nFieldNumber = dwField;
+        for (int i = 0; i < dwLine; i++)
         {
-            XCHAR** pptszResult = DataBase_MySQL_GetResult(xhDBSQL, xhTableResult);
-            if (NULL == pptszResult[0])
-            {
-                continue;
-            }
             int nTimeMonth = 0;
             //只有在处理正确的情况下才进行删除操作
-            if (Database_File_TimeMonth(pptszResult[0], &nTimeMonth))
+            if (Database_File_TimeMonth(pptszResult[nFieldNumber], &nTimeMonth))
             {
                 if (nTimeMonth > m_nTimeMonth)
                 {
                     //删除文件
                     int nListCount = 0;
                     XSTORAGECORE_DBFILE **ppSt_ListFile = NULL;
-                    Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, NULL, pptszResult[0]);
+                    Database_File_FileQuery(&ppSt_ListFile, &nListCount, NULL, NULL, NULL, NULL, NULL, NULL, pptszResult[nFieldNumber]);
                     for (int i = 0; i < nListCount; i++)
                     {
                         //删除文件
-                        XCHAR tszFilePath[2048];
-                        memset(tszFilePath, '\0', sizeof(tszFilePath));
-
+                        XCHAR tszFilePath[2048] = {};
                         _xstprintf(tszFilePath, _X("%s/%s"), ppSt_ListFile[i]->st_ProtocolFile.tszFilePath, ppSt_ListFile[i]->st_ProtocolFile.tszFileName);
                         _xtremove(tszFilePath);
                     }
                     //删除数据库
                     memset(tszSQLQuery, '\0', sizeof(tszSQLQuery));
-                    _xstprintf(tszSQLQuery, _X("DROP TABLE `%s`"), pptszResult[0]);
+                    _xstprintf(tszSQLQuery, _X("DROP TABLE `%s`"), pptszResult[nFieldNumber]);
                     DataBase_MySQL_Execute(xhDBSQL, tszSQLQuery);
                     BaseLib_Memory_Free((XPPPMEM)&ppSt_ListFile, nListCount);
                 }
             }
+            nFieldNumber++;
         }
     }
-    DataBase_MySQL_FreeResult(xhDBSQL, xhTableResult);
+    DataBase_MySQL_FreeResult(pptszResult, dwLine * dwField);
     return true;
 }
 //////////////////////////////////////////////////////////////////////////
