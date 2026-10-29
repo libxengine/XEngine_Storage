@@ -1,6 +1,6 @@
 ﻿#include "StorageApp_Hdr.h"
 
-bool StorageApp_HTTPHelp_Verification(LPCXSTR lpszClientAddr, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount, LPCXSTR lpszRestApi)
+bool StorageApp_HTTPHelp_Verification(int nClient, LPCXSTR lpszClientAddr, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount, LPCXSTR lpszRestApi)
 {
 	int nSDLen = 2048;
 	int nRVLen = 2048;
@@ -29,7 +29,7 @@ bool StorageApp_HTTPHelp_Verification(LPCXSTR lpszClientAddr, RFCCOMPONENTS_HTTP
 	if (!Verification_HTTP_GetType(pptszListHdr, nHdrCount, &nVType))
 	{
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHDRBuffer);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nClient);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,用户验证失败,验证方式:%d,错误:%lX"), lpszClientAddr, st_ServiceCfg.st_XProxy.nVType, Verification_GetLastError());
 		return false;
 	}
@@ -37,7 +37,7 @@ bool StorageApp_HTTPHelp_Verification(LPCXSTR lpszClientAddr, RFCCOMPONENTS_HTTP
 	if (st_ServiceCfg.st_XProxy.nVType != nVType)
 	{
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHDRBuffer);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nClient);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,用户验证失败,验证方式错误,请求:%d,需求:%d"), lpszClientAddr, nVType, st_ServiceCfg.st_XProxy.nVType);
 		return false;
 	}
@@ -52,7 +52,7 @@ bool StorageApp_HTTPHelp_Verification(LPCXSTR lpszClientAddr, RFCCOMPONENTS_HTTP
 		st_HDRParam.nHttpCode = 500;
 		Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_SERVERDOWN, "api server is down,cant verification");
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen, tszHDRBuffer);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nClient);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,用户验证失败,GET请求验证服务:%s 失败,错误码:%lX"), lpszClientAddr, lpszRestApi, APIClient_GetLastError());
 		return false;
 	}
@@ -61,7 +61,7 @@ bool StorageApp_HTTPHelp_Verification(LPCXSTR lpszClientAddr, RFCCOMPONENTS_HTTP
 		st_HDRParam.nHttpCode = 500;
 		Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_SERVERDOWN, "api server is down,cant verification");
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen, tszHDRBuffer);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nClient);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,用户验证失败,GET请求验证服务:%s 失败,错误:%d"), lpszClientAddr, lpszRestApi, nHTTPCode);
 		return false;
 	}
@@ -71,7 +71,7 @@ bool StorageApp_HTTPHelp_Verification(LPCXSTR lpszClientAddr, RFCCOMPONENTS_HTTP
 		st_HDRParam.nHttpCode = 500;
 		Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_AUTHFAIL, "api server reply failure,cant verification");
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen, tszHDRBuffer);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nClient);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,用户验证失败,返回内容:%s 错误,无法继续"), lpszClientAddr, ptszMSGBuffer);
 		BaseLib_Memory_FreeCStyle((XPPMEM)&ptszMSGBuffer);
 		return false;
@@ -90,7 +90,7 @@ bool StorageApp_HTTPHelp_Verification(LPCXSTR lpszClientAddr, RFCCOMPONENTS_HTTP
 	if (!bRet)
 	{
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, NULL, 0, tszHDRBuffer);
-		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nClient);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("HTTP客户端:%s,用户验证失败,验证处理错误,可能用户密码登信息不匹配,类型:%d"), lpszClientAddr, nVType);
 		return false;
 	}

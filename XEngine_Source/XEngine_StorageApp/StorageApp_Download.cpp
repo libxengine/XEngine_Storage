@@ -176,7 +176,7 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	//验证用户
 	if (st_ServiceCfg.st_XProxy.nVType > 0)
 	{
-		if (!StorageApp_HTTPHelp_Verification(lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszDLPass))
+		if (!StorageApp_HTTPHelp_Verification(STORAGE_NETTYPE_HTTPDOWNLOAD, lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszDLPass))
 		{
 			return false;
 		}

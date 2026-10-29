@@ -350,7 +350,7 @@ extern "C" bool Protocol_StorageParse_WDPropPatch(LPCXSTR lpszMsgBuffer, int nMs
 *********************************************************************/
 extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCXSTR lpszMSGInfo = NULL);
 /********************************************************************
-函数名称：Protocol_StoragePacket_BasicAuth
+函数名称：Protocol_StoragePacket_Auth
 函数功能：基本验证协议代理转发
  参数.一：lpszRequestType
   In/Out：In
@@ -397,7 +397,7 @@ extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pIn
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Protocol_StoragePacket_BasicAuth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR * ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" bool Protocol_StoragePacket_Auth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR * ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：Protocol_StoragePacket_UPDown
 函数功能：上传下载完成代理通知协议

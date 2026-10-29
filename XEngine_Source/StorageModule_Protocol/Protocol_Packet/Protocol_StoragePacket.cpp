@@ -314,8 +314,8 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgB
     return true;
 }
 /********************************************************************
-函数名称：Protocol_StoragePacket_BasicAuth
-函数功能：基本验证协议代理转发
+函数名称：Protocol_StoragePacket_Auth
+函数功能：验证协议代理转发
  参数.一：lpszRequestType
   In/Out：In
   类型：常量字符指针
@@ -361,7 +361,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgB
   意思：是否成功
 备注：
 *********************************************************************/
-bool CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Auth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
     Protocol_IsErrorOccur = false;
 

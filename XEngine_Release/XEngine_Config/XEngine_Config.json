@@ -2,10 +2,9 @@
     "tszIPAddr": "127.0.0.1",
     "bDeamon": 0,
     "nCenterPort": 5100,
-    "nStorageDLPort": 5101,
-    "nStorageUPPort": 5102,
-    "nWebdavPort": 5103,
-    "nFTPPort": 5104,
+    "nHTTPPort": 5101,
+    "nWebdavPort": 5102,
+    "nFTPPort": 5103,
     "XMax": {
         "MaxClient": 10000,
         "MaxQueue": 10000,
@@ -46,15 +45,12 @@
         "nHashMode": 2
     },
     "XProxy": {
-        "bUPPass": false,
-        "bDLPass": false,
-        "bWDPass": false,
-        "bAuthPass": false,
-        "nVType": 1,
+        "nVType": 0,
         "tszUPPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
         "tszDLPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
         "tszWDPass": "http://192.168.1.7:5200/Api/Pass/WDFile",
-        "tszAuthPass": ""
+        "tszAuthPass": "",
+        "tszFTPPass": "http://192.168.1.7:5200/Api/Pass/FTPFile",
     },
     "XLimit": {
         "bLimitMode": true,

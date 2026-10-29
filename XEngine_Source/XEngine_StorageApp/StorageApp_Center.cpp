@@ -71,7 +71,7 @@ bool XEngine_Task_HttpCenter(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 
 	if (st_ServiceCfg.st_XProxy.nVType > 0)
 	{
-		if (!StorageApp_HTTPHelp_Verification(lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszAuthPass))
+		if (!StorageApp_HTTPHelp_Verification(STORAGE_NETTYPE_HTTPCENTER, lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszAuthPass))
 		{
 			return false;
 		}

@@ -93,7 +93,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	//用户验证
 	if (st_ServiceCfg.st_XProxy.nVType > 0)
 	{
-		if (!StorageApp_HTTPHelp_Verification(lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszUPPass))
+		if (!StorageApp_HTTPHelp_Verification(STORAGE_NETTYPE_HTTPUPLOADER, lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszUPPass))
 		{
 			return false;
 		}
