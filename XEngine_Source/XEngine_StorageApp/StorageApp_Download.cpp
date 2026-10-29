@@ -83,7 +83,7 @@ void XCALLBACK XEngine_Download_CBSend(LPCXSTR lpszClientAddr, XSOCKET hSocket, 
 	{
 		if (nMsgLen <= 0)
 		{
-			if (st_ServiceCfg.st_XProxy.bDLPass)
+			if (st_ServiceCfg.st_XProxy.nVType > 0)
 			{
 				int nPLen = XPATH_MAX;
 				int nHttpCode = 0;
@@ -174,7 +174,7 @@ bool XEngine_Task_HttpDownload(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		}
 	}
 	//验证用户
-	if (st_ServiceCfg.st_XProxy.bDLPass)
+	if (st_ServiceCfg.st_XProxy.nVType > 0)
 	{
 		if (!StorageApp_HTTPHelp_Verification(lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszDLPass))
 		{

@@ -62,7 +62,7 @@ bool XEngine_Task_HttpWebdav(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, int 
 	st_HDRParam.nHttpCode = 200;
 	_tcsxcpy(st_HDRParam.tszMimeType, _X("xml"));
 
-	if (st_ServiceCfg.st_XProxy.bWDPass)
+	if (st_ServiceCfg.st_XProxy.nVType > 0)
 	{
 		if (!StorageApp_HTTPHelp_Verification(lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszWDPass))
 		{

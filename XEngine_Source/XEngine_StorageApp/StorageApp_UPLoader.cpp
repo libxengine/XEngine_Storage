@@ -91,7 +91,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		}
 	}
 	//用户验证
-	if (st_ServiceCfg.st_XProxy.bUPPass)
+	if (st_ServiceCfg.st_XProxy.nVType > 0)
 	{
 		if (!StorageApp_HTTPHelp_Verification(lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszUPPass))
 		{
@@ -434,7 +434,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		}
 		Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWLen, false, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		//PASS代理
-		if (st_ServiceCfg.st_XProxy.bUPPass)
+		if (st_ServiceCfg.st_XProxy.nVType > 0)
 		{
 			int nHttpCode = 0;
 			if (!APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszUPPass, tszPassNotify, &nHttpCode))
