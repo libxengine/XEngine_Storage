@@ -813,3 +813,51 @@ extern "C" bool Session_FTP_GetRetr(LPCXSTR lpszClientAddr, __int64u* pInt_Pos);
 备注：
 *********************************************************************/
 extern "C" bool Session_FTP_Delete(LPCXSTR lpszClientAddr);
+/********************************************************************
+函数名称：Session_FTP_SetUser
+函数功能：设置用户密码信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：lpszUser
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入用户名
+ 参数.三：lpszPass
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入密码
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_FTP_SetUser(LPCXSTR lpszClientAddr, LPCXSTR lpszUser = NULL, LPCXSTR lpszPass = NULL);
+/********************************************************************
+函数名称：Session_FTP_GetUser
+函数功能：获取用户密码信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：ptszUser
+  In/Out：Out
+  类型：字符指针
+  可空：Y
+  意思：输出用户名
+ 参数.三：ptszPass
+  In/Out：Out
+  类型：字符指针
+  可空：Y
+  意思：输出密码
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_FTP_GetUser(LPCXSTR lpszClientAddr, XCHAR* ptszUser = NULL, XCHAR* ptszPass = NULL);

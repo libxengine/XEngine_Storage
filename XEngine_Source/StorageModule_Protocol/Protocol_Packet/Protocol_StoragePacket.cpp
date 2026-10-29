@@ -336,22 +336,17 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgB
   类型：常量字符指针
   可空：N
   意思：用户发送的客户端地址
- 参数.五：lpszUser
+ 参数.五：lpszAuthStr
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：用户
- 参数.六：lpszPass
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：密码
- 参数.七：ptszMsgBuffer
+  意思：验证字符串
+ 参数.六：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：转发数据包
- 参数.八：pInt_MsgLen
+ 参数.七：pInt_MsgLen
   In/Out：Out
   类型：整数型
   可空：N
@@ -361,11 +356,11 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgB
   意思：是否成功
 备注：
 *********************************************************************/
-bool CProtocol_StoragePacket::Protocol_StoragePacket_Auth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Auth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszAuthStr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
     Protocol_IsErrorOccur = false;
 
-    if ((NULL == lpszUser) || (NULL == lpszPass))
+    if ((NULL == lpszAuthStr) || (NULL == lpszClientAddr))
     {
         Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
@@ -377,8 +372,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Auth(int nRequestType, LPCX
     st_JsonRoot["lpszMethod"] = lpszMethod;
     st_JsonRoot["lpszPostUrl"] = lpszPostUrl;
     st_JsonRoot["lpszClientAddr"] = lpszClientAddr;
-    st_JsonRoot["lpszUser"] = lpszUser;
-    st_JsonRoot["lpszPass"] = lpszPass;
+    st_JsonRoot["lpszAuthStr"] = lpszAuthStr;
 	st_JsonRoot["code"] = 0;
 	st_JsonRoot["msg"] = _X("success");
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();

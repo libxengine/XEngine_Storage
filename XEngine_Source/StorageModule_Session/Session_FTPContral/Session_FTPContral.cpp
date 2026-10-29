@@ -333,3 +333,97 @@ bool CSession_FTPContral::Session_FTP_Delete(LPCXSTR lpszClientAddr)
 	}
 	return true;
 }
+/********************************************************************
+函数名称：Session_FTP_SetUser
+函数功能：设置用户密码信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：lpszUser
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入用户名
+ 参数.三：lpszPass
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入密码
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_FTPContral::Session_FTP_SetUser(LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass)
+{
+	Session_IsErrorOccur = false;
+
+	std::shared_lock<std::shared_mutex> st_AutoLock(st_Locker);
+	unordered_map<xstring, SESSION_FTPCONTRAL>::iterator stl_MapIterator = stl_MapAction.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapAction.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+
+	if (NULL != lpszUser)
+	{
+		memset(stl_MapIterator->second.tszFTPUser, '\0', sizeof(stl_MapIterator->second.tszFTPUser));
+		_tcsxcpy(stl_MapIterator->second.tszFTPUser, lpszUser);
+	}
+	if (NULL != lpszPass)
+	{
+		memset(stl_MapIterator->second.tszFTPPass, '\0', sizeof(stl_MapIterator->second.tszFTPPass));
+		_tcsxcpy(stl_MapIterator->second.tszFTPPass, lpszPass);
+	}
+	return true;
+}
+/********************************************************************
+函数名称：Session_FTP_GetUser
+函数功能：获取用户密码信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：ptszUser
+  In/Out：Out
+  类型：字符指针
+  可空：Y
+  意思：输出用户名
+ 参数.三：ptszPass
+  In/Out：Out
+  类型：字符指针
+  可空：Y
+  意思：输出密码
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_FTPContral::Session_FTP_GetUser(LPCXSTR lpszClientAddr, XCHAR* ptszUser, XCHAR* ptszPass)
+{
+	Session_IsErrorOccur = false;
+
+	std::shared_lock<std::shared_mutex> st_AutoLock(st_Locker);
+	unordered_map<xstring, SESSION_FTPCONTRAL>::iterator stl_MapIterator = stl_MapAction.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapAction.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+
+	if (NULL != ptszUser)
+	{
+		_tcsxcpy(ptszUser, stl_MapIterator->second.tszFTPUser);
+	}
+	if (NULL != ptszPass)
+	{
+		_tcsxcpy(ptszPass, stl_MapIterator->second.tszFTPPass);
+	}
+	return true;
+}

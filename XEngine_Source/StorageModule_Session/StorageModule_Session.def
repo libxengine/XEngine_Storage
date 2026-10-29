@@ -46,3 +46,5 @@ EXPORTS
 	Session_FTP_SetRetr
 	Session_FTP_GetRetr
 	Session_FTP_Delete
+	Session_FTP_SetUser
+	Session_FTP_GetUser

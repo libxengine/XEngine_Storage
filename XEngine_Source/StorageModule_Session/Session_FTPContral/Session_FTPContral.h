@@ -15,6 +15,10 @@ typedef struct
 	XCHAR tszFileName[XPATH_MAX];
 	XCHAR tszFilePath[XPATH_MAX];
     XCHAR tszAlisPath[XPATH_MAX];
+
+    XCHAR tszFTPUser[XPATH_MIN];
+    XCHAR tszFTPPass[XPATH_MIN];
+
     __int64u nPos;
     time_t nTimeStart;
     int nPort;
@@ -36,6 +40,9 @@ public:
     bool Session_FTP_SetRetr(LPCXSTR lpszClientAddr, __int64u nPos);
     bool Session_FTP_GetRetr(LPCXSTR lpszClientAddr, __int64u* pInt_Pos);
     bool Session_FTP_Delete(LPCXSTR lpszClientAddr);
+public:
+    bool Session_FTP_SetUser(LPCXSTR lpszClientAddr, LPCXSTR lpszUser = NULL, LPCXSTR lpszPass = NULL);
+    bool Session_FTP_GetUser(LPCXSTR lpszClientAddr, XCHAR* ptszUser = NULL, XCHAR* ptszPass = NULL);
 private:
     shared_mutex st_Locker;
 private:

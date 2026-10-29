@@ -67,7 +67,6 @@ static void XEngine_FTPDownload_Thread(xstring lpszClientAddr, xstring lpszFileN
 	{
 		fseek(pSt_File, (long)nPos, SEEK_SET);
 	}
-
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,准备数据文件:%s 完成,开始下载文件数据,下载位置:%llu"), lpszClientAddr.c_str(), lpszFileName.c_str(), nPos);
 
 	while (true)
@@ -242,6 +241,41 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 
 	if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_USER, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_USER)))
 	{
+		if (0 == st_ServiceCfg.st_XProxy.nVType)
+		{
+			LPCXSTR lpszUserAnony = _X("anonymous");
+			if (0 != _tcsxnicmp(lpszUserAnony, pSt_KeyValue->tszStrVlu, _tcsxlen(lpszUserAnony)))
+			{
+				FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_530, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,用户验证失败,匿名用户不正确:%s"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+				return false;
+			}
+		}
+		else
+		{
+			int nHTTPCode = 0;
+			XCLIENT_APIHTTP st_APIHttp = {};
+
+			XCHAR* ptszMSGBuffer = NULL;
+			Protocol_StoragePacket_Auth(STORAGE_NETTYPE_FTPCONTRAL, XENGINE_FTPROTOCOL_QUESTION_USER, st_ServiceCfg.tszIPAddr, lpszClientAddr, pSt_KeyValue->tszStrVlu, tszRVBuffer, &nRVLen);
+			if (!APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszFTPPass, tszRVBuffer, &nHTTPCode, &ptszMSGBuffer, &nRVLen, NULL, NULL, &st_APIHttp))
+			{
+				FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_530, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,用户:%s 验证失败,请求验证服务:%s 失败,错误码:%lX"), lpszClientAddr, pSt_KeyValue->tszStrVlu, st_ServiceCfg.st_XProxy.tszFTPPass, APIClient_GetLastError());
+				return false;
+			}
+			if (200 != nHTTPCode)
+			{
+				FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_530, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,用户:%s 验证失败,请求验证服务:%s 失败,错误:%d"), lpszClientAddr, pSt_KeyValue->tszStrVlu, st_ServiceCfg.st_XProxy.tszFTPPass, nHTTPCode);
+				return false;
+			}
+		}
+		Session_FTP_Insert(lpszClientAddr, false);
+		Session_FTP_SetUser(lpszClientAddr, pSt_KeyValue->tszStrVlu);
 		//用户请求
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_331, tszSDBuffer, &nSDLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
@@ -250,8 +284,36 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_PASS, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_PASS)))
 	{
 		//密码请求
-		Session_FTP_Insert(lpszClientAddr, false);
+		if (!Session_FTP_Get(lpszClientAddr))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求下载文件:%s 失败,执行顺序错误"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+			return false;
+		}
+		if (0 != st_ServiceCfg.st_XProxy.nVType)
+		{
+			int nHTTPCode = 0;
+			XCLIENT_APIHTTP st_APIHttp = {};
+			XCHAR* ptszMSGBuffer = NULL;
+			Protocol_StoragePacket_Auth(STORAGE_NETTYPE_FTPCONTRAL, XENGINE_FTPROTOCOL_QUESTION_PASS, st_ServiceCfg.tszIPAddr, lpszClientAddr, pSt_KeyValue->tszStrVlu, tszRVBuffer, &nRVLen);
+			if (!APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszFTPPass, tszRVBuffer, &nHTTPCode, &ptszMSGBuffer, &nRVLen, NULL, NULL, &st_APIHttp))
+			{
+				FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_530, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,密码:%s 验证失败,请求验证服务:%s 失败,错误码:%lX"), lpszClientAddr, pSt_KeyValue->tszStrVlu, st_ServiceCfg.st_XProxy.tszFTPPass, APIClient_GetLastError());
+				return false;
+			}
+			if (200 != nHTTPCode)
+			{
+				FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_530, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,密码:%s 验证失败,请求验证服务:%s 失败,错误:%d"), lpszClientAddr, pSt_KeyValue->tszStrVlu, st_ServiceCfg.st_XProxy.tszFTPPass, nHTTPCode);
+				return false;
+			}
+		}
 		Session_FTP_Set(lpszClientAddr, NULL, st_ServiceCfg.st_XFtp.tszFTPDir);
+		Session_FTP_SetUser(lpszClientAddr, pSt_KeyValue->tszStrVlu);
 
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_230, tszSDBuffer, &nSDLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
