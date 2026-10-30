@@ -137,9 +137,31 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	}
 	else
 	{
-		pSt_File = _xtfopen(lpszFileName.c_str(), _X("wb"));
+#if defined(_WIN32)
+		int nFD = _open(lpszFileName.c_str(), _O_WRONLY | _O_CREAT | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+#else
+		int nFD = open(lpszFileName.c_str(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+#endif
+		if (nFD < 0)
+		{
+			APIHelp_Port_Free(nPort);
+			NetCore_TCPSelect_StopEx(xhToken);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件失败,创建文件:%s失败"), lpszClientAddr.c_str(), lpszFileName.c_str());
+			return;
+		}
+
+#if defined(_WIN32)
+		pSt_File = _fdopen(nFD, "wb");
+#else
+		pSt_File = fdopen(nFD, "wb");
+#endif
 		if (NULL == pSt_File)
 		{
+#if defined(_WIN32)
+			_close(nFD);
+#else
+			close(nFD);
+#endif
 			APIHelp_Port_Free(nPort);
 			NetCore_TCPSelect_StopEx(xhToken);
 			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件失败,创建文件:%s失败"), lpszClientAddr.c_str(), lpszFileName.c_str());
