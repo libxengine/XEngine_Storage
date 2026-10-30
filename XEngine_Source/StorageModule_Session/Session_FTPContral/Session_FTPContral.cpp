@@ -304,7 +304,7 @@ bool CSession_FTPContral::Session_FTP_GetRetr(LPCXSTR lpszClientAddr, __int64u* 
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
 		return false;
 	}
-	*pInt_Pos = stl_MapIterator->second.nPort;
+	*pInt_Pos = stl_MapIterator->second.nPos;
 	return true;
 }
 /********************************************************************
