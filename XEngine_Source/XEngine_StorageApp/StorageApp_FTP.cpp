@@ -148,6 +148,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,创建文件:%s 成功,开始接受数据,位置:%llu"), lpszClientAddr.c_str(), lpszFileName.c_str(), nPos);
 	
+	__int64x nllCount = 0;
 	while (true)
 	{
 		int nMSGLen = 0;
@@ -169,12 +170,38 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 		else if (XENGINE_NETCORE_TCP_SELECT_EVENT_RECV == dwEvent)
 		{
 			fwrite(tszMSGBuffer, 1, nMSGLen, pSt_File);
+			nllCount += nMSGLen;
 		}
 	}
 	fclose(pSt_File);
 	//关闭连接
 	APIHelp_Port_Free(nPort);
 	NetCore_TCPSelect_StopEx(xhToken);
+	//数据库
+	if (st_ServiceCfg.st_XSql.bEnable)
+	{
+		int nHashLen = 0;
+		XBYTE tszHashStr[XPATH_MID] = {};
+		XSTORAGECORE_DBFILE st_ProtocolFile = {};
+
+		BaseLib_String_GetFileAndPath(lpszFileName.c_str(), st_ProtocolFile.st_ProtocolFile.tszFilePath, st_ProtocolFile.st_ProtocolFile.tszFileName);
+
+		Cryption_Api_Digest(lpszFileName.c_str(), tszHashStr, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
+		BaseLib_String_StrToHex((LPCXSTR)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+
+		_tcsxcpy(st_ProtocolFile.st_ProtocolFile.tszFileUser, st_ServiceCfg.st_XFtp.tszFTPDir);
+		_tcsxcpy(st_ProtocolFile.tszBuckKey, st_ServiceCfg.st_XFtp.tszFTPDir);
+		st_ProtocolFile.st_ProtocolFile.nFileSize = nllCount;
+
+		Session_FTP_GetUser(lpszClientAddr.c_str(), st_ProtocolFile.st_ProtocolFile.tszFileUser);
+
+		XENGINE_STORAGEBUCKET st_StorageBucket = {};
+		if (APIHelp_Distributed_CTStorage(st_ServiceCfg.st_XFtp.tszFTPDir, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
+		{
+			Database_File_FileInsert(&st_ProtocolFile, st_StorageBucket.st_PermissionFlags.bRewrite);
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s 请求上传文件完毕, 插入数据库完毕"), lpszClientAddr.c_str());
+	}
 	//通知
 	int nSDLen = 1024;
 	XCHAR tszSDBuffer[1024] = {};
@@ -312,8 +339,9 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 				return false;
 			}
 		}
+		//转换
 		Session_FTP_Set(lpszClientAddr, NULL, st_ServiceCfg.st_XFtp.tszFTPDir);
-		Session_FTP_SetUser(lpszClientAddr, pSt_KeyValue->tszStrVlu);
+		Session_FTP_SetUser(lpszClientAddr, NULL, pSt_KeyValue->tszStrVlu);
 
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_230, tszSDBuffer, &nSDLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
