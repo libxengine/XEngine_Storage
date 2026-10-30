@@ -137,7 +137,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	}
 	else
 	{
-		pSt_File = _xfopenA(lpszFileName.c_str(), _X("wb"));
+		pSt_File = _xtfopen(lpszFileName.c_str(), _X("wb"));
 		if (NULL == pSt_File)
 		{
 			APIHelp_Port_Free(nPort);
@@ -162,9 +162,13 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 			continue;
 		}
 		
-		if (XENGINE_NETCORE_TCP_SELECT_EVENT_LEAVE == dwEvent)
+		if (XENGINE_NETCORE_TCP_SELECT_EVENT_LOGIN == dwEvent)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件失败,获取网络事件,用户:%s 离开"), lpszClientAddr.c_str(), tszClientAddr);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,请求上传文件,传输用户:%s 进入"), lpszClientAddr.c_str(), tszClientAddr);
+		}
+		else if (XENGINE_NETCORE_TCP_SELECT_EVENT_LEAVE == dwEvent)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,请求上传文件,传输用户:%s 离开"), lpszClientAddr.c_str(), tszClientAddr);
 			break;
 		}
 		else if (XENGINE_NETCORE_TCP_SELECT_EVENT_RECV == dwEvent)
@@ -200,7 +204,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 		{
 			Database_File_FileInsert(&st_ProtocolFile, st_StorageBucket.st_PermissionFlags.bRewrite);
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s 请求上传文件完毕, 插入数据库完毕"), lpszClientAddr.c_str());
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s 请求上传文件完毕, 插入数据库完毕,BucketName:%s,Table:%s,Path:%s%s,Hash:%s,Size:%lld"), lpszClientAddr.c_str(), st_ProtocolFile.tszBuckKey, st_ProtocolFile.tszTableName, st_ProtocolFile.st_ProtocolFile.tszFilePath, st_ProtocolFile.st_ProtocolFile.tszFileName, st_ProtocolFile.st_ProtocolFile.tszFileHash, st_ProtocolFile.st_ProtocolFile.nFileSize);
 	}
 	//通知
 	int nSDLen = 1024;
@@ -402,7 +406,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
 
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
@@ -445,7 +449,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
 
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
@@ -495,7 +499,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
 
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
@@ -569,7 +573,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		XCHAR tszFileName[XPATH_MAX] = {};
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
@@ -595,7 +599,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		XCHAR tszFileName[XPATH_MAX] = {};
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
@@ -672,7 +676,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
 
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
