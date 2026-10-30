@@ -125,7 +125,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	Session_FTP_GetRetr(lpszClientAddr.c_str(), &nPos);
 	if (nPos > 0)
 	{
-		pSt_File = _xfopenA(lpszFileName.c_str(), _X("rb+"), true);
+		pSt_File = _xtfopen(lpszFileName.c_str(), _X("rb+"));
 		if (NULL == pSt_File)
 		{
 			APIHelp_Port_Free(nPort);
@@ -193,7 +193,6 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 		Cryption_Api_Digest(lpszFileName.c_str(), tszHashStr, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
 		BaseLib_String_StrToHex((LPCXSTR)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 
-		_tcsxcpy(st_ProtocolFile.st_ProtocolFile.tszFileUser, st_ServiceCfg.st_XFtp.tszFTPDir);
 		_tcsxcpy(st_ProtocolFile.tszBuckKey, st_ServiceCfg.st_XFtp.tszFTPDir);
 		st_ProtocolFile.st_ProtocolFile.nFileSize = nllCount;
 
@@ -204,7 +203,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 		{
 			Database_File_FileInsert(&st_ProtocolFile, st_StorageBucket.st_PermissionFlags.bRewrite);
 		}
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s 请求上传文件完毕, 插入数据库完毕,BucketName:%s,Table:%s,Path:%s%s,Hash:%s,Size:%lld"), lpszClientAddr.c_str(), st_ProtocolFile.tszBuckKey, st_ProtocolFile.tszTableName, st_ProtocolFile.st_ProtocolFile.tszFilePath, st_ProtocolFile.st_ProtocolFile.tszFileName, st_ProtocolFile.st_ProtocolFile.tszFileHash, st_ProtocolFile.st_ProtocolFile.nFileSize);
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s 请求上传文件完毕, 插入数据库完毕,BucketName:%s,Path:%s%s,Hash:%s,Size:%lld"), lpszClientAddr.c_str(), st_ProtocolFile.tszBuckKey, st_ProtocolFile.st_ProtocolFile.tszFilePath, st_ProtocolFile.st_ProtocolFile.tszFileName, st_ProtocolFile.st_ProtocolFile.tszFileHash, st_ProtocolFile.st_ProtocolFile.nFileSize);
 	}
 	//通知
 	int nSDLen = 1024;
@@ -343,8 +342,16 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 				return false;
 			}
 		}
-		//转换
-		Session_FTP_Set(lpszClientAddr, NULL, st_ServiceCfg.st_XFtp.tszFTPDir);
+		//路径转换
+		XENGINE_STORAGEBUCKET st_StorageBucket = {};
+		if (!APIHelp_Distributed_CTStorage(st_ServiceCfg.st_XFtp.tszFTPDir, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_421, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求登录失败,服务器配置错误,无法继续,错误:%lX"), lpszClientAddr, StorageHelp_GetLastError());
+			return false;
+		}
+		Session_FTP_Set(lpszClientAddr, NULL, st_StorageBucket.tszFilePath);
 		Session_FTP_SetUser(lpszClientAddr, NULL, pSt_KeyValue->tszStrVlu);
 
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_230, tszSDBuffer, &nSDLen);

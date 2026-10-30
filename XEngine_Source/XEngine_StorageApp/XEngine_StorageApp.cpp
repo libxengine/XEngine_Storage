@@ -590,16 +590,6 @@ int main(int argc, char** argv)
 
 		APIHelp_Port_Init(st_ServiceCfg.st_XFtp.nFTPStart, st_ServiceCfg.st_XFtp.nFTPEnd);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化FTP数据端口成功,端口范围:%d-%d"), st_ServiceCfg.st_XFtp.nFTPStart, st_ServiceCfg.st_XFtp.nFTPEnd);
-		//路径转换
-		XENGINE_STORAGEBUCKET st_StorageBucket = {};
-		if (!APIHelp_Distributed_CTStorage(st_ServiceCfg.st_XFtp.tszFTPDir, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
-		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("启动服务中，转换FTP路径失败，错误：%lX"), StorageHelp_GetLastError());
-			goto XENGINE_EXITAPP;
-		}
-		memset(st_ServiceCfg.st_XFtp.tszFTPDir, '\0', sizeof(st_ServiceCfg.st_XFtp.tszFTPDir));
-		_tcsxcpy(st_ServiceCfg.st_XFtp.tszFTPDir, st_StorageBucket.tszFileName);
-		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("启动服务中，初始化FTP路径成功:%s -> %s"), st_ServiceCfg.st_XFtp.tszFTPDir, st_StorageBucket.tszFilePath);
 	}
 	//只有使用了数据库,才启用P2P
 	if (st_ServiceCfg.st_P2xp.bEnable)
