@@ -205,6 +205,10 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 		}
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s 请求上传文件完毕, 插入数据库完毕,BucketName:%s,Path:%s%s,Hash:%s,Size:%lld"), lpszClientAddr.c_str(), st_ProtocolFile.tszBuckKey, st_ProtocolFile.st_ProtocolFile.tszFilePath, st_ProtocolFile.st_ProtocolFile.tszFileName, st_ProtocolFile.st_ProtocolFile.tszFileHash, st_ProtocolFile.st_ProtocolFile.nFileSize);
 	}
+	//大小统计
+	SYSTEMAPI_FILE_ATTR st_FileAttr = {};
+	SystemApi_File_GetFileAttr(lpszFileName.c_str(), &st_FileAttr);
+	APIHelp_Distributed_SetSize(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, st_ServiceCfg.st_XFtp.tszFTPDir, st_FileAttr.nFileSize);
 	//通知
 	int nSDLen = 1024;
 	XCHAR tszSDBuffer[1024] = {};
@@ -504,13 +508,24 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		}
 		XCHAR tszFileName[XPATH_MAX] = {};
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
+		//清理数据库
+		if (st_ServiceCfg.st_XSql.bEnable)
+		{
+			Database_File_FileDelete(st_ServiceCfg.st_XFtp.tszFTPDir, tszFileName, pSt_KeyValue->tszStrVlu);
+		}
+		//合并文件
 		BaseLib_String_FixPath(tszFileName, 1);
-
 		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
 		_tcsxcat(tszFileName, pSt_KeyValue->tszStrVlu);
+		//大小统计
+		SYSTEMAPI_FILE_ATTR st_FileAttr = {};
+		SystemApi_File_GetFileAttr(tszFileName, &st_FileAttr);
+		__int64x nFSize = (__int64x)st_FileAttr.nFileSize;
+		APIHelp_Distributed_SetSize(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, st_ServiceCfg.st_XFtp.tszFTPDir, -nFSize);
+		//删除文件
 		_xtremove(tszFileName);
 
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_250, tszSDBuffer, &nSDLen);

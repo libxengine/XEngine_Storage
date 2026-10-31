@@ -121,11 +121,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	int nRVMode = 0;
 	int nRVCount = 0;
 	int nHDSize = 0;
-	XCHAR tszFileName[XPATH_MAX];
-	XENGINE_STORAGEBUCKET st_StorageBucket;
-
-	memset(tszFileName, '\0', XPATH_MAX);
-	memset(&st_StorageBucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
+	XCHAR tszFileName[XPATH_MAX] = {};
+	XENGINE_STORAGEBUCKET st_StorageBucket = {};
 	//解析参数
 	XCHAR** pptszParamList;
 	int nParamCount = 0;
@@ -399,11 +396,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			}
 		}
 		int nHashLen = 0;
-		XBYTE tszHashStr[XPATH_MAX];
-		XSTORAGECORE_DBFILE st_ProtocolFile;
-
-		memset(tszHashStr, '\0', XPATH_MAX);
-		memset(&st_ProtocolFile, '\0', sizeof(XSTORAGECORE_DBFILE));
+		XBYTE tszHashStr[XPATH_MAX] = {};
+		XSTORAGECORE_DBFILE st_ProtocolFile = {};
 
 		_tcsxcpy(st_ProtocolFile.st_ProtocolFile.tszFilePath, st_StorageBucket.tszFilePath);
 		_tcsxcpy(st_ProtocolFile.st_ProtocolFile.tszFileName, tszFileName);

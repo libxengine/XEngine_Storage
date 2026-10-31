@@ -231,19 +231,17 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 					APIHelp_Distributed_SetSize(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, ppSt_DBQuery[i]->tszBuckKey, -ppSt_DBQuery[i]->st_ProtocolFile.nFileSize);
 					_xtremove(tszFilePath);
 				}
-				
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求删除文件HASH成功,文件名:%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
 			}
 			else
 			{
 				int nQueryCount = 0;
-				XCHAR tszFileDir[1024];
+				XCHAR tszFileDir[XPATH_MAX] = {};
 				XSTORAGECORE_DBFILE** ppSt_DBQuery;
 
-				memset(tszFileDir, '\0', sizeof(tszFileDir));
 				if (_tcsxlen(ppSt_DBFile[i]->tszBuckKey) > 0)
 				{
-					APIHelp_Distributed_GetPathKey(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, ppSt_DBFile[i]->tszBuckKey, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath);
+					APIHelp_Distributed_GetPathKey(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, ppSt_DBFile[i]->tszBuckKey, tszFileDir);
 				}
 				_xstprintf(tszFileDir, _X("%s/%s"), ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
 
