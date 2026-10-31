@@ -342,7 +342,7 @@ bool CDatabase_File::Database_File_FileQuery(XSTORAGECORE_DBFILE*** pppSt_ListFi
                     XSTORAGECORE_DBFILE st_DBFile = {};
 
                     nFieldFile++;
-					_tcsxcpy(st_DBFile.tszTableName, pptszResult[nFieldFile]);
+					_tcsxcpy(st_DBFile.tszTableName, pptszResult[nFieldNumber]);
 					if (NULL != pptszFileResult[nFieldFile])
 					{
 						_tcsxcpy(st_DBFile.tszBuckKey, pptszFileResult[nFieldFile]);
