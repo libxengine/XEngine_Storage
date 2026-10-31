@@ -2,9 +2,10 @@
     "tszIPAddr": "127.0.0.1",
     "bDeamon": 0,
     "nCenterPort": 5100,
-    "nHTTPPort": 5101,
-    "nWebdavPort": 5102,
-    "nFTPPort": 5103,
+    "nStorageDLPort": 5101,
+    "nStorageUPPort": 5102,
+    "nWebdavPort": 5103,
+    "nFTPPort": 5104,
     "XMax": {
         "MaxClient": 10000,
         "MaxQueue": 10000,
@@ -50,7 +51,7 @@
         "tszDLPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
         "tszWDPass": "http://192.168.1.7:5200/Api/Pass/WDFile",
         "tszAuthPass": "",
-        "tszFTPPass": "http://192.168.1.7:5200/Api/Pass/FTPFile",
+        "tszFTPPass": "http://192.168.1.7:5200/Api/Pass/FTPFile"
     },
     "XLimit": {
         "bLimitMode": true,
@@ -87,6 +88,6 @@
     "XFtp": {
         "nFTPStart": 50051,
         "nFTPEnd": 51051,
-        "tszFTPDir": "D:\\XEngine_Storage\\XEngine_Source\\Debug"
+        "tszFTPDir": "storageftp"
     }
 }
