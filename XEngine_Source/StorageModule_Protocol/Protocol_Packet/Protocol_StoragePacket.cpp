@@ -368,6 +368,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Auth(int nRequestType, LPCX
     }
     Json::Value st_JsonRoot;
 
+	st_JsonRoot["tszAction"] = "Auth";
 	st_JsonRoot["nRequestType"] = nRequestType;
     st_JsonRoot["lpszMethod"] = lpszMethod;
     st_JsonRoot["lpszPostUrl"] = lpszPostUrl;
@@ -439,6 +440,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(XCHAR* ptszMsgBuffer
     }
     Json::Value st_JsonRoot;
 
+	st_JsonRoot["tszAction"] = "UPDown";
     st_JsonRoot["bDown"] = bDown;
     st_JsonRoot["lpszBuckKey"] = lpszBuckKey;
     st_JsonRoot["lpszFileName"] = lpszFileName;

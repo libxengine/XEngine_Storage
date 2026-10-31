@@ -189,28 +189,9 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 					return true;
 				}
 				//文件是否可写
-#ifdef _MSC_BUILD
-				int nFileFD = _xtopen(tszFileDir, _O_WRONLY | _O_CREAT | _O_TRUNC, _S_IREAD | _S_IWRITE);
-#else
-				int nFileFD = _xtopen(tszFileDir, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-#endif
-				if (nFileFD < 0)
-				{
-					st_HDRParam.bIsClose = true;
-					st_HDRParam.nHttpCode = 403;
-					HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,准备上传文件:%s 失败,创建文件失败"), lpszClientAddr, tszFileDir);
-					return true;
-				}
-#ifdef _MSC_BUILD
-				FILE* pSt_File = _fdopen(nFileFD, "wb");
-#else
-				FILE* pSt_File = fdopen(nFileFD, "wb");
-#endif
+				FILE* pSt_File = _xtfopen(tszFileDir, "wb");
 				if (NULL == pSt_File)
 				{
-					_close(nFileFD);
 					st_HDRParam.bIsClose = true;
 					st_HDRParam.nHttpCode = 403;
 					HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
