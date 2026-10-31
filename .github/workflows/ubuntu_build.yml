@@ -132,6 +132,13 @@ jobs:
           name: XEngine_XStorageApp-Ubuntu_24.04_x86_64
           path: XEngine_Release/
           retention-days: 1
+      - name: Upload folder as artifact with ubuntu26.04
+        if: matrix.os == 'ubuntu-26.04'
+        uses: actions/upload-artifact@v7
+        with:
+          name: XEngine_XStorageApp-Ubuntu_26.04_x86_64
+          path: XEngine_Release/
+          retention-days: 1
       - name: Upload folder as artifact with ubuntu22.04-arm
         if: matrix.os == 'ubuntu-22.04-arm'
         uses: actions/upload-artifact@v7
@@ -144,5 +151,12 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: XEngine_XStorageApp-Ubuntu_24.04_Arm64
+          path: XEngine_Release/
+          retention-days: 1
+      - name: Upload folder as artifact with ubuntu26.04-arm
+        if: matrix.os == 'ubuntu-26.04-arm'
+        uses: actions/upload-artifact@v7
+        with:
+          name: XEngine_XStorageApp-Ubuntu_26.04_Arm64
           path: XEngine_Release/
           retention-days: 1

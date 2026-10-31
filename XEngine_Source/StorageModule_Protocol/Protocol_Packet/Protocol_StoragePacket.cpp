@@ -189,12 +189,22 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(XCHAR* ptszMsgBuf
   类型：数据结构指针
   可空：N
   意思：上传信息列表
- 参数.五：nDLCount
+ 参数.五：pppSt_FTPInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：FTP信息列表
+ 参数.六：nDLCount
   In/Out：In
   类型：整数型
   可空：N
   意思：下载列表个数
- 参数.六：nUPCount
+ 参数.七：nUPCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：上传列表个数
+ 参数.八：nFTPCount
   In/Out：In
   类型：整数型
   可空：N
@@ -204,7 +214,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(XCHAR* ptszMsgBuf
   意思：是否成功
 备注：
 *********************************************************************/
-bool CProtocol_StoragePacket::Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, int nDLCount, int nUPCount)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, SESSION_STORAGEINFO*** pppSt_FTPInfo, int nDLCount, int nUPCount, int nFTPCount)
 {
 	Protocol_IsErrorOccur = false;
 
@@ -217,6 +227,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, 
 	Json::Value st_JsonRoot;
 	Json::Value st_JsonDLArray;
     Json::Value st_JsonUPArray;
+	Json::Value st_JsonFTPArray;
 
 	for (int i = 0; i < nDLCount; i++)
 	{
@@ -234,21 +245,36 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, 
 	for (int i = 0; i < nUPCount; i++)
 	{
 		Json::Value st_JsonObject;
-		st_JsonObject["tszClientAddr"] = (*pppSt_DLInfo)[i]->tszClientAddr;
-		st_JsonObject["tszFilePath"] = (*pppSt_DLInfo)[i]->tszFileDir;
-		st_JsonObject["ullCount"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullCount;
-		st_JsonObject["ullRWCount"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullRWCount;
-		st_JsonObject["ullRWLen"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullRWLen;
-		st_JsonObject["ullPosStart"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullPosStart;
-		st_JsonObject["ullPosEnd"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullPosEnd;
+		st_JsonObject["tszClientAddr"] = (*pppSt_UPInfo)[i]->tszClientAddr;
+		st_JsonObject["tszFilePath"] = (*pppSt_UPInfo)[i]->tszFileDir;
+		st_JsonObject["ullCount"] = (Json::Value::Int64)(*pppSt_UPInfo)[i]->ullCount;
+		st_JsonObject["ullRWCount"] = (Json::Value::Int64)(*pppSt_UPInfo)[i]->ullRWCount;
+		st_JsonObject["ullRWLen"] = (Json::Value::Int64)(*pppSt_UPInfo)[i]->ullRWLen;
+		st_JsonObject["ullPosStart"] = (Json::Value::Int64)(*pppSt_UPInfo)[i]->ullPosStart;
+		st_JsonObject["ullPosEnd"] = (Json::Value::Int64)(*pppSt_UPInfo)[i]->ullPosEnd;
 
         st_JsonUPArray.append(st_JsonObject);
 	}
+	for (int i = 0; i < nFTPCount; i++)
+	{
+		Json::Value st_JsonObject;
+		st_JsonObject["tszClientAddr"] = (*pppSt_FTPInfo)[i]->tszClientAddr;
+		st_JsonObject["tszFilePath"] = (*pppSt_FTPInfo)[i]->tszFileDir;
+		st_JsonObject["ullCount"] = (Json::Value::Int64)(*pppSt_FTPInfo)[i]->ullCount;
+		st_JsonObject["ullRWCount"] = (Json::Value::Int64)(*pppSt_FTPInfo)[i]->ullRWCount;
+		st_JsonObject["ullRWLen"] = (Json::Value::Int64)(*pppSt_FTPInfo)[i]->ullRWLen;
+		st_JsonObject["ullPosStart"] = (Json::Value::Int64)(*pppSt_FTPInfo)[i]->ullPosStart;
+		st_JsonObject["ullPosEnd"] = (Json::Value::Int64)(*pppSt_FTPInfo)[i]->ullPosEnd;
+
+		st_JsonFTPArray.append(st_JsonObject);
+	}
 	st_JsonRoot["DLCount"] = st_JsonDLArray.size();
     st_JsonRoot["UPCount"] = st_JsonUPArray.size();
+	st_JsonRoot["FTPCount"] = st_JsonFTPArray.size();
 
 	st_JsonRoot["DLList"] = st_JsonDLArray;
     st_JsonRoot["UPList"] = st_JsonUPArray;
+	st_JsonRoot["FTPList"] = st_JsonFTPArray;
 
 	st_JsonRoot["code"] = 0;
 	st_JsonRoot["msg"] = _X("success");

@@ -861,3 +861,22 @@ extern "C" bool Session_FTP_SetUser(LPCXSTR lpszClientAddr, LPCXSTR lpszUser = N
 备注：
 *********************************************************************/
 extern "C" bool Session_FTP_GetUser(LPCXSTR lpszClientAddr, XCHAR* ptszUser = NULL, XCHAR* ptszPass = NULL);
+/********************************************************************
+函数名称：Session_FTP_GetAll
+函数功能：获取FTP所有会话信息
+ 参数.一：pppSt_StorageList
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出会话信息列表
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+extern "C" bool Session_FTP_GetAll(SESSION_STORAGEINFO*** pppSt_StorageList, int* pInt_ListCount);

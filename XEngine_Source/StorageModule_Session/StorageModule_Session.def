@@ -48,3 +48,4 @@ EXPORTS
 	Session_FTP_Delete
 	Session_FTP_SetUser
 	Session_FTP_GetUser
+	Session_FTP_GetAll

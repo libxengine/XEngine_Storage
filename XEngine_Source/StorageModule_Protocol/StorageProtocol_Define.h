@@ -524,7 +524,7 @@ extern "C" bool Protocol_StoragePacket_QueryFile(XCHAR * ptszMsgBuffer, int* pIn
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Protocol_StoragePacket_Info(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO * **pppSt_DLInfo, SESSION_STORAGEINFO * **pppSt_UPInfo, int nDLCount, int nUPCount);
+extern "C" bool Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, SESSION_STORAGEINFO*** pppSt_FTPInfo, int nDLCount, int nUPCount, int nFTPCount);
 /********************************************************************
 函数名称：Protocol_StoragePacket_DirOperator
 函数功能：查询用户目录

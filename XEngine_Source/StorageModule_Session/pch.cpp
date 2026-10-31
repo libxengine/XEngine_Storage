@@ -210,3 +210,7 @@ extern "C" bool Session_FTP_GetUser(LPCXSTR lpszClientAddr, XCHAR* ptszUser, XCH
 {
 	return m_FTPContral.Session_FTP_GetUser(lpszClientAddr, ptszUser, ptszPass);
 }
+extern "C" bool Session_FTP_GetAll(SESSION_STORAGEINFO*** pppSt_StorageList, int* pInt_ListCount)
+{
+	return m_FTPContral.Session_FTP_GetAll(pppSt_StorageList, pInt_ListCount);
+}

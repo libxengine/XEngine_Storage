@@ -40,6 +40,7 @@ public:
     bool Session_FTP_SetRetr(LPCXSTR lpszClientAddr, __int64u nPos);
     bool Session_FTP_GetRetr(LPCXSTR lpszClientAddr, __int64u* pInt_Pos);
     bool Session_FTP_Delete(LPCXSTR lpszClientAddr);
+    bool Session_FTP_GetAll(SESSION_STORAGEINFO*** pppSt_StorageList, int* pInt_ListCount);
 public:
     bool Session_FTP_SetUser(LPCXSTR lpszClientAddr, LPCXSTR lpszUser = NULL, LPCXSTR lpszPass = NULL);
     bool Session_FTP_GetUser(LPCXSTR lpszClientAddr, XCHAR* ptszUser = NULL, XCHAR* ptszPass = NULL);
