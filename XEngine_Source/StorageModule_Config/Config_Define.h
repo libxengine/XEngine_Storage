@@ -80,6 +80,9 @@ typedef struct tag_XEngine_ServerConfig
         XCHAR tszAuthPass[XPATH_MID];
         XCHAR tszFTPPass[XPATH_MID];
         int nVType;
+        bool bUPCall;
+        bool bDLCall;
+        bool bFTPCall;
     }st_XProxy;
 	struct
 	{

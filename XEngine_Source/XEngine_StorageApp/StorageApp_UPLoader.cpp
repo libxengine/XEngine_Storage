@@ -409,7 +409,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		}
 		Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWLen, false, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		//PASS代理
-		if (st_ServiceCfg.st_XProxy.nVType > 0)
+		if (st_ServiceCfg.st_XProxy.bUPCall)
 		{
 			int nHttpCode = 0;
 			if (!APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszUPPass, tszPassNotify, &nHttpCode))

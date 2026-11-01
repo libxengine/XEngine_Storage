@@ -160,13 +160,16 @@ bool CConfig_Json::Config_Json_File(LPCXSTR lpszConfigFile, XENGINE_SERVERCONFIG
 	pSt_ServerConfig->st_XStorage.bResumable = st_JsonXStorage["bResumable"].asBool();
 	pSt_ServerConfig->st_XStorage.bWDLocation = st_JsonXStorage["bWDLocation"].asBool();
 
-	if (st_JsonRoot["XProxy"].empty() || (6 != st_JsonRoot["XProxy"].size()))
+	if (st_JsonRoot["XProxy"].empty() || (9 != st_JsonRoot["XProxy"].size()))
 	{
 		Config_IsErrorOccur = true;
 		Config_dwErrorCode = ERROR_XENGINE_BLOGIC_CONFIG_JSON_XPROXY;
 		return false;
 	}
 	Json::Value st_JsonXProxy = st_JsonRoot["XProxy"];
+	pSt_ServerConfig->st_XProxy.bDLCall = st_JsonXProxy["bDLCall"].asInt();
+	pSt_ServerConfig->st_XProxy.bFTPCall = st_JsonXProxy["bFTPCall"].asInt();
+	pSt_ServerConfig->st_XProxy.bUPCall = st_JsonXProxy["bUPCall"].asInt();
 	pSt_ServerConfig->st_XProxy.nVType = st_JsonXProxy["nVType"].asInt();
 	_tcsxcpy(pSt_ServerConfig->st_XProxy.tszDLPass, st_JsonXProxy["tszDLPass"].asCString());
 	_tcsxcpy(pSt_ServerConfig->st_XProxy.tszUPPass, st_JsonXProxy["tszUPPass"].asCString());
