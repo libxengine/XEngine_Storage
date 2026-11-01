@@ -47,6 +47,9 @@
     },
     "XProxy": {
         "nVType": 0,
+        "bUPCall": false,
+        "bDLCall": false,
+        "bFTPCall": false,
         "tszUPPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
         "tszDLPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
         "tszWDPass": "http://192.168.1.7:5200/Api/Pass/WDFile",
