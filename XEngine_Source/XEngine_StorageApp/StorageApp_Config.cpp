@@ -52,9 +52,10 @@ bool StorageApp_Config_Parament(int argc,char **argv)
 		return false;
 	}
 
-    for (int i = 0;i < argc;i++)
+    int i = 0;
+    while (i < argc)
     {
-        if (0 == _tcsxicmp("-h",argv[i]))
+        if (0 == _tcsxicmp("-h", argv[i]))
         {
             StorageApp_Config_ParamentHelp();
             return false;
@@ -72,7 +73,9 @@ bool StorageApp_Config_Parament(int argc,char **argv)
                 printf("Parameter error: lost value\n");
                 return false;
             }
-            st_ServiceCfg.bDeamon = _ttxoi(argv[++i]);
+            st_ServiceCfg.bDeamon = _ttxoi(argv[i + 1]);
+            i += 2;
+            continue;
         }
         else if (0 == _tcsxicmp("-r", argv[i]))
         {
@@ -93,7 +96,9 @@ bool StorageApp_Config_Parament(int argc,char **argv)
                 printf("Parameter error: lost value\n");
                 return false;
             }
-            st_ServiceCfg.st_XLog.nLogType = _ttxoi(argv[++i]);
+            st_ServiceCfg.st_XLog.nLogType = _ttxoi(argv[i + 1]);
+            i += 2;
+            continue;
         }
 		else if (0 == _tcsxicmp("-l", argv[i]))
 		{
@@ -102,7 +107,7 @@ bool StorageApp_Config_Parament(int argc,char **argv)
                 printf("Parameter error: lost value\n");
                 return false;
             }
-			LPCXSTR lpszLogLevel = argv[++i];
+			LPCXSTR lpszLogLevel = argv[i + 1];
 			if (0 == _tcsxicmp("debug", lpszLogLevel))
 			{
                 st_ServiceCfg.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_DEBUG;
@@ -115,7 +120,10 @@ bool StorageApp_Config_Parament(int argc,char **argv)
 			{
                 st_ServiceCfg.st_XLog.nLogLeave = XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO;
 			}
+            i += 2;
+            continue;
 		}
+        i++;
     }
 
     return true;

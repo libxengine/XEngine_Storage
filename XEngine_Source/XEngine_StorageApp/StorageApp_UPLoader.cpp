@@ -91,9 +91,9 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		}
 	}
 	//用户验证
-	if (st_ServiceCfg.st_XProxy.bUPPass)
+	if (st_ServiceCfg.st_XProxy.nVType > 0)
 	{
-		if (!StorageApp_HTTPHelp_Verification(lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszUPPass))
+		if (!StorageApp_HTTPHelp_Verification(STORAGE_NETTYPE_HTTPUPLOADER, lpszClientAddr, pSt_HTTPParam, pptszListHdr, nHdrCount, st_ServiceCfg.st_XProxy.tszUPPass))
 		{
 			return false;
 		}
@@ -121,11 +121,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 	int nRVMode = 0;
 	int nRVCount = 0;
 	int nHDSize = 0;
-	XCHAR tszFileName[XPATH_MAX];
-	XENGINE_STORAGEBUCKET st_StorageBucket;
-
-	memset(tszFileName, '\0', XPATH_MAX);
-	memset(&st_StorageBucket, '\0', sizeof(XENGINE_STORAGEBUCKET));
+	XCHAR tszFileName[XPATH_MAX] = {};
+	XENGINE_STORAGEBUCKET st_StorageBucket = {};
 	//解析参数
 	XCHAR** pptszParamList;
 	int nParamCount = 0;
@@ -192,28 +189,9 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 					return true;
 				}
 				//文件是否可写
-#ifdef _MSC_BUILD
-				int nFileFD = _xtopen(tszFileDir, _O_WRONLY | _O_CREAT | _O_TRUNC, _S_IREAD | _S_IWRITE);
-#else
-				int nFileFD = _xtopen(tszFileDir, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-#endif
-				if (nFileFD < 0)
-				{
-					st_HDRParam.bIsClose = true;
-					st_HDRParam.nHttpCode = 403;
-					HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
-					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("上传客户端:%s,准备上传文件:%s 失败,创建文件失败"), lpszClientAddr, tszFileDir);
-					return true;
-				}
-#ifdef _MSC_BUILD
-				FILE* pSt_File = _fdopen(nFileFD, "wb");
-#else
-				FILE* pSt_File = fdopen(nFileFD, "wb");
-#endif
+				FILE* pSt_File = _xtfopen(tszFileDir, "wb");
 				if (NULL == pSt_File)
 				{
-					_close(nFileFD);
 					st_HDRParam.bIsClose = true;
 					st_HDRParam.nHttpCode = 403;
 					HttpProtocol_Server_SendMsgEx(xhUPHttp, tszSDBuffer, &nSDLen, &st_HDRParam);
@@ -399,11 +377,8 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 			}
 		}
 		int nHashLen = 0;
-		XBYTE tszHashStr[XPATH_MAX];
-		XSTORAGECORE_DBFILE st_ProtocolFile;
-
-		memset(tszHashStr, '\0', XPATH_MAX);
-		memset(&st_ProtocolFile, '\0', sizeof(XSTORAGECORE_DBFILE));
+		XBYTE tszHashStr[XPATH_MAX] = {};
+		XSTORAGECORE_DBFILE st_ProtocolFile = {};
 
 		_tcsxcpy(st_ProtocolFile.st_ProtocolFile.tszFilePath, st_StorageBucket.tszFilePath);
 		_tcsxcpy(st_ProtocolFile.st_ProtocolFile.tszFileName, tszFileName);
@@ -434,7 +409,7 @@ bool XEngine_Task_HttpUPLoader(LPCXSTR lpszClientAddr, LPCXSTR lpszMsgBuffer, in
 		}
 		Protocol_StoragePacket_UPDown(tszPassNotify, &nPLen, st_StorageInfo.tszBuckKey, st_StorageInfo.tszFileDir, st_StorageInfo.tszClientAddr, st_StorageInfo.ullRWLen, false, st_ProtocolFile.st_ProtocolFile.tszFileHash);
 		//PASS代理
-		if (st_ServiceCfg.st_XProxy.bUPPass)
+		if (st_ServiceCfg.st_XProxy.bUPCall)
 		{
 			int nHttpCode = 0;
 			if (!APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszUPPass, tszPassNotify, &nHttpCode))

@@ -42,6 +42,19 @@
                     "UPLimit":false,
                     "UPReady":true
                 }
+            },
+            {
+                "bEnable":true,
+                "nLevel":1,
+                "Size":"1024MB",
+                "XEngine_Key":"storageftp",
+                "XEngine_Path":"D:\\XEngine_Storage\\XEngine_Source\\Debug\\XEngine_FTPFile",
+                "PermissionFlags":{
+                    "CreateDir":false,
+                    "Rewrite":true,
+                    "UPLimit":false,
+                    "UPReady":true
+                }
             }
         ]
     }

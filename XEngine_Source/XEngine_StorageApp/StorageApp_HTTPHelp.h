@@ -10,4 +10,4 @@
 //    Purpose:     HTTP 帮助函数封装
 //    History:
 *********************************************************************/
-bool StorageApp_HTTPHelp_Verification(LPCXSTR lpszClientAddr, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount, LPCXSTR lpszRestApi);
+bool StorageApp_HTTPHelp_Verification(int nClient, LPCXSTR lpszClientAddr, RFCCOMPONENTS_HTTP_REQPARAM* pSt_HTTPParam, XCHAR** pptszListHdr, int nHdrCount, LPCXSTR lpszRestApi);

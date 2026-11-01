@@ -189,12 +189,22 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(XCHAR* ptszMsgBuf
   类型：数据结构指针
   可空：N
   意思：上传信息列表
- 参数.五：nDLCount
+ 参数.五：pppSt_FTPInfo
+  In/Out：In
+  类型：数据结构指针
+  可空：N
+  意思：FTP信息列表
+ 参数.六：nDLCount
   In/Out：In
   类型：整数型
   可空：N
   意思：下载列表个数
- 参数.六：nUPCount
+ 参数.七：nUPCount
+  In/Out：In
+  类型：整数型
+  可空：N
+  意思：上传列表个数
+ 参数.八：nFTPCount
   In/Out：In
   类型：整数型
   可空：N
@@ -204,7 +214,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_QueryFile(XCHAR* ptszMsgBuf
   意思：是否成功
 备注：
 *********************************************************************/
-bool CProtocol_StoragePacket::Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, int nDLCount, int nUPCount)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, SESSION_STORAGEINFO*** pppSt_FTPInfo, int nDLCount, int nUPCount, int nFTPCount)
 {
 	Protocol_IsErrorOccur = false;
 
@@ -217,6 +227,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, 
 	Json::Value st_JsonRoot;
 	Json::Value st_JsonDLArray;
     Json::Value st_JsonUPArray;
+	Json::Value st_JsonFTPArray;
 
 	for (int i = 0; i < nDLCount; i++)
 	{
@@ -234,21 +245,36 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, 
 	for (int i = 0; i < nUPCount; i++)
 	{
 		Json::Value st_JsonObject;
-		st_JsonObject["tszClientAddr"] = (*pppSt_DLInfo)[i]->tszClientAddr;
-		st_JsonObject["tszFilePath"] = (*pppSt_DLInfo)[i]->tszFileDir;
-		st_JsonObject["ullCount"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullCount;
-		st_JsonObject["ullRWCount"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullRWCount;
-		st_JsonObject["ullRWLen"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullRWLen;
-		st_JsonObject["ullPosStart"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullPosStart;
-		st_JsonObject["ullPosEnd"] = (Json::Value::Int64)(*pppSt_DLInfo)[i]->ullPosEnd;
+		st_JsonObject["tszClientAddr"] = (*pppSt_UPInfo)[i]->tszClientAddr;
+		st_JsonObject["tszFilePath"] = (*pppSt_UPInfo)[i]->tszFileDir;
+		st_JsonObject["ullCount"] = (Json::Value::Int64)(*pppSt_UPInfo)[i]->ullCount;
+		st_JsonObject["ullRWCount"] = (Json::Value::Int64)(*pppSt_UPInfo)[i]->ullRWCount;
+		st_JsonObject["ullRWLen"] = (Json::Value::Int64)(*pppSt_UPInfo)[i]->ullRWLen;
+		st_JsonObject["ullPosStart"] = (Json::Value::Int64)(*pppSt_UPInfo)[i]->ullPosStart;
+		st_JsonObject["ullPosEnd"] = (Json::Value::Int64)(*pppSt_UPInfo)[i]->ullPosEnd;
 
         st_JsonUPArray.append(st_JsonObject);
 	}
+	for (int i = 0; i < nFTPCount; i++)
+	{
+		Json::Value st_JsonObject;
+		st_JsonObject["tszClientAddr"] = (*pppSt_FTPInfo)[i]->tszClientAddr;
+		st_JsonObject["tszFilePath"] = (*pppSt_FTPInfo)[i]->tszFileDir;
+		st_JsonObject["ullCount"] = (Json::Value::Int64)(*pppSt_FTPInfo)[i]->ullCount;
+		st_JsonObject["ullRWCount"] = (Json::Value::Int64)(*pppSt_FTPInfo)[i]->ullRWCount;
+		st_JsonObject["ullRWLen"] = (Json::Value::Int64)(*pppSt_FTPInfo)[i]->ullRWLen;
+		st_JsonObject["ullPosStart"] = (Json::Value::Int64)(*pppSt_FTPInfo)[i]->ullPosStart;
+		st_JsonObject["ullPosEnd"] = (Json::Value::Int64)(*pppSt_FTPInfo)[i]->ullPosEnd;
+
+		st_JsonFTPArray.append(st_JsonObject);
+	}
 	st_JsonRoot["DLCount"] = st_JsonDLArray.size();
     st_JsonRoot["UPCount"] = st_JsonUPArray.size();
+	st_JsonRoot["FTPCount"] = st_JsonFTPArray.size();
 
 	st_JsonRoot["DLList"] = st_JsonDLArray;
     st_JsonRoot["UPList"] = st_JsonUPArray;
+	st_JsonRoot["FTPList"] = st_JsonFTPArray;
 
 	st_JsonRoot["code"] = 0;
 	st_JsonRoot["msg"] = _X("success");
@@ -314,8 +340,8 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgB
     return true;
 }
 /********************************************************************
-函数名称：Protocol_StoragePacket_BasicAuth
-函数功能：基本验证协议代理转发
+函数名称：Protocol_StoragePacket_Auth
+函数功能：验证协议代理转发
  参数.一：lpszRequestType
   In/Out：In
   类型：常量字符指针
@@ -336,22 +362,17 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgB
   类型：常量字符指针
   可空：N
   意思：用户发送的客户端地址
- 参数.五：lpszUser
+ 参数.五：lpszAuthStr
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：用户
- 参数.六：lpszPass
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：密码
- 参数.七：ptszMsgBuffer
+  意思：验证字符串
+ 参数.六：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：转发数据包
- 参数.八：pInt_MsgLen
+ 参数.七：pInt_MsgLen
   In/Out：Out
   类型：整数型
   可空：N
@@ -361,11 +382,11 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_DirOperator(XCHAR* ptszMsgB
   意思：是否成功
 备注：
 *********************************************************************/
-bool CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR* ptszMsgBuffer, int* pInt_MsgLen)
+bool CProtocol_StoragePacket::Protocol_StoragePacket_Auth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszAuthStr, XCHAR* ptszMsgBuffer, int* pInt_MsgLen)
 {
     Protocol_IsErrorOccur = false;
 
-    if ((NULL == lpszUser) || (NULL == lpszPass))
+    if ((NULL == lpszAuthStr) || (NULL == lpszClientAddr))
     {
         Protocol_IsErrorOccur = true;
         Protocol_dwErrorCode = ERROR_XENGINE_STORAGE_PROTOCOL_PARAMENT;
@@ -373,12 +394,12 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_BasicAuth(int nRequestType,
     }
     Json::Value st_JsonRoot;
 
+	st_JsonRoot["tszAction"] = "Auth";
 	st_JsonRoot["nRequestType"] = nRequestType;
     st_JsonRoot["lpszMethod"] = lpszMethod;
     st_JsonRoot["lpszPostUrl"] = lpszPostUrl;
     st_JsonRoot["lpszClientAddr"] = lpszClientAddr;
-    st_JsonRoot["lpszUser"] = lpszUser;
-    st_JsonRoot["lpszPass"] = lpszPass;
+    st_JsonRoot["lpszAuthStr"] = lpszAuthStr;
 	st_JsonRoot["code"] = 0;
 	st_JsonRoot["msg"] = _X("success");
     *pInt_MsgLen = st_JsonRoot.toStyledString().length();
@@ -445,6 +466,7 @@ bool CProtocol_StoragePacket::Protocol_StoragePacket_UPDown(XCHAR* ptszMsgBuffer
     }
     Json::Value st_JsonRoot;
 
+	st_JsonRoot["tszAction"] = "UPDown";
     st_JsonRoot["bDown"] = bDown;
     st_JsonRoot["lpszBuckKey"] = lpszBuckKey;
     st_JsonRoot["lpszFileName"] = lpszFileName;

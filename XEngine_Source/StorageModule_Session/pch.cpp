@@ -202,3 +202,15 @@ extern "C" bool Session_FTP_Delete(LPCXSTR lpszClientAddr)
 {
 	return m_FTPContral.Session_FTP_Delete(lpszClientAddr);
 }
+extern "C" bool Session_FTP_SetUser(LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass)
+{
+	return m_FTPContral.Session_FTP_SetUser(lpszClientAddr, lpszUser, lpszPass);
+}
+extern "C" bool Session_FTP_GetUser(LPCXSTR lpszClientAddr, XCHAR* ptszUser, XCHAR* ptszPass)
+{
+	return m_FTPContral.Session_FTP_GetUser(lpszClientAddr, ptszUser, ptszPass);
+}
+extern "C" bool Session_FTP_GetAll(SESSION_STORAGEINFO*** pppSt_StorageList, int* pInt_ListCount)
+{
+	return m_FTPContral.Session_FTP_GetAll(pppSt_StorageList, pInt_ListCount);
+}

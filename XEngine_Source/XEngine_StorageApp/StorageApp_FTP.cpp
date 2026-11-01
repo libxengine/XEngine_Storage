@@ -67,7 +67,6 @@ static void XEngine_FTPDownload_Thread(xstring lpszClientAddr, xstring lpszFileN
 	{
 		fseek(pSt_File, (long)nPos, SEEK_SET);
 	}
-
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,准备数据文件:%s 完成,开始下载文件数据,下载位置:%llu"), lpszClientAddr.c_str(), lpszFileName.c_str(), nPos);
 
 	while (true)
@@ -78,7 +77,7 @@ static void XEngine_FTPDownload_Thread(xstring lpszClientAddr, xstring lpszFileN
 		{
 			break;
 		}
-		while (true)
+		for (int i = 0; i < 10; i++)
 		{
 			if (NetCore_TCPSelect_SendEx(xhToken, tszClientAddr, tszMSGBuffer, nRet))
 			{
@@ -101,6 +100,31 @@ static void XEngine_FTPDownload_Thread(xstring lpszClientAddr, xstring lpszFileN
 		}
 	}
 	fclose(pSt_File);
+	//HTTP CALL
+	if (st_ServiceCfg.st_XProxy.bFTPCall)
+	{
+		int nPLen = 0;
+		XCHAR tszProxyStr[XPATH_MAX] = {};
+
+		SYSTEMAPI_FILE_ATTR st_FileAttr = {};
+		SystemApi_File_GetFileAttr(lpszFileName.c_str(), &st_FileAttr);
+
+		int nHashLen = 0;
+		XBYTE tszHashHex[XPATH_MID] = {};
+		XCHAR tszHashStr[XPATH_MID] = {};
+		Cryption_Api_Digest(lpszFileName.c_str(), tszHashHex, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
+		BaseLib_String_StrToHex((LPCXSTR)tszHashHex, nHashLen, tszHashStr);
+
+		Protocol_StoragePacket_UPDown(tszProxyStr, &nPLen, lpszFileName.c_str(), st_ServiceCfg.st_XFtp.tszFTPDir, lpszClientAddr.c_str(), st_FileAttr.nFileSize, true, tszHashStr);
+		if (APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszFTPPass, tszProxyStr))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,请求完成通知,文件:%s,地址:%s"), lpszClientAddr.c_str(), lpszFileName.c_str(), st_ServiceCfg.st_XProxy.tszFTPPass);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,请求完成通知失败,可能对方服务没有开启,文件:%s,地址:%s"), lpszClientAddr.c_str(), lpszFileName.c_str(), st_ServiceCfg.st_XProxy.tszFTPPass);
+		}
+	}
 	//关闭连接
 	APIHelp_Port_Free(nPort);
 	NetCore_TCPSelect_StopEx(xhToken);
@@ -126,7 +150,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	Session_FTP_GetRetr(lpszClientAddr.c_str(), &nPos);
 	if (nPos > 0)
 	{
-		pSt_File = _xfopenA(lpszFileName.c_str(), _X("rb+"), true);
+		pSt_File = _xtfopen(lpszFileName.c_str(), _X("rb+"));
 		if (NULL == pSt_File)
 		{
 			APIHelp_Port_Free(nPort);
@@ -138,7 +162,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	}
 	else
 	{
-		pSt_File = _xfopenA(lpszFileName.c_str(), _X("wb"));
+		pSt_File = _xtfopen(lpszFileName.c_str(), _X("wb"));
 		if (NULL == pSt_File)
 		{
 			APIHelp_Port_Free(nPort);
@@ -149,6 +173,7 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 	}
 	XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,创建文件:%s 成功,开始接受数据,位置:%llu"), lpszClientAddr.c_str(), lpszFileName.c_str(), nPos);
 	
+	__int64x nllCount = 0;
 	while (true)
 	{
 		int nMSGLen = 0;
@@ -162,20 +187,66 @@ static void XEngine_FTPUPload_Thread(xstring lpszClientAddr, xstring lpszFileNam
 			continue;
 		}
 		
-		if (XENGINE_NETCORE_TCP_SELECT_EVENT_LEAVE == dwEvent)
+		if (XENGINE_NETCORE_TCP_SELECT_EVENT_LOGIN == dwEvent)
 		{
-			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求上传文件失败,获取网络事件,用户:%s 离开"), lpszClientAddr.c_str(), tszClientAddr);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,请求上传文件,传输用户:%s 进入"), lpszClientAddr.c_str(), tszClientAddr);
+		}
+		else if (XENGINE_NETCORE_TCP_SELECT_EVENT_LEAVE == dwEvent)
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s,请求上传文件,传输用户:%s 离开"), lpszClientAddr.c_str(), tszClientAddr);
 			break;
 		}
 		else if (XENGINE_NETCORE_TCP_SELECT_EVENT_RECV == dwEvent)
 		{
 			fwrite(tszMSGBuffer, 1, nMSGLen, pSt_File);
+			nllCount += nMSGLen;
 		}
 	}
 	fclose(pSt_File);
 	//关闭连接
 	APIHelp_Port_Free(nPort);
 	NetCore_TCPSelect_StopEx(xhToken);
+	//数据库
+	int nHashLen = 0;
+	XBYTE tszHashStr[XPATH_MID] = {};
+	XSTORAGECORE_DBFILE st_ProtocolFile = {};
+	Cryption_Api_Digest(lpszFileName.c_str(), tszHashStr, &nHashLen, true, st_ServiceCfg.st_XStorage.nHashMode);
+	BaseLib_String_StrToHex((LPCXSTR)tszHashStr, nHashLen, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+
+	if (st_ServiceCfg.st_XSql.bEnable)
+	{
+		BaseLib_String_GetFileAndPath(lpszFileName.c_str(), st_ProtocolFile.st_ProtocolFile.tszFilePath, st_ProtocolFile.st_ProtocolFile.tszFileName);
+		_tcsxcpy(st_ProtocolFile.tszBuckKey, st_ServiceCfg.st_XFtp.tszFTPDir);
+		st_ProtocolFile.st_ProtocolFile.nFileSize = nllCount;
+
+		Session_FTP_GetUser(lpszClientAddr.c_str(), st_ProtocolFile.st_ProtocolFile.tszFileUser);
+
+		XENGINE_STORAGEBUCKET st_StorageBucket = {};
+		if (APIHelp_Distributed_CTStorage(st_ServiceCfg.st_XFtp.tszFTPDir, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
+		{
+			Database_File_FileInsert(&st_ProtocolFile, st_StorageBucket.st_PermissionFlags.bRewrite);
+		}
+		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("FTP客户端:%s 请求上传文件完毕, 插入数据库完毕,BucketName:%s,Path:%s%s,Hash:%s,Size:%lld"), lpszClientAddr.c_str(), st_ProtocolFile.tszBuckKey, st_ProtocolFile.st_ProtocolFile.tszFilePath, st_ProtocolFile.st_ProtocolFile.tszFileName, st_ProtocolFile.st_ProtocolFile.tszFileHash, st_ProtocolFile.st_ProtocolFile.nFileSize);
+	}
+	//大小统计
+	SYSTEMAPI_FILE_ATTR st_FileAttr = {};
+	SystemApi_File_GetFileAttr(lpszFileName.c_str(), &st_FileAttr);
+	APIHelp_Distributed_SetSize(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, st_ServiceCfg.st_XFtp.tszFTPDir, st_FileAttr.nFileSize);
+	//HTTP CALL
+	if (st_ServiceCfg.st_XProxy.bFTPCall)
+	{
+		int nPLen = 0;
+		XCHAR tszProxyStr[XPATH_MAX] = {};
+		Protocol_StoragePacket_UPDown(tszProxyStr, &nPLen, lpszFileName.c_str(), st_ServiceCfg.st_XFtp.tszFTPDir, lpszClientAddr.c_str(), st_FileAttr.nFileSize, false, st_ProtocolFile.st_ProtocolFile.tszFileHash);
+		if (APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszFTPPass, tszProxyStr))
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("下载客户端:%s,请求完成通知,文件:%s,地址:%s"), lpszClientAddr.c_str(), lpszFileName.c_str(), st_ServiceCfg.st_XProxy.tszFTPPass);
+		}
+		else
+		{
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("下载客户端:%s,请求完成通知失败,可能对方服务没有开启,文件:%s,地址:%s"), lpszClientAddr.c_str(), lpszFileName.c_str(), st_ServiceCfg.st_XProxy.tszFTPPass);
+		}
+	}
 	//通知
 	int nSDLen = 1024;
 	XCHAR tszSDBuffer[1024] = {};
@@ -242,6 +313,41 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 
 	if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_USER, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_USER)))
 	{
+		if (0 == st_ServiceCfg.st_XProxy.nVType)
+		{
+			LPCXSTR lpszUserAnony = _X("anonymous");
+			if (0 != _tcsxnicmp(lpszUserAnony, pSt_KeyValue->tszStrVlu, _tcsxlen(lpszUserAnony)))
+			{
+				FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_530, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,用户验证失败,匿名用户不正确:%s"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+				return false;
+			}
+		}
+		else
+		{
+			int nHTTPCode = 0;
+			XCLIENT_APIHTTP st_APIHttp = {};
+
+			XCHAR* ptszMSGBuffer = NULL;
+			Protocol_StoragePacket_Auth(STORAGE_NETTYPE_FTPCONTRAL, XENGINE_FTPROTOCOL_QUESTION_USER, st_ServiceCfg.tszIPAddr, lpszClientAddr, pSt_KeyValue->tszStrVlu, tszRVBuffer, &nRVLen);
+			if (!APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszFTPPass, tszRVBuffer, &nHTTPCode, &ptszMSGBuffer, &nRVLen, NULL, NULL, &st_APIHttp))
+			{
+				FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_530, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,用户:%s 验证失败,请求验证服务:%s 失败,错误码:%lX"), lpszClientAddr, pSt_KeyValue->tszStrVlu, st_ServiceCfg.st_XProxy.tszFTPPass, APIClient_GetLastError());
+				return false;
+			}
+			if (200 != nHTTPCode)
+			{
+				FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_530, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,用户:%s 验证失败,请求验证服务:%s 失败,错误:%d"), lpszClientAddr, pSt_KeyValue->tszStrVlu, st_ServiceCfg.st_XProxy.tszFTPPass, nHTTPCode);
+				return false;
+			}
+		}
+		Session_FTP_Insert(lpszClientAddr, false);
+		Session_FTP_SetUser(lpszClientAddr, pSt_KeyValue->tszStrVlu);
 		//用户请求
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_331, tszSDBuffer, &nSDLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
@@ -250,8 +356,45 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 	else if (0 == _tcsxnicmp(XENGINE_FTPROTOCOL_QUESTION_PASS, pSt_KeyValue->tszStrKey, _tcsxlen(XENGINE_FTPROTOCOL_QUESTION_PASS)))
 	{
 		//密码请求
-		Session_FTP_Insert(lpszClientAddr, false);
-		Session_FTP_Set(lpszClientAddr, NULL, st_ServiceCfg.st_XFtp.tszFTPDir);
+		if (!Session_FTP_Get(lpszClientAddr))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_503, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求下载文件:%s 失败,执行顺序错误"), lpszClientAddr, pSt_KeyValue->tszStrVlu);
+			return false;
+		}
+		if (0 != st_ServiceCfg.st_XProxy.nVType)
+		{
+			int nHTTPCode = 0;
+			XCLIENT_APIHTTP st_APIHttp = {};
+			XCHAR* ptszMSGBuffer = NULL;
+			Protocol_StoragePacket_Auth(STORAGE_NETTYPE_FTPCONTRAL, XENGINE_FTPROTOCOL_QUESTION_PASS, st_ServiceCfg.tszIPAddr, lpszClientAddr, pSt_KeyValue->tszStrVlu, tszRVBuffer, &nRVLen);
+			if (!APIClient_Http_Request(_X("POST"), st_ServiceCfg.st_XProxy.tszFTPPass, tszRVBuffer, &nHTTPCode, &ptszMSGBuffer, &nRVLen, NULL, NULL, &st_APIHttp))
+			{
+				FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_530, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,密码:%s 验证失败,请求验证服务:%s 失败,错误码:%lX"), lpszClientAddr, pSt_KeyValue->tszStrVlu, st_ServiceCfg.st_XProxy.tszFTPPass, APIClient_GetLastError());
+				return false;
+			}
+			if (200 != nHTTPCode)
+			{
+				FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_530, tszSDBuffer, &nSDLen);
+				XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,密码:%s 验证失败,请求验证服务:%s 失败,错误:%d"), lpszClientAddr, pSt_KeyValue->tszStrVlu, st_ServiceCfg.st_XProxy.tszFTPPass, nHTTPCode);
+				return false;
+			}
+		}
+		//路径转换
+		XENGINE_STORAGEBUCKET st_StorageBucket = {};
+		if (!APIHelp_Distributed_CTStorage(st_ServiceCfg.st_XFtp.tszFTPDir, st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, &st_StorageBucket))
+		{
+			FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_421, tszSDBuffer, &nSDLen);
+			XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
+			XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("FTP客户端:%s,请求登录失败,服务器配置错误,无法继续,错误:%lX"), lpszClientAddr, StorageHelp_GetLastError());
+			return false;
+		}
+		Session_FTP_Set(lpszClientAddr, NULL, st_StorageBucket.tszFilePath);
+		Session_FTP_SetUser(lpszClientAddr, NULL, pSt_KeyValue->tszStrVlu);
 
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_230, tszSDBuffer, &nSDLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, nNetType);
@@ -312,7 +455,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
 
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
@@ -355,7 +498,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
 
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
@@ -403,13 +546,24 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		}
 		XCHAR tszFileName[XPATH_MAX] = {};
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
+		//清理数据库
+		if (st_ServiceCfg.st_XSql.bEnable)
+		{
+			Database_File_FileDelete(st_ServiceCfg.st_XFtp.tszFTPDir, tszFileName, pSt_KeyValue->tszStrVlu);
+		}
+		//合并文件
 		BaseLib_String_FixPath(tszFileName, 1);
-
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
 		_tcsxcat(tszFileName, pSt_KeyValue->tszStrVlu);
+		//大小统计
+		SYSTEMAPI_FILE_ATTR st_FileAttr = {};
+		SystemApi_File_GetFileAttr(tszFileName, &st_FileAttr);
+		__int64x nFSize = (__int64x)st_FileAttr.nFileSize;
+		APIHelp_Distributed_SetSize(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, st_ServiceCfg.st_XFtp.tszFTPDir, -nFSize);
+		//删除文件
 		_xtremove(tszFileName);
 
 		FTPProtocol_Parse_SendPacketEx(xhFTPContral, XENGINE_FTPROTOCOL_RESPONSE_250, tszSDBuffer, &nSDLen);
@@ -479,7 +633,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		XCHAR tszFileName[XPATH_MAX] = {};
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
@@ -505,7 +659,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		XCHAR tszFileName[XPATH_MAX] = {};
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}
@@ -582,7 +736,7 @@ bool XEngine_Task_FTP(LPCXSTR lpszClientAddr, XENGINE_KEYVALUE *pSt_KeyValue, in
 		_xstprintf(tszFileName, _X("%s%s"), tszFilePath, tszAlisPath);
 		BaseLib_String_FixPath(tszFileName, 1);
 
-		if (tszFileName[_tcsxlen(tszFileName)] != '\\' && tszFileName[_tcsxlen(tszFileName)] != '/')
+		if (tszFileName[_tcsxlen(tszFileName) - 1] != '\\' && tszFileName[_tcsxlen(tszFileName) - 1] != '/')
 		{
 			_tcsxcat(tszFileName, _X("\\"));
 		}

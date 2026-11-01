@@ -350,7 +350,7 @@ extern "C" bool Protocol_StorageParse_WDPropPatch(LPCXSTR lpszMsgBuffer, int nMs
 *********************************************************************/
 extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, int nCode = 0, LPCXSTR lpszMSGInfo = NULL);
 /********************************************************************
-函数名称：Protocol_StoragePacket_BasicAuth
+函数名称：Protocol_StoragePacket_Auth
 函数功能：基本验证协议代理转发
  参数.一：lpszRequestType
   In/Out：In
@@ -372,22 +372,17 @@ extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pIn
   类型：常量字符指针
   可空：N
   意思：用户发送的客户端地址
- 参数.五：lpszUser
+ 参数.五：lpszAuthStr
   In/Out：In
   类型：常量字符指针
   可空：N
-  意思：用户
- 参数.六：lpszPass
-  In/Out：In
-  类型：常量字符指针
-  可空：N
-  意思：密码
- 参数.七：ptszMsgBuffer
+  意思：验证字符串
+ 参数.六：ptszMsgBuffer
   In/Out：Out
   类型：字符指针
   可空：N
   意思：转发数据包
- 参数.八：pInt_MsgLen
+ 参数.七：pInt_MsgLen
   In/Out：Out
   类型：整数型
   可空：N
@@ -397,7 +392,7 @@ extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pIn
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Protocol_StoragePacket_BasicAuth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR * ptszMsgBuffer, int* pInt_MsgLen);
+extern "C" bool Protocol_StoragePacket_Auth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszAuthStr, XCHAR * ptszMsgBuffer, int* pInt_MsgLen);
 /********************************************************************
 函数名称：Protocol_StoragePacket_UPDown
 函数功能：上传下载完成代理通知协议
@@ -529,7 +524,7 @@ extern "C" bool Protocol_StoragePacket_QueryFile(XCHAR * ptszMsgBuffer, int* pIn
   意思：是否成功
 备注：
 *********************************************************************/
-extern "C" bool Protocol_StoragePacket_Info(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO * **pppSt_DLInfo, SESSION_STORAGEINFO * **pppSt_UPInfo, int nDLCount, int nUPCount);
+extern "C" bool Protocol_StoragePacket_Info(XCHAR* ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO*** pppSt_DLInfo, SESSION_STORAGEINFO*** pppSt_UPInfo, SESSION_STORAGEINFO*** pppSt_FTPInfo, int nDLCount, int nUPCount, int nFTPCount);
 /********************************************************************
 函数名称：Protocol_StoragePacket_DirOperator
 函数功能：查询用户目录

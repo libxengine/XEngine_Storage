@@ -76,9 +76,9 @@ extern "C" bool Protocol_StoragePacket_HTTPPacket(XCHAR* ptszMsgBuffer, int* pIn
 {
 	return m_StoragePacket.Protocol_StoragePacket_HTTPPacket(ptszMsgBuffer, pInt_MsgLen, nCode, lpszMSGInfo);
 }
-extern "C" bool Protocol_StoragePacket_BasicAuth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass, XCHAR * ptszMsgBuffer, int* pInt_MsgLen)
+extern "C" bool Protocol_StoragePacket_Auth(int nRequestType, LPCXSTR lpszMethod, LPCXSTR lpszPostUrl, LPCXSTR lpszClientAddr, LPCXSTR lpszAuthStr, XCHAR * ptszMsgBuffer, int* pInt_MsgLen)
 {
-	return m_StoragePacket.Protocol_StoragePacket_BasicAuth(nRequestType, lpszMethod, lpszPostUrl, lpszClientAddr, lpszUser, lpszPass, ptszMsgBuffer, pInt_MsgLen);
+	return m_StoragePacket.Protocol_StoragePacket_Auth(nRequestType, lpszMethod, lpszPostUrl, lpszClientAddr, lpszAuthStr, ptszMsgBuffer, pInt_MsgLen);
 }
 extern "C" bool Protocol_StoragePacket_UPDown(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, LPCXSTR lpszBuckKey, LPCXSTR lpszFileName, LPCXSTR lpszClientAddr, __int64x nFileSize, bool bDown, LPCXSTR lpszFileHash)
 {
@@ -88,9 +88,9 @@ extern "C" bool Protocol_StoragePacket_QueryFile(XCHAR * ptszMsgBuffer, int* pIn
 {
 	return m_StoragePacket.Protocol_StoragePacket_QueryFile(ptszMsgBuffer, pInt_MsgLen, pppSt_DBFile, nListCount, lpszTimeStart, lpszTimeEnd, xhToken);
 }
-extern "C" bool Protocol_StoragePacket_Info(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO * **pppSt_DLInfo, SESSION_STORAGEINFO * **pppSt_UPInfo, int nDLCount, int nUPCount)
+extern "C" bool Protocol_StoragePacket_Info(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, SESSION_STORAGEINFO * **pppSt_DLInfo, SESSION_STORAGEINFO * **pppSt_UPInfo, SESSION_STORAGEINFO*** pppSt_FTPInfo, int nDLCount, int nUPCount, int nFTPCount)
 {
-	return m_StoragePacket.Protocol_StoragePacket_Info(ptszMsgBuffer, pInt_MsgLen, pppSt_DLInfo, pppSt_UPInfo, nDLCount, nUPCount);
+	return m_StoragePacket.Protocol_StoragePacket_Info(ptszMsgBuffer, pInt_MsgLen, pppSt_DLInfo, pppSt_UPInfo, pppSt_FTPInfo, nDLCount, nUPCount, nFTPCount);
 }
 extern "C" bool Protocol_StoragePacket_DirOperator(XCHAR * ptszMsgBuffer, int* pInt_MsgLen, XCHAR * **pppszListEnum, int nListCount)
 {

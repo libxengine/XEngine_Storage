@@ -231,40 +231,31 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 					APIHelp_Distributed_SetSize(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, ppSt_DBQuery[i]->tszBuckKey, -ppSt_DBQuery[i]->st_ProtocolFile.nFileSize);
 					_xtremove(tszFilePath);
 				}
-				
 				XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求删除文件HASH成功,文件名:%s"), lpszClientAddr, ppSt_DBFile[i]->st_ProtocolFile.tszFileHash);
 			}
 			else
 			{
 				int nQueryCount = 0;
-				XCHAR tszFileDir[1024];
+				XCHAR tszFileDir[XPATH_MAX] = {};
 				XSTORAGECORE_DBFILE** ppSt_DBQuery;
 
-				memset(tszFileDir, '\0', sizeof(tszFileDir));
 				if (_tcsxlen(ppSt_DBFile[i]->tszBuckKey) > 0)
 				{
-					APIHelp_Distributed_GetPathKey(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, ppSt_DBFile[i]->tszBuckKey, ppSt_DBFile[i]->st_ProtocolFile.tszFilePath);
+					APIHelp_Distributed_GetPathKey(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, ppSt_DBFile[i]->tszBuckKey, tszFileDir);
 				}
 				_xstprintf(tszFileDir, _X("%s/%s"), ppSt_DBFile[i]->st_ProtocolFile.tszFilePath, ppSt_DBFile[i]->st_ProtocolFile.tszFileName);
 
-				if (!st_ServiceCfg.st_XSql.bEnable)
-				{
-					Protocol_StoragePacket_HTTPPacket(tszRVBuffer, &nRVLen, ERROR_STORAGE_PROTOCOL_HTTP_MANAGE_NOENABLE, "function not enable");
-					HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
-					XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
-					XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_ERROR, _X("业务客户端:%s,请求删除文件:%s 名称失败,没有启用数据库,无法使用此功能!"), lpszClientAddr, tszFileDir);
-					return true;
-				}
 				Database_File_FileQuery(&ppSt_DBQuery, &nQueryCount, NULL, NULL, NULL, tszFileDir);
 				//删除数据库与文件
 				for (int i = 0; i < nQueryCount; i++)
 				{
-					XCHAR tszFilePath[1024];
-					memset(tszFilePath, '\0', sizeof(tszFilePath));
+					XCHAR tszFilePath[1024] = {};
 
 					_xstprintf(tszFilePath, _X("%s/%s"), ppSt_DBQuery[i]->st_ProtocolFile.tszFilePath, ppSt_DBQuery[i]->st_ProtocolFile.tszFileName);
-					Database_File_FileDelete(NULL, NULL, NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
-
+					if (st_ServiceCfg.st_XSql.bEnable)
+					{
+						Database_File_FileDelete(NULL, NULL, NULL, ppSt_DBQuery[i]->st_ProtocolFile.tszFileHash);
+					}
 					APIHelp_Distributed_SetSize(st_LoadbalanceCfg.st_LoadBalance.pStl_ListBucket, ppSt_DBQuery[i]->tszBuckKey, -ppSt_DBQuery[i]->st_ProtocolFile.nFileSize);
 					_xtremove(tszFilePath);
 				}
@@ -406,17 +397,22 @@ bool XEngine_Task_Manage(LPCXSTR lpszAPIName, LPCXSTR lpszClientAddr, LPCXSTR lp
 	{
 		int nDLCount = 0;
 		int nUPCount = 0;
+		int nFTPCount = 0;
 		SESSION_STORAGEINFO** ppSt_DLInfo;
 		SESSION_STORAGEINFO** ppSt_UPInfo;
+		SESSION_STORAGEINFO** ppSt_FTPInfo;
 
 		Session_DLStorage_GetAll(&ppSt_DLInfo, &nDLCount);
 		Session_UPStorage_GetAll(&ppSt_UPInfo, &nUPCount);
+		Session_FTP_GetAll(&ppSt_FTPInfo, &nFTPCount);
 
-		Protocol_StoragePacket_Info(tszRVBuffer, &nRVLen, &ppSt_DLInfo, &ppSt_UPInfo, nDLCount, nUPCount);
+		Protocol_StoragePacket_Info(tszRVBuffer, &nRVLen, &ppSt_DLInfo, &ppSt_UPInfo, &ppSt_FTPInfo, nDLCount, nUPCount, nFTPCount);
 		HttpProtocol_Server_SendMsgEx(xhCenterHttp, tszSDBuffer, &nSDLen, &st_HDRParam, tszRVBuffer, nRVLen);
 		XEngine_Net_SendMsg(lpszClientAddr, tszSDBuffer, nSDLen, STORAGE_NETTYPE_HTTPCENTER);
+
 		BaseLib_Memory_Free((XPPPMEM)&ppSt_DLInfo, nDLCount);
 		BaseLib_Memory_Free((XPPPMEM)&ppSt_UPInfo, nUPCount);
+		BaseLib_Memory_Free((XPPPMEM)&ppSt_FTPInfo, nFTPCount);
 		XLOG_PRINT(xhLog, XENGINE_HELPCOMPONENTS_XLOG_IN_LOGLEVEL_INFO, _X("业务客户端:%s,请求获取上传下载信息成功,下载个数:%d,上传个数:%d"), lpszClientAddr, nDLCount, nUPCount);
 	}
 	return true;

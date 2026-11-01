@@ -74,15 +74,15 @@ typedef struct tag_XEngine_ServerConfig
     }st_XStorage;
     struct  
     {
-		bool bUPPass;
-		bool bDLPass;
-        bool bWDPass;
-        bool bAuthPass;
+		XCHAR tszUPPass[XPATH_MID];
+		XCHAR tszDLPass[XPATH_MID];
+        XCHAR tszWDPass[XPATH_MID];
+        XCHAR tszAuthPass[XPATH_MID];
+        XCHAR tszFTPPass[XPATH_MID];
         int nVType;
-		XCHAR tszUPPass[XPATH_MAX];
-		XCHAR tszDLPass[XPATH_MAX];
-        XCHAR tszWDPass[XPATH_MAX];
-        XCHAR tszAuthPass[XPATH_MAX];
+        bool bUPCall;
+        bool bDLCall;
+        bool bFTPCall;
     }st_XProxy;
 	struct
 	{

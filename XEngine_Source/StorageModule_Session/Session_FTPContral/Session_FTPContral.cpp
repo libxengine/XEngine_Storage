@@ -304,7 +304,7 @@ bool CSession_FTPContral::Session_FTP_GetRetr(LPCXSTR lpszClientAddr, __int64u* 
 		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
 		return false;
 	}
-	*pInt_Pos = stl_MapIterator->second.nPort;
+	*pInt_Pos = stl_MapIterator->second.nPos;
 	return true;
 }
 /********************************************************************
@@ -330,6 +330,136 @@ bool CSession_FTPContral::Session_FTP_Delete(LPCXSTR lpszClientAddr)
 	if (stl_MapIterator != stl_MapAction.end())
 	{
 		stl_MapAction.erase(stl_MapIterator);
+	}
+	return true;
+}
+/********************************************************************
+函数名称：Session_FTP_GetAll
+函数功能：获取FTP所有会话信息
+ 参数.一：pppSt_StorageList
+  In/Out：Out
+  类型：三级指针
+  可空：N
+  意思：输出会话信息列表
+ 参数.二：pInt_ListCount
+  In/Out：Out
+  类型：整数型指针
+  可空：N
+  意思：输出列表个数
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_FTPContral::Session_FTP_GetAll(SESSION_STORAGEINFO*** pppSt_StorageList, int* pInt_ListCount)
+{
+	Session_IsErrorOccur = false;
+
+	std::unique_lock<std::shared_mutex> st_AutoLock(st_Locker);
+
+	*pInt_ListCount = stl_MapAction.size();
+	BaseLib_Memory_Malloc((XPPPMEM)pppSt_StorageList, *pInt_ListCount, sizeof(SESSION_STORAGEINFO));
+
+	unordered_map<xstring, SESSION_FTPCONTRAL>::iterator stl_MapIterator = stl_MapAction.begin();
+	for (int i = 0; stl_MapIterator != stl_MapAction.end(); stl_MapIterator++, i++)
+	{
+		_tcsxcpy((*pppSt_StorageList)[i]->tszClientAddr, stl_MapIterator->first.c_str());
+		_xstprintf((*pppSt_StorageList)[i]->tszFileDir, _X("%s/%s"), stl_MapIterator->second.tszFilePath, stl_MapIterator->second.tszFileName);
+	}
+
+	return true;
+}
+/********************************************************************
+函数名称：Session_FTP_SetUser
+函数功能：设置用户密码信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：lpszUser
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入用户名
+ 参数.三：lpszPass
+  In/Out：In
+  类型：常量字符指针
+  可空：Y
+  意思：输入密码
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_FTPContral::Session_FTP_SetUser(LPCXSTR lpszClientAddr, LPCXSTR lpszUser, LPCXSTR lpszPass)
+{
+	Session_IsErrorOccur = false;
+
+	std::shared_lock<std::shared_mutex> st_AutoLock(st_Locker);
+	unordered_map<xstring, SESSION_FTPCONTRAL>::iterator stl_MapIterator = stl_MapAction.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapAction.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+
+	if (NULL != lpszUser)
+	{
+		memset(stl_MapIterator->second.tszFTPUser, '\0', sizeof(stl_MapIterator->second.tszFTPUser));
+		_tcsxcpy(stl_MapIterator->second.tszFTPUser, lpszUser);
+	}
+	if (NULL != lpszPass)
+	{
+		memset(stl_MapIterator->second.tszFTPPass, '\0', sizeof(stl_MapIterator->second.tszFTPPass));
+		_tcsxcpy(stl_MapIterator->second.tszFTPPass, lpszPass);
+	}
+	return true;
+}
+/********************************************************************
+函数名称：Session_FTP_GetUser
+函数功能：获取用户密码信息
+ 参数.一：lpszClientAddr
+  In/Out：In
+  类型：常量字符指针
+  可空：N
+  意思：输入客户端地址
+ 参数.二：ptszUser
+  In/Out：Out
+  类型：字符指针
+  可空：Y
+  意思：输出用户名
+ 参数.三：ptszPass
+  In/Out：Out
+  类型：字符指针
+  可空：Y
+  意思：输出密码
+返回值
+  类型：逻辑型
+  意思：是否成功
+备注：
+*********************************************************************/
+bool CSession_FTPContral::Session_FTP_GetUser(LPCXSTR lpszClientAddr, XCHAR* ptszUser, XCHAR* ptszPass)
+{
+	Session_IsErrorOccur = false;
+
+	std::shared_lock<std::shared_mutex> st_AutoLock(st_Locker);
+	unordered_map<xstring, SESSION_FTPCONTRAL>::iterator stl_MapIterator = stl_MapAction.find(lpszClientAddr);
+	if (stl_MapIterator == stl_MapAction.end())
+	{
+		Session_IsErrorOccur = true;
+		Session_dwErrorCode = ERROR_STORAGE_MODULE_SESSION_NOTFOUND;
+		return false;
+	}
+
+	if (NULL != ptszUser)
+	{
+		_tcsxcpy(ptszUser, stl_MapIterator->second.tszFTPUser);
+	}
+	if (NULL != ptszPass)
+	{
+		_tcsxcpy(ptszPass, stl_MapIterator->second.tszFTPPass);
 	}
 	return true;
 }

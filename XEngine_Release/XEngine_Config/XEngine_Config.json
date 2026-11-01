@@ -46,15 +46,15 @@
         "nHashMode": 2
     },
     "XProxy": {
-        "bUPPass": false,
-        "bDLPass": false,
-        "bWDPass": false,
-        "bAuthPass": false,
-        "nVType": 1,
+        "nVType": 0,
+        "bUPCall": false,
+        "bDLCall": false,
+        "bFTPCall": false,
         "tszUPPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
         "tszDLPass": "http://192.168.1.7:5200/Api/Pass/UPFile",
         "tszWDPass": "http://192.168.1.7:5200/Api/Pass/WDFile",
-        "tszAuthPass": ""
+        "tszAuthPass": "",
+        "tszFTPPass": "http://192.168.1.7:5200/Api/Pass/FTPFile"
     },
     "XLimit": {
         "bLimitMode": true,
@@ -91,6 +91,6 @@
     "XFtp": {
         "nFTPStart": 50051,
         "nFTPEnd": 51051,
-        "tszFTPDir": "D:\\XEngine_Storage\\XEngine_Source\\Debug"
+        "tszFTPDir": "storageftp"
     }
 }

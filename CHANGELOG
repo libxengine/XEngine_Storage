@@ -1,3 +1,43 @@
+XEngine_Storage V3.25.0.1001
+
+ci:增加freebsd和ubuntu26.04 支持
+ci:删除无用的git clone代码
+增加:ftp授权验证支持
+增加:ftp客户端信息查询支持
+修改:使用新的sql函数替代
+修改:启动参数处理问题
+修改:使用clang替代c++在freebsd系统
+修改:ftp文件夹使用lb配置替代
+修改:大小统计支持ftp上传删除了
+修改:http call增加动作名
+修改:http的完成通知重新设计实现
+修正:http验证响应网络错误问题
+修正:当没有文件hash删除数据库问题
+修正:ftp获取文件续传位置处理不正确
+修正:ftp获取文件路径长度处理不正确
+修正:windows crt运行时导致的问题
+修正:查询文件数据库错误
+修正:http api查询客户端上传信息不正确
+
+ci:added freebsd and ubuntu 26.04 build support
+ci:delete useless git clone
+added:authorize support for ftp
+added:ftp client info query for http api 
+modify:used new sql function instead
+modify:start parameter For loop variable changed in body
+modify:use clang instead c++ build for freebsd
+modify:ftp dir use load storage LoadBalance instead
+modify:size count support for ftp up and delete
+modify:added http call action string
+modify:http notify call redesign
+fixed:reply ver network incorrect for http verification
+fixed:database delete file failure when without hash
+fixed:get file retr pos incorrect
+fixed:get file path strlen incorrect for ftp
+fixed:crt runtime on windows
+fixed:query file sql failure
+fixed:upload client info query incorrect for http api
+======================================================================================
 XEngine_Storage V3.24.0.1001
 
 ci:增加了opnesuse系统支持
